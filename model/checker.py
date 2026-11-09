@@ -1,7 +1,7 @@
 """Checksum comparator and corrector (SPEC 6.2, 6.4) and injection semantics (SPEC 11).
 
 Lane numbers follow the SPEC: data lanes are 1..K and checksum lanes are K+1..K+3 for
-injection addressing. The RTL in rtl/checker.v must decide identically.
+injection addressing. The RTL in rtl/lane_checker.v must decide identically.
 """
 from __future__ import annotations
 
@@ -42,13 +42,17 @@ def checksums(y: list[int]) -> tuple[int, int, int]:
     return s1, s2, s3
 
 
-def check(y: list[int], s1: int, s2: int, s3: int, mode: int, c3_en: bool, trust_csum_lane: bool) -> CheckResult:
-    """SPEC 6.2, line by line."""
+def check(
+    y: list[int], s1: int, s2: int, s3: int, mode: int, c3_en: bool, trust_csum_lane: bool,
+    acc_w: int = ACC_W_DEFAULT, cs_w: int = ACC_CS_W_DEFAULT,
+) -> CheckResult:
+    """SPEC 6.2, line by line, with d1/d2/d3 as ACC_CS_W-bit values (ADR-008)."""
     sums = checksums(y)
-    d1 = sums[0] - s1
-    d2 = sums[1] - s2
-    d3 = (sums[2] - s3) if c3_en else 0
+    d1 = to_signed(sums[0] - s1, cs_w)
+    d2 = to_signed(sums[1] - s2, cs_w)
+    d3 = to_signed(sums[2] - s3, cs_w) if c3_en else 0
     out = list(y)
+    width_mask = (1 << cs_w) - 1
 
     if mode == UNPROTECTED:
         return CheckResult(Outcome.NONE, 0, out, d1, d2, d3)
@@ -59,8 +63,8 @@ def check(y: list[int], s1: int, s2: int, s3: int, mode: int, c3_en: bool, trust
         return CheckResult(Outcome.CLEAN, 0, out, d1, d2, d3)
     if d1 != 0:
         for j in range(1, len(y) + 1):
-            if d2 == j * d1 and (not c3_en or d3 == j * j * d1):
-                out[j - 1] = out[j - 1] - d1
+            if (d2 - j * d1) & width_mask == 0 and (not c3_en or (d3 - j * j * d1) & width_mask == 0):
+                out[j - 1] = to_signed(out[j - 1] - d1, acc_w)
                 return CheckResult(Outcome.CORRECTED, j, out, d1, d2, d3)
     if trust_csum_lane:
         if d1 != 0 and d2 == 0 and d3 == 0:

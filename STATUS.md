@@ -61,7 +61,7 @@ Jika G1 meleset lebih dari satu minggu, buang pemilihan clock per layer dan paka
 **DoD:** bit-exact untuk semua LANE_IMPL. Lint Verilator bersih (jika tersedia).
 
 ### M5 — RTL checker dan korektor
-- [ ] `rtl/checker.v` sesuai SPEC §6.2: mode 0/1/2, C3_EN, TRUST_CSUM_LANE, pencarian j tanpa pembagi
+- [ ] `rtl/lane_checker.v` (ADR-009) sesuai SPEC §6.2: mode 0/1/2, C3_EN, TRUST_CSUM_LANE, pencarian j tanpa pembagi
 
 **DoD:** bit-exact terhadap `model/checker.py` pada ≥ 2.000 kasus dari M3, mencakup setiap cabang keputusan.
 

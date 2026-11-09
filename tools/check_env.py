@@ -92,6 +92,17 @@ def find_verilator() -> str | None:
     return shutil.which("verilator_bin") or shutil.which("verilator")
 
 
+def verilator_env() -> dict[str, str]:
+    """Environment for Verilator: packaged builds need VERILATOR_ROOT pointed at their data."""
+    env = os.environ.copy()
+    verilator = find_verilator()
+    if verilator and "VERILATOR_ROOT" not in env:
+        root = Path(verilator).resolve().parent.parent / "share" / "verilator"
+        if (root / "include").is_dir():
+            env["VERILATOR_ROOT"] = str(root)
+    return env
+
+
 def _first_line(text: str, needle: str = "") -> str:
     for line in text.splitlines():
         if line.strip() and (not needle or needle in line):

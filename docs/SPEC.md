@@ -572,7 +572,7 @@ sentinel/
   spec/                regmap.yaml
   model/               arch.py, arch_report.py, train.py, quant.py, golden.py, export.py,
                        checker.py, governor.py, fault_model.py, campaign.py
-  rtl/                 lane_*.v, lane_array.v, operand_gen.v, checker.v, postproc.v, pool.v,
+  rtl/                 lane_*.v, lane_array.v, operand_gen.v, lane_checker.v, postproc.v, pool.v,
                        engine.v, spi_slave.v, regfile.v, governor.v, top_core.v
   rtl/gen/             hasil generate regmap (jangan diedit)
   rtl/platform/sim/    clk_gen_sim.v, cdc_fifo_sim.v, ...

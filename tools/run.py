@@ -40,7 +40,8 @@ def cmd_check(rest: list[str]) -> int:
 
 
 def cmd_test(rest: list[str]) -> int:
-    return call("-m", "pytest", "tests", "-q", *rest)
+    targets = [] if any(r.startswith("tests") for r in rest) else ["tests"]
+    return call("-m", "pytest", *targets, "-q", *rest)
 
 
 def cmd_gen(rest: list[str]) -> int:
