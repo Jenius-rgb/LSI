@@ -67,6 +67,20 @@ foreach p [get_timing_paths -group clk_fast -setup -max_paths 3000 -nworst 1] {
         if {$slack < $wns_nonmac} { set wns_nonmac $slack; set worst_nonmac $ep }
     }
 }
+# Worst slack per endpoint class, for both clocks, to see the next limit at a glance.
+foreach clk {clk_safe clk_fast} {
+    set worst [dict create]
+    foreach p [get_timing_paths -group $clk -setup -max_paths 3000 -nworst 1] {
+        set cls [get_property ENDPOINT_PIN $p]
+        regsub -all {\[[0-9]+\]} $cls {} cls
+        regsub {_reg.*$} $cls {} cls
+        set s [get_property SLACK $p]
+        if {![dict exists $worst $cls] || $s < [dict get $worst $cls]} { dict set worst $cls $s }
+    }
+    set cf [open $outdir/classes_$clk.txt w]
+    foreach {cls s} [lsort -real -stride 2 -index 1 $worst] { puts $cf "$s $cls" }
+    close $cf
+}
 puts $fp "WNS_MAC $wns_mac"
 puts $fp "WNS_NONMAC $wns_nonmac"
 puts $fp "WORST_MAC_ENDPOINT $worst_mac"

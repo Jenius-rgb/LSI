@@ -61,7 +61,7 @@ module operand_gen #(
     localparam integer SLOT_W = SET_W + 1;
     localparam integer MW     = 12;
 
-    localparam [2:0] S_IDLE = 3'd0, S_RUN = 3'd1, S_LOG_ADDR = 3'd2, S_LOG_DATA = 3'd3, S_LOG_NEXT = 3'd4;
+    localparam [2:0] S_IDLE = 3'd0, S_RUN = 3'd1, S_LOG_ADDR = 3'd2, S_LOG_DATA = 3'd3, S_LOG_NEXT = 3'd4, S_LOG_BASE = 3'd5;
     reg [2:0] state;
 
     reg [G_W-1:0]   g;
@@ -87,19 +87,29 @@ module operand_gen #(
     wire [1:0]  i2 = j1_last ? (i1_last ? 2'd0 : i1 + 1'b1) : i1;
     wire [15:0] c2 = (j1_last & i1_last) ? c1 + 1'b1 : c1;
 
-    wire [15:0] t_last  = cfg_t - 1'b1;
-    wire        two     = (R == 2) && (t != t_last);
-    wire [15:0] t_after = t + (two ? 16'd2 : 16'd1);
-    wire        unit_end = (t_after == cfg_t);
+    // Values derived from the layer configuration are static during a pass: registered,
+    // so loop control only compares registers.
+    reg [15:0]      t_last_r, t_last2_r;
+    reg [WIN_W-1:0] win_max_r;
+    reg [G_W-1:0]   g_max_r;
+    reg             t_zero;
+
+    always @(posedge clk) begin
+        t_last_r  <= cfg_t - 16'd1;
+        t_last2_r <= cfg_t - 16'd2;
+        win_max_r <= cfg_is_fc ? {WIN_W{1'b0}} : (({{(WIN_W-1){1'b0}}, 1'b1} << (cfg_log2w - 1'b1)) - 1'b1);
+        g_max_r   <= cfg_g[G_W-1:0] - 1'b1;
+    end
+
+    wire        two      = (R == 2) && (t != t_last_r);
+    wire [15:0] t_after  = t + (two ? 16'd2 : 16'd1);
+    wire        unit_end = two ? (t == t_last2_r) : ((R == 2) | (t == t_last_r));
 
     // ---- loop exits -------------------------------------------------------------------
-    wire [WIN_W-1:0] win_max = cfg_is_fc ? {WIN_W{1'b0}}
-                                         : (({{(WIN_W-1){1'b0}}, 1'b1} << (cfg_log2w - 1'b1)) - 1'b1);
-    wire [G_W-1:0]   g_max = cfg_g[G_W-1:0] - 1'b1;
     wire pos_last   = cfg_is_fc ? 1'b1 : (pos == 2'd3);
-    wire wx_last    = (wx == win_max);
-    wire wy_last    = (wy == win_max);
-    wire g_last     = (g == g_max);
+    wire wx_last    = (wx == win_max_r);
+    wire wy_last    = (wy == win_max_r);
+    wire g_last     = (g == g_max_r);
     wire window_end = unit_end & pos_last;
     wire pass_end   = window_end & wx_last & wy_last & g_last;
 
@@ -146,7 +156,7 @@ module operand_gen #(
     assign w_addr1   = w1_addr_r;
 
     // ---- flow control -----------------------------------------------------------------
-    wire new_unit = (t == 16'd0);
+    wire new_unit = t_zero;
     wire advance  = (state == S_RUN) & ~fifo_afull & (~new_unit | ~info_full);
 
     assign info_wr   = advance & new_unit;
@@ -185,6 +195,7 @@ module operand_gen #(
             log_addr   <= {LOG_AW{1'b0}};
             pass_first <= 1'b0;
             w_base_g   <= {WEIGHT_AW{1'b0}};
+            t_zero     <= 1'b1;
         end else begin
             case (state)
                 S_IDLE: if (start) begin
@@ -199,17 +210,22 @@ module operand_gen #(
                     log_addr   <= {LOG_AW{1'b0}};
                     pass_first <= 1'b1;
                     w_base_g   <= cfg_wbase;
+                    t_zero     <= 1'b1;
                     state      <= use_log ? S_LOG_ADDR : S_RUN;
                 end
 
                 S_LOG_ADDR: state <= S_LOG_DATA;
 
                 S_LOG_DATA: begin
-                    g        <= log_g;
-                    wy       <= log_wy;
-                    wx       <= log_wx;
-                    pos      <= 2'd0;
-                    w_base_g <= group_base(log_g, t_ext, cfg_wbase);
+                    g     <= log_g;
+                    wy    <= log_wy;
+                    wx    <= log_wx;
+                    pos   <= 2'd0;
+                    state <= S_LOG_BASE;
+                end
+
+                S_LOG_BASE: begin
+                    w_base_g <= group_base(g, t_ext, cfg_wbase);
                     state    <= S_RUN;
                 end
 
@@ -221,6 +237,7 @@ module operand_gen #(
 
                 S_RUN: if (advance) begin
                     pass_first <= 1'b0;
+                    t_zero     <= unit_end;
                     if (unit_end) begin
                         t <= 16'd0;
                         c <= 16'd0;
@@ -242,7 +259,7 @@ module operand_gen #(
                                     wy <= {WIN_W{1'b0}};
                                     if (!g_last) begin
                                         g        <= g + 1'b1;
-                                        w_base_g <= group_base(g + 1'b1, t_ext, cfg_wbase);
+                                        w_base_g <= w_base_g + cfg_t[WEIGHT_AW-1:0];
                                     end else begin
                                         state <= S_IDLE;
                                     end

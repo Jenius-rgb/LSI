@@ -7,8 +7,10 @@
 // C += B) give A = sum(Y), B = sum(k*Y) and sum(k*k*Y) = 2C - B without multipliers.
 // The search for j is sequential and division-free: j*d1 and j*j*d1 are accumulated.
 //
-// Latency after the last word: 2 cycles for a decision without search, plus up to K cycles
-// of search and 1 cycle to write the correction.
+// The chained sums are pipelined, one adder per stage.
+//
+// Latency after the last word: 4 cycles for a decision without search (5 with C3 on), plus up
+// to K cycles of search and 1 cycle to write the correction.
 module lane_checker #(
     parameter K         = 8,
     parameter C3_EN     = 0,
@@ -38,7 +40,8 @@ module lane_checker #(
     // Values of model.checker.Outcome.
     localparam [2:0] O_NONE = 3'd0, O_CLEAN = 3'd1, O_CORRECTED = 3'd2, O_CSUM = 3'd3, O_RECOMPUTE = 3'd4;
 
-    localparam [2:0] S_RECV = 3'd0, S_CALC = 3'd1, S_JUDGE = 3'd2, S_SEARCH = 3'd3, S_FIX = 3'd4, S_HOLD = 3'd5;
+    localparam [2:0] S_RECV = 3'd0, S_CALC = 3'd1, S_JUDGE = 3'd2, S_SEARCH = 3'd3, S_FIX = 3'd4, S_HOLD = 3'd5,
+                     S_SETTLE = 3'd6, S_CALC3 = 3'd7;
 
     reg [2:0] state;
     reg [6:0] count;
@@ -47,6 +50,8 @@ module lane_checker #(
     reg [ACC_CS_W-1:0] sum_a, sum_b, sum_c;
     reg [ACC_CS_W-1:0] d1, d2, d3;
     reg [ACC_CS_W-1:0] j_d1, jj_d1, step;
+    reg [ACC_CS_W-1:0] sum_k2_r;
+    reg                y_v1, y_v2, settled;
     reg [LANE_BITS-1:0] j;
 
     reg [ACC_W-1:0] y_mem [0:K-1];
@@ -60,9 +65,6 @@ module lane_checker #(
     wire d3_nz = |d3;
 
     wire [6:0] y_index = count - NCS[6:0];              // 0 for YK, K-1 for Y1
-    wire [ACC_CS_W-1:0] a_next = sum_a + in_data;
-    wire [ACC_CS_W-1:0] b_next = sum_b + a_next;
-    wire [ACC_CS_W-1:0] c_next = sum_c + b_next;
     wire [ACC_CS_W-1:0] sum_k2 = (sum_c << 1) - sum_b;
 
     wire match = (d2 == j_d1) & (~c3_active | (d3 == jj_d1));
@@ -111,29 +113,46 @@ module lane_checker #(
             sum_c   <= {ACC_CS_W{1'b0}};
             outcome <= O_NONE;
             lane    <= {LANE_BITS{1'b0}};
+            y_v1    <= 1'b0;
+            y_v2    <= 1'b0;
+            settled <= 1'b0;
         end else begin
+            // Second and third accumulators follow the first by one and two stages.
+            y_v1 <= (state == S_RECV) & in_valid & (count >= NCS[6:0]);
+            y_v2 <= y_v1;
+            if (y_v1) sum_b <= sum_b + sum_a;
+            if (y_v2) sum_c <= sum_c + sum_b;
+
             case (state)
                 S_RECV: if (in_valid) begin
                     if (count == 7'd0) s1 <= in_data;
                     else if (count == 7'd1) s2 <= in_data;
                     else if (count < NCS[6:0]) s3 <= in_data;
-                    else begin
-                        sum_a <= a_next;
-                        sum_b <= b_next;
-                        sum_c <= c_next;
-                    end
+                    else sum_a <= sum_a + in_data;
                     if (count == WORDS[6:0] - 1'b1) begin
-                        count <= 7'd0;
-                        state <= S_CALC;
+                        count   <= 7'd0;
+                        settled <= 1'b0;
+                        state   <= S_SETTLE;
                     end else begin
                         count <= count + 1'b1;
                     end
                 end
 
+                S_SETTLE: begin
+                    settled <= 1'b1;
+                    if (settled) state <= S_CALC;
+                end
+
                 S_CALC: begin
-                    d1 <= sum_a - s1;
-                    d2 <= sum_b - s2;
-                    d3 <= c3_active ? (sum_k2 - s3) : {ACC_CS_W{1'b0}};
+                    d1       <= sum_a - s1;
+                    d2       <= sum_b - s2;
+                    d3       <= {ACC_CS_W{1'b0}};
+                    sum_k2_r <= sum_k2;
+                    state    <= c3_active ? S_CALC3 : S_JUDGE;
+                end
+
+                S_CALC3: begin
+                    d3    <= sum_k2_r - s3;
                     state <= S_JUDGE;
                 end
 
@@ -195,7 +214,6 @@ module lane_checker #(
                     state <= S_RECV;
                 end
 
-                default: state <= S_RECV;
             endcase
         end
     end

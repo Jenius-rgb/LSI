@@ -265,7 +265,7 @@ module engine #(
         .info_wr(info_wr), .info_data(info_wdata), .info_full(info_full));
 
     // Reset for clk_fast logic, synchronized into that domain.
-    reg [2:0] rst_fast_sync;
+    (* max_fanout = 64 *) reg [2:0] rst_fast_sync;
     always @(posedge clk_fast) rst_fast_sync <= {rst_fast_sync[1:0], rst};
     wire rst_fast = rst_fast_sync[2];
 

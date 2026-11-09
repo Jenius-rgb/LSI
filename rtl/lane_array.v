@@ -124,20 +124,16 @@ module lane_array #(
             // unit only changes at a capture, and captures are at least T cycles apart,
             // so fire_r is settled well before it is used.
             always @(posedge clk) begin
+                fire_r <= fire_next;
+                for (ls = 0; ls < INJ_SLOTS; ls = ls + 1) begin
+                    unit_match[ls] <= inj_any[ls] | (unit == inj_unit[ls*UNIT_W +: UNIT_W]);
+                    for (lm = 0; lm < WORDS; lm = lm + 1)
+                        lane_fire[ls][lm] <= fire_next[ls] & (inj_lane[ls*LANE_ID_W +: LANE_ID_W] == (lm[LANE_ID_W-1:0] + 1'b1));
+                end
                 if (rst) begin
                     unit   <= {UNIT_W{1'b0}};
                     fired  <= {INJ_SLOTS{1'b0}};
-                    fire_r <= {INJ_SLOTS{1'b0}};
-                    unit_match <= {INJ_SLOTS{1'b0}};
-                    for (ls = 0; ls < INJ_SLOTS; ls = ls + 1)
-                        lane_fire[ls] <= {WORDS{1'b0}};
                 end else begin
-                    fire_r <= fire_next;
-                    for (ls = 0; ls < INJ_SLOTS; ls = ls + 1)
-                        unit_match[ls] <= inj_any[ls] | (unit == inj_unit[ls*UNIT_W +: UNIT_W]);
-                    for (ls = 0; ls < INJ_SLOTS; ls = ls + 1)
-                        for (lm = 0; lm < WORDS; lm = lm + 1)
-                            lane_fire[ls][lm] <= fire_next[ls] & (inj_lane[ls*LANE_ID_W +: LANE_ID_W] == (lm[LANE_ID_W-1:0] + 1'b1));
                     if (op_valid & op_pass_start) unit <= {UNIT_W{1'b0}};
                     else if (capture) unit <= unit + 1'b1;
                     if (op_valid & op_pass_start & inj_rearm) fired <= {INJ_SLOTS{1'b0}};
