@@ -39,7 +39,8 @@ module top_core #(
 
     // Synchronous reset held until the clocks are stable; soft reset comes from the registers.
     wire   soft_reset;
-    reg [3:0] rst_sync = 4'hF;
+    reg [3:0] rst_sync;
+    initial rst_sync = 4'hF;
     always @(posedge clk_safe) rst_sync <= {rst_sync[2:0], rst | ~clocks_locked | soft_reset};
     wire rst_safe = rst_sync[3];
 
@@ -86,6 +87,7 @@ module top_core #(
     wire [95:0] inj_mask;
     wire        busy, done, fatal, log_ovf, image_done;
     wire [3:0]  result_class;
+    wire [3:0]  result_class_w = result_class;
     wire [31:0] cycles_total, cycles_recompute, starve_cycles, cnt_data;
     wire [6:0]  cnt_addr;
     wire [3:0]  gov_state_level;

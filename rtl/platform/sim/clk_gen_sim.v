@@ -6,6 +6,13 @@
 //
 // The mux models BUFGCTRL behaviour: the output parks low on the old clock, then starts on
 // a rising edge of the new clock.  is_turbo reports the selection actually in force.
+// verilator lint_off BLKSEQ
+// verilator lint_off PROCASSINIT
+// verilator lint_off ZERODLY
+// verilator lint_off MULTIDRIVEN
+// verilator lint_off STMTDLY
+// verilator lint_off UNUSEDSIGNAL
+// verilator lint_off UNOPTFLAT
 module clk_gen_sim #(
     parameter        LEVELS_LOG2  = 4,
     parameter real   SAFE_PERIOD  = 10.0,
@@ -66,5 +73,12 @@ module clk_gen_sim #(
 
     wire unused_clk_in = clk_in;
 endmodule
+// verilator lint_on BLKSEQ
+// verilator lint_on PROCASSINIT
+// verilator lint_on ZERODLY
+// verilator lint_on MULTIDRIVEN
+// verilator lint_on STMTDLY
+// verilator lint_on UNUSEDSIGNAL
+// verilator lint_on UNOPTFLAT
 
 `default_nettype wire

@@ -44,7 +44,7 @@ def test_verilator_lint_is_clean(target):
     verilator = check_env.find_verilator()
     if verilator is None or not check_env._run([verilator, "--version"]):
         pytest.skip("verilator not available")
-    cmd = [verilator, "--lint-only", "-Wall", "-Irtl/gen", "--top-module", target["top"]]
+    cmd = [verilator, "--lint-only", "-Wall", "-Irtl/gen", "-Irtl/platform/sim", "--top-module", target["top"]]
     cmd += [f"-G{k}={v}" for k, v in target.get("params", {}).items()]
     cmd += target["sources"]
     res = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, errors="replace", env=check_env.verilator_env())

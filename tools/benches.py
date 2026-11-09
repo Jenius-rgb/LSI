@@ -113,16 +113,156 @@ def engine_benches() -> dict[str, Bench]:
     return out
 
 
+TOP_SOURCES = [
+    *ENGINE_SOURCES, "rtl/spi_slave.v", "rtl/regfile.v", "rtl/clk_gen.v", "rtl/platform/sim/clk_gen_sim.v", "rtl/top_core.v",
+]
+
+
+def _spi_log_vectors(model: str):
+    def gen(workdir: Path, params: dict) -> list[str]:
+        from model.vectors import spi_session_log
+
+        n_entries, _ = spi_session_log(model, params["K"], workdir)
+        return [f"+log={(workdir / 'spi_session.mem').as_posix()}", f"+entries={n_entries}"]
+
+    return gen
+
+
+def _system_params(model: str, k: int, c3: int, turbo_ns: float, log_aw: int = 8) -> dict:
+    wc1, wc2, wc3 = wc_widths(k)
+    aw = {"s": (13, 11, 12), "xs": (12, 10, 11), "micro": (9, 8, 9)}[model]
+    img_bytes = {"s": 3072, "xs": 3072, "micro": 192}[model]
+    return {"K": k, "C3_EN": c3, "WC1_W": wc1, "WC2_W": wc2, "WC3_W": wc3, "WEIGHT_AW": aw[2], "ACT0_AW": aw[0],
+            "ACT1_AW": aw[1], "LOG_AW": log_aw, "IMG_BYTES": img_bytes, "TURBO_NS": turbo_ns}
+
+
+def _system_vectors(model: str, scenario_fn, n_log: int = 256, micro: bool = False):
+    def gen(workdir: Path, params: dict) -> list[str]:
+        from model.vectors import system_scenarios
+
+        k, c3 = params["K"], params["C3_EN"]
+        images = None
+        if micro:
+            from model.data import micro_images
+
+            images = micro_images(MICRO_IMAGES)
+        scenarios = scenario_fn(k, c3)
+        meta = system_scenarios(model, k, c3, scenarios, workdir, images=images, n_log=n_log)
+        stem = f"{model}_k{k}"
+        return [
+            f"+scen={(workdir / 'scen.mem').as_posix()}", f"+images={(workdir / 'images.mem').as_posix()}", f"+n={meta['scenarios']}",
+            f"+weights={(workdir / (stem + '_weights.mem')).as_posix()}", f"+params={(workdir / (stem + '_params.mem')).as_posix()}",
+        ]
+
+    return gen
+
+
+MICRO_IMAGES = 16
+
+
+def _m8_scenarios(k: int, c3: int) -> list[dict]:
+    """Clean images and one single-lane injection under each mode (M8 DoD)."""
+    from model.engine_model import InjectionSlot as S
+
+    no = lambda: [S(), S()]  # noqa: E731
+    inj = lambda: [S(enable=True, layer=1, unit=37, lane=3, mask=(1 << 12) | 1, oneshot=True), S()]  # noqa: E731
+    inj2 = lambda: [S(enable=True, layer=2, any_unit=True, lane=5, mask=1 << 18, oneshot=True), S()]  # noqa: E731
+    out: list[dict] = []
+    for img in range(3):
+        out.append({"image": img, "mode": 2, "slots": no()})
+    out.append({"image": 0, "mode": 2, "slots": inj()})
+    out.append({"image": 1, "mode": 1, "slots": inj()})
+    out.append({"image": 2, "mode": 0, "slots": inj()})
+    out.append({"image": 0, "mode": 2, "slots": inj2()})
+    out.append({"image": 1, "mode": 1, "slots": inj2()})
+    return out
+
+
+def _corner_scenarios(k: int, c3: int) -> list[dict]:
+    """SPEC 13.4: log full and FATAL path, on the micro model."""
+    from model.engine_model import InjectionSlot as S
+
+    persistent = lambda: [S(enable=True, layer=0, any_unit=True, lane=2, mask=1 << 7, oneshot=False), S()]  # noqa: E731
+    dual = lambda: [S(enable=True, layer=0, any_unit=True, lane=2, mask=1 << 7, oneshot=False),  # noqa: E731
+                    S(enable=True, layer=0, any_unit=True, lane=3, mask=1 << 9, oneshot=False)]
+    oneshot_any = lambda: [S(enable=True, layer=0, any_unit=True, lane=4, mask=8, oneshot=True), S()]  # noqa: E731
+    out = [
+        {"image": 0, "mode": 1, "slots": persistent()},      # recompute also fails: FATAL
+        {"image": 1, "mode": 2, "slots": dual()},            # every unit uncorrectable, log overflows
+        {"image": 2, "mode": 2, "slots": oneshot_any()},     # ONESHOT re-arms per image
+        {"image": 3, "mode": 2, "slots": oneshot_any()},
+        {"image": 4, "mode": 0, "slots": persistent()},      # mode 0 never recomputes
+    ]
+    return out
+
+
+def m9_campaign_scenarios(k: int, c3: int, count: int = 2400, seed: int = 99) -> list[dict]:
+    """Random injections for the RTL campaign: one data lane, two data lanes, one checksum lane."""
+    import numpy as np
+
+    from model.engine_model import InjectionSlot as S
+
+    rng = np.random.default_rng(seed)
+    n_units = [64, 2]
+    out = []
+    for i in range(count):
+        layer = int(rng.integers(2))
+        unit = int(rng.integers(n_units[layer]))
+        mode = int(rng.choice([2, 2, 2, 1, 0]))
+        trust = bool(rng.random() < 0.25)
+        kind = int(rng.integers(3))
+        def mask():
+            return int(rng.integers(1, 1 << 22)) if rng.random() < 0.7 else (1 << int(rng.integers(0, 31)))
+        if kind == 0:
+            slots = [S(enable=True, layer=layer, unit=unit, lane=int(rng.integers(1, k + 1)), mask=mask(), oneshot=True), S()]
+        elif kind == 1:
+            a, b = (int(v) + 1 for v in rng.choice(k, size=2, replace=False))
+            slots = [S(enable=True, layer=layer, unit=unit, lane=a, mask=mask(), oneshot=True),
+                     S(enable=True, layer=layer, unit=unit, lane=b, mask=mask(), oneshot=True)]
+        else:
+            lane = k + int(rng.integers(1, (3 if c3 else 2) + 1))
+            slots = [S(enable=True, layer=layer, unit=unit, lane=lane, mask=(1 << int(rng.integers(0, 44))), oneshot=True), S()]
+        out.append({"image": i % MICRO_IMAGES, "mode": mode, "trust": trust, "c3_on": bool(c3), "slots": slots})
+    return out
+
+
+def system_benches() -> dict[str, Bench]:
+    out = {}
+    for ratio, name in [(1.0, "r100"), (1.3, "r130"), (1.7, "r170"), (2.0, "r200")]:
+        bench = f"system_xs_{name}"
+        out[bench] = Bench(bench, "tb_system", SYSTEM_SOURCES, _system_params("xs", 8, 0, 10.0 / ratio),
+                           _system_vectors("xs", _m8_scenarios), slow=True, prefer_xsim=True)
+    bench = "system_micro_corners"
+    out[bench] = Bench(bench, "tb_system", SYSTEM_SOURCES, {**_system_params("micro", 8, 0, 7.0, log_aw=2)},
+                       _system_vectors("micro", _corner_scenarios, n_log=4, micro=True), prefer_xsim=True)
+    for k, c3 in [(8, 0), (8, 1), (16, 1)]:
+        bench = f"system_micro_campaign_k{k}_c{c3}"
+        out[bench] = Bench(bench, "tb_system", SYSTEM_SOURCES, _system_params("micro", k, c3, 6.0),
+                           _system_vectors("micro", m9_campaign_scenarios, micro=True), slow=True, prefer_xsim=True)
+    return out
+
+
 def misc_benches() -> dict[str, Bench]:
     return {
         "spi_slave": Bench("spi_slave", "tb_spi_slave", ["rtl/spi_slave.v", "tb/tb_spi_slave.v"]),
+        "spi_session_xs": Bench(
+            "spi_session_xs", "tb_spi_log", [*TOP_SOURCES, "tb/tb_spi_log.v"],
+            {k: v for k, v in _engine_params("xs", 8).items() if k != "LANE_IMPL"},
+            _spi_log_vectors("xs"), slow=True, prefer_xsim=True,
+        ),
     }
 
 
-BENCHES: dict[str, Bench] = {**lane_array_benches(), **checker_benches(), **engine_benches(), **misc_benches()}
+SYSTEM_SOURCES = [*TOP_SOURCES, "tb/tb_system.v"]
+
+BENCHES: dict[str, Bench] = {
+    **lane_array_benches(), **checker_benches(), **engine_benches(), **misc_benches(), **system_benches(),
+}
 
 _W = {f"WC{i+1}_W": v for i, v in enumerate(wc_widths(8))}
 LINT_TARGETS = [
+    {"id": "regfile", "top": "regfile", "sources": ["rtl/regfile.v"]},
+    {"id": "top_core", "top": "top_core", "sources": TOP_SOURCES, "params": _W},
     {"id": "spi_slave", "top": "spi_slave", "sources": ["rtl/spi_slave.v"]},
     *[
         {"id": f"engine_c{c3}", "top": "engine", "sources": ENGINE_SOURCES, "params": {"C3_EN": c3, **_W}}

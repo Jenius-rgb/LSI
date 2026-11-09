@@ -1,0 +1,8 @@
+# Very small model on the same RTL, used only to run many injection scenarios quickly.
+name: micro
+input: {channels: 3, height: 8, width: 8}
+n_classes: 10
+layers:
+  - {name: conv1, type: conv, out_channels: 8, pool: true}
+  - {name: fc, type: fc}
+train: {seed: 2027, epochs: 1, batch_size: 64, lr: 0.05, momentum: 0.9, weight_decay: 0.0, dropout: 0.0, val_size: 10}

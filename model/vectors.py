@@ -223,6 +223,94 @@ def engine_vectors(model: str, k: int, count: int, workdir, n_classes: int = 10,
     }
 
 
+def spi_session_log(model: str, k: int, workdir, seed: int = 2027) -> tuple[int, dict]:
+    """A complete driver session against the Python device model, as a replayable log."""
+    from sentinel.device_model import ModelDevice
+    from sentinel.driver import SentinelDriver
+    from sentinel.transport import LogTransport
+
+    from model.config import load_hw_config
+    from model.data import verification_images
+    from model.export import write_artifacts
+    from model.golden import forward
+
+    qm, qsource = load_or_random_qmodel(model, seed)
+    manifest = write_artifacts(qm, {**load_hw_config(), "K": k}, workdir)
+    images, _, isource = verification_images(1)
+    device = ModelDevice(qm, k=k, flags=(1 << 1))
+    drv = SentinelDriver(LogTransport(device))
+
+    identity = drv.read_id()
+    assert identity.magic == b"SNTL"
+    assert drv.read_reg(0x000) == 0x534E544C
+    stem = workdir / f"{qm.name}_k{k}"
+    drv.load_model(stem.with_suffix(".bin"), stem.with_suffix(".manifest.json"))
+    # Read a few weight bytes back through the device model and the RTL.
+    assert len(drv.read(0x010000, 16)) == 16
+    drv.write_image(images[0].tobytes(), slot=0)
+    assert drv.read(0x030000, 8) == images[0].tobytes()[:8]
+    drv.configure(mode=2, img_sel=0)
+    drv.start()
+    drv.wait_done()
+    pred = drv.result_class()
+    logits = drv.logits(int(manifest["n_classes"]))
+    counters = drv.layer_counters(len(qm.layers))
+    gold = forward(qm, images[0])
+    assert pred == gold.pred and logits == [int(v) for v in gold.logits]
+    assert all(c["units"] == c["clean"] for c in counters)
+    n_entries = drv.t.write_log(workdir / "spi_session.mem")
+    return n_entries, {"weights": qsource, "images": isource}
+
+
+def system_scenarios(model: str, k: int, c3_hw: int, scenarios: list[dict], workdir, images=None, n_log: int = 256, seed: int = 2027) -> dict:
+    """Run each scenario through the engine model and write the expectations for tb_system.
+
+    A scenario: {image, mode, c3_on, trust, slots: [InjectionSlot, InjectionSlot]}.
+    """
+    from model.config import load_hw_config
+    from model.engine_model import EngineConfig, InjectionSlot, run_image
+    from model.export import write_artifacts
+
+    qm, qsource = load_or_random_qmodel(model, seed)
+    write_artifacts(qm, {**load_hw_config(), "K": k}, workdir)
+    if images is None:
+        from model.data import verification_images
+
+        images, _, isource = verification_images(max(s["image"] for s in scenarios) + 1)
+    else:
+        isource = "provided"
+
+    def slot_ctrl(sl: InjectionSlot) -> int:
+        return int(sl.enable) | (int(sl.any_unit) << 1) | (int(sl.oneshot) << 2) | ((sl.layer & 15) << 4) | ((sl.lane & 63) << 8)
+
+    words: list[int] = []
+    fired = dropped = 0
+    for sc in scenarios:
+        slots = sc.get("slots") or [InjectionSlot(), InjectionSlot()]
+        cfg = EngineConfig(k=k, c3_hw=bool(c3_hw), c3_on=sc.get("c3_on", False), mode=sc["mode"], trust=sc.get("trust", False), n_log=n_log)
+        res = run_image(qm, images[sc["image"]], cfg, slots)
+        fired += res.injections_fired
+        words += [sc["image"], (sc["mode"] & 3) | (int(cfg.trust) << 2) | (int(cfg.c3_on) << 3)]
+        for sl in slots:
+            words += [slot_ctrl(sl), sl.unit & 0xFFFF, sl.mask & 0xFFFFFFFF, (sl.mask >> 32) & 0xFFFF]
+        words += [res.pred, int(res.fatal) | (int(res.log_ovf) << 1)]
+        logits = np.zeros(16, dtype=np.int64)
+        logits[: len(res.logits)] = res.logits
+        words += [int(v) & 0xFFFFFFFF for v in logits]
+        for layer in range(4):
+            if layer < len(qm.layers):
+                words += [res.units[layer], res.clean[layer], res.corrected[layer], res.csum_lane[layer], res.recompute[layer], res.fatal_count[layer]]
+            else:
+                words += [0] * 6
+        lanes = list(res.lane_corrections) + [0] * (16 - k)
+        words += lanes[:16]
+        words.append(len(res.logits))
+    write_hex(workdir / "scen.mem", words, 32)
+    with open(workdir / "images.mem", "w", newline="\n", encoding="ascii") as fh:
+        fh.writelines(f"{int(v):02x}\n" for v in images.reshape(-1).tolist())
+    return {"scenarios": len(scenarios), "injections_fired": fired, "weights": qsource, "images": isource}
+
+
 def write_hex(path, values: list[int], width_bits: int) -> None:
     digits = (width_bits + 3) // 4
     with open(path, "w", newline="\n", encoding="ascii") as fh:

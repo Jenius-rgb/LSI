@@ -70,6 +70,12 @@ def load_dataset(name: str, data_dir: str | None = None) -> tuple[ImageSet, Imag
     raise ValueError(f"unknown dataset: {name}")
 
 
+def micro_images(count: int, seed: int = 2027) -> np.ndarray:
+    """Seeded 8x8 images for the micro model used in the mass injection campaign."""
+    rng = np.random.default_rng(seed)
+    return rng.integers(0, 256, size=(count, 3, 8, 8), dtype=np.uint8)
+
+
 def verification_images(count: int, seed: int = 2027) -> tuple[np.ndarray, np.ndarray | None, str]:
     """Images for verification vectors: real CIFAR-10 test images when available.
 
