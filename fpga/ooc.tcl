@@ -53,4 +53,22 @@ foreach clk {clk_safe clk_fast} {
     set paths [get_timing_paths -group $clk -max_paths 1 -setup]
     puts $fp "WNS_$clk [expr {[llength $paths] ? [get_property SLACK [lindex $paths 0]] : "NA"}]"
 }
+# SPEC 7.4: worst setup slack in clk_fast for MAC endpoints and for everything else.
+set wns_mac 1e9
+set wns_nonmac 1e9
+set worst_nonmac ""
+set worst_mac ""
+foreach p [get_timing_paths -group clk_fast -setup -max_paths 3000 -nworst 1] {
+    set slack [get_property SLACK $p]
+    set ep [get_property ENDPOINT_PIN $p]
+    if {[regexp {_lane\[[0-9]+\]\.impl\.u/(p_reg|m_reg|acc_reg)} $ep]} {
+        if {$slack < $wns_mac} { set wns_mac $slack; set worst_mac $ep }
+    } else {
+        if {$slack < $wns_nonmac} { set wns_nonmac $slack; set worst_nonmac $ep }
+    }
+}
+puts $fp "WNS_MAC $wns_mac"
+puts $fp "WNS_NONMAC $wns_nonmac"
+puts $fp "WORST_MAC_ENDPOINT $worst_mac"
+puts $fp "WORST_NONMAC_ENDPOINT $worst_nonmac"
 close $fp

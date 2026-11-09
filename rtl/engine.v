@@ -83,6 +83,7 @@ module engine #(
     localparam integer WORDS  = K + NCS;
     localparam integer SET_W  = 2 + 8 + K*8 + WC1_W + WC2_W + (C3_EN != 0 ? WC3_W : 0);
     localparam integer OPF_W  = R * (SET_W + 1);
+    localparam integer OPF_SLICES = (OPF_W + 49) / 50;
     localparam integer MAX_OUT_LOG2  = INFO_LOG2;
     localparam integer RESF_LOG2     = $clog2(WORDS * (1 << MAX_OUT_LOG2));
     localparam integer SB_W  = G_W + KB + 2*WIN_W + 2 + 1;
@@ -275,7 +276,7 @@ module engine #(
     reg               resf_rd;
     wire [ACC_CS_W-1:0] resf_wdata, resf_rdata;
 
-    cdc_fifo #(.WIDTH(OPF_W), .DEPTH_LOG2(OPF_LOG2), .AFULL_MARGIN(6)) u_opfifo (
+    cdc_fifo #(.WIDTH(OPF_W), .DEPTH_LOG2(OPF_LOG2), .AFULL_MARGIN(6), .SLICES(OPF_SLICES)) u_opfifo (
         .wr_clk(clk_safe), .wr_rst(rst), .wr_en(opf_wr), .wr_data(opf_wdata), .afull(opf_afull),
         .rd_clk(clk_fast), .rd_rst(rst_fast), .rd_en(opf_rd), .rd_data(opf_rdata), .empty(opf_empty));
 

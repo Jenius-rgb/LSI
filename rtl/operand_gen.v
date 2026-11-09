@@ -5,7 +5,7 @@
 // weights, producing up to R operand sets per clk_safe cycle for the operand FIFO.
 //
 // A pass is either the whole layer or, for a recompute pass, the windows listed in the log.
-// Pipeline: addresses -> RAM outputs -> (wc adder tree, 2 stages) -> FIFO write.
+// Pipeline: address registers -> RAM outputs -> (wc adder tree, 2 stages) -> FIFO write.
 //
 // FIFO word: R slots, each {valid, set}; a set is {pass_start, last, a, w[K], wc3, wc2, wc1}.
 // wc3 is omitted when C3_EN = 0.
@@ -123,12 +123,27 @@ module operand_gen #(
     wire [ACT_AW-1:0] xx1_ext = {{(ACT_AW-7){1'b0}}, xx1};
     wire [4:0]        m2      = {cfg_log2w, 1'b0};
 
-    assign act_addr0 = cfg_is_fc ? cfg_src_base + t[ACT_AW-1:0]
-                                 : cfg_src_base + (c0_ext << m2) + (yy0_ext << cfg_log2w) + xx0_ext;
-    assign act_addr1 = cfg_is_fc ? cfg_src_base + t[ACT_AW-1:0] + 1'b1
-                                 : cfg_src_base + (c1_ext << m2) + (yy1_ext << cfg_log2w) + xx1_ext;
-    assign w_addr0 = w_base_g + t[WEIGHT_AW-1:0];
-    assign w_addr1 = w_base_g + t[WEIGHT_AW-1:0] + 1'b1;
+    // Address stage 1: everything that depends on the loop state.  Stage 2 only sums.
+    reg [ACT_AW-1:0] a0_base, a0_row, a0_col, a1_base, a1_row, a1_col;
+    reg [WEIGHT_AW-1:0] w0_addr_r, w1_addr_r;
+    reg [1:0] pad_a;
+
+    always @(posedge clk) begin
+        a0_base   <= cfg_is_fc ? cfg_src_base : cfg_src_base + (c0_ext << m2);
+        a1_base   <= cfg_is_fc ? cfg_src_base : cfg_src_base + (c1_ext << m2);
+        a0_row    <= cfg_is_fc ? t[ACT_AW-1:0] : (yy0_ext << cfg_log2w);
+        a1_row    <= cfg_is_fc ? t[ACT_AW-1:0] + 1'b1 : (yy1_ext << cfg_log2w);
+        a0_col    <= cfg_is_fc ? {ACT_AW{1'b0}} : xx0_ext;
+        a1_col    <= cfg_is_fc ? {ACT_AW{1'b0}} : xx1_ext;
+        w0_addr_r <= w_base_g + t[WEIGHT_AW-1:0];
+        w1_addr_r <= w_base_g + t[WEIGHT_AW-1:0] + 1'b1;
+        pad_a     <= {pad1, pad0};
+    end
+
+    assign act_addr0 = a0_base + a0_row + a0_col;
+    assign act_addr1 = a1_base + a1_row + a1_col;
+    assign w_addr0   = w0_addr_r;
+    assign w_addr1   = w1_addr_r;
 
     // ---- flow control -----------------------------------------------------------------
     wire new_unit = (t == 16'd0);
@@ -248,8 +263,8 @@ module operand_gen #(
     end
 
     // ---- operand pipeline -------------------------------------------------------------
-    // Stage B: RAM outputs are valid.  Stages C and D: wait for the adder tree.
-    localparam PIPE = 3;
+    // Stage A: address registers.  Stage B: RAM outputs are valid.  Stages C and D: adder tree.
+    localparam PIPE = 4;
     reg [1:0] slot_v_p [0:PIPE-1];
     reg [1:0] slot_l_p [0:PIPE-1];
     reg       pass_p   [0:PIPE-1];
@@ -289,7 +304,7 @@ module operand_gen #(
                 pass_p[p]   <= pass_p[p-1];
             end
         end
-        pad_b <= {pad1, pad0};
+        pad_b <= pad_a;
         a0_c  <= a0_b;
         a0_d  <= a0_c;
         w0_c  <= w_data0;

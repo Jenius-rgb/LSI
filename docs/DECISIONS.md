@@ -71,3 +71,9 @@ ADR-001 sampai ADR-007 adalah usulan awal dari starter kit (2026-11-09). Boleh d
 - **Keputusan:** C3 tetap parameter sintesis `C3_EN`. Default repo tetap 0 sampai data resource M11 dan data E1 di board ada. Rekomendasi: aktifkan `C3_EN=1` bila resource part yang dipakai mencukupi, karena salah koreksi tanpa C3 adalah silent data corruption yang tidak terdeteksi oleh counter CORRECTED.
 - **Konsekuensi:** biaya C3 adalah satu lane checksum lagi (DSP atau LUT) dan satu kata per unit di FIFO hasil. Perbandingan keuntungan bersih dilakukan di E8 setelah M11.
 - **Status:** Diterima sementara, keputusan akhir setelah M11 dan E1.
+
+## ADR-012 — Pipeline tambahan dan tafsir margin SPEC §7.4
+- **Konteks:** run OOC pertama (xc7s25csga225-1, K=8) menunjukkan jalur kritis domain cepat bukan MAC: pointer baca FIFO XPM (fanout 205) dan sinyal capture ke register holding. Domain aman dibatasi perhitungan alamat aktivasi (10 tingkat logika). SPEC §7.4 menyebut slack non-MAC "minimal 30% lebih besar", tanpa definisi angka saat slack MAC kecil atau negatif.
+- **Keputusan:** FIFO operand dipecah menjadi beberapa FIFO paralel (lebar maksimum sekitar 50 bit per irisan) yang ditulis dan dibaca bersama; capture register holding memakai pulsa selesai milik lane masing-masing; kontrol slot di `fast_path` menjadi register yang boleh direplikasi; alamat generator operand ditambah satu tahap register. Margin §7.4 dihitung sebagai (slack non-MAC − slack MAC) dibagi delay MAC (periode − slack MAC), target ≥ 30%, oleh `fpga/parse_reports.py`.
+- **Konsekuensi:** perilaku cycle-level generator bertambah satu tahap latensi tetapi fungsi tetap; semua bench diulang. Keluaran FIFO irisan identik dengan FIFO tunggal.
+- **Status:** Diterima.

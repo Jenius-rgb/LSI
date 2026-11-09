@@ -73,6 +73,9 @@ def main() -> int:
     parser.add_argument("--impl", type=int, nargs="+", default=[0, 1, 2], help="0 lut, 1 dsp_min, 2 dsp_full")
     parser.add_argument("--c3", type=int, nargs="+", default=[0, 1])
     parser.add_argument("--parts", nargs="*", help="restrict to these part names")
+    parser.add_argument("--t-safe", type=float, default=T_SAFE_NS, help="clk_safe target period in ns")
+    parser.add_argument("--t-fast", type=float, default=T_FAST_NS, help="clk_fast target period in ns")
+    parser.add_argument("--tag", default="", help="suffix for the report directory")
     args = parser.parse_args()
 
     vivado = find_vivado()
@@ -95,18 +98,18 @@ def main() -> int:
     failures = 0
     for (part, model), k, impl, c3 in itertools.product(parts, args.k, args.impl, args.c3):
         weight_aw, act0_aw, act1_aw = AW[model]
-        name = f"{part}_{model}_k{k}_impl{impl}_c{c3}"
+        name = f"{part}_{model}_k{k}_impl{impl}_c{c3}" + (f"_{args.tag}" if args.tag else "")
         out = REPORTS / name
         print(f"[VIVADO-STA] {name}", flush=True)
         res = subprocess.run(
             [vivado, "-mode", "batch", "-nojournal", "-log", str(out.with_suffix(".log")), "-source", str(tcl), "-tclargs",
-             part, str(k), str(impl), str(c3), str(weight_aw), str(act0_aw), str(act1_aw), str(T_SAFE_NS), str(T_FAST_NS), str(out)],
+             part, str(k), str(impl), str(c3), str(weight_aw), str(act0_aw), str(act1_aw), str(args.t_safe), str(args.t_fast), str(out)],
             cwd=ROOT, capture_output=True, text=True, errors="replace",
         )
         if res.returncode != 0 or not (out / "summary.txt").exists():
             print(f"  failed; see {out.with_suffix('.log')}")
             failures += 1
-    subprocess.call([sys.executable, str(ROOT / "fpga" / "parse_reports.py")], cwd=ROOT)
+    subprocess.call([sys.executable, str(ROOT / "fpga" / "parse_reports.py"), args.tag], cwd=ROOT)
     return 1 if failures else 0
 
 

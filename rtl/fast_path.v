@@ -46,13 +46,17 @@ module fast_path #(
 
     reg [R*SLOT_W-1:0] word;
     reg                word_valid;
-    reg                slot;
+    // Control bits drive the whole word: registered, and Vivado may replicate them.
+    (* max_fanout = 32 *) reg slot;
+    (* max_fanout = 32 *) reg can_take;
 
     wire [SLOT_W-1:0] slot0 = word[SLOT_W-1:0];
     wire [SLOT_W-1:0] slot1 = word[R*SLOT_W-1 -: SLOT_W];
 
-    wire on_last_slot = (R == 1) | slot | ~slot1[SLOT_W-1];
-    wire can_take     = ~word_valid | on_last_slot;
+    // A new word is taken when none is held or the current one is on its last slot.
+    // Next state: after taking a word, wait only if it carries a valid second slot.
+    wire op_slot1_valid = op_data[R*SLOT_W-1];
+    wire can_take_next  = ~can_take | op_empty | (R == 1) | ~op_slot1_valid;
 
     assign op_rd = ~op_empty & can_take;
 
@@ -71,15 +75,13 @@ module fast_path #(
         if (rst) begin
             word_valid    <= 1'b0;
             slot          <= 1'b0;
+            can_take      <= 1'b1;
             set_valid     <= 1'b0;
             starve_cycles <= 32'd0;
         end else begin
-            if (can_take) begin
-                word_valid <= ~op_empty;
-                slot       <= 1'b0;
-            end else begin
-                slot <= 1'b1;
-            end
+            if (can_take) word_valid <= ~op_empty;
+            slot     <= ~can_take;
+            can_take <= can_take_next;
             set_valid <= word_valid;
             if (pass_active_sync & ~word_valid & op_empty)
                 starve_cycles <= starve_cycles + 1'b1;

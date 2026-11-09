@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import csv
 import re
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -39,6 +40,11 @@ def fmax_mhz(period_ns: float, wns_ns: float) -> float:
     return 1000.0 / (period_ns - wns_ns)
 
 
+def spec_7_4_gap(period_ns: float, wns_mac: float, wns_nonmac: float) -> float:
+    """Margin of non-MAC paths over the worst MAC path, in percent of the MAC delay (ADR-012)."""
+    return 100.0 * (wns_nonmac - wns_mac) / (period_ns - wns_mac)
+
+
 PATH_RE = re.compile(r"Source:\s+(\S+).*?Destination:\s+(\S+).*?Slack \(([A-Z]+)\)\s*:\s*(-?[\d.]+)ns", re.S)
 
 
@@ -58,9 +64,10 @@ def is_mac_path(path: dict) -> bool:
     return bool(re.search(pattern, path["destination"]) and re.search(r"(data_lane|csum_lane)", path["source"]))
 
 
-def collect(report_dir: Path = REPORTS) -> list[dict]:
+def collect(report_dir: Path = REPORTS, tag: str = "") -> list[dict]:
+    """Collect report directories; with a tag, only those whose name ends in _<tag>."""
     rows = []
-    for variant in sorted(p for p in report_dir.iterdir() if p.is_dir()):
+    for variant in sorted(p for p in report_dir.iterdir() if p.is_dir() and (not tag or p.name.endswith(f"_{tag}"))):
         summary_path = variant / "summary.txt"
         util_path = variant / "utilization.rpt"
         if not summary_path.exists() or not util_path.exists():
@@ -74,19 +81,29 @@ def collect(report_dir: Path = REPORTS) -> list[dict]:
             "wns_safe_ns": s.get("WNS_clk_safe"), "wns_fast_ns": s.get("WNS_clk_fast"),
             "fmax_safe_mhz": fmax_mhz(t_safe, float(s["WNS_clk_safe"])),
             "fmax_fast_mhz": fmax_mhz(t_fast, float(s["WNS_clk_fast"])),
+            "t_safe_ns": t_safe, "t_fast_ns": t_fast,
         }
+        if "WNS_MAC" in s and "WNS_NONMAC" in s:
+            mac, nonmac = float(s["WNS_MAC"]), float(s["WNS_NONMAC"])
+            row.update({
+                "wns_mac_ns": mac, "wns_nonmac_ns": nonmac,
+                "gap_pct_of_mac_delay": spec_7_4_gap(t_fast, mac, nonmac),
+                "worst_nonmac": s.get("WORST_NONMAC_ENDPOINT", ""),
+            })
         rows.append(row)
     return rows
 
 
 def main() -> int:
-    rows = collect()
+    tag = sys.argv[1] if len(sys.argv) > 1 else ""
+    rows = collect(tag=tag)
     if not rows:
         print("no reports under fpga/reports/")
         return 1
     out = REPORTS / "summary.csv"
     with open(out, "w", newline="", encoding="utf-8") as fh:
-        writer = csv.DictWriter(fh, fieldnames=list(rows[0].keys()))
+        fields = list(dict.fromkeys(k for row in rows for k in row))
+        writer = csv.DictWriter(fh, fieldnames=fields, restval="")
         writer.writeheader()
         writer.writerows(rows)
     print(f"wrote {out.relative_to(ROOT)}: {len(rows)} variants [VIVADO-STA]")

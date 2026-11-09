@@ -40,6 +40,11 @@ def test_fmax_from_period_and_slack():
     assert round(pr.fmax_mhz(5.0, -1.0), 3) == 166.667
 
 
+def test_spec_7_4_gap_is_relative_to_mac_delay():
+    # MAC delay 4 ns (period 5, slack 1); non-MAC slack 2.2: margin 1.2 ns = 30% of 4 ns.
+    assert round(pr.spec_7_4_gap(5.0, 1.0, 2.2), 6) == 30.0
+
+
 def test_paths_and_mac_classification():
     paths = pr.parse_paths(TIMING)
     assert len(paths) == 2

@@ -101,12 +101,14 @@ module lane_array #(
 
     // All lanes share the same latency; lane 0 stands for all of them.
     wire capture = y_last[0];
-    wire unused_lane_status = &{1'b0, y_last[K-1:1], s_last, wc_bus};
+    wire unused_lane_status = &{1'b0, wc_bus};
 
     // ---- fault injection --------------------------------------------------------------
     reg [UNIT_W-1:0]    unit;
     reg [INJ_SLOTS-1:0] fired;
     reg [INJ_SLOTS-1:0] fire_r;
+    reg [WORDS-1:0]     lane_fire [0:INJ_SLOTS-1];   // registered per lane to keep fanout low
+    integer             ls, lm;
 
     integer s;
     reg [INJ_SLOTS-1:0] fire_next;
@@ -126,8 +128,13 @@ module lane_array #(
                     unit   <= {UNIT_W{1'b0}};
                     fired  <= {INJ_SLOTS{1'b0}};
                     fire_r <= {INJ_SLOTS{1'b0}};
+                    for (ls = 0; ls < INJ_SLOTS; ls = ls + 1)
+                        lane_fire[ls] <= {WORDS{1'b0}};
                 end else begin
                     fire_r <= fire_next;
+                    for (ls = 0; ls < INJ_SLOTS; ls = ls + 1)
+                        for (lm = 0; lm < WORDS; lm = lm + 1)
+                            lane_fire[ls][lm] <= fire_next[ls] & (inj_lane[ls*LANE_ID_W +: LANE_ID_W] == (lm[LANE_ID_W-1:0] + 1'b1));
                     if (op_valid & op_pass_start) unit <= {UNIT_W{1'b0}};
                     else if (capture) unit <= unit + 1'b1;
                     if (op_valid & op_pass_start & inj_rearm) fired <= {INJ_SLOTS{1'b0}};
@@ -139,6 +146,8 @@ module lane_array #(
                 unit   <= {UNIT_W{1'b0}};
                 fired  <= {INJ_SLOTS{1'b0}};
                 fire_r <= {INJ_SLOTS{1'b0}};
+                for (ls = 0; ls < INJ_SLOTS; ls = ls + 1)
+                    lane_fire[ls] <= {WORDS{1'b0}};
             end
         end
     endgenerate
@@ -164,7 +173,7 @@ module lane_array #(
         for (m = 0; m < WORDS; m = m + 1) begin
             mask_id = {ACC_CS_W{1'b0}};
             for (t = 0; t < INJ_SLOTS; t = t + 1)
-                if (fire_r[t] && inj_lane[t*LANE_ID_W +: LANE_ID_W] == (m[LANE_ID_W-1:0] + 1'b1))
+                if (lane_fire[t][m])
                     mask_id = mask_id ^ inj_mask[t*ACC_CS_W +: ACC_CS_W];
             if (m < K) mask_y[m] = mask_id[ACC_W-1:0];
             else       mask_cs[m-K] = mask_id;
@@ -173,18 +182,14 @@ module lane_array #(
 
     integer i;
     always @(posedge clk) begin
-        if (capture) begin
-            for (i = 0; i < NCS; i = i + 1)
-                hold_cs[i] <= s_acc[i*ACC_CS_W +: ACC_CS_W] ^ mask_cs[i];
-            for (i = 0; i < K; i = i + 1)
-                hold_y[i] <= y_acc[(K-1-i)*ACC_W +: ACC_W] ^ mask_y[K-1-i];
-        end else if (valid_r) begin
-            for (i = 0; i < NCS - 1; i = i + 1)
-                hold_cs[i] <= hold_cs[i+1];
-            hold_cs[NCS-1] <= y_head_ext;
-            for (i = 0; i < K - 1; i = i + 1)
-                hold_y[i] <= hold_y[i+1];
-        end
+        // Each holding register is loaded by its own lane's finish pulse, which keeps the
+        // select fanout local.  The chain shifts freely; res_valid qualifies its output.
+        for (i = 0; i < NCS - 1; i = i + 1)
+            hold_cs[i] <= s_last[i] ? (s_acc[i*ACC_CS_W +: ACC_CS_W] ^ mask_cs[i]) : hold_cs[i+1];
+        hold_cs[NCS-1] <= s_last[NCS-1] ? (s_acc[(NCS-1)*ACC_CS_W +: ACC_CS_W] ^ mask_cs[NCS-1]) : y_head_ext;
+        for (i = 0; i < K - 1; i = i + 1)
+            hold_y[i] <= y_last[K-1-i] ? (y_acc[(K-1-i)*ACC_W +: ACC_W] ^ mask_y[K-1-i]) : hold_y[i+1];
+        if (y_last[0]) hold_y[K-1] <= y_acc[ACC_W-1:0] ^ mask_y[0];
 
         if (rst) begin
             remaining <= 7'd0;
