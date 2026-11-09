@@ -105,7 +105,7 @@ Jika G1 meleset lebih dari satu minggu, buang pemilihan clock per layer dan paka
 - [x] `fpga/ooc.tcl`, `fpga/run_matrix.py` (matriks varian), parser laporan ke CSV
 - [x] `tools/fit_report.py` (estimasi BRAM dan DSP per part dari config)
 
-**Status:** `[~]` enam varian K=8 pada xc7s25csga225-1 sudah dijalankan (`fpga/reports/summary.csv`, [VIVADO-STA]). Belum selesai: Fmax domain cepat varian DSP belum terukur (target 5 ns terpenuhi sehingga angkanya batas bawah), jalur kritis domain cepat varian DSP ada di FIFO XPM (melanggar SPEC 7.4), varian K=16 dan part lain belum dijalankan. Part XC7S25 dan speed grade -1 belum terverifikasi.
+**Status:** `[~]` enam varian K=8 pada xc7s25csga225-1 sudah dijalankan (`fpga/reports/summary.csv`, [VIVADO-STA]). Belum selesai: Fmax domain cepat varian DSP belum terukur (target 5 ns terpenuhi sehingga angkanya batas bawah), jalur kritis domain cepat bukan MAC pada `dsp_full` (FIFO XPM) dan `dsp_min` (register holding), melanggar SPEC 7.4, varian K=16 dan part lain belum dijalankan. Part XC7S25 dan speed grade -1 belum terverifikasi.
 
 **DoD:** tabel resource dan Fmax [VIVADO-STA] per part dan varian di `docs/RESULTS_SIM.md`. Analisis jalur kritis sesuai SPEC §7.4. Jika Vivado tidak ada di lingkungan ini: instruksi persis untuk user, dan status `[B] perlu dijalankan user`.
 
