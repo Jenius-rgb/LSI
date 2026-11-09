@@ -17,6 +17,7 @@ import gen_regmap  # noqa: E402
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--regmap", action="store_true", help="only the register map")
+    parser.add_argument("--no-vectors", action="store_true", help="skip verification vectors")
     args = parser.parse_args()
     gen_regmap.main()
     if args.regmap:
@@ -31,6 +32,14 @@ def main() -> int:
         for k in (8, 16):
             manifest = write_artifacts(qm, {**hw, "K": k}, ROOT / "build" / "weights")
             print(f"exported {model} K={k} from {source}: sha256 {manifest['sha256'][:16]}")
+    if not args.no_vectors:
+        import benches as bench_registry
+        from sim import _vector_plusargs
+
+        for name, bench in bench_registry.BENCHES.items():
+            if not bench.slow and bench.vectors is not None:
+                _vector_plusargs(bench)
+                print(f"vectors: build/vectors/{name}")
     return 0
 
 

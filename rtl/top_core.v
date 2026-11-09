@@ -96,7 +96,6 @@ module top_core #(
     reg         start_pending;
     wire        start_engine;
     wire [3:0]  result_class;
-    wire [3:0]  result_class_w = result_class;
     wire [31:0] cycles_total, cycles_recompute, starve_cycles, cnt_data;
     wire [6:0]  cnt_addr;
     wire [3:0]  gov_state_level;

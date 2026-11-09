@@ -1,0 +1,41 @@
+{
+  "label": "[SIM]",
+  "model": "xs",
+  "dataset": "cifar10",
+  "seed": 2027,
+  "epochs": 120,
+  "best_epoch": 116,
+  "val_acc": 0.7286,
+  "test_acc_float": 0.729,
+  "n_classes": 10,
+  "classes": [
+    "airplane",
+    "automobile",
+    "bird",
+    "cat",
+    "deer",
+    "dog",
+    "frog",
+    "horse",
+    "ship",
+    "truck"
+  ],
+  "train_size": 45000,
+  "val_size": 5000,
+  "test_size": 10000,
+  "device": "cpu",
+  "threads": 3,
+  "torch": "2.15.0+cpu",
+  "python": "3.13.1",
+  "train_cfg": {
+    "seed": 2027,
+    "epochs": 120,
+    "batch_size": 128,
+    "lr": 0.08,
+    "momentum": 0.9,
+    "weight_decay": 0.0005,
+    "dropout": 0.1,
+    "val_size": 5000
+  },
+  "elapsed_s": 1338.7557027339935
+}

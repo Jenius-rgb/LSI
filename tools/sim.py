@@ -24,6 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BUILD = ROOT / "build"
 SIM_DIR = BUILD / "sim"
 XSIM_DIR = BUILD / "xsim"
+VECTOR_DIR = BUILD / "vectors"
 
 RTL = "rtl"
 LANES = [f"{RTL}/lane_lut.v", f"{RTL}/lane_dsp_min.v", f"{RTL}/lane_dsp_full.v", f"{RTL}/lane_array.v"]
@@ -64,7 +65,7 @@ def _verdict(output: str) -> bool:
 
 
 def _vector_plusargs(bench: Bench) -> list[str]:
-    workdir = SIM_DIR / bench.name
+    workdir = VECTOR_DIR / bench.name
     workdir.mkdir(parents=True, exist_ok=True)
     return bench.vectors(workdir, bench.params) if bench.vectors else []
 

@@ -1,0 +1,100 @@
+{
+  "model": "xs",
+  "layers": [
+    {
+      "name": "conv1",
+      "kind": "conv",
+      "input": [
+        3,
+        32,
+        32
+      ],
+      "output_channels": 8,
+      "weights": 216,
+      "bias": 8,
+      "macs": 221184,
+      "t": 27,
+      "groups": {
+        "8": 1,
+        "16": 1
+      },
+      "ideal_cycles": {
+        "8": 27648,
+        "16": 27648
+      }
+    },
+    {
+      "name": "conv2",
+      "kind": "conv",
+      "input": [
+        8,
+        16,
+        16
+      ],
+      "output_channels": 16,
+      "weights": 1152,
+      "bias": 16,
+      "macs": 294912,
+      "t": 72,
+      "groups": {
+        "8": 2,
+        "16": 1
+      },
+      "ideal_cycles": {
+        "8": 36864,
+        "16": 18432
+      }
+    },
+    {
+      "name": "conv3",
+      "kind": "conv",
+      "input": [
+        16,
+        8,
+        8
+      ],
+      "output_channels": 16,
+      "weights": 2304,
+      "bias": 16,
+      "macs": 147456,
+      "t": 144,
+      "groups": {
+        "8": 2,
+        "16": 1
+      },
+      "ideal_cycles": {
+        "8": 18432,
+        "16": 9216
+      }
+    },
+    {
+      "name": "fc",
+      "kind": "fc",
+      "input": [
+        16,
+        4,
+        4
+      ],
+      "output_channels": 10,
+      "weights": 2560,
+      "bias": 10,
+      "macs": 2560,
+      "t": 256,
+      "groups": {
+        "8": 2,
+        "16": 1
+      },
+      "ideal_cycles": {
+        "8": 512,
+        "16": 256
+      }
+    }
+  ],
+  "total_weights": 6232,
+  "total_bias": 50,
+  "total_macs": 666112,
+  "ideal_cycles": {
+    "8": 83456,
+    "16": 55552
+  }
+}

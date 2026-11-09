@@ -3,7 +3,8 @@
 
 // Checksum weights of one K-byte weight word (SPEC 6.1):
 //   wc1 = sum(w_k), wc2 = sum(k*w_k), wc3 = sum(k*k*w_k), k = 1..K.
-// Latency: 2 cycles.
+// Latency: 2 cycles.  Constant multiplications stay in fabric, not DSP slices.
+(* use_dsp = "no" *)
 module wc_gen #(
     parameter K     = 8,
     parameter C3_EN = 0,

@@ -236,7 +236,7 @@ def spi_session_log(model: str, k: int, workdir, seed: int = 2027) -> tuple[int,
 
     qm, qsource = load_or_random_qmodel(model, seed)
     manifest = write_artifacts(qm, {**load_hw_config(), "K": k}, workdir)
-    images, _, isource = verification_images(1)
+    images, _, isource = verification_images(2)
     device = ModelDevice(qm, k=k, flags=(1 << 1))
     drv = SentinelDriver(LogTransport(device))
 
@@ -258,6 +258,20 @@ def spi_session_log(model: str, k: int, workdir, seed: int = 2027) -> tuple[int,
     gold = forward(qm, images[0])
     assert pred == gold.pred and logits == [int(v) for v in gold.logits]
     assert all(c["units"] == c["clean"] for c in counters)
+
+    # Ping-pong (SPEC 12.5): write IMG1 while the engine works on IMG0, then switch.
+    drv.configure(mode=2, img_sel=0)
+    drv.start()
+    drv.write_image(images[1].tobytes(), slot=1)
+    drv.wait_done()
+    assert drv.result_class() == gold.pred
+    drv.configure(mode=2, img_sel=1)
+    drv.start()
+    drv.wait_done()
+    gold1 = forward(qm, images[1])
+    assert drv.result_class() == gold1.pred
+    assert drv.logits(int(manifest["n_classes"])) == [int(v) for v in gold1.logits]
+
     n_entries = drv.t.write_log(workdir / "spi_session.mem")
     return n_entries, {"weights": qsource, "images": isource}
 

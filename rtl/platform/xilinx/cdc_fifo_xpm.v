@@ -19,6 +19,9 @@ module cdc_fifo_xpm #(
     output wire             empty
 );
     localparam DEPTH = 1 << DEPTH_LOG2;
+    // xpm_fifo_async accepts PROG_FULL_THRESH only in [7, DEPTH - 5].
+    localparam integer THRESH_RAW = DEPTH - AFULL_MARGIN;
+    localparam integer THRESH = (THRESH_RAW > DEPTH - 5) ? DEPTH - 5 : ((THRESH_RAW < 7) ? 7 : THRESH_RAW);
 
     xpm_fifo_async #(
         .FIFO_MEMORY_TYPE("distributed"),
@@ -27,7 +30,7 @@ module cdc_fifo_xpm #(
         .READ_DATA_WIDTH(WIDTH),
         .READ_MODE("fwft"),
         .FIFO_READ_LATENCY(0),
-        .PROG_FULL_THRESH(DEPTH - AFULL_MARGIN),
+        .PROG_FULL_THRESH(THRESH),
         .USE_ADV_FEATURES("0002"),
         .CDC_SYNC_STAGES(2)
     ) u_xpm (

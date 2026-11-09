@@ -116,14 +116,43 @@ def plot_e6(backend: str, run_dir: Path) -> Path:
     return out
 
 
-PLOTTERS = {"e1": plot_e1, "e2": plot_e2, "e3": plot_e3, "e4": plot_e4, "e6": plot_e6}
+def plot_e5(backend: str, run_dir: Path) -> Path:
+    rows = [r for r in read_rows(run_dir) if r["k"] == "8"]
+    fig, ax = figure("E5 outcome of injected errors, K=8", backend, "Injection kind and C3 setting", "Trials")
+    labels = [f"{r['kind']} C3={r['c3']}" for r in rows]
+    x = range(len(rows))
+    bottom = [0.0] * len(rows)
+    for color, key in zip(SERIES, ("corrected", "recompute", "miscorrected", "escaped")):
+        values = [float(r[key]) for r in rows]
+        ax.bar(x, values, bottom=bottom, color=color, width=0.6, label=key, edgecolor=SURFACE, linewidth=1.0)
+        bottom = [b + v for b, v in zip(bottom, values)]
+    ax.set_xticks(list(x), labels, rotation=20, ha="right", fontsize=8)
+    out = run_dir / "e5_outcomes.png"
+    finish(fig, ax, out, backend)
+    return out
+
+
+def plot_e8(backend: str, run_dir: Path) -> Path:
+    rows = [r for r in read_rows(run_dir) if r["part"] == "xc7s15"]
+    fig, ax = figure("E8 block RAM needed against capacity of xc7s15", backend, "Model and K", "BRAM36 equivalents")
+    labels = [f"{r['model']} K={r['K']}" for r in rows]
+    x = range(len(rows))
+    ax.bar(x, [float(r["bram36_needed"]) for r in rows], color=SERIES[0], width=0.6, label="needed (parameter estimate)")
+    ax.axhline(float(rows[0]["bram36_available"]), color=SERIES[1], linewidth=1.5, label="xc7s15 capacity (unverified)")
+    ax.set_xticks(list(x), labels, fontsize=8)
+    out = run_dir / "e8_bram.png"
+    finish(fig, ax, out, backend)
+    return out
+
+
+PLOTTERS = {"e1": plot_e1, "e2": plot_e2, "e3": plot_e3, "e4": plot_e4, "e6": plot_e6, "e5": plot_e5, "e8": plot_e8}
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--backend", default="all", choices=["all", "mock", "hw"])
+    parser.add_argument("--backend", default="all", choices=["all", "mock", "hw", "sim"])
     args = parser.parse_args()
-    backends = ["mock", "hw"] if args.backend == "all" else [args.backend]
+    backends = ["mock", "hw", "sim"] if args.backend == "all" else [args.backend]
     produced = 0
     for backend in backends:
         for name, plotter in PLOTTERS.items():
@@ -132,7 +161,7 @@ def main() -> None:
                 continue
             path = plotter(backend, run_dir)
             produced += 1
-            print(f"{'[SYNTHETIC]' if backend == 'mock' else '[HW]'} {path.relative_to(ROOT)}")
+            print(f"{LABELS.get(backend, '')} {path.relative_to(ROOT)}")
     print(f"{produced} plots")
 
 
