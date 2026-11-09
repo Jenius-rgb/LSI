@@ -276,11 +276,11 @@ module engine #(
     reg               resf_rd;
     wire [ACC_CS_W-1:0] resf_wdata, resf_rdata;
 
-    cdc_fifo #(.WIDTH(OPF_W), .DEPTH_LOG2(OPF_LOG2), .AFULL_MARGIN(6), .SLICES(OPF_SLICES)) u_opfifo (
+    cdc_fifo #(.WIDTH(OPF_W), .DEPTH_LOG2(OPF_LOG2), .AFULL_MARGIN(7), .SLICES(OPF_SLICES)) u_opfifo (
         .wr_clk(clk_safe), .wr_rst(rst), .wr_en(opf_wr), .wr_data(opf_wdata), .afull(opf_afull),
         .rd_clk(clk_fast), .rd_rst(rst_fast), .rd_en(opf_rd), .rd_data(opf_rdata), .empty(opf_empty));
 
-    cdc_fifo #(.WIDTH(ACC_CS_W), .DEPTH_LOG2(RESF_LOG2), .AFULL_MARGIN(1)) u_resfifo (
+    cdc_fifo #(.WIDTH(ACC_CS_W), .DEPTH_LOG2(RESF_LOG2), .AFULL_MARGIN(1), .SLICES(3)) u_resfifo (
         .wr_clk(clk_fast), .wr_rst(rst_fast), .wr_en(resf_wr), .wr_data(resf_wdata), .afull(resf_afull),
         .rd_clk(clk_safe), .rd_rst(rst), .rd_en(resf_rd), .rd_data(resf_rdata), .empty(resf_empty));
 

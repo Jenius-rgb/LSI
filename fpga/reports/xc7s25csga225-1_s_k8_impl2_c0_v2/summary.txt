@@ -1,0 +1,12 @@
+part xc7s25csga225-1
+K 8
+LANE_IMPL 2
+C3_EN 0
+T_SAFE_NS 7.5
+T_FAST_NS 3.2
+WNS_clk_safe -1.275
+WNS_clk_fast -0.451
+WNS_MAC -0.451
+WNS_NONMAC -0.331
+WORST_MAC_ENDPOINT u_fast/u_lanes/csum_lane[1].impl.u/acc_reg/A[3]
+WORST_NONMAC_ENDPOINT u_fast/u_lanes/inj_ctrl.lane_fire_reg[1][1]/D

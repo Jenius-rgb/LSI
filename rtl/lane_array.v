@@ -111,12 +111,12 @@ module lane_array #(
     integer             ls, lm;
 
     integer s;
+    reg [INJ_SLOTS-1:0] unit_match;
     reg [INJ_SLOTS-1:0] fire_next;
     always @* begin
         fire_next = {INJ_SLOTS{1'b0}};
         for (s = 0; s < INJ_SLOTS; s = s + 1)
-            fire_next[s] = inj_en[s] & ~(inj_oneshot[s] & fired[s]) &
-                           (inj_any[s] | (unit == inj_unit[s*UNIT_W +: UNIT_W]));
+            fire_next[s] = inj_en[s] & ~(inj_oneshot[s] & fired[s]) & unit_match[s];
     end
 
     generate
@@ -128,10 +128,13 @@ module lane_array #(
                     unit   <= {UNIT_W{1'b0}};
                     fired  <= {INJ_SLOTS{1'b0}};
                     fire_r <= {INJ_SLOTS{1'b0}};
+                    unit_match <= {INJ_SLOTS{1'b0}};
                     for (ls = 0; ls < INJ_SLOTS; ls = ls + 1)
                         lane_fire[ls] <= {WORDS{1'b0}};
                 end else begin
                     fire_r <= fire_next;
+                    for (ls = 0; ls < INJ_SLOTS; ls = ls + 1)
+                        unit_match[ls] <= inj_any[ls] | (unit == inj_unit[ls*UNIT_W +: UNIT_W]);
                     for (ls = 0; ls < INJ_SLOTS; ls = ls + 1)
                         for (lm = 0; lm < WORDS; lm = lm + 1)
                             lane_fire[ls][lm] <= fire_next[ls] & (inj_lane[ls*LANE_ID_W +: LANE_ID_W] == (lm[LANE_ID_W-1:0] + 1'b1));
@@ -146,6 +149,7 @@ module lane_array #(
                 unit   <= {UNIT_W{1'b0}};
                 fired  <= {INJ_SLOTS{1'b0}};
                 fire_r <= {INJ_SLOTS{1'b0}};
+                unit_match <= {INJ_SLOTS{1'b0}};
                 for (ls = 0; ls < INJ_SLOTS; ls = ls + 1)
                     lane_fire[ls] <= {WORDS{1'b0}};
             end

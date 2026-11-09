@@ -1,0 +1,79 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2025.2 (win64) Build 6299465 Fri Nov 14 19:35:11 GMT 2025
+| Date         : Tue Nov 10 02:21:56 2026
+| Host         : LAPTOP-ER7J7A89 running 64-bit major release  (build 9200)
+| Command      : report_utilization -hierarchical -file {C:\AF\SENTINEL-LSI-2027\fpga\reports\xc7s25csga225-1_s_k8_impl0_c1_v2/utilization_hier.rpt}
+| Design       : engine
+| Device       : xc7s25csga225-1
+| Speed File   : -1
+| Design State : Routed
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+Utilization Design Information
+
+Table of Contents
+-----------------
+1. Utilization by Hierarchy
+
+1. Utilization by Hierarchy
+---------------------------
+
++----------------------------------------------+---------------------------------+------------+------------+---------+------+------+--------+--------+------------+
+|                   Instance                   |              Module             | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs | RAMB36 | RAMB18 | DSP Blocks |
++----------------------------------------------+---------------------------------+------------+------------+---------+------+------+--------+--------+------------+
+| engine                                       |                           (top) |       5473 |       4884 |     572 |   17 | 4607 |     13 |      2 |          4 |
+|   (engine)                                   |                           (top) |        263 |        206 |      56 |    1 |  443 |      0 |      0 |          0 |
+|   u_checker                                  |                    lane_checker |        821 |        777 |      44 |    0 |  601 |      0 |      0 |          0 |
+|   u_counters                                 |                    counter_bank |        255 |         79 |     176 |    0 |    8 |      0 |      0 |          0 |
+|   u_fast                                     |                       fast_path |       2013 |       2013 |       0 |    0 | 1579 |      0 |      0 |          0 |
+|     (u_fast)                                 |                       fast_path |         65 |         65 |       0 |    0 |  394 |      0 |      0 |          0 |
+|     u_lanes                                  |                      lane_array |       1948 |       1948 |       0 |    0 | 1185 |      0 |      0 |          0 |
+|       (u_lanes)                              |                      lane_array |        235 |        235 |       0 |    0 |  450 |      0 |      0 |          0 |
+|       csum_lane[0].impl.u                    |        lane_lut__parameterized0 |        183 |        183 |       0 |    0 |   79 |      0 |      0 |          0 |
+|       csum_lane[1].impl.u                    |        lane_lut__parameterized1 |        368 |        368 |       0 |    0 |  102 |      0 |      0 |          0 |
+|       csum_lane[2].impl.u                    |        lane_lut__parameterized2 |        224 |        224 |       0 |    0 |   90 |      0 |      0 |          0 |
+|       data_lane[0].impl.u                    |                        lane_lut |        130 |        130 |       0 |    0 |   60 |      0 |      0 |          0 |
+|       data_lane[1].impl.u                    |                     lane_lut_54 |        122 |        122 |       0 |    0 |   57 |      0 |      0 |          0 |
+|       data_lane[2].impl.u                    |                     lane_lut_55 |        125 |        125 |       0 |    0 |   57 |      0 |      0 |          0 |
+|       data_lane[3].impl.u                    |                     lane_lut_56 |        125 |        125 |       0 |    0 |   57 |      0 |      0 |          0 |
+|       data_lane[4].impl.u                    |                     lane_lut_57 |        122 |        122 |       0 |    0 |   57 |      0 |      0 |          0 |
+|       data_lane[5].impl.u                    |                     lane_lut_58 |        126 |        126 |       0 |    0 |   57 |      0 |      0 |          0 |
+|       data_lane[6].impl.u                    |                     lane_lut_59 |        125 |        125 |       0 |    0 |   57 |      0 |      0 |          0 |
+|       data_lane[7].impl.u                    |                     lane_lut_60 |        126 |        126 |       0 |    0 |   62 |      0 |      0 |          0 |
+|   u_gen                                      |                     operand_gen |        610 |        605 |       0 |    5 |  716 |      0 |      0 |          2 |
+|     (u_gen)                                  |                     operand_gen |        360 |        355 |       0 |    5 |  470 |      0 |      0 |          2 |
+|     two_slots.u_wc1                          |                          wc_gen |        125 |        125 |       0 |    0 |  123 |      0 |      0 |          0 |
+|     u_wc0                                    |                       wc_gen_50 |        125 |        125 |       0 |    0 |  123 |      0 |      0 |          0 |
+|   u_opfifo                                   |                        cdc_fifo |        434 |        274 |     160 |    0 |  849 |      0 |      0 |          0 |
+|     slice[4].u_fifo                          |    cdc_fifo_xpm__parameterized0 |         87 |         55 |      32 |    0 |  173 |      0 |      0 |          0 |
+|       u_xpm                                  |  xpm_fifo_async__parameterized0 |         86 |         54 |      32 |    0 |  173 |      0 |      0 |          0 |
+|         gnuram_async_fifo.xpm_fifo_base_inst |   xpm_fifo_base__parameterized0 |         86 |         54 |      32 |    0 |  173 |      0 |      0 |          0 |
+|           gen_sdpram.xpm_memory_base_inst    | xpm_memory_base__parameterized0 |         32 |          0 |      32 |    0 |   96 |      0 |      0 |          0 |
+|     slice[0].u_fifo                          |         cdc_fifo_xpm__xdcDup__1 |         86 |         54 |      32 |    0 |  169 |      0 |      0 |          0 |
+|       u_xpm                                  |               xpm_fifo_async__4 |         86 |         54 |      32 |    0 |  169 |      0 |      0 |          0 |
+|         gnuram_async_fifo.xpm_fifo_base_inst |                xpm_fifo_base__4 |         86 |         54 |      32 |    0 |  169 |      0 |      0 |          0 |
+|           gen_sdpram.xpm_memory_base_inst    |              xpm_memory_base__4 |         32 |          0 |      32 |    0 |   92 |      0 |      0 |          0 |
+|     slice[1].u_fifo                          |         cdc_fifo_xpm__xdcDup__2 |         86 |         54 |      32 |    0 |  169 |      0 |      0 |          0 |
+|       u_xpm                                  |               xpm_fifo_async__5 |         86 |         54 |      32 |    0 |  169 |      0 |      0 |          0 |
+|         gnuram_async_fifo.xpm_fifo_base_inst |                xpm_fifo_base__5 |         86 |         54 |      32 |    0 |  169 |      0 |      0 |          0 |
+|           gen_sdpram.xpm_memory_base_inst    |              xpm_memory_base__5 |         32 |          0 |      32 |    0 |   92 |      0 |      0 |          0 |
+|     slice[2].u_fifo                          |         cdc_fifo_xpm__xdcDup__3 |         88 |         56 |      32 |    0 |  169 |      0 |      0 |          0 |
+|       u_xpm                                  |               xpm_fifo_async__6 |         86 |         54 |      32 |    0 |  169 |      0 |      0 |          0 |
+|         gnuram_async_fifo.xpm_fifo_base_inst |                xpm_fifo_base__6 |         86 |         54 |      32 |    0 |  169 |      0 |      0 |          0 |
+|           gen_sdpram.xpm_memory_base_inst    |              xpm_memory_base__6 |         32 |          0 |      32 |    0 |   92 |      0 |      0 |          0 |
+|     slice[3].u_fifo                          |                    cdc_fifo_xpm |         86 |         54 |      32 |    0 |  169 |      0 |      0 |          0 |
+|       u_xpm                                  |                  xpm_fifo_async |         86 |         54 |      32 |    0 |  169 |      0 |      0 |          0 |
+|         gnuram_async_fifo.xpm_fifo_base_inst |                   xpm_fifo_base |         86 |         54 |      32 |    0 |  169 |      0 |      0 |          0 |
+|           gen_sdpram.xpm_memory_base_inst    |                 xpm_memory_base |         32 |          0 |      32 |    0 |   92 |      0 |      0 |          0 |
+|   u_post                                     |                        postproc |        336 |        325 |       0 |   11 |  141 |      0 |      0 |          2 |
+|   u_resfifo                                  |        cdc_fifo__parameterized0 |        244 |        116 |     128 |    0 |  267 |      0 |      0 |          0 |
+|     slice[0].u_fifo                          |    cdc_fifo_xpm__parameterized1 |        244 |        116 |     128 |    0 |  267 |      0 |      0 |          0 |
+|       u_xpm                                  |  xpm_fifo_async__parameterized1 |        243 |        115 |     128 |    0 |  267 |      0 |      0 |          0 |
+|         gnuram_async_fifo.xpm_fifo_base_inst |   xpm_fifo_base__parameterized1 |        243 |        115 |     128 |    0 |  267 |      0 |      0 |          0 |
+|           gen_sdpram.xpm_memory_base_inst    | xpm_memory_base__parameterized1 |        153 |         25 |     128 |    0 |  145 |      0 |      0 |          0 |
+|   u_wram                                     |                         ram_tdp |        406 |        406 |       0 |    0 |    0 |      8 |      0 |          0 |
++----------------------------------------------+---------------------------------+------------+------------+---------+------+------+--------+--------+------------+
+* Note: The sum of lower-level cells may be larger than their parent cells total, due to cross-hierarchy LUT combining
+
+

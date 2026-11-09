@@ -264,7 +264,7 @@ module operand_gen #(
 
     // ---- operand pipeline -------------------------------------------------------------
     // Stage A: address registers.  Stage B: RAM outputs are valid.  Stages C and D: adder tree.
-    localparam PIPE = 4;
+    localparam PIPE = 5;
     reg [1:0] slot_v_p [0:PIPE-1];
     reg [1:0] slot_l_p [0:PIPE-1];
     reg       pass_p   [0:PIPE-1];
@@ -276,6 +276,10 @@ module operand_gen #(
     wire [7:0] a0_b = pad_b[0] ? 8'd0 : act_data0;
     wire [7:0] a1_b = pad_b[1] ? 8'd0 : act_data1;
 
+    // Stage B2: RAM outputs registered, so BRAM clock-to-out does not eat into the adder tree.
+    reg [7:0]       a0_r, a1_r;
+    reg [K*W_W-1:0] w0_r, w1_r;
+
     reg [7:0]       a0_c, a0_d, a1_c, a1_d;
     reg [K*W_W-1:0] w0_c, w0_d, w1_c, w1_d;
 
@@ -284,7 +288,7 @@ module operand_gen #(
     wire [WC3_W-1:0] wc3_0, wc3_1;
 
     wc_gen #(.K(K), .C3_EN(C3_EN), .W_W(W_W), .WC1_W(WC1_W), .WC2_W(WC2_W), .WC3_W(WC3_W)) u_wc0 (
-        .clk(clk), .w(w_data0), .wc1(wc1_0), .wc2(wc2_0), .wc3(wc3_0));
+        .clk(clk), .w(w0_r), .wc1(wc1_0), .wc2(wc2_0), .wc3(wc3_0));
 
     integer p;
     always @(posedge clk) begin
@@ -305,13 +309,17 @@ module operand_gen #(
             end
         end
         pad_b <= pad_a;
-        a0_c  <= a0_b;
+        a0_r  <= a0_b;
+        w0_r  <= w_data0;
+        a1_r  <= a1_b;
+        w1_r  <= w_data1;
+        a0_c  <= a0_r;
         a0_d  <= a0_c;
-        w0_c  <= w_data0;
+        w0_c  <= w0_r;
         w0_d  <= w0_c;
-        a1_c  <= a1_b;
+        a1_c  <= a1_r;
         a1_d  <= a1_c;
-        w1_c  <= w_data1;
+        w1_c  <= w1_r;
         w1_d  <= w1_c;
     end
 
@@ -332,7 +340,7 @@ module operand_gen #(
 
         if (R == 2) begin : two_slots
             wc_gen #(.K(K), .C3_EN(C3_EN), .W_W(W_W), .WC1_W(WC1_W), .WC2_W(WC2_W), .WC3_W(WC3_W)) u_wc1 (
-                .clk(clk), .w(w_data1), .wc1(wc1_1), .wc2(wc2_1), .wc3(wc3_1));
+                .clk(clk), .w(w1_r), .wc1(wc1_1), .wc2(wc2_1), .wc3(wc3_1));
             assign fifo_data = {slot1, slot0};
         end else begin : one_slot
             assign wc1_1 = {WC1_W{1'b0}};

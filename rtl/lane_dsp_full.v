@@ -4,6 +4,7 @@
 // MAC lane mapped to a DSP slice with all pipeline registers:
 // operand registers (AREG/BREG), product register (MREG) and accumulator (PREG).
 // acc_last pulses for one cycle while acc holds a finished unit.
+(* use_dsp = "yes" *)
 module lane_dsp_full #(
     parameter W_W   = 8,
     parameter ACC_W = 32
@@ -25,7 +26,7 @@ module lane_dsp_full #(
     reg                  v1, l1, f1;
     reg                  v2, l2, f2;
 
-    (* use_dsp = "yes" *) reg signed [P_W-1:0] m;
+    reg signed [P_W-1:0] m;
 
     wire [ACC_W-1:0] base = f2 ? {ACC_W{1'b0}} : acc;
     wire [ACC_W-1:0] m_ext = {{(ACC_W-P_W){m[P_W-1]}}, m};

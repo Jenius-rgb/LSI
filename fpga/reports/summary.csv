@@ -1,7 +1,7 @@
-variant,label,part,K,LANE_IMPL,C3_EN,lut,ff,bram36_equiv,dsp,wns_safe_ns,wns_fast_ns,fmax_safe_mhz,fmax_fast_mhz
-xc7s25csga225-1_s_k8_impl0_c0,[VIVADO-STA],xc7s25csga225-1,8,0,0,4369.0,3585.0,14.0,4.0,0.149,-1.375,101.51253679829458,156.86274509803923
-xc7s25csga225-1_s_k8_impl0_c1,[VIVADO-STA],xc7s25csga225-1,8,0,1,5405.0,4175.0,14.0,4.0,0.205,-1.565,102.09290454313425,152.32292460015233
-xc7s25csga225-1_s_k8_impl1_c0,[VIVADO-STA],xc7s25csga225-1,8,1,0,3231.0,2849.0,14.0,14.0,0.23,0.207,102.3541453428864,208.63759649488838
-xc7s25csga225-1_s_k8_impl1_c1,[VIVADO-STA],xc7s25csga225-1,8,1,1,4073.0,3330.0,14.0,15.0,0.365,0.21,103.78827192527244,208.76826722338205
-xc7s25csga225-1_s_k8_impl2_c0,[VIVADO-STA],xc7s25csga225-1,8,2,0,3227.0,2853.0,14.0,24.0,0.188,0.293,101.91602119853242,212.44954323348205
-xc7s25csga225-1_s_k8_impl2_c1,[VIVADO-STA],xc7s25csga225-1,8,2,1,4075.0,3334.0,14.0,26.0,0.247,0.222,102.53255408592229,209.2925910422771
+variant,label,part,K,LANE_IMPL,C3_EN,lut,ff,bram36_equiv,dsp,wns_safe_ns,wns_fast_ns,fmax_safe_mhz,fmax_fast_mhz,t_safe_ns,t_fast_ns,wns_mac_ns,wns_nonmac_ns,gap_pct_of_mac_delay,worst_nonmac
+xc7s25csga225-1_s_k8_impl0_c0_v2,[VIVADO-STA],xc7s25csga225-1,8,0,0,4537.0,3938.0,14.0,4.0,-1.768,-1.164,107.89814415192058,150.06002400960384,7.5,5.5,-1.164,-0.605,8.388355342136855,u_fast/u_lanes/hold_y_reg[4][9]/D
+xc7s25csga225-1_s_k8_impl0_c1_v2,[VIVADO-STA],xc7s25csga225-1,8,0,1,5473.0,4607.0,14.0,4.0,-1.405,-1.214,112.29646266142618,148.94250819183793,7.5,5.5,-1.214,-0.96,3.7831397080726834,u_fast/u_lanes/hold_y_reg[4][28]/D
+xc7s25csga225-1_s_k8_impl1_c0_v2,[VIVADO-STA],xc7s25csga225-1,8,1,0,3425.0,3372.0,14.0,14.0,-2.089,-0.572,104.28616122640526,265.11134676564154,7.5,3.2,0.242,-0.572,-27.51859364435429,u_fast/u_lanes/inj_ctrl.lane_fire_reg[0][1]/D
+xc7s25csga225-1_s_k8_impl1_c1_v2,[VIVADO-STA],xc7s25csga225-1,8,1,1,4184.0,3957.0,14.0,15.0,-1.165,-0.572,115.40680900173112,265.11134676564154,7.5,3.2,0.335,-0.572,-31.657940663176262,u_resfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_64_127_0_2/RAMA/WE
+xc7s25csga225-1_s_k8_impl2_c0_v2,[VIVADO-STA],xc7s25csga225-1,8,2,0,3426.0,3355.0,14.0,24.0,-1.275,-0.451,113.96011396011396,273.8975623116954,7.5,3.2,-0.451,-0.331,3.286770747740345,u_fast/u_lanes/inj_ctrl.lane_fire_reg[1][1]/D
+xc7s25csga225-1_s_k8_impl2_c1_v2,[VIVADO-STA],xc7s25csga225-1,8,2,1,4190.0,3945.0,14.0,26.0,-1.743,-0.554,108.18998160770312,266.38252530633986,7.5,3.2,-0.554,-0.49,1.7048481619605766,u_fast/u_lanes/inj_ctrl.lane_fire_reg[1][2]/D
