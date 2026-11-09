@@ -56,7 +56,11 @@ def choose_parts(available: dict[str, list[str]]) -> list[tuple[str, str]]:
     model_for = {"xc7s6": "xs", "xc7s15": "s", "xc7s25": "s", "xc7s50": "s"}
     for base, names in available.items():
         for speed in ("-1", "-2"):
-            picks = [n for n in names if n.endswith(speed) and "ftgb196" in n] or [n for n in names if n.endswith(speed)]
+            picks = (
+                [n for n in names if n.endswith(speed) and "csga225" in n]  # package read from the chip photo (unverified)
+                or [n for n in names if n.endswith(speed) and "ftgb196" in n]
+                or [n for n in names if n.endswith(speed)]
+            )
             if picks:
                 chosen.append((sorted(picks)[0], model_for[base]))
     return chosen

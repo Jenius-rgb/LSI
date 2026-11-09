@@ -1,0 +1,8 @@
+part xc7s25csga225-1
+K 8
+LANE_IMPL 2
+C3_EN 1
+T_SAFE_NS 10.0
+T_FAST_NS 5.0
+WNS_clk_safe 0.247
+WNS_clk_fast 0.222

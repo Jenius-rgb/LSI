@@ -105,7 +105,7 @@ Jika G1 meleset lebih dari satu minggu, buang pemilihan clock per layer dan paka
 - [x] `fpga/ooc.tcl`, `fpga/run_matrix.py` (matriks varian), parser laporan ke CSV
 - [x] `tools/fit_report.py` (estimasi BRAM dan DSP per part dari config)
 
-**Status:** `[B]` perlu dijalankan user: skrip dan `fit_report` selesai; Vivado butuh dukungan device Spartan-7 (lihat Terblokir).
+**Status:** `[~]` enam varian K=8 pada xc7s25csga225-1 sudah dijalankan (`fpga/reports/summary.csv`, [VIVADO-STA]). Belum selesai: Fmax domain cepat varian DSP belum terukur (target 5 ns terpenuhi sehingga angkanya batas bawah), jalur kritis domain cepat varian DSP ada di FIFO XPM (melanggar SPEC 7.4), varian K=16 dan part lain belum dijalankan. Part XC7S25 dan speed grade -1 belum terverifikasi.
 
 **DoD:** tabel resource dan Fmax [VIVADO-STA] per part dan varian di `docs/RESULTS_SIM.md`. Analisis jalur kritis sesuai SPEC §7.4. Jika Vivado tidak ada di lingkungan ini: instruksi persis untuk user, dan status `[B] perlu dijalankan user`.
 
@@ -152,7 +152,6 @@ Jika G1 meleset lebih dari satu minggu, buang pemilihan clock per layer dan paka
 - [B] Semua eksperimen [HW] — butuh board
 - [B] Kelas target — belum diumumkan panitia (pakai CIFAR-10 sementara)
 
-- [B] Dukungan device Spartan-7 belum ada di Vivado 2025.2 (`get_parts xc7s*` kosong): M11 perlu dijalankan user setelah menambah device lewat Help > Add Design Tools or Devices, lalu `python tools/run.py ooc`
 - [B] `config/mmcm_limits.yaml` dan `config/parts.yaml`: angka batas DS189/DS180 belum diverifikasi (`verified: false`); butuh dokumen resmi
 - [B] Rekonfigurasi MMCM2 di `clk_gen_xilinx.v` (ADR-010): butuh Spartan-7 di Vivado, F_IN, dan PG065
 
@@ -181,6 +180,7 @@ Ditulis di akhir sesi 2026-11-09.
 
 | Tanggal | Milestone | Perintah | Hasil |
 | --- | --- | --- | --- |
+| 2026-11-10 | M11 | `python tools/run.py ooc --parts xc7s25csga225-1 --k 8` | [VIVADO-STA] 6 varian selesai; lihat fpga/reports/summary.csv. Domain aman lolos target 10 ns; lane LUT gagal target 5 ns |
 | 2026-11-09 | M0 | `python tools/run.py check --write` | Python 3.13.1, Icarus 12.0 devel, Vivado 2025.2 terdeteksi, Verilator 5.053 lint; lihat docs/ENVIRONMENT.md |
 | 2026-11-09 | M0 | `python tools/run.py test` | 189 passed (pytest, lint, benches cepat) |
 | 2026-11-09 | M1 | `python tools/run.py train --model s` | [SIM] test float 0.8048, seed 2027, 120 epoch; results/model/s/float_result.json |

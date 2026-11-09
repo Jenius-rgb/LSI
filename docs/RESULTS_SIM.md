@@ -107,4 +107,4 @@ Source: `results/sim/fit_report.json` (script `tools/fit_report.py`). Arithmetic
 
 ## Vivado out-of-context [VIVADO-STA]
 
-No data yet. Vivado 2025.2 on this machine has no Spartan-7 device support; see STATUS.md, M11.
+See `fpga/reports/summary.csv` (script `fpga/run_matrix.py`).
