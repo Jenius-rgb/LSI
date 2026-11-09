@@ -1,0 +1,646 @@
+{
+  "estimates": [
+    {
+      "label": "[SIM] estimate from parameters, not an implementation result",
+      "model": "s",
+      "K": 8,
+      "R": 2,
+      "C3_EN": 0,
+      "memories": {
+        "weights": {
+          "depth": 2806,
+          "width": 64,
+          "bram18": 12
+        },
+        "img0": {
+          "depth": 3072,
+          "width": 8,
+          "bram18": 2
+        },
+        "img1": {
+          "depth": 3072,
+          "width": 8,
+          "bram18": 2
+        },
+        "act0": {
+          "depth": 4608,
+          "width": 8,
+          "bram18": 3
+        },
+        "act1": {
+          "depth": 2048,
+          "width": 8,
+          "bram18": 1
+        },
+        "params": {
+          "depth": 512,
+          "width": 32,
+          "bram18": 2
+        }
+      },
+      "bram18_total": 22,
+      "bram36_equivalent": 11.0,
+      "dsp_lanes_dsp_impl": 10,
+      "dsp_lanes_note": "only for lane implementations mapped to DSP slices; the lut variant uses none",
+      "dsp_postproc": "1 to 2 (v*M multiplier in clk_safe)"
+    },
+    {
+      "label": "[SIM] estimate from parameters, not an implementation result",
+      "model": "s",
+      "K": 8,
+      "R": 2,
+      "C3_EN": 1,
+      "memories": {
+        "weights": {
+          "depth": 2806,
+          "width": 64,
+          "bram18": 12
+        },
+        "img0": {
+          "depth": 3072,
+          "width": 8,
+          "bram18": 2
+        },
+        "img1": {
+          "depth": 3072,
+          "width": 8,
+          "bram18": 2
+        },
+        "act0": {
+          "depth": 4608,
+          "width": 8,
+          "bram18": 3
+        },
+        "act1": {
+          "depth": 2048,
+          "width": 8,
+          "bram18": 1
+        },
+        "params": {
+          "depth": 512,
+          "width": 32,
+          "bram18": 2
+        }
+      },
+      "bram18_total": 22,
+      "bram36_equivalent": 11.0,
+      "dsp_lanes_dsp_impl": 11,
+      "dsp_lanes_note": "only for lane implementations mapped to DSP slices; the lut variant uses none",
+      "dsp_postproc": "1 to 2 (v*M multiplier in clk_safe)"
+    },
+    {
+      "label": "[SIM] estimate from parameters, not an implementation result",
+      "model": "s",
+      "K": 16,
+      "R": 2,
+      "C3_EN": 0,
+      "memories": {
+        "weights": {
+          "depth": 1403,
+          "width": 128,
+          "bram18": 16
+        },
+        "img0": {
+          "depth": 3072,
+          "width": 8,
+          "bram18": 2
+        },
+        "img1": {
+          "depth": 3072,
+          "width": 8,
+          "bram18": 2
+        },
+        "act0": {
+          "depth": 4608,
+          "width": 8,
+          "bram18": 3
+        },
+        "act1": {
+          "depth": 2048,
+          "width": 8,
+          "bram18": 1
+        },
+        "params": {
+          "depth": 512,
+          "width": 32,
+          "bram18": 2
+        }
+      },
+      "bram18_total": 26,
+      "bram36_equivalent": 13.0,
+      "dsp_lanes_dsp_impl": 18,
+      "dsp_lanes_note": "only for lane implementations mapped to DSP slices; the lut variant uses none",
+      "dsp_postproc": "1 to 2 (v*M multiplier in clk_safe)"
+    },
+    {
+      "label": "[SIM] estimate from parameters, not an implementation result",
+      "model": "s",
+      "K": 16,
+      "R": 2,
+      "C3_EN": 1,
+      "memories": {
+        "weights": {
+          "depth": 1403,
+          "width": 128,
+          "bram18": 16
+        },
+        "img0": {
+          "depth": 3072,
+          "width": 8,
+          "bram18": 2
+        },
+        "img1": {
+          "depth": 3072,
+          "width": 8,
+          "bram18": 2
+        },
+        "act0": {
+          "depth": 4608,
+          "width": 8,
+          "bram18": 3
+        },
+        "act1": {
+          "depth": 2048,
+          "width": 8,
+          "bram18": 1
+        },
+        "params": {
+          "depth": 512,
+          "width": 32,
+          "bram18": 2
+        }
+      },
+      "bram18_total": 26,
+      "bram36_equivalent": 13.0,
+      "dsp_lanes_dsp_impl": 19,
+      "dsp_lanes_note": "only for lane implementations mapped to DSP slices; the lut variant uses none",
+      "dsp_postproc": "1 to 2 (v*M multiplier in clk_safe)"
+    },
+    {
+      "label": "[SIM] estimate from parameters, not an implementation result",
+      "model": "xs",
+      "K": 8,
+      "R": 2,
+      "C3_EN": 0,
+      "memories": {
+        "weights": {
+          "depth": 971,
+          "width": 64,
+          "bram18": 4
+        },
+        "img0": {
+          "depth": 3072,
+          "width": 8,
+          "bram18": 2
+        },
+        "img1": {
+          "depth": 3072,
+          "width": 8,
+          "bram18": 2
+        },
+        "act0": {
+          "depth": 2304,
+          "width": 8,
+          "bram18": 2
+        },
+        "act1": {
+          "depth": 1024,
+          "width": 8,
+          "bram18": 1
+        },
+        "params": {
+          "depth": 512,
+          "width": 32,
+          "bram18": 2
+        }
+      },
+      "bram18_total": 13,
+      "bram36_equivalent": 6.5,
+      "dsp_lanes_dsp_impl": 10,
+      "dsp_lanes_note": "only for lane implementations mapped to DSP slices; the lut variant uses none",
+      "dsp_postproc": "1 to 2 (v*M multiplier in clk_safe)"
+    },
+    {
+      "label": "[SIM] estimate from parameters, not an implementation result",
+      "model": "xs",
+      "K": 8,
+      "R": 2,
+      "C3_EN": 1,
+      "memories": {
+        "weights": {
+          "depth": 971,
+          "width": 64,
+          "bram18": 4
+        },
+        "img0": {
+          "depth": 3072,
+          "width": 8,
+          "bram18": 2
+        },
+        "img1": {
+          "depth": 3072,
+          "width": 8,
+          "bram18": 2
+        },
+        "act0": {
+          "depth": 2304,
+          "width": 8,
+          "bram18": 2
+        },
+        "act1": {
+          "depth": 1024,
+          "width": 8,
+          "bram18": 1
+        },
+        "params": {
+          "depth": 512,
+          "width": 32,
+          "bram18": 2
+        }
+      },
+      "bram18_total": 13,
+      "bram36_equivalent": 6.5,
+      "dsp_lanes_dsp_impl": 11,
+      "dsp_lanes_note": "only for lane implementations mapped to DSP slices; the lut variant uses none",
+      "dsp_postproc": "1 to 2 (v*M multiplier in clk_safe)"
+    },
+    {
+      "label": "[SIM] estimate from parameters, not an implementation result",
+      "model": "xs",
+      "K": 16,
+      "R": 2,
+      "C3_EN": 0,
+      "memories": {
+        "weights": {
+          "depth": 499,
+          "width": 128,
+          "bram18": 8
+        },
+        "img0": {
+          "depth": 3072,
+          "width": 8,
+          "bram18": 2
+        },
+        "img1": {
+          "depth": 3072,
+          "width": 8,
+          "bram18": 2
+        },
+        "act0": {
+          "depth": 2304,
+          "width": 8,
+          "bram18": 2
+        },
+        "act1": {
+          "depth": 1024,
+          "width": 8,
+          "bram18": 1
+        },
+        "params": {
+          "depth": 512,
+          "width": 32,
+          "bram18": 2
+        }
+      },
+      "bram18_total": 17,
+      "bram36_equivalent": 8.5,
+      "dsp_lanes_dsp_impl": 18,
+      "dsp_lanes_note": "only for lane implementations mapped to DSP slices; the lut variant uses none",
+      "dsp_postproc": "1 to 2 (v*M multiplier in clk_safe)"
+    },
+    {
+      "label": "[SIM] estimate from parameters, not an implementation result",
+      "model": "xs",
+      "K": 16,
+      "R": 2,
+      "C3_EN": 1,
+      "memories": {
+        "weights": {
+          "depth": 499,
+          "width": 128,
+          "bram18": 8
+        },
+        "img0": {
+          "depth": 3072,
+          "width": 8,
+          "bram18": 2
+        },
+        "img1": {
+          "depth": 3072,
+          "width": 8,
+          "bram18": 2
+        },
+        "act0": {
+          "depth": 2304,
+          "width": 8,
+          "bram18": 2
+        },
+        "act1": {
+          "depth": 1024,
+          "width": 8,
+          "bram18": 1
+        },
+        "params": {
+          "depth": 512,
+          "width": 32,
+          "bram18": 2
+        }
+      },
+      "bram18_total": 17,
+      "bram36_equivalent": 8.5,
+      "dsp_lanes_dsp_impl": 19,
+      "dsp_lanes_note": "only for lane implementations mapped to DSP slices; the lut variant uses none",
+      "dsp_postproc": "1 to 2 (v*M multiplier in clk_safe)"
+    }
+  ],
+  "fit": [
+    {
+      "model": "s",
+      "K": 8,
+      "part": "xc7s6",
+      "bram36_needed": 11.0,
+      "bram36_available": 5,
+      "fits_bram": false,
+      "capacity_verified": false
+    },
+    {
+      "model": "s",
+      "K": 8,
+      "part": "xc7s15",
+      "bram36_needed": 11.0,
+      "bram36_available": 10,
+      "fits_bram": false,
+      "capacity_verified": false
+    },
+    {
+      "model": "s",
+      "K": 8,
+      "part": "xc7s25",
+      "bram36_needed": 11.0,
+      "bram36_available": 45,
+      "fits_bram": true,
+      "capacity_verified": false
+    },
+    {
+      "model": "s",
+      "K": 8,
+      "part": "xc7s50",
+      "bram36_needed": 11.0,
+      "bram36_available": 75,
+      "fits_bram": true,
+      "capacity_verified": false
+    },
+    {
+      "model": "s",
+      "K": 8,
+      "part": "xc7s6",
+      "bram36_needed": 11.0,
+      "bram36_available": 5,
+      "fits_bram": false,
+      "capacity_verified": false
+    },
+    {
+      "model": "s",
+      "K": 8,
+      "part": "xc7s15",
+      "bram36_needed": 11.0,
+      "bram36_available": 10,
+      "fits_bram": false,
+      "capacity_verified": false
+    },
+    {
+      "model": "s",
+      "K": 8,
+      "part": "xc7s25",
+      "bram36_needed": 11.0,
+      "bram36_available": 45,
+      "fits_bram": true,
+      "capacity_verified": false
+    },
+    {
+      "model": "s",
+      "K": 8,
+      "part": "xc7s50",
+      "bram36_needed": 11.0,
+      "bram36_available": 75,
+      "fits_bram": true,
+      "capacity_verified": false
+    },
+    {
+      "model": "s",
+      "K": 16,
+      "part": "xc7s6",
+      "bram36_needed": 13.0,
+      "bram36_available": 5,
+      "fits_bram": false,
+      "capacity_verified": false
+    },
+    {
+      "model": "s",
+      "K": 16,
+      "part": "xc7s15",
+      "bram36_needed": 13.0,
+      "bram36_available": 10,
+      "fits_bram": false,
+      "capacity_verified": false
+    },
+    {
+      "model": "s",
+      "K": 16,
+      "part": "xc7s25",
+      "bram36_needed": 13.0,
+      "bram36_available": 45,
+      "fits_bram": true,
+      "capacity_verified": false
+    },
+    {
+      "model": "s",
+      "K": 16,
+      "part": "xc7s50",
+      "bram36_needed": 13.0,
+      "bram36_available": 75,
+      "fits_bram": true,
+      "capacity_verified": false
+    },
+    {
+      "model": "s",
+      "K": 16,
+      "part": "xc7s6",
+      "bram36_needed": 13.0,
+      "bram36_available": 5,
+      "fits_bram": false,
+      "capacity_verified": false
+    },
+    {
+      "model": "s",
+      "K": 16,
+      "part": "xc7s15",
+      "bram36_needed": 13.0,
+      "bram36_available": 10,
+      "fits_bram": false,
+      "capacity_verified": false
+    },
+    {
+      "model": "s",
+      "K": 16,
+      "part": "xc7s25",
+      "bram36_needed": 13.0,
+      "bram36_available": 45,
+      "fits_bram": true,
+      "capacity_verified": false
+    },
+    {
+      "model": "s",
+      "K": 16,
+      "part": "xc7s50",
+      "bram36_needed": 13.0,
+      "bram36_available": 75,
+      "fits_bram": true,
+      "capacity_verified": false
+    },
+    {
+      "model": "xs",
+      "K": 8,
+      "part": "xc7s6",
+      "bram36_needed": 6.5,
+      "bram36_available": 5,
+      "fits_bram": false,
+      "capacity_verified": false
+    },
+    {
+      "model": "xs",
+      "K": 8,
+      "part": "xc7s15",
+      "bram36_needed": 6.5,
+      "bram36_available": 10,
+      "fits_bram": true,
+      "capacity_verified": false
+    },
+    {
+      "model": "xs",
+      "K": 8,
+      "part": "xc7s25",
+      "bram36_needed": 6.5,
+      "bram36_available": 45,
+      "fits_bram": true,
+      "capacity_verified": false
+    },
+    {
+      "model": "xs",
+      "K": 8,
+      "part": "xc7s50",
+      "bram36_needed": 6.5,
+      "bram36_available": 75,
+      "fits_bram": true,
+      "capacity_verified": false
+    },
+    {
+      "model": "xs",
+      "K": 8,
+      "part": "xc7s6",
+      "bram36_needed": 6.5,
+      "bram36_available": 5,
+      "fits_bram": false,
+      "capacity_verified": false
+    },
+    {
+      "model": "xs",
+      "K": 8,
+      "part": "xc7s15",
+      "bram36_needed": 6.5,
+      "bram36_available": 10,
+      "fits_bram": true,
+      "capacity_verified": false
+    },
+    {
+      "model": "xs",
+      "K": 8,
+      "part": "xc7s25",
+      "bram36_needed": 6.5,
+      "bram36_available": 45,
+      "fits_bram": true,
+      "capacity_verified": false
+    },
+    {
+      "model": "xs",
+      "K": 8,
+      "part": "xc7s50",
+      "bram36_needed": 6.5,
+      "bram36_available": 75,
+      "fits_bram": true,
+      "capacity_verified": false
+    },
+    {
+      "model": "xs",
+      "K": 16,
+      "part": "xc7s6",
+      "bram36_needed": 8.5,
+      "bram36_available": 5,
+      "fits_bram": false,
+      "capacity_verified": false
+    },
+    {
+      "model": "xs",
+      "K": 16,
+      "part": "xc7s15",
+      "bram36_needed": 8.5,
+      "bram36_available": 10,
+      "fits_bram": true,
+      "capacity_verified": false
+    },
+    {
+      "model": "xs",
+      "K": 16,
+      "part": "xc7s25",
+      "bram36_needed": 8.5,
+      "bram36_available": 45,
+      "fits_bram": true,
+      "capacity_verified": false
+    },
+    {
+      "model": "xs",
+      "K": 16,
+      "part": "xc7s50",
+      "bram36_needed": 8.5,
+      "bram36_available": 75,
+      "fits_bram": true,
+      "capacity_verified": false
+    },
+    {
+      "model": "xs",
+      "K": 16,
+      "part": "xc7s6",
+      "bram36_needed": 8.5,
+      "bram36_available": 5,
+      "fits_bram": false,
+      "capacity_verified": false
+    },
+    {
+      "model": "xs",
+      "K": 16,
+      "part": "xc7s15",
+      "bram36_needed": 8.5,
+      "bram36_available": 10,
+      "fits_bram": true,
+      "capacity_verified": false
+    },
+    {
+      "model": "xs",
+      "K": 16,
+      "part": "xc7s25",
+      "bram36_needed": 8.5,
+      "bram36_available": 45,
+      "fits_bram": true,
+      "capacity_verified": false
+    },
+    {
+      "model": "xs",
+      "K": 16,
+      "part": "xc7s50",
+      "bram36_needed": 8.5,
+      "bram36_available": 75,
+      "fits_bram": true,
+      "capacity_verified": false
+    }
+  ]
+}

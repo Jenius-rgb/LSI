@@ -1,0 +1,44 @@
+{
+  "experiment": "e7",
+  "timestamp": "2026-11-09T21:46:25",
+  "git_hash": "5d8a70d0432344db494d504530a799b954413005",
+  "bitstream_id": "none (pre-board)",
+  "python": "3.13.1",
+  "numpy": "2.2.1",
+  "backend": "mock",
+  "k": 8,
+  "c3_hw": false,
+  "f_safe_mhz": 100.0,
+  "fault_model": {
+    "label": "[SYNTHETIC]",
+    "seed": 2027,
+    "f_onset_mhz": 150.0,
+    "spread": 0.15,
+    "gamma": 0.0,
+    "delta_mhz": 40.0,
+    "alpha": 2.0,
+    "f_onset_per_lane": [
+      127.86024571825953,
+      144.8647147898288,
+      131.21342770238866,
+      149.90557135932428,
+      147.69355350553911,
+      159.2442754541398,
+      140.90048192402227,
+      155.456911075299,
+      152.74060543574015,
+      131.5431487420484
+    ],
+    "sparsity": [
+      0.05,
+      0.4,
+      0.55,
+      0.6
+    ]
+  },
+  "label": "[SYNTHETIC]",
+  "weights": "random(seed=2027)",
+  "images": "synthetic(seed=2027)",
+  "bit_exact_images": 50,
+  "total": 50
+}

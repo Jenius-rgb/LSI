@@ -1,0 +1,9 @@
+# Spartan-7 device capacities, for tools/fit_report.py only.
+#
+# PROVISIONAL: entered without the data sheet. Check each value against AMD DS180 or the
+# Vivado part properties, then set `verified: true`. The ZERO7 part is still [UNKNOWN].
+parts:
+  xc7s6:  {bram36: {value: 5,  verified: false}, dsp: {value: 10,  verified: false}}
+  xc7s15: {bram36: {value: 10, verified: false}, dsp: {value: 20,  verified: false}}
+  xc7s25: {bram36: {value: 45, verified: false}, dsp: {value: 80,  verified: false}}
+  xc7s50: {bram36: {value: 75, verified: false}, dsp: {value: 120, verified: false}}
