@@ -2,11 +2,11 @@
 # Run through fpga/run_matrix.py:
 #   vivado -mode batch -source fpga/ooc.tcl -tclargs <part> <K> <impl> <c3> <weight_aw> <act0_aw> <act1_aw> <t_safe_ns> <t_fast_ns> <outdir>
 
-if { $argc != 10 } {
-    puts "usage: ooc.tcl part K lane_impl c3 weight_aw act0_aw act1_aw t_safe_ns t_fast_ns outdir"
+if { $argc != 11 } {
+    puts "usage: ooc.tcl part K lane_impl c3 weight_aw act0_aw act1_aw t_safe_ns t_fast_ns outdir nonmac_factor"
     exit 2
 }
-lassign $argv part k impl c3 weight_aw act0_aw act1_aw t_safe t_fast outdir
+lassign $argv part k impl c3 weight_aw act0_aw act1_aw t_safe t_fast outdir nonmac_factor
 file mkdir $outdir
 
 set root [file normalize [file join [file dirname [info script]] ..]]
@@ -31,6 +31,13 @@ create_clock -name clk_safe -period $t_safe [get_ports clk_safe]
 create_clock -name clk_fast -period $t_fast [get_ports clk_fast]
 set_clock_groups -asynchronous -group [get_clocks clk_safe] -group [get_clocks clk_fast]
 
+# SPEC 7.4 check: hold every non-MAC endpoint of clk_fast to a fraction of the period.
+if {$nonmac_factor < 1.0} {
+    set regs [all_registers -clock clk_fast -cells]
+    set non [filter $regs {NAME !~ "*_lane*impl*u/p_reg*" && NAME !~ "*_lane*impl*u/m_reg*" && NAME !~ "*_lane*impl*u/acc_reg*"}]
+    set_max_delay [expr {$t_fast * $nonmac_factor}] -to $non
+}
+
 opt_design
 place_design
 route_design
@@ -49,6 +56,7 @@ puts $fp "LANE_IMPL $impl"
 puts $fp "C3_EN $c3"
 puts $fp "T_SAFE_NS $t_safe"
 puts $fp "T_FAST_NS $t_fast"
+puts $fp "NONMAC_FACTOR $nonmac_factor"
 foreach clk {clk_safe clk_fast} {
     set paths [get_timing_paths -group $clk -max_paths 1 -setup]
     puts $fp "WNS_$clk [expr {[llength $paths] ? [get_property SLACK [lindex $paths 0]] : "NA"}]"

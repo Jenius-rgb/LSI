@@ -76,6 +76,7 @@ def main() -> int:
     parser.add_argument("--t-safe", type=float, default=T_SAFE_NS, help="clk_safe target period in ns")
     parser.add_argument("--t-fast", type=float, default=T_FAST_NS, help="clk_fast target period in ns")
     parser.add_argument("--tag", default="", help="suffix for the report directory")
+    parser.add_argument("--nonmac-factor", type=float, default=1.0, help="hold non-MAC clk_fast endpoints to this fraction of the period (SPEC 7.4 check)")
     args = parser.parse_args()
 
     vivado = find_vivado()
@@ -103,7 +104,7 @@ def main() -> int:
         print(f"[VIVADO-STA] {name}", flush=True)
         res = subprocess.run(
             [vivado, "-mode", "batch", "-nojournal", "-log", str(out.with_suffix(".log")), "-source", str(tcl), "-tclargs",
-             part, str(k), str(impl), str(c3), str(weight_aw), str(act0_aw), str(act1_aw), str(args.t_safe), str(args.t_fast), str(out)],
+             part, str(k), str(impl), str(c3), str(weight_aw), str(act0_aw), str(act1_aw), str(args.t_safe), str(args.t_fast), str(out), str(args.nonmac_factor)],
             cwd=ROOT, capture_output=True, text=True, errors="replace",
         )
         if res.returncode != 0 or not (out / "summary.txt").exists():

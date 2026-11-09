@@ -85,9 +85,11 @@ def collect(report_dir: Path = REPORTS, tag: str = "") -> list[dict]:
         }
         if "WNS_MAC" in s and "WNS_NONMAC" in s:
             mac, nonmac = float(s["WNS_MAC"]), float(s["WNS_NONMAC"])
+            factor = float(s.get("NONMAC_FACTOR", "1.0"))
             row.update({
-                "wns_mac_ns": mac, "wns_nonmac_ns": nonmac,
-                "gap_pct_of_mac_delay": spec_7_4_gap(t_fast, mac, nonmac),
+                "wns_mac_ns": mac, "wns_nonmac_ns": nonmac, "nonmac_factor": factor,
+                # With a factor below 1, non-MAC slack is already measured against the tighter limit.
+                "gap_pct_of_mac_delay": spec_7_4_gap(t_fast, mac, nonmac) if factor == 1.0 else "",
                 "worst_nonmac": s.get("WORST_NONMAC_ENDPOINT", ""),
             })
         rows.append(row)
