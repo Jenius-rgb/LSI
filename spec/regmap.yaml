@@ -1,0 +1,108 @@
+# Register map: single source for rtl/gen/sentinel_regmap.vh and sw/sentinel/regmap.py.
+# Regenerate with `python tools/run.py gen --regmap`. Do not edit the generated files.
+version: {major: 0, minor: 1}
+
+memory:
+  REGS:    {base: 0x000000, size: 0x1000}
+  WEIGHTS: {base: 0x010000, size: 0x10000}
+  PARAMS:  {base: 0x020000, size: 0x10000}
+  IMG0:    {base: 0x030000, size: 0x0C00}
+  IMG1:    {base: 0x034000, size: 0x0C00}
+  LOGITS:  {base: 0x040000, size: 0x40}
+  EVENTS:  {base: 0x050000, size: 0x1000}
+
+layer_table_index: 256
+counters:
+  base: 0x800
+  per_layer: {layers: 8, stride: 8, types: [UNITS, CLEAN, CORRECTED, CSUM_LANE, RECOMPUTE, FATAL]}
+  lane_correction_base: 64
+  log_overflow_index: 84
+
+registers:
+  - {name: ID, offset: 0x000, access: ro, reset: 0x534E544C, doc: "ASCII SNTL"}
+  - {name: VERSION, offset: 0x004, access: ro, doc: "major[15:8] minor[7:0]"}
+  - name: CTRL
+    offset: 0x008
+    access: rw
+    fields:
+      - {name: START, bit: 0, kind: pulse}
+      - {name: SOFT_RESET, bit: 1, kind: pulse}
+      - {name: MODE, lsb: 2, width: 2}
+      - {name: C3_EN, bit: 4}
+      - {name: TRUST_CSUM_LANE, bit: 5}
+      - {name: IMG_SEL, bit: 6}
+  - name: STATUS
+    offset: 0x00C
+    access: ro
+    fields:
+      - {name: BUSY, bit: 0}
+      - {name: DONE, bit: 1}
+      - {name: FATAL, bit: 2}
+      - {name: LOG_OVF, bit: 3}
+      - {name: MMCM2_LOCKED, bit: 4}
+      - {name: FAST_IS_TURBO, bit: 5}
+  - {name: RESULT_CLASS, offset: 0x010, access: ro}
+  - {name: CYCLES_TOTAL, offset: 0x014, access: ro}
+  - {name: CYCLES_RECOMPUTE, offset: 0x018, access: ro}
+  - {name: STARVE_CYCLES, offset: 0x01C, access: ro}
+  - name: GOV_CTRL
+    offset: 0x020
+    access: rw
+    fields:
+      - {name: AUTO, bit: 0}
+      - {name: LEVEL, lsb: 8, width: 4}
+      - {name: TURBO_MASK, lsb: 16, width: 8}
+  - name: GOV_PARAM
+    offset: 0x024
+    access: rw
+    fields:
+      - {name: N_UP, lsb: 0, width: 8}
+      - {name: COOLDOWN, lsb: 8, width: 8}
+      - {name: CORR_HI, lsb: 16, width: 8}
+      - {name: L_MIN, lsb: 24, width: 4}
+      - {name: L_MAX, lsb: 28, width: 4}
+  - name: GOV_STATE
+    offset: 0x028
+    access: ro
+    fields:
+      - {name: LEVEL, lsb: 0, width: 4}
+      - {name: CLEAN_STREAK, lsb: 8, width: 8}
+      - {name: TURBO_EN, lsb: 16, width: 8}
+  - name: CLK_CTRL
+    offset: 0x02C
+    access: rw
+    fields:
+      - {name: RECONFIG_START, bit: 0, kind: pulse}
+      - {name: LEVEL, lsb: 8, width: 4}
+  - name: CLK_STATUS
+    offset: 0x030
+    access: ro
+    fields:
+      - {name: RECONFIG_BUSY, bit: 0}
+      - {name: LOCKED, bit: 1}
+  - name: INJ0_CTRL
+    offset: 0x040
+    access: rw
+    fields:
+      - {name: EN, bit: 0}
+      - {name: ANY, bit: 1}
+      - {name: ONESHOT, bit: 2}
+      - {name: LAYER, lsb: 4, width: 4}
+      - {name: LANE, lsb: 8, width: 6}
+  - {name: INJ0_UNIT, offset: 0x044, access: rw}
+  - {name: INJ0_MASK_LO, offset: 0x048, access: rw}
+  - {name: INJ0_MASK_HI, offset: 0x04C, access: rw}
+  - name: INJ1_CTRL
+    offset: 0x050
+    access: rw
+    fields:
+      - {name: EN, bit: 0}
+      - {name: ANY, bit: 1}
+      - {name: ONESHOT, bit: 2}
+      - {name: LAYER, lsb: 4, width: 4}
+      - {name: LANE, lsb: 8, width: 6}
+  - {name: INJ1_UNIT, offset: 0x054, access: rw}
+  - {name: INJ1_MASK_LO, offset: 0x058, access: rw}
+  - {name: INJ1_MASK_HI, offset: 0x05C, access: rw}
+  - {name: LANE_STATUS, offset: 0x060, access: ro}
+  - {name: TEMP, offset: 0x064, access: ro, doc: "XADC temperature if the part has one [UNKNOWN]"}

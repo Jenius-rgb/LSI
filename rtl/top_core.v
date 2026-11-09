@@ -1,0 +1,151 @@
+`timescale 1ns / 1ps
+`default_nettype none
+
+`include "sentinel_regmap.vh"
+
+// Top level of the accelerator without board pins: SPI host interface, registers,
+// engine, governor and clock generator.
+module top_core #(
+    parameter K          = 8,
+    parameter R          = 2,
+    parameter C3_EN      = 0,
+    parameter LANE_IMPL  = 0,
+    parameter INJ_EN     = 1,
+    parameter WC1_W      = 11,
+    parameter WC2_W      = 14,
+    parameter WC3_W      = 16,
+    parameter WEIGHT_AW  = 12,
+    parameter ACT0_AW    = 13,
+    parameter ACT1_AW    = 12,
+    parameter LOG_AW     = 8
+) (
+    input  wire clk_in,
+    input  wire rst,
+    input  wire spi_sclk,
+    input  wire spi_cs_n,
+    input  wire spi_mosi,
+    output wire spi_miso,
+    output wire [3:0] led
+);
+    wire clk_safe, clk_fast, clocks_locked, sel_turbo, is_turbo;
+    wire reconfig_start, reconfig_busy, turbo_locked;
+    wire [3:0] reconfig_level;
+
+    clk_gen u_clk (
+        .clk_in(clk_in), .rst(rst), .clk_safe(clk_safe), .clk_fast(clk_fast), .locked(clocks_locked),
+        .sel_turbo(sel_turbo), .is_turbo(is_turbo),
+        .reconfig_start(reconfig_start), .reconfig_level(reconfig_level),
+        .reconfig_busy(reconfig_busy), .turbo_locked(turbo_locked));
+
+    // Synchronous reset held until the clocks are stable; soft reset comes from the registers.
+    wire   soft_reset;
+    reg [3:0] rst_sync = 4'hF;
+    always @(posedge clk_safe) rst_sync <= {rst_sync[2:0], rst | ~clocks_locked | soft_reset};
+    wire rst_safe = rst_sync[3];
+
+    // ---- host bus ------------------------------------------------------------------------
+    wire        bus_wr, bus_rd;
+    wire [23:0] bus_addr;
+    wire [7:0]  bus_wdata;
+    wire [7:0]  reg_rdata, eng_rdata;
+
+    wire is_reg = (bus_addr[23:12] == 12'd0);
+
+    reg [2:0] rd_pipe;
+    reg       rd_is_reg;
+    always @(posedge clk_safe) begin
+        rd_pipe <= rst_safe ? 3'd0 : {rd_pipe[1:0], bus_rd};
+        if (bus_rd) rd_is_reg <= is_reg;
+    end
+    wire       bus_rvalid = rd_pipe[2];
+    wire [7:0] bus_rdata  = rd_is_reg ? reg_rdata : eng_rdata;
+
+    localparam [7:0] VER_MAJOR = `SNT_VER_MAJOR;
+    localparam [7:0] VER_MINOR = `SNT_VER_MINOR;
+    localparam [7:0] K_BYTE    = K;
+    localparam [1:0] IMPL_BITS = LANE_IMPL;
+    localparam [0:0] INJ_BIT   = (INJ_EN != 0);
+    localparam [0:0] C3_BIT    = (C3_EN != 0);
+    wire [63:0] id_word = {32'h534E544C, VER_MAJOR, VER_MINOR, K_BYTE, 4'd0, IMPL_BITS, INJ_BIT, C3_BIT};
+
+    spi_slave u_spi (
+        .clk(clk_safe), .rst(rst_safe), .sclk(spi_sclk), .cs_n(spi_cs_n), .mosi(spi_mosi), .miso(spi_miso),
+        .id_word(id_word), .bus_wr(bus_wr), .bus_rd(bus_rd), .bus_addr(bus_addr), .bus_wdata(bus_wdata),
+        .bus_rdata(bus_rdata), .bus_rvalid(bus_rvalid));
+
+    // ---- registers -----------------------------------------------------------------------
+    wire        start_reg, c3_on, trust_csum, img_sel;
+    wire [1:0]  mode;
+    wire        gov_auto;
+    wire [3:0]  gov_level, gov_l_min, gov_l_max;
+    wire [7:0]  gov_turbo_mask, gov_n_up, gov_cooldown, gov_corr_hi;
+    wire [1:0]  inj_en, inj_any, inj_oneshot;
+    wire [7:0]  inj_layer;
+    wire [31:0] inj_unit;
+    wire [11:0] inj_lane;
+    wire [95:0] inj_mask;
+    wire        busy, done, fatal, log_ovf, image_done;
+    wire [3:0]  result_class;
+    wire [31:0] cycles_total, cycles_recompute, starve_cycles, cnt_data;
+    wire [6:0]  cnt_addr;
+    wire [3:0]  gov_state_level;
+    wire [7:0]  gov_state_streak, gov_state_turbo;
+    wire [7:0]  turbo_mask;
+
+    reg  done_flag;
+    always @(posedge clk_safe) begin
+        if (rst_safe | start_reg) done_flag <= 1'b0;
+        else if (done) done_flag <= 1'b1;
+    end
+
+    regfile u_regs (
+        .clk(clk_safe), .rst(rst_safe),
+        .bus_wr(bus_wr & is_reg), .bus_rd(bus_rd & is_reg), .bus_addr(bus_addr[11:0]),
+        .bus_wdata(bus_wdata), .bus_rdata(reg_rdata),
+        .start(start_reg), .soft_reset(soft_reset), .mode(mode), .c3_on(c3_on),
+        .trust_csum(trust_csum), .img_sel(img_sel),
+        .gov_auto(gov_auto), .gov_level(gov_level), .gov_turbo_mask(gov_turbo_mask),
+        .gov_n_up(gov_n_up), .gov_cooldown(gov_cooldown), .gov_corr_hi(gov_corr_hi),
+        .gov_l_min(gov_l_min), .gov_l_max(gov_l_max),
+        .clk_reconfig_start(reconfig_start), .clk_reconfig_level(reconfig_level),
+        .inj_en(inj_en), .inj_any(inj_any), .inj_oneshot(inj_oneshot), .inj_layer(inj_layer),
+        .inj_unit(inj_unit), .inj_lane(inj_lane), .inj_mask(inj_mask),
+        .busy(busy), .done_flag(done_flag), .fatal(fatal), .log_ovf(log_ovf),
+        .mmcm2_locked(turbo_locked), .fast_is_turbo(is_turbo),
+        .result_class(result_class), .cycles_total(cycles_total), .cycles_recompute(cycles_recompute),
+        .starve_cycles(starve_cycles),
+        .gov_state_level(gov_state_level), .gov_state_streak(gov_state_streak), .gov_state_turbo(gov_state_turbo),
+        .clk_reconfig_busy(reconfig_busy), .clk_locked(clocks_locked & turbo_locked),
+        .lane_status(32'd0), .temp(32'd0),
+        .cnt_addr(cnt_addr), .cnt_data(cnt_data));
+
+    // ---- engine ----------------------------------------------------------------------------
+    engine #(
+        .K(K), .R(R), .C3_EN(C3_EN), .LANE_IMPL(LANE_IMPL), .INJ_EN(INJ_EN),
+        .WC1_W(WC1_W), .WC2_W(WC2_W), .WC3_W(WC3_W),
+        .WEIGHT_AW(WEIGHT_AW), .ACT0_AW(ACT0_AW), .ACT1_AW(ACT1_AW), .LOG_AW(LOG_AW)
+    ) u_engine (
+        .clk_safe(clk_safe), .clk_fast(clk_fast), .rst(rst_safe),
+        .start(start_reg), .mode(mode), .c3_on(c3_on), .trust_csum(trust_csum), .img_sel(img_sel),
+        .turbo_mask(turbo_mask),
+        .clk_sel_turbo(sel_turbo), .clk_is_turbo(is_turbo),
+        .host_en((bus_wr | bus_rd) & ~is_reg), .host_we(bus_wr), .host_addr(bus_addr),
+        .host_wdata(bus_wdata), .host_rdata(eng_rdata),
+        .inj_en(INJ_EN != 0 ? inj_en : 2'b00), .inj_any(inj_any), .inj_oneshot(inj_oneshot),
+        .inj_layer(inj_layer), .inj_unit(inj_unit), .inj_lane(inj_lane), .inj_mask(inj_mask),
+        .busy(busy), .done(done), .fatal(fatal), .log_ovf(log_ovf), .result_class(result_class),
+        .cycles_total(cycles_total), .cycles_recompute(cycles_recompute), .starve_cycles(starve_cycles),
+        .image_done(image_done), .cnt_addr(cnt_addr), .cnt_data(cnt_data));
+
+    // Governor arrives with M10: until then the host's manual mask decides.
+    assign turbo_mask       = gov_turbo_mask;
+    assign gov_state_level  = gov_level;
+    assign gov_state_streak = 8'd0;
+    assign gov_state_turbo  = gov_turbo_mask;
+
+    assign led = {fatal, is_turbo, done_flag, busy};
+
+    wire unused_top = &{1'b0, gov_auto, gov_n_up, gov_cooldown, gov_corr_hi, gov_l_min, gov_l_max, image_done};
+endmodule
+
+`default_nettype wire

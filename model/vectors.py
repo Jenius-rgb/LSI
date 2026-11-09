@@ -186,6 +186,43 @@ def checker_vectors(k: int, c3_hw: int, seed: int = 2027, n_campaign: int = 2500
     return in_lines, exp_lines, {"coverage": coverage, "weights": qsource, "images": isource}
 
 
+def engine_vectors(model: str, k: int, count: int, workdir, n_classes: int = 10, seed: int = 2027) -> dict:
+    """Weights, params, images and expected logits for tb_engine."""
+    from model.data import verification_images
+    from model.export import write_artifacts
+    from model.golden import forward
+    from model.config import load_hw_config
+
+    qm, qsource = load_or_random_qmodel(model, seed)
+    images, labels, isource = verification_images(count)
+    if len(images) < count:
+        raise ValueError(f"only {len(images)} images available")
+    hw = {**load_hw_config(), "K": k}
+    manifest = write_artifacts(qm, hw, workdir)
+    res = forward(qm, images)
+    logits = res.logits
+    pred = np.atleast_1d(res.pred)
+
+    stem = f"{qm.name}_k{k}"
+    with open(workdir / "images.mem", "w", newline="\n", encoding="ascii") as fh:
+        fh.writelines(f"{int(v):02x}\n" for v in images.reshape(-1).tolist())
+    padded = np.zeros((len(images), 16), dtype=np.int64)
+    padded[:, : logits.shape[1]] = logits
+    write_hex(workdir / "logits.mem", [int(v) & 0xFFFFFFFF for v in padded.reshape(-1).tolist()], 32)
+    write_hex(workdir / "classes.mem", [int(v) for v in pred.tolist()], 32)
+    return {
+        "weights": (workdir / f"{stem}_weights.mem").as_posix(),
+        "params": (workdir / f"{stem}_params.mem").as_posix(),
+        "images": (workdir / "images.mem").as_posix(),
+        "logits": (workdir / "logits.mem").as_posix(),
+        "classes": (workdir / "classes.mem").as_posix(),
+        "n_classes": int(logits.shape[1]),
+        "manifest": manifest,
+        "weights_source": qsource,
+        "image_source": isource,
+    }
+
+
 def write_hex(path, values: list[int], width_bits: int) -> None:
     digits = (width_bits + 3) // 4
     with open(path, "w", newline="\n", encoding="ascii") as fh:

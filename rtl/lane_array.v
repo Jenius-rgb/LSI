@@ -41,6 +41,7 @@ module lane_array #(
     input  wire [INJ_SLOTS-1:0]            inj_en,
     input  wire [INJ_SLOTS-1:0]            inj_any,
     input  wire [INJ_SLOTS-1:0]            inj_oneshot,
+    input  wire                            inj_rearm,
     input  wire [INJ_SLOTS*UNIT_W-1:0]     inj_unit,
     input  wire [INJ_SLOTS*LANE_ID_W-1:0]  inj_lane,
     input  wire [INJ_SLOTS*ACC_CS_W-1:0]   inj_mask,
@@ -129,7 +130,8 @@ module lane_array #(
                     fire_r <= fire_next;
                     if (op_valid & op_pass_start) unit <= {UNIT_W{1'b0}};
                     else if (capture) unit <= unit + 1'b1;
-                    if (capture) fired <= fired | fire_r;
+                    if (op_valid & op_pass_start & inj_rearm) fired <= {INJ_SLOTS{1'b0}};
+                    else if (capture) fired <= fired | fire_r;
                 end
             end
         end else begin : inj_ctrl
@@ -176,7 +178,7 @@ module lane_array #(
                 hold_cs[i] <= s_acc[i*ACC_CS_W +: ACC_CS_W] ^ mask_cs[i];
             for (i = 0; i < K; i = i + 1)
                 hold_y[i] <= y_acc[(K-1-i)*ACC_W +: ACC_W] ^ mask_y[K-1-i];
-        end else begin
+        end else if (valid_r) begin
             for (i = 0; i < NCS - 1; i = i + 1)
                 hold_cs[i] <= hold_cs[i+1];
             hold_cs[NCS-1] <= y_head_ext;

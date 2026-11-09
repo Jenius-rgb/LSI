@@ -42,7 +42,7 @@ module tb_lane_array;
         .clk(clk), .rst(rst),
         .op_valid(op_valid), .op_last(op_last), .op_pass_start(1'b0),
         .op_a(op_a), .op_w(op_w), .op_wc1(op_wc1), .op_wc2(op_wc2), .op_wc3(op_wc3),
-        .inj_en(2'b00), .inj_any(2'b00), .inj_oneshot(2'b00),
+        .inj_en(2'b00), .inj_any(2'b00), .inj_oneshot(2'b00), .inj_rearm(1'b0),
         .inj_unit({32{1'b0}}), .inj_lane({12{1'b0}}), .inj_mask({96{1'b0}}),
         .res_valid(res_valid), .res_data(res_data));
 
