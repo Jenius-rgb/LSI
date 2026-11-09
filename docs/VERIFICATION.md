@@ -28,9 +28,9 @@ is claimed from it. Latest bench outcomes are in `docs/RESULTS_SIM.md` (from
 
 ## Simulators
 
-Icarus Verilog runs the short benches and xsim the long regressions (about ten times faster). Benches
-run under both agree (checked on `engine_xs_k8`, `system_micro_corners`). Verilator is used for
-lint only: no C++ toolchain is installed on this machine, so its simulation path is not used.
+Icarus Verilog runs the short benches and xsim the long regressions (about ten times faster in the
+one direct comparison made, `engine_xs_k8`: both passed with identical cycle counts). Verilator is
+used for lint only: no C++ toolchain is installed on this machine, so its simulation path is not used.
 
 ## Injection semantics
 

@@ -11,7 +11,7 @@ Source: `results/model/<model>/float_result.json`, `quant_result.json` (scripts 
 | Model | Dataset | Seed | Epochs | Float (test) | Integer PTQ (test) | Drop (points) |
 | --- | --- | --- | --- | --- | --- | --- |
 | s | cifar10 | 2027 | 120 | 80.48% | 80.22% | 0.26 |
-| xs | (not trained yet) | | | | | |
+| xs | cifar10 | 2027 | 120 | 72.90% | 72.50% | 0.40 |
 
 CIFAR-10 is a temporary stand-in: the target classes of the contest are [UNKNOWN]. Integer accuracy is the golden model on the full test set.
 
@@ -21,6 +21,8 @@ Source: `results/model/arch_<m>.json` (script `model/arch_report.py`).
 
 | Model | Weights | Bias | MACs | Ideal cycles K=8 | Ideal cycles K=16 |
 | --- | --- | --- | --- | --- | --- |
+| s | 19376 | 90 | 2216960 | 277504 | 138752 |
+| xs | 6232 | 50 | 666112 | 83456 | 55552 |
 
 ## Fault-injection campaign, Python model [SIM]
 
@@ -44,7 +46,49 @@ XOR masks injected into accumulators from the golden model; not a timing-error m
 
 ## RTL regressions [SIM]
 
-Not recorded yet.
+Source: `results/sim/rtl_regression.jsonl` (script `tools/sim.py --record`; latest run per bench).
+
+| Bench | Simulator | Date | Result |
+| --- | --- | --- | --- |
+| checker_k16_c0 | icarus | 2026-11-09 | PASS: PASS 5050/5050 max_latency=19 |
+| checker_k16_c1 | icarus | 2026-11-09 | PASS: PASS 10100/10100 max_latency=19 |
+| checker_k8_c0 | icarus | 2026-11-09 | PASS: PASS 5034/5034 max_latency=11 |
+| checker_k8_c1 | icarus | 2026-11-09 | PASS: PASS 10068/10068 max_latency=11 |
+| engine_corner_extreme | xsim | 2026-11-09 | PASS: PASS 6/6 cycles_mean=173804 ideal=0 |
+| engine_corner_saturate | xsim | 2026-11-09 | PASS: PASS 6/6 cycles_mean=173804 ideal=0 |
+| engine_corner_ties | xsim | 2026-11-09 | PASS: PASS 6/6 cycles_mean=173804 ideal=0 |
+| engine_corner_zero_lanes | xsim | 2026-11-09 | PASS: PASS 6/6 cycles_mean=173804 ideal=0 |
+| engine_s_k16_n20 | xsim | 2026-11-09 | PASS: PASS 20/20 (5/5 cycles_mean=150436 ideal=138752) |
+| engine_s_k8 | icarus | 2026-11-09 | PASS: PASS 1/1 cycles_mean=277871 ideal=277504 |
+| engine_s_k8_n200 | xsim | 2026-11-09 | PASS: PASS 200/200 (34/34 cycles_mean=277871 ideal=277504) |
+| engine_xs_k8 | icarus | 2026-11-09 | PASS: PASS 2/2 cycles_mean=83823 ideal=83456 |
+| engine_xs_k8_n200 | xsim | 2026-11-09 | PASS: PASS 200/200 (34/34 cycles_mean=83823 ideal=83456) |
+| governor | icarus | 2026-11-09 | PASS: PASS 2400/2400 scenarios=60 |
+| lane_array_k16_c0_dsp_full | icarus | 2026-11-09 | PASS: PASS 9360/9360 |
+| lane_array_k16_c0_dsp_min | icarus | 2026-11-09 | PASS: PASS 9360/9360 |
+| lane_array_k16_c0_lut | icarus | 2026-11-09 | PASS: PASS 9360/9360 |
+| lane_array_k16_c1_dsp_full | icarus | 2026-11-09 | PASS: PASS 9880/9880 |
+| lane_array_k16_c1_dsp_min | icarus | 2026-11-09 | PASS: PASS 9880/9880 |
+| lane_array_k16_c1_lut | icarus | 2026-11-09 | PASS: PASS 9880/9880 |
+| lane_array_k8_c0_dsp_full | icarus | 2026-11-09 | PASS: PASS 101000/101000 |
+| lane_array_k8_c0_dsp_min | icarus | 2026-11-09 | PASS: PASS 101000/101000 |
+| lane_array_k8_c0_lut | icarus | 2026-11-09 | PASS: PASS 101000/101000 |
+| lane_array_k8_c1_dsp_full | icarus | 2026-11-09 | PASS: PASS 5720/5720 |
+| lane_array_k8_c1_dsp_min | icarus | 2026-11-09 | PASS: PASS 5720/5720 |
+| lane_array_k8_c1_lut | icarus | 2026-11-09 | PASS: PASS 5720/5720 |
+| spi_session_xs | xsim | 2026-11-09 | PASS: PASS 224/224 polls=421 |
+| spi_slave | icarus | 2026-11-09 | PASS: PASS 19/19 |
+| system_micro_autogov | xsim | 2026-11-09 | PASS: PASS 12/12 reconfigs=8 |
+| system_micro_campaign_k16_c1 | xsim | 2026-11-09 | PASS: PASS 2400/2400 reconfigs=0 |
+| system_micro_campaign_k8_c0 | xsim | 2026-11-09 | PASS: PASS 2400/2400 reconfigs=0 |
+| system_micro_campaign_k8_c1 | xsim | 2026-11-09 | PASS: PASS 2400/2400 reconfigs=0 |
+| system_micro_corners | xsim | 2026-11-09 | PASS: PASS 5/5 reconfigs=0 |
+| system_xs_r100 | xsim | 2026-11-09 | PASS: PASS 8/8 reconfigs=0 |
+| system_xs_r130 | xsim | 2026-11-09 | PASS: PASS 8/8 reconfigs=0 |
+| system_xs_r170 | xsim | 2026-11-09 | PASS: PASS 8/8 reconfigs=0 |
+| system_xs_r200 | xsim | 2026-11-09 | PASS: PASS 8/8 reconfigs=0 |
+
+Passing means the RTL matched the golden or checker model bit for bit in simulation. Simulation cannot reproduce real timing errors.
 
 ## Block-RAM estimate [SIM]
 

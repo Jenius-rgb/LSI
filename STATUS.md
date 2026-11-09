@@ -1,6 +1,6 @@
 # STATUS — SENTINEL
 
-Terakhir diperbarui: 2026-11-09, dibuat dari starter kit. Belum ada kode.
+Terakhir diperbarui: 2026-11-09, akhir sesi pertama (pra-board).
 Fase: **PRA-BOARD**
 
 Legenda: `[ ]` belum · `[~]` sedang dikerjakan · `[x]` selesai (ada bukti di Log bukti) · `[B]` terblokir (alasan di bagian Terblokir)
@@ -97,11 +97,15 @@ Jika G1 meleset lebih dari satu minggu, buang pemilihan clock per layer dan paka
 - [B] `tools/gen_mmcm_table.py` selesai dan lolos test batas, tetapi batas di `config/mmcm_limits.yaml` belum dicek ke DS189 (halaman belum ada, `verified: false`); F_IN placeholder
 - [x] Testbench ≥ 50 skenario dengan event dari fault model sintetis
 
+**Status:** `[~]` governor dan protokol selesai di simulasi; rekonfigurasi MMCM asli `[B]` (ADR-010); batas MMCM belum diverifikasi ke DS189.
+
 **DoD:** trajektori state RTL sama dengan model untuk semua skenario. Urutan SPEC §7.7 terverifikasi di simulasi. Tabel MMCM lolos test batas.
 
 ### M11 — Vivado out-of-context
 - [x] `fpga/ooc.tcl`, `fpga/run_matrix.py` (matriks varian), parser laporan ke CSV
 - [x] `tools/fit_report.py` (estimasi BRAM dan DSP per part dari config)
+
+**Status:** `[B]` perlu dijalankan user: skrip dan `fit_report` selesai; Vivado butuh dukungan device Spartan-7 (lihat Terblokir).
 
 **DoD:** tabel resource dan Fmax [VIVADO-STA] per part dan varian di `docs/RESULTS_SIM.md`. Analisis jalur kritis sesuai SPEC §7.4. Jika Vivado tidak ada di lingkungan ini: instruksi persis untuk user, dan status `[B] perlu dijalankan user`.
 
@@ -154,9 +158,46 @@ Jika G1 meleset lebih dari satu minggu, buang pemilihan clock per layer dan paka
 
 ## Catatan untuk sesi berikutnya
 
-(kosong; diisi di akhir setiap sesi)
+Ditulis di akhir sesi 2026-11-09.
+
+**Posisi:** semua milestone M0–M9, M12–M14 selesai di simulasi. M10 selesai untuk governor dan verifikasi protokol, tapi rekonfigurasi MMCM asli `[B]` (butuh dukungan device, F_IN, PG065; ADR-010). M11 menunggu dukungan device Spartan-7 di Vivado (`[B]`, langkah di bawah). Tidak ada satu pun hasil `[HW]` atau `[VIVADO-STA]` Spartan-7.
+
+**Langkah berikutnya:**
+1. Setelah user memasang device Spartan-7 di Vivado: `python tools/run.py ooc`, lalu `python fpga/parse_reports.py`, `python tools/gen_results_doc.py`, lanjut analisis jalur kritis (SPEC §7.4) dan isi E8.
+2. Verifikasi `config/mmcm_limits.yaml` ke DS189 (nomor halaman) dan `config/parts.yaml` ke DS180, ganti `verified: false`.
+3. Implementasi register Clocking Wizard AXI4-Lite di `rtl/platform/xilinx/clk_gen_xilinx.v` sesuai ADR-010.
+4. Evaluasi muatan BRAM: estimasi [SIM] model s K=8 = 11,0 BRAM36-eq, melebihi 10 di XC7S15 (kapasitas belum terverifikasi). Jika part-nya XC7S15: pakai xs, atau kurangi buffer (mis. tanpa ping-pong).
+5. Setelah BOARD_INFO terisi dan user menulis "board siap": mulai B1 sesuai `board/BRINGUP.md`, dari clock aman.
+
+**Jebakan yang ditemukan:**
+- `verilator` di oss-cad-suite Windows hanya bisa lewat `verilator_bin` + `VERILATOR_ROOT` (sudah ditangani `tools/check_env.py`); tidak ada g++/make sehingga Verilator tidak dipakai untuk simulasi.
+- Icarus sekitar 14x lebih lambat dari xsim untuk engine; regresi panjang pakai xsim (Icarus tetap untuk bench pendek). `.bat` Vivado memecah argumen berisi `=`: opsi lewat file `-f`.
+- `always @*` tidak peka sinyal yang hanya dibaca di dalam function (membuat X di Icarus). `checker` adalah kata kunci SystemVerilog (ADR-009).
+- Uji sintesis pada part xczu3eg (bukan Spartan-7, bukan hasil) menemukan batas `PROG_FULL_THRESH` XPM; sudah diperbaiki. Dataset folder sudah diuji dengan pelatihan satu epoch.
+- Di Windows, menulis berkas tepat setelah berkas itu diubah proses lain kadang gagal `OSError: [Errno 22]` (kemungkinan pengawas file); ulangi penulisan. Beberapa heredoc `<<'EOF'` dalam satu perintah bash gagal: pakai satu heredoc per perintah.
+- Kampanye RTL (M9) memakai model `micro` berbobot acak karena tiap skenario harus cepat; kampanye model nyata ada di M3 (Python) dan M8 (RTL, xs).
 
 ## Log bukti
 
 | Tanggal | Milestone | Perintah | Hasil |
 | --- | --- | --- | --- |
+| 2026-11-09 | M0 | `python tools/run.py check --write` | Python 3.13.1, Icarus 12.0 devel, Vivado 2025.2 terdeteksi, Verilator 5.053 lint; lihat docs/ENVIRONMENT.md |
+| 2026-11-09 | M0 | `python tools/run.py test` | 189 passed (pytest, lint, benches cepat) |
+| 2026-11-09 | M1 | `python tools/run.py train --model s` | [SIM] test float 0.8048, seed 2027, 120 epoch; results/model/s/float_result.json |
+| 2026-11-09 | M1 | `python tools/run.py train --model xs` | [SIM] test float 0.7290, seed 2027, 120 epoch; results/model/xs/float_result.json |
+| 2026-11-09 | M1 | `pytest tests/test_arch_report.py` | angka SPEC §2 dan siklus §5.4 cocok (tidak perlu ADR) |
+| 2026-11-09 | M2 | `python tools/run.py export --model s` | [SIM] integer 0.8022 vs float 0.8048, turun 0.26 poin; PTQ per-tensor |
+| 2026-11-09 | M2 | `python tools/run.py export --model xs` | [SIM] integer 0.7250 vs float 0.7290, turun 0.40 poin |
+| 2026-11-09 | M2 | `export --model s --from-quant` dua kali, `sha256sum build/weights/s_k8.bin` | hash sama: 534f3862cf31b5e8 (dua kali); test_export_is_deterministic lulus |
+| 2026-11-09 | M3 | `python tools/run.py campaign --model s` | [SIM] K=8 C3=0: tunggal 10000/10000 terkoreksi, dua lane 9403 recompute dan 597 salah koreksi, checksum lane 1000/1000 recompute; C3=1 dua lane 0 salah koreksi. Tabel lengkap di docs/RESULTS_SIM.md |
+| 2026-11-09 | M4 | `python tools/run.py sim lane_array` | lane_array_k8_c1_dsp_full: PASS 5720/5720 (icarus); lane_array_k8_c1_dsp_min: PASS 5720/5720 (icarus); lane_array_k8_c1_lut: PASS 5720/5720 (icarus); lane_array_k16_c0_lut: PASS 9360/9360 (icarus); lane_array_k16_c0_dsp_full: PASS 9360/9360 (icarus); lane_array_k16_c0_dsp_min: PASS 9360/9360 (icarus); lane_array_k16_c1_lut: PASS 9880/9880 (icarus); lane_array_k16_c1_dsp_full: PASS 9880/9880 (icarus); lane_array_k16_c1_dsp_min: PASS 9880/9880 (icarus); lane_array_k8_c0_lut: PASS 101000/101000 (icarus); lane_array_k8_c0_dsp_full: PASS 101000/101000 (icarus); lane_array_k8_c0_dsp_min: PASS 101000/101000 (icarus) |
+| 2026-11-09 | M5 | `python tools/run.py sim checker` | checker_k8_c0: PASS 5034/5034 max_latency=11 (icarus); checker_k16_c0: PASS 5050/5050 max_latency=19 (icarus); checker_k8_c1: PASS 10068/10068 max_latency=11 (icarus); checker_k16_c1: PASS 10100/10100 max_latency=19 (icarus) (mencakup semua cabang keputusan; lihat build/vectors/.../meta.json) |
+| 2026-11-09 | M6 | `python tools/run.py sim engine_corner_extreme engine_corner_saturate engine_corner_ties engine_corner_zero_lanes engine_s_k16_n20 engine_s_k8_n200 engine_xs_k8_n200` | engine_xs_k8_n200: PASS 200/200 (34/34 cycles_mean=83823 ideal=83456) (xsim); engine_s_k8_n200: PASS 200/200 (34/34 cycles_mean=277871 ideal=277504) (xsim); engine_s_k16_n20: PASS 20/20 (5/5 cycles_mean=150436 ideal=138752) (xsim); engine_corner_zero_lanes: PASS 6/6 cycles_mean=173804 ideal=0 (xsim); engine_corner_extreme: PASS 6/6 cycles_mean=173804 ideal=0 (xsim); engine_corner_ties: PASS 6/6 cycles_mean=173804 ideal=0 (xsim); engine_corner_saturate: PASS 6/6 cycles_mean=173804 ideal=0 (xsim) overhead siklus: s K=8 0,13%, xs K=8 0,44%, s K=16 8,4% [SIM] |
+| 2026-11-09 | M7 | `python tools/run.py sim spi_session_xs spi_slave` | spi_session_xs: PASS 224/224 polls=421 (xsim); spi_slave: PASS 19/19 (icarus) (ID, muat bobot, tulis gambar, START, baca kelas/logit/counter, ping-pong IMG0/IMG1); test_generated_files_are_up_to_date lulus |
+| 2026-11-09 | M8 | `python tools/run.py sim system_micro_corners system_xs_r100 system_xs_r130 system_xs_r170 system_xs_r200` | system_xs_r100: PASS 8/8 reconfigs=0 (xsim); system_xs_r130: PASS 8/8 reconfigs=0 (xsim); system_xs_r170: PASS 8/8 reconfigs=0 (xsim); system_xs_r200: PASS 8/8 reconfigs=0 (xsim); system_micro_corners: PASS 5/5 reconfigs=0 (xsim) (rasio f_fast/f_safe 1,0/1,3/1,7/2,0; injeksi mode 0/1/2; counter dan FATAL/log penuh cocok dengan model) |
+| 2026-11-09 | M9 | `python tools/run.py sim system_micro_campaign_k16_c1 system_micro_campaign_k8_c0 system_micro_campaign_k8_c1` | system_micro_campaign_k8_c0: PASS 2400/2400 reconfigs=0 (xsim); system_micro_campaign_k8_c1: PASS 2400/2400 reconfigs=0 (xsim); system_micro_campaign_k16_c1: PASS 2400/2400 reconfigs=0 (xsim) (7.200 skenario termasuk dua lane dan lane checksum; pakai model micro bobot acak [SIM]) |
+| 2026-11-09 | M10 | `python tools/run.py sim governor system_micro_autogov` | governor: PASS 2400/2400 scenarios=60 (icarus); system_micro_autogov: PASS 12/12 reconfigs=8 (xsim) (60 skenario trajektori state; urutan SPEC §7.7 diawasi monitor protokol, 8 rekonfigurasi); pytest tests/test_mmcm_table.py lulus dengan batas belum terverifikasi |
+| 2026-11-09 | M11 | `python tools/run.py ooc` | keluar kode 2: Vivado tidak punya device Spartan-7; instruksi tertulis; [B] perlu dijalankan user |
+| 2026-11-09 | M12 | `pytest tests/test_software.py`; `python -m sentinel.experiments.e1..e8`; `python tools/run.py plots` | 7 grafik; e1-e4,e6,e7 mock [SYNTHETIC], e5 [SIM], e8 estimasi [SIM] |
+| 2026-11-09 | M13 | `python tools/gen_results_doc.py` | docs/RESULTS_SIM.md dari file hasil; dokumen lain ditulis tanpa angka baru |
+| 2026-11-09 | M14 | `pytest tests/test_board_package.py`; `python board/bringup.py validate --dry-run` | dry-run lulus; build menolak jalan karena BOARD_INFO UNKNOWN |
