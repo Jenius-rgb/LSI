@@ -1,0 +1,15 @@
+# Hardware parameters (SPEC section 1).
+K: 8
+R: 2
+C3_EN: 0
+LANE_IMPL: lut      # lut | dsp_min | dsp_full
+ACT_W: 8
+W_W: 8
+ACC_W: 32
+ACC_CS_W: 48
+N_LOG: 256
+MODEL: s
+N_CLASSES: 10
+N_CLASSES_MAX: 16
+IN_CH: 3
+INJ_EN: 1

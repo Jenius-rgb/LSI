@@ -1,0 +1,18 @@
+# Variant "s" (SPEC section 2.1).
+name: s
+input: {channels: 3, height: 32, width: 32}
+n_classes: 10
+layers:
+  - {name: conv1, type: conv, out_channels: 16, pool: true}
+  - {name: conv2, type: conv, out_channels: 32, pool: true}
+  - {name: conv3, type: conv, out_channels: 32, pool: true}
+  - {name: fc, type: fc}
+train:
+  seed: 2027
+  epochs: 120
+  batch_size: 128
+  lr: 0.08
+  momentum: 0.9
+  weight_decay: 0.0005
+  dropout: 0.2
+  val_size: 5000

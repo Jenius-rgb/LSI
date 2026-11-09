@@ -1,0 +1,178 @@
+#!/usr/bin/env python3
+"""Detect the tools this project depends on and report their real versions.
+
+Run through ``python tools/run.py check``. ``--write`` also refreshes
+docs/ENVIRONMENT.md with exactly what was detected.
+"""
+from __future__ import annotations
+
+import argparse
+import datetime as dt
+import glob
+import importlib
+import importlib.metadata
+import os
+import platform
+import shutil
+import subprocess
+import sys
+from dataclasses import dataclass
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+
+PY_PACKAGES = [
+    ("numpy", "numpy", True),
+    ("pyyaml", "yaml", True),
+    ("pytest", "pytest", True),
+    ("hypothesis", "hypothesis", True),
+    ("matplotlib", "matplotlib", True),
+    ("torch", "torch", True),
+    ("torchvision", "torchvision", True),
+    ("opencv-python", "cv2", False),
+    ("flask", "flask", False),
+]
+
+VIVADO_GLOBS = [
+    "C:/AMDDesignTools/*/Vivado/bin/vivado.bat",
+    "C:/Xilinx/Vivado/*/bin/vivado.bat",
+    "C:/Xilinx/*/Vivado/bin/vivado.bat",
+    "/opt/Xilinx/Vivado/*/bin/vivado",
+    "/tools/Xilinx/Vivado/*/bin/vivado",
+    "/opt/AMD/*/Vivado/bin/vivado",
+]
+
+
+@dataclass
+class Tool:
+    name: str
+    found: bool
+    version: str = ""
+    path: str = ""
+    required: bool = True
+
+
+def _run(cmd: list[str], timeout: int = 120) -> str:
+    """Run a command and return stdout+stderr, or an empty string if it cannot run."""
+    try:
+        out = subprocess.run(
+            cmd, capture_output=True, text=True, timeout=timeout, errors="replace"
+        )
+    except (OSError, subprocess.SubprocessError):
+        return ""
+    return (out.stdout or "") + (out.stderr or "")
+
+
+def find_vivado() -> str | None:
+    """Locate the Vivado launcher: $VIVADO_BIN, then PATH, then standard install dirs."""
+    env = os.environ.get("VIVADO_BIN")
+    if env and Path(env).exists():
+        return env
+    on_path = shutil.which("vivado")
+    if on_path:
+        return on_path
+    hits: list[str] = []
+    for pattern in VIVADO_GLOBS:
+        hits.extend(glob.glob(pattern))
+    return sorted(hits)[-1] if hits else None
+
+
+def vivado_sibling(name: str) -> str | None:
+    """Locate xvlog/xsim next to Vivado."""
+    vivado = find_vivado()
+    if not vivado:
+        return None
+    suffix = ".bat" if os.name == "nt" else ""
+    candidate = Path(vivado).parent / f"{name}{suffix}"
+    return str(candidate) if candidate.exists() else None
+
+
+def find_verilator() -> str | None:
+    """Prefer the native binary: the `verilator` wrapper is a Perl script on Windows."""
+    return shutil.which("verilator_bin") or shutil.which("verilator")
+
+
+def _first_line(text: str, needle: str = "") -> str:
+    for line in text.splitlines():
+        if line.strip() and (not needle or needle in line):
+            return line.strip()
+    return ""
+
+
+def detect() -> list[Tool]:
+    tools = [
+        Tool("python", True, platform.python_version(), sys.executable),
+    ]
+    for name, module, required in PY_PACKAGES:
+        try:
+            mod = importlib.import_module(module)
+            tools.append(Tool(name, True, importlib.metadata.version(name), str(mod.__file__), required))
+        except (ImportError, importlib.metadata.PackageNotFoundError):
+            tools.append(Tool(name, False, required=required))
+
+    git = shutil.which("git")
+    tools.append(Tool("git", bool(git), _first_line(_run(["git", "--version"])) if git else "", git or ""))
+
+    for name in ("iverilog", "vvp"):
+        exe = shutil.which(name)
+        ver = _first_line(_run([exe, "-V"])) if exe else ""
+        tools.append(Tool(name, bool(exe), ver, exe or ""))
+
+    verilator = find_verilator()
+    ver = _first_line(_run([verilator, "--version"])) if verilator else ""
+    tools.append(Tool("verilator (lint)", bool(ver), ver, verilator or "", required=False))
+
+    vivado = find_vivado()
+    ver = _first_line(_run([vivado, "-version"]), "Vivado") if vivado else ""
+    if not ver and vivado:
+        ver = _first_line(_run([vivado, "-version"]), "vivado")
+    tools.append(Tool("vivado", bool(vivado), ver, vivado or "", required=False))
+    for name in ("xvlog", "xsim"):
+        exe = vivado_sibling(name)
+        tools.append(Tool(name, bool(exe), "same install as vivado" if exe else "", exe or "", required=False))
+    return tools
+
+
+def report(tools: list[Tool]) -> str:
+    lines = [f"{'tool':<18} {'status':<9} version", "-" * 78]
+    for t in tools:
+        status = "ok" if t.found else ("MISSING" if t.required else "absent")
+        lines.append(f"{t.name:<18} {status:<9} {t.version}")
+    return "\n".join(lines)
+
+
+def write_environment_md(tools: list[Tool]) -> Path:
+    path = ROOT / "docs" / "ENVIRONMENT.md"
+    today = dt.date.today().isoformat()
+    rows = "\n".join(
+        f"| {t.name} | {'yes' if t.found else 'no'} | {t.version or '-'} | `{t.path or '-'}` |" for t in tools
+    )
+    path.write_text(
+        "# Environment\n\n"
+        "Generated by `python tools/run.py check --write`. Do not edit by hand.\n\n"
+        f"Last detected: {today}. Host: {platform.system()} {platform.release()} ({platform.machine()}).\n\n"
+        "| Tool | Found | Version | Path |\n| --- | --- | --- | --- |\n"
+        f"{rows}\n",
+        encoding="utf-8",
+    )
+    return path
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--write", action="store_true", help="also refresh docs/ENVIRONMENT.md")
+    args = parser.parse_args(argv)
+
+    tools = detect()
+    print(report(tools))
+    if args.write:
+        print(f"wrote {write_environment_md(tools).relative_to(ROOT)}")
+    missing = [t.name for t in tools if t.required and not t.found]
+    if missing:
+        print("missing required tools: " + ", ".join(missing))
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

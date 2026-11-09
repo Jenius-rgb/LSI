@@ -1,0 +1,29 @@
+# Regenerable artefacts
+build/
+__pycache__/
+*.pyc
+.pytest_cache/
+.hypothesis/
+
+# Local environment and datasets
+.venv/
+data/
+
+# Large checkpoints (small trained-model checkpoints under results/model/ are kept)
+*.ckpt
+checkpoints/
+
+# Vivado / simulator droppings
+*.jou
+*.log
+*.str
+.Xil/
+xsim.dir/
+*.vcd
+*.fst
+*.vvp
+obj_dir/
+usage_statistics_webtalk.*
+
+# Claude Code local skills are per-machine tooling, not project sources
+.claude/
