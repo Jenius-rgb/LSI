@@ -40,3 +40,10 @@ Terakhir diperbarui: 2026-11-09
 - [OFFICIAL] Spesifikasi dan lingkungan pengembangan ZERO7 "akan diposting" oleh panitia; belum ada per 9 Nov 2026.
 - [VERIFIED EXTERNAL] Gigafirm (Iizuka, Fukuoka) memamerkan ZERO7 berukuran 60×30 mm dengan controller LED warna penuh.
 - Kontak peminjaman: support@LSI-contest.com, atau untuk Indonesia Prof. Trio Adiono (tadiono@itb.ac.id).
+
+## Observasi belum terverifikasi (bukan fakta; jangan dipakai mengisi field wajib)
+
+- 2026-11-09, foto chip dari user (buram). Terbaca `AMD SPARTAN`, `XC7S?5`, `CSGA225ABX2629`, `D4BNY989A`. Digit nomor part yang ditandai `?` tidak pasti, terlihat seperti 7 atau 2.
+- Kandidat paling masuk akal: XC7S25 paket CSGA225. Alasannya, menurut ingatan atas DS180 (belum dicek ke dokumennya), paket CSGA225 hanya ada untuk XC7S6, XC7S15, dan XC7S25, sedangkan XC7S75 hanya FGGA484 dan FGGA676.
+- Speed grade tidak terlihat di foto.
+- Cara memastikan: foto lebih tajam dengan cahaya miring, dokumen resmi Gigafirm atau panitia, atau Vivado Hardware Manager lewat JTAG (IDCODE menunjukkan device, tetapi bukan speed grade).
