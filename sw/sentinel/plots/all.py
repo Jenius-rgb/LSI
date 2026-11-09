@@ -133,7 +133,10 @@ def plot_e5(backend: str, run_dir: Path) -> Path:
 
 
 def plot_e8(backend: str, run_dir: Path) -> Path:
-    rows = [r for r in read_rows(run_dir) if r["part"] == "xc7s15"]
+    all_rows = read_rows(run_dir)
+    if all_rows and "fmax_fast_mhz" in all_rows[0]:
+        return plot_e8_vivado(run_dir, all_rows)
+    rows = [r for r in all_rows if r["part"] == "xc7s15"]
     fig, ax = figure("E8 block RAM needed against capacity of xc7s15", backend, "Model and K", "BRAM36 equivalents")
     labels = [f"{r['model']} K={r['K']}" for r in rows]
     x = range(len(rows))
@@ -142,6 +145,23 @@ def plot_e8(backend: str, run_dir: Path) -> Path:
     ax.set_xticks(list(x), labels, fontsize=8)
     out = run_dir / "e8_bram.png"
     finish(fig, ax, out, backend)
+    return out
+
+
+def plot_e8_vivado(run_dir: Path, rows: list[dict]) -> Path:
+    names = {"0": "lut", "1": "dsp_min", "2": "dsp_full"}
+    sel = [r for r in rows if r["part"] == "xc7s25csga225-1" and r["K"] == "8"]
+    sel.sort(key=lambda r: (r["LANE_IMPL"], r["C3_EN"]))
+    fig, ax = figure("E8 static Fmax of clk_fast, xc7s25-1, K=8 [VIVADO-STA]", "sim", "Lane implementation and C3", "MHz")
+    ax.set_title("E8 static Fmax of clk_fast, xc7s25-1, K=8 [VIVADO-STA]", color=TEXT, fontsize=11, loc="left", pad=10)
+    labels = [f"{names[r['LANE_IMPL']]} C3={r['C3_EN']}" for r in sel]
+    x = list(range(len(sel)))
+    ax.bar(x, [float(r["fmax_fast_mhz"]) for r in sel], color=SERIES[0], width=0.6, label="clk_fast")
+    ax.plot(x, [float(r["fmax_safe_mhz"]) * 2 for r in sel], color=SERIES[1], linewidth=1.5, marker="o", markersize=4, label="operand supply limit R x f_safe (R=2)")
+    ax.set_xticks(x, labels, rotation=20, ha="right", fontsize=8)
+    out = run_dir / "e8_fmax.png"
+    ax.legend(frameon=False, fontsize=8, labelcolor=TEXT_2, loc="upper center", bbox_to_anchor=(0.5, -0.32), ncol=2)
+    finish(fig, ax, out, "sim", legend=False)
     return out
 
 
