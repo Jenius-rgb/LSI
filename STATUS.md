@@ -105,7 +105,7 @@ Jika G1 meleset lebih dari satu minggu, buang pemilihan clock per layer dan paka
 - [x] `fpga/ooc.tcl`, `fpga/run_matrix.py` (matriks varian), parser laporan ke CSV
 - [x] `tools/fit_report.py` (estimasi BRAM dan DSP per part dari config)
 
-**Status:** `[~]` enam varian K=8 pada xc7s25csga225-1 sudah dijalankan (`fpga/reports/summary.csv`, [VIVADO-STA]). Belum selesai: Fmax domain cepat varian DSP belum terukur (target 5 ns terpenuhi sehingga angkanya batas bawah), jalur kritis domain cepat bukan MAC pada `dsp_full` (FIFO XPM) dan `dsp_min` (register holding), melanggar SPEC 7.4, varian K=16 dan part lain belum dijalankan. Part XC7S25 dan speed grade -1 belum terverifikasi.
+**Status:** `[x]` matriks lengkap 96 run (xc7s6, xc7s15, xc7s25, xc7s50; speed -1 dan -2; K 8/16; lut, dsp_min, dsp_full; C3 0/1). 48 run di xc7s25 dan xc7s50 berhasil; 48 run di xc7s6 dan xc7s15 tidak muat (BRAM kurang). Tabel dan analisis jalur kritis di `docs/RESULTS_SIM.md` [VIVADO-STA]. Part ZERO7 dan speed grade belum terverifikasi.
 
 **DoD:** tabel resource dan Fmax [VIVADO-STA] per part dan varian di `docs/RESULTS_SIM.md`. Analisis jalur kritis sesuai SPEC §7.4. Jika Vivado tidak ada di lingkungan ini: instruksi persis untuk user, dan status `[B] perlu dijalankan user`.
 
@@ -162,11 +162,17 @@ Ditulis di akhir sesi 2026-11-09.
 **Posisi:** semua milestone M0–M9, M12–M14 selesai di simulasi. M10 selesai untuk governor dan verifikasi protokol, tapi rekonfigurasi MMCM asli `[B]` (butuh dukungan device, F_IN, PG065; ADR-010). M11 menunggu dukungan device Spartan-7 di Vivado (`[B]`, langkah di bawah). Tidak ada satu pun hasil `[HW]` atau `[VIVADO-STA]` Spartan-7.
 
 **Langkah berikutnya:**
-1. Setelah user memasang device Spartan-7 di Vivado: `python tools/run.py ooc`, lalu `python fpga/parse_reports.py`, `python tools/gen_results_doc.py`, lanjut analisis jalur kritis (SPEC §7.4) dan isi E8.
+1. M11 selesai (lihat Temuan M11). Konfirmasi part dan speed grade ZERO7; jalankan ulang `python tools/run.py ooc --parts <part> --tag final` untuk part itu saja bila berbeda.
 2. Verifikasi `config/mmcm_limits.yaml` ke DS189 (nomor halaman) dan `config/parts.yaml` ke DS180, ganti `verified: false`.
 3. Implementasi register Clocking Wizard AXI4-Lite di `rtl/platform/xilinx/clk_gen_xilinx.v` sesuai ADR-010.
 4. Evaluasi muatan BRAM: estimasi [SIM] model s K=8 = 11,0 BRAM36-eq, melebihi 10 di XC7S15 (kapasitas belum terverifikasi). Jika part-nya XC7S15: pakai xs, atau kurangi buffer (mis. tanpa ping-pong).
 5. Setelah BOARD_INFO terisi dan user menulis "board siap": mulai B1 sesuai `board/BRINGUP.md`, dari clock aman.
+
+**Temuan M11 (2026-11-10):**
+- Lane `lut` adalah pilihan yang sesuai tujuan proyek: jalur MAC menjadi jalur kritis (Fmax clk_fast sekitar 148–167 MHz di xc7s25/xc7s50), sedangkan suplai operand R·f_safe sekitar 280 MHz, jadi ruang overclock ada.
+- Lane DSP lebih cepat secara STA (sekitar 265–336 MHz di K=8), tetapi batasnya adalah FIFO dan suplai operand (R·f_safe), bukan MAC; tidak cocok untuk eksperimen overclock MAC tanpa menaikkan R.
+- `dsp_full` dipetakan Vivado ke dua DSP per lane (produk dan akumulator terpisah); K=16 `dsp_min` lambat (jalur DSP tanpa MREG sekitar 5 ns). Perlu ditinjau bila varian DSP dipakai.
+- Jika part ternyata xc7s15 atau xc7s6, organisasi memori harus dihemat (kedalaman bukan pangkat dua, tanpa buffer ping-pong, atau model xs) sebelum bisa muat.
 
 **Jebakan yang ditemukan:**
 - `verilator` di oss-cad-suite Windows hanya bisa lewat `verilator_bin` + `VERILATOR_ROOT` (sudah ditangani `tools/check_env.py`); tidak ada g++/make sehingga Verilator tidak dipakai untuk simulasi.
@@ -180,6 +186,10 @@ Ditulis di akhir sesi 2026-11-09.
 
 | Tanggal | Milestone | Perintah | Hasil |
 | --- | --- | --- | --- |
+| 2026-11-10 | M11 | perbaikan timing ADR-012, putaran v2–v4 di xc7s25csga225-1 | [VIVADO-STA] Fmax clk_safe naik dari sekitar 102 ke 139–148 MHz (K=8) |
+| 2026-11-10 | M11 | `python tools/run.py ooc ... --nonmac-factor 0.7` (lut, K=8) | [VIVADO-STA] C3=0: jalur non-MAC lolos 70% periode (slack +0,226 ns), 20 jalur terburuk clk_fast adalah MAC; C3=1 meleset 0,008 ns |
+| 2026-11-10 | M11 | `python tools/run.py ooc --parts <8 part> --tag final` | [VIVADO-STA] 48/96 run berhasil (xc7s25, xc7s50); xc7s6 dan xc7s15 tidak muat: BRAM kurang. Tabel di docs/RESULTS_SIM.md |
+| 2026-11-10 | M4–M10 | `python tools/run.py sim lane_array checker engine spi system governor --record ...` | [SIM] 37/37 bench lulus setelah perubahan pipeline; s K=8 200/200, xs K=8 200/200, overhead s K=16 9,9% |
 | 2026-11-10 | M11 | `python tools/run.py ooc --parts xc7s25csga225-1 --k 8` | [VIVADO-STA] 6 varian selesai; lihat fpga/reports/summary.csv. Domain aman lolos target 10 ns; lane LUT gagal target 5 ns |
 | 2026-11-09 | M0 | `python tools/run.py check --write` | Python 3.13.1, Icarus 12.0 devel, Vivado 2025.2 terdeteksi, Verilator 5.053 lint; lihat docs/ENVIRONMENT.md |
 | 2026-11-09 | M0 | `python tools/run.py test` | 189 passed (pytest, lint, benches cepat) |

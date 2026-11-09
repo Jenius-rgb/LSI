@@ -90,10 +90,35 @@ def fit_section() -> list[str]:
 
 
 def vivado_section() -> list[str]:
+    import csv
+
     path = ROOT / "fpga" / "reports" / "summary.csv"
-    if path.exists():
-        return ["## Vivado out-of-context [VIVADO-STA]", "", f"See `{path.relative_to(ROOT).as_posix()}` (script `fpga/run_matrix.py`)."]
-    return ["## Vivado out-of-context [VIVADO-STA]", "", "No data yet. Vivado 2025.2 on this machine has no Spartan-7 device support; see STATUS.md, M11."]
+    head = ["## Vivado out-of-context [VIVADO-STA]", ""]
+    if not path.exists():
+        return head + ["No data yet."]
+    with open(path, newline="", encoding="utf-8") as fh:
+        rows = list(csv.DictReader(fh))
+    names = {"0": "lut", "1": "dsp_min", "2": "dsp_full"}
+    lines = head + [
+        f"Source: `{path.relative_to(ROOT).as_posix()}` (script `fpga/run_matrix.py`, Vivado 2025.2, out of context, top `engine`, model s).",
+        "Fmax = 1000 / (target period - WNS). Where the target is met, Fmax is a lower bound. Targets: clk_safe 7.0 ns; clk_fast 6.4 ns for lut, 3.0 ns for the DSP lanes.",
+        "For lut, every non-MAC endpoint of clk_fast is held to 70% of the period (SPEC 7.4, ADR-012): its WNS is measured against that tighter limit.",
+        "Static timing is conservative; the frequency at which a real device fails can only be measured on the board.",
+        "",
+        "| Part | K | Lane | C3 | LUT | FF | BRAM36 | DSP | Fmax clk_safe (MHz) | Fmax clk_fast (MHz) | WNS MAC (ns) | WNS non-MAC (ns) |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+    ]
+    for r in sorted(rows, key=lambda r: (r["part"], int(r["K"]), r["LANE_IMPL"], r["C3_EN"])):
+        lines.append(
+            f"| {r['part']} | {r['K']} | {names.get(r['LANE_IMPL'], r['LANE_IMPL'])} | {r['C3_EN']} | {float(r['lut']):.0f} | {float(r['ff']):.0f} | "
+            f"{float(r['bram36_equiv']):.1f} | {float(r['dsp']):.0f} | {float(r['fmax_safe_mhz']):.1f} | {float(r['fmax_fast_mhz']):.1f} | "
+            f"{r.get('wns_mac_ns', '')} | {r.get('wns_nonmac_ns', '')} |"
+        )
+    failed = sorted(p.name[: -len(".log")] for p in (ROOT / "fpga" / "reports").glob("*_final.log") if not (p.with_suffix("") / "summary.txt").exists())
+    if failed:
+        parts = sorted({name.split("_")[0] for name in failed})
+        lines += ["", f"Did not fit ({len(failed)} runs, parts {', '.join(parts)}): the memories need more block RAM than these parts have (model s uses 14 BRAM36 tiles on xc7s25), so Vivado moved them to LUT RAM, which then overflowed (DRC UTLZ-1 in the local `*_final.log` files)."]
+    return lines
 
 
 def main() -> int:

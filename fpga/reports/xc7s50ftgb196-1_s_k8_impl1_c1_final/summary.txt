@@ -1,0 +1,13 @@
+part xc7s50ftgb196-1
+K 8
+LANE_IMPL 1
+C3_EN 1
+T_SAFE_NS 7.0
+T_FAST_NS 3.0
+NONMAC_FACTOR 1.0
+WNS_clk_safe -0.208
+WNS_clk_fast -0.332
+WNS_MAC 0.210
+WNS_NONMAC -0.332
+WORST_MAC_ENDPOINT u_fast/u_lanes/data_lane[4].impl.u/acc_reg/B[11]
+WORST_NONMAC_ENDPOINT u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_3_5/RAMA/WE

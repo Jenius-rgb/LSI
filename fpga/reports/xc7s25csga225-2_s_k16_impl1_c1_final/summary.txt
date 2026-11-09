@@ -1,0 +1,13 @@
+part xc7s25csga225-2
+K 16
+LANE_IMPL 1
+C3_EN 1
+T_SAFE_NS 7.0
+T_FAST_NS 3.0
+NONMAC_FACTOR 1.0
+WNS_clk_safe -0.668
+WNS_clk_fast -3.018
+WNS_MAC -3.018
+WNS_NONMAC -2.618
+WORST_MAC_ENDPOINT u_fast/u_lanes/data_lane[0].impl.u/acc_reg/B[14]
+WORST_NONMAC_ENDPOINT u_fast/u_lanes/hold_y_reg[12][2]/D

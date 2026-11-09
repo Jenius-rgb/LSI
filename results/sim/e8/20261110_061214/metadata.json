@@ -1,0 +1,11 @@
+{
+  "experiment": "e8",
+  "timestamp": "2026-11-10T06:12:14",
+  "git_hash": "3366f09bf2d3b98358b99bf4f27b5d1b415712be",
+  "bitstream_id": "none (pre-board)",
+  "python": "3.13.1",
+  "numpy": "2.2.1",
+  "backend": "vivado-reports",
+  "label": "[VIVADO-STA]",
+  "source": "fpga\\reports\\summary.csv"
+}

@@ -1,0 +1,13 @@
+part xc7s25csga225-2
+K 8
+LANE_IMPL 1
+C3_EN 0
+T_SAFE_NS 7.0
+T_FAST_NS 3.0
+NONMAC_FACTOR 1.0
+WNS_clk_safe 0.36
+WNS_clk_fast -0.049
+WNS_MAC 0.018
+WNS_NONMAC -0.049
+WORST_MAC_ENDPOINT u_fast/u_lanes/data_lane[0].impl.u/acc_reg/A[7]
+WORST_NONMAC_ENDPOINT u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_rd_b_synth_template.gen_rf_narrow_pipe.doutb_reg_reg[18]/CE

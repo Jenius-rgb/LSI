@@ -1,0 +1,1044 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2025.2 (win64) Build 6299465 Fri Nov 14 19:35:11 GMT 2025
+| Date         : Tue Nov 10 05:13:44 2026
+| Host         : LAPTOP-ER7J7A89 running 64-bit major release  (build 9200)
+| Command      : report_timing -max_paths 20 -nworst 1 -group clk_fast -file {C:\AF\SENTINEL-LSI-2027\fpga\reports\xc7s50ftgb196-1_s_k8_impl1_c1_final/timing_fast.rpt}
+| Design       : engine
+| Device       : 7s50-ftgb196
+| Speed File   : -1  PRODUCTION 1.23 2018-06-13
+| Design State : Routed
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack (VIOLATED) :        -0.332ns  (required time - arrival time)
+  Source:                 u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rst_d1_inst/d_out_int_reg/C
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_3_5/RAMA/WE
+                            (rising edge-triggered cell RAMD64E clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        2.715ns  (logic 0.842ns (31.019%)  route 1.873ns (68.981%))
+  Logic Levels:           2  (LUT2=1 LUT4=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.973     0.973    u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rst_d1_inst/wr_clk
+    SLICE_X61Y53         FDRE                                         r  u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rst_d1_inst/d_out_int_reg/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X61Y53         FDRE (Prop_fdre_C_Q)         0.419     1.392 f  u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rst_d1_inst/d_out_int_reg/Q
+                         net (fo=6, routed)           0.622     2.014    u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/rst_d1
+    SLICE_X61Y52         LUT4 (Prop_lut4_I3_O)        0.299     2.313 r  u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_sdpram.xpm_memory_base_inst_i_1/O
+                         net (fo=25, routed)          0.564     2.877    u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/ena
+    SLICE_X55Y52         LUT2 (Prop_lut2_I0_O)        0.124     3.001 r  u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_0_2_i_1/O
+                         net (fo=22, routed)          0.687     3.688    u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_3_5/WE
+    SLICE_X50Y50         RAMD64E                                      r  u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_3_5/RAMA/WE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.924     3.924    u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_3_5/WCLK
+    SLICE_X50Y50         RAMD64E                                      r  u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_3_5/RAMA/CLK
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    SLICE_X50Y50         RAMD64E (Setup_ramd64e_CLK_WE)
+                                                     -0.533     3.356    u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_3_5/RAMA
+  -------------------------------------------------------------------
+                         required time                          3.356    
+                         arrival time                          -3.688    
+  -------------------------------------------------------------------
+                         slack                                 -0.332    
+
+Slack (VIOLATED) :        -0.332ns  (required time - arrival time)
+  Source:                 u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rst_d1_inst/d_out_int_reg/C
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_3_5/RAMB/WE
+                            (rising edge-triggered cell RAMD64E clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        2.715ns  (logic 0.842ns (31.019%)  route 1.873ns (68.981%))
+  Logic Levels:           2  (LUT2=1 LUT4=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.973     0.973    u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rst_d1_inst/wr_clk
+    SLICE_X61Y53         FDRE                                         r  u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rst_d1_inst/d_out_int_reg/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X61Y53         FDRE (Prop_fdre_C_Q)         0.419     1.392 f  u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rst_d1_inst/d_out_int_reg/Q
+                         net (fo=6, routed)           0.622     2.014    u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/rst_d1
+    SLICE_X61Y52         LUT4 (Prop_lut4_I3_O)        0.299     2.313 r  u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_sdpram.xpm_memory_base_inst_i_1/O
+                         net (fo=25, routed)          0.564     2.877    u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/ena
+    SLICE_X55Y52         LUT2 (Prop_lut2_I0_O)        0.124     3.001 r  u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_0_2_i_1/O
+                         net (fo=22, routed)          0.687     3.688    u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_3_5/WE
+    SLICE_X50Y50         RAMD64E                                      r  u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_3_5/RAMB/WE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.924     3.924    u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_3_5/WCLK
+    SLICE_X50Y50         RAMD64E                                      r  u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_3_5/RAMB/CLK
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    SLICE_X50Y50         RAMD64E (Setup_ramd64e_CLK_WE)
+                                                     -0.533     3.356    u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_3_5/RAMB
+  -------------------------------------------------------------------
+                         required time                          3.356    
+                         arrival time                          -3.688    
+  -------------------------------------------------------------------
+                         slack                                 -0.332    
+
+Slack (VIOLATED) :        -0.332ns  (required time - arrival time)
+  Source:                 u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rst_d1_inst/d_out_int_reg/C
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_3_5/RAMC/WE
+                            (rising edge-triggered cell RAMD64E clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        2.715ns  (logic 0.842ns (31.019%)  route 1.873ns (68.981%))
+  Logic Levels:           2  (LUT2=1 LUT4=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.973     0.973    u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rst_d1_inst/wr_clk
+    SLICE_X61Y53         FDRE                                         r  u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rst_d1_inst/d_out_int_reg/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X61Y53         FDRE (Prop_fdre_C_Q)         0.419     1.392 f  u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rst_d1_inst/d_out_int_reg/Q
+                         net (fo=6, routed)           0.622     2.014    u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/rst_d1
+    SLICE_X61Y52         LUT4 (Prop_lut4_I3_O)        0.299     2.313 r  u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_sdpram.xpm_memory_base_inst_i_1/O
+                         net (fo=25, routed)          0.564     2.877    u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/ena
+    SLICE_X55Y52         LUT2 (Prop_lut2_I0_O)        0.124     3.001 r  u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_0_2_i_1/O
+                         net (fo=22, routed)          0.687     3.688    u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_3_5/WE
+    SLICE_X50Y50         RAMD64E                                      r  u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_3_5/RAMC/WE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.924     3.924    u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_3_5/WCLK
+    SLICE_X50Y50         RAMD64E                                      r  u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_3_5/RAMC/CLK
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    SLICE_X50Y50         RAMD64E (Setup_ramd64e_CLK_WE)
+                                                     -0.533     3.356    u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_3_5/RAMC
+  -------------------------------------------------------------------
+                         required time                          3.356    
+                         arrival time                          -3.688    
+  -------------------------------------------------------------------
+                         slack                                 -0.332    
+
+Slack (VIOLATED) :        -0.332ns  (required time - arrival time)
+  Source:                 u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rst_d1_inst/d_out_int_reg/C
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_3_5/RAMD/WE
+                            (rising edge-triggered cell RAMD64E clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        2.715ns  (logic 0.842ns (31.019%)  route 1.873ns (68.981%))
+  Logic Levels:           2  (LUT2=1 LUT4=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.973     0.973    u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rst_d1_inst/wr_clk
+    SLICE_X61Y53         FDRE                                         r  u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rst_d1_inst/d_out_int_reg/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X61Y53         FDRE (Prop_fdre_C_Q)         0.419     1.392 f  u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rst_d1_inst/d_out_int_reg/Q
+                         net (fo=6, routed)           0.622     2.014    u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/rst_d1
+    SLICE_X61Y52         LUT4 (Prop_lut4_I3_O)        0.299     2.313 r  u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_sdpram.xpm_memory_base_inst_i_1/O
+                         net (fo=25, routed)          0.564     2.877    u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/ena
+    SLICE_X55Y52         LUT2 (Prop_lut2_I0_O)        0.124     3.001 r  u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_0_2_i_1/O
+                         net (fo=22, routed)          0.687     3.688    u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_3_5/WE
+    SLICE_X50Y50         RAMD64E                                      r  u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_3_5/RAMD/WE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.924     3.924    u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_3_5/WCLK
+    SLICE_X50Y50         RAMD64E                                      r  u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_3_5/RAMD/CLK
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    SLICE_X50Y50         RAMD64E (Setup_ramd64e_CLK_WE)
+                                                     -0.533     3.356    u_resfifo/slice[1].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_3_5/RAMD
+  -------------------------------------------------------------------
+                         required time                          3.356    
+                         arrival time                          -3.688    
+  -------------------------------------------------------------------
+                         slack                                 -0.332    
+
+Slack (VIOLATED) :        -0.294ns  (required time - arrival time)
+  Source:                 u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_pf_ic_rc.ngen_full_rst_val.ram_full_i_reg/C
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_9_11/RAMA/WE
+                            (rising edge-triggered cell RAMD64E clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        2.677ns  (logic 0.766ns (28.618%)  route 1.911ns (71.382%))
+  Logic Levels:           2  (LUT2=1 LUT4=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.973     0.973    u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/wr_clk
+    SLICE_X60Y61         FDRE                                         r  u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_pf_ic_rc.ngen_full_rst_val.ram_full_i_reg/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X60Y61         FDRE (Prop_fdre_C_Q)         0.518     1.491 f  u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_pf_ic_rc.ngen_full_rst_val.ram_full_i_reg/Q
+                         net (fo=5, routed)           0.792     2.283    u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_pf_ic_rc.gpf_ic.prog_full_i_reg
+    SLICE_X61Y59         LUT4 (Prop_lut4_I1_O)        0.124     2.407 r  u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_sdpram.xpm_memory_base_inst_i_1/O
+                         net (fo=25, routed)          0.358     2.765    u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/ena
+    SLICE_X58Y59         LUT2 (Prop_lut2_I0_O)        0.124     2.889 r  u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_0_2_i_1/O
+                         net (fo=22, routed)          0.761     3.650    u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_9_11/WE
+    SLICE_X56Y55         RAMD64E                                      r  u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_9_11/RAMA/WE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.924     3.924    u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_9_11/WCLK
+    SLICE_X56Y55         RAMD64E                                      r  u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_9_11/RAMA/CLK
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    SLICE_X56Y55         RAMD64E (Setup_ramd64e_CLK_WE)
+                                                     -0.533     3.356    u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_9_11/RAMA
+  -------------------------------------------------------------------
+                         required time                          3.356    
+                         arrival time                          -3.650    
+  -------------------------------------------------------------------
+                         slack                                 -0.294    
+
+Slack (VIOLATED) :        -0.294ns  (required time - arrival time)
+  Source:                 u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_pf_ic_rc.ngen_full_rst_val.ram_full_i_reg/C
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_9_11/RAMB/WE
+                            (rising edge-triggered cell RAMD64E clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        2.677ns  (logic 0.766ns (28.618%)  route 1.911ns (71.382%))
+  Logic Levels:           2  (LUT2=1 LUT4=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.973     0.973    u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/wr_clk
+    SLICE_X60Y61         FDRE                                         r  u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_pf_ic_rc.ngen_full_rst_val.ram_full_i_reg/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X60Y61         FDRE (Prop_fdre_C_Q)         0.518     1.491 f  u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_pf_ic_rc.ngen_full_rst_val.ram_full_i_reg/Q
+                         net (fo=5, routed)           0.792     2.283    u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_pf_ic_rc.gpf_ic.prog_full_i_reg
+    SLICE_X61Y59         LUT4 (Prop_lut4_I1_O)        0.124     2.407 r  u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_sdpram.xpm_memory_base_inst_i_1/O
+                         net (fo=25, routed)          0.358     2.765    u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/ena
+    SLICE_X58Y59         LUT2 (Prop_lut2_I0_O)        0.124     2.889 r  u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_0_2_i_1/O
+                         net (fo=22, routed)          0.761     3.650    u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_9_11/WE
+    SLICE_X56Y55         RAMD64E                                      r  u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_9_11/RAMB/WE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.924     3.924    u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_9_11/WCLK
+    SLICE_X56Y55         RAMD64E                                      r  u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_9_11/RAMB/CLK
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    SLICE_X56Y55         RAMD64E (Setup_ramd64e_CLK_WE)
+                                                     -0.533     3.356    u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_9_11/RAMB
+  -------------------------------------------------------------------
+                         required time                          3.356    
+                         arrival time                          -3.650    
+  -------------------------------------------------------------------
+                         slack                                 -0.294    
+
+Slack (VIOLATED) :        -0.294ns  (required time - arrival time)
+  Source:                 u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_pf_ic_rc.ngen_full_rst_val.ram_full_i_reg/C
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_9_11/RAMC/WE
+                            (rising edge-triggered cell RAMD64E clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        2.677ns  (logic 0.766ns (28.618%)  route 1.911ns (71.382%))
+  Logic Levels:           2  (LUT2=1 LUT4=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.973     0.973    u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/wr_clk
+    SLICE_X60Y61         FDRE                                         r  u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_pf_ic_rc.ngen_full_rst_val.ram_full_i_reg/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X60Y61         FDRE (Prop_fdre_C_Q)         0.518     1.491 f  u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_pf_ic_rc.ngen_full_rst_val.ram_full_i_reg/Q
+                         net (fo=5, routed)           0.792     2.283    u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_pf_ic_rc.gpf_ic.prog_full_i_reg
+    SLICE_X61Y59         LUT4 (Prop_lut4_I1_O)        0.124     2.407 r  u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_sdpram.xpm_memory_base_inst_i_1/O
+                         net (fo=25, routed)          0.358     2.765    u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/ena
+    SLICE_X58Y59         LUT2 (Prop_lut2_I0_O)        0.124     2.889 r  u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_0_2_i_1/O
+                         net (fo=22, routed)          0.761     3.650    u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_9_11/WE
+    SLICE_X56Y55         RAMD64E                                      r  u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_9_11/RAMC/WE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.924     3.924    u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_9_11/WCLK
+    SLICE_X56Y55         RAMD64E                                      r  u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_9_11/RAMC/CLK
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    SLICE_X56Y55         RAMD64E (Setup_ramd64e_CLK_WE)
+                                                     -0.533     3.356    u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_9_11/RAMC
+  -------------------------------------------------------------------
+                         required time                          3.356    
+                         arrival time                          -3.650    
+  -------------------------------------------------------------------
+                         slack                                 -0.294    
+
+Slack (VIOLATED) :        -0.294ns  (required time - arrival time)
+  Source:                 u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_pf_ic_rc.ngen_full_rst_val.ram_full_i_reg/C
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_9_11/RAMD/WE
+                            (rising edge-triggered cell RAMD64E clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        2.677ns  (logic 0.766ns (28.618%)  route 1.911ns (71.382%))
+  Logic Levels:           2  (LUT2=1 LUT4=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.973     0.973    u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/wr_clk
+    SLICE_X60Y61         FDRE                                         r  u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_pf_ic_rc.ngen_full_rst_val.ram_full_i_reg/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X60Y61         FDRE (Prop_fdre_C_Q)         0.518     1.491 f  u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_pf_ic_rc.ngen_full_rst_val.ram_full_i_reg/Q
+                         net (fo=5, routed)           0.792     2.283    u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_pf_ic_rc.gpf_ic.prog_full_i_reg
+    SLICE_X61Y59         LUT4 (Prop_lut4_I1_O)        0.124     2.407 r  u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_sdpram.xpm_memory_base_inst_i_1/O
+                         net (fo=25, routed)          0.358     2.765    u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/ena
+    SLICE_X58Y59         LUT2 (Prop_lut2_I0_O)        0.124     2.889 r  u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_0_2_i_1/O
+                         net (fo=22, routed)          0.761     3.650    u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_9_11/WE
+    SLICE_X56Y55         RAMD64E                                      r  u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_9_11/RAMD/WE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.924     3.924    u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_9_11/WCLK
+    SLICE_X56Y55         RAMD64E                                      r  u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_9_11/RAMD/CLK
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    SLICE_X56Y55         RAMD64E (Setup_ramd64e_CLK_WE)
+                                                     -0.533     3.356    u_resfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_63_9_11/RAMD
+  -------------------------------------------------------------------
+                         required time                          3.356    
+                         arrival time                          -3.650    
+  -------------------------------------------------------------------
+                         slack                                 -0.294    
+
+Slack (VIOLATED) :        -0.293ns  (required time - arrival time)
+  Source:                 u_fast/can_take_reg_rep__6/C
+                            (rising edge-triggered cell FDSE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][11]/CE
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        3.004ns  (logic 0.704ns (23.434%)  route 2.300ns (76.566%))
+  Logic Levels:           2  (LUT3=1 LUT6=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.973     0.973    u_fast/clk_fast
+    SLICE_X45Y54         FDSE                                         r  u_fast/can_take_reg_rep__6/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X45Y54         FDSE (Prop_fdse_C_Q)         0.456     1.429 r  u_fast/can_take_reg_rep__6/Q
+                         net (fo=7, routed)           0.834     2.263    u_opfifo/slice[2].u_fifo/count_value_i_reg[1]
+    SLICE_X40Y55         LUT6 (Prop_lut6_I0_O)        0.124     2.387 r  u_opfifo/slice[2].u_fifo/u_xpm_i_1__0/O
+                         net (fo=45, routed)          0.606     2.993    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rd_en
+    SLICE_X43Y54         LUT3 (Prop_lut3_I2_O)        0.124     3.117 r  u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst_i_3/O
+                         net (fo=48, routed)          0.860     3.977    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/regceb
+    SLICE_X45Y49         FDRE                                         r  u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][11]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.924     3.924    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/clkb
+    SLICE_X45Y49         FDRE                                         r  u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][11]/C
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    SLICE_X45Y49         FDRE (Setup_fdre_C_CE)      -0.205     3.684    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][11]
+  -------------------------------------------------------------------
+                         required time                          3.684    
+                         arrival time                          -3.977    
+  -------------------------------------------------------------------
+                         slack                                 -0.293    
+
+Slack (VIOLATED) :        -0.293ns  (required time - arrival time)
+  Source:                 u_fast/can_take_reg_rep__6/C
+                            (rising edge-triggered cell FDSE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][13]/CE
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        3.004ns  (logic 0.704ns (23.434%)  route 2.300ns (76.566%))
+  Logic Levels:           2  (LUT3=1 LUT6=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.973     0.973    u_fast/clk_fast
+    SLICE_X45Y54         FDSE                                         r  u_fast/can_take_reg_rep__6/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X45Y54         FDSE (Prop_fdse_C_Q)         0.456     1.429 r  u_fast/can_take_reg_rep__6/Q
+                         net (fo=7, routed)           0.834     2.263    u_opfifo/slice[2].u_fifo/count_value_i_reg[1]
+    SLICE_X40Y55         LUT6 (Prop_lut6_I0_O)        0.124     2.387 r  u_opfifo/slice[2].u_fifo/u_xpm_i_1__0/O
+                         net (fo=45, routed)          0.606     2.993    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rd_en
+    SLICE_X43Y54         LUT3 (Prop_lut3_I2_O)        0.124     3.117 r  u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst_i_3/O
+                         net (fo=48, routed)          0.860     3.977    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/regceb
+    SLICE_X45Y49         FDRE                                         r  u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][13]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.924     3.924    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/clkb
+    SLICE_X45Y49         FDRE                                         r  u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][13]/C
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    SLICE_X45Y49         FDRE (Setup_fdre_C_CE)      -0.205     3.684    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][13]
+  -------------------------------------------------------------------
+                         required time                          3.684    
+                         arrival time                          -3.977    
+  -------------------------------------------------------------------
+                         slack                                 -0.293    
+
+Slack (VIOLATED) :        -0.293ns  (required time - arrival time)
+  Source:                 u_fast/can_take_reg_rep__6/C
+                            (rising edge-triggered cell FDSE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][24]/CE
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        3.004ns  (logic 0.704ns (23.434%)  route 2.300ns (76.566%))
+  Logic Levels:           2  (LUT3=1 LUT6=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.973     0.973    u_fast/clk_fast
+    SLICE_X45Y54         FDSE                                         r  u_fast/can_take_reg_rep__6/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X45Y54         FDSE (Prop_fdse_C_Q)         0.456     1.429 r  u_fast/can_take_reg_rep__6/Q
+                         net (fo=7, routed)           0.834     2.263    u_opfifo/slice[2].u_fifo/count_value_i_reg[1]
+    SLICE_X40Y55         LUT6 (Prop_lut6_I0_O)        0.124     2.387 r  u_opfifo/slice[2].u_fifo/u_xpm_i_1__0/O
+                         net (fo=45, routed)          0.606     2.993    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rd_en
+    SLICE_X43Y54         LUT3 (Prop_lut3_I2_O)        0.124     3.117 r  u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst_i_3/O
+                         net (fo=48, routed)          0.860     3.977    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/regceb
+    SLICE_X45Y49         FDRE                                         r  u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][24]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.924     3.924    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/clkb
+    SLICE_X45Y49         FDRE                                         r  u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][24]/C
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    SLICE_X45Y49         FDRE (Setup_fdre_C_CE)      -0.205     3.684    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][24]
+  -------------------------------------------------------------------
+                         required time                          3.684    
+                         arrival time                          -3.977    
+  -------------------------------------------------------------------
+                         slack                                 -0.293    
+
+Slack (VIOLATED) :        -0.293ns  (required time - arrival time)
+  Source:                 u_fast/can_take_reg_rep__6/C
+                            (rising edge-triggered cell FDSE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][28]/CE
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        3.004ns  (logic 0.704ns (23.434%)  route 2.300ns (76.566%))
+  Logic Levels:           2  (LUT3=1 LUT6=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.973     0.973    u_fast/clk_fast
+    SLICE_X45Y54         FDSE                                         r  u_fast/can_take_reg_rep__6/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X45Y54         FDSE (Prop_fdse_C_Q)         0.456     1.429 r  u_fast/can_take_reg_rep__6/Q
+                         net (fo=7, routed)           0.834     2.263    u_opfifo/slice[2].u_fifo/count_value_i_reg[1]
+    SLICE_X40Y55         LUT6 (Prop_lut6_I0_O)        0.124     2.387 r  u_opfifo/slice[2].u_fifo/u_xpm_i_1__0/O
+                         net (fo=45, routed)          0.606     2.993    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rd_en
+    SLICE_X43Y54         LUT3 (Prop_lut3_I2_O)        0.124     3.117 r  u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst_i_3/O
+                         net (fo=48, routed)          0.860     3.977    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/regceb
+    SLICE_X45Y49         FDRE                                         r  u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][28]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.924     3.924    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/clkb
+    SLICE_X45Y49         FDRE                                         r  u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][28]/C
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    SLICE_X45Y49         FDRE (Setup_fdre_C_CE)      -0.205     3.684    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][28]
+  -------------------------------------------------------------------
+                         required time                          3.684    
+                         arrival time                          -3.977    
+  -------------------------------------------------------------------
+                         slack                                 -0.293    
+
+Slack (VIOLATED) :        -0.293ns  (required time - arrival time)
+  Source:                 u_fast/can_take_reg_rep__6/C
+                            (rising edge-triggered cell FDSE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][38]/CE
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        3.004ns  (logic 0.704ns (23.434%)  route 2.300ns (76.566%))
+  Logic Levels:           2  (LUT3=1 LUT6=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.973     0.973    u_fast/clk_fast
+    SLICE_X45Y54         FDSE                                         r  u_fast/can_take_reg_rep__6/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X45Y54         FDSE (Prop_fdse_C_Q)         0.456     1.429 r  u_fast/can_take_reg_rep__6/Q
+                         net (fo=7, routed)           0.834     2.263    u_opfifo/slice[2].u_fifo/count_value_i_reg[1]
+    SLICE_X40Y55         LUT6 (Prop_lut6_I0_O)        0.124     2.387 r  u_opfifo/slice[2].u_fifo/u_xpm_i_1__0/O
+                         net (fo=45, routed)          0.606     2.993    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rd_en
+    SLICE_X43Y54         LUT3 (Prop_lut3_I2_O)        0.124     3.117 r  u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst_i_3/O
+                         net (fo=48, routed)          0.860     3.977    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/regceb
+    SLICE_X45Y49         FDRE                                         r  u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][38]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.924     3.924    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/clkb
+    SLICE_X45Y49         FDRE                                         r  u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][38]/C
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    SLICE_X45Y49         FDRE (Setup_fdre_C_CE)      -0.205     3.684    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][38]
+  -------------------------------------------------------------------
+                         required time                          3.684    
+                         arrival time                          -3.977    
+  -------------------------------------------------------------------
+                         slack                                 -0.293    
+
+Slack (VIOLATED) :        -0.293ns  (required time - arrival time)
+  Source:                 u_fast/can_take_reg_rep__6/C
+                            (rising edge-triggered cell FDSE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][44]/CE
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        3.004ns  (logic 0.704ns (23.434%)  route 2.300ns (76.566%))
+  Logic Levels:           2  (LUT3=1 LUT6=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.973     0.973    u_fast/clk_fast
+    SLICE_X45Y54         FDSE                                         r  u_fast/can_take_reg_rep__6/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X45Y54         FDSE (Prop_fdse_C_Q)         0.456     1.429 r  u_fast/can_take_reg_rep__6/Q
+                         net (fo=7, routed)           0.834     2.263    u_opfifo/slice[2].u_fifo/count_value_i_reg[1]
+    SLICE_X40Y55         LUT6 (Prop_lut6_I0_O)        0.124     2.387 r  u_opfifo/slice[2].u_fifo/u_xpm_i_1__0/O
+                         net (fo=45, routed)          0.606     2.993    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rd_en
+    SLICE_X43Y54         LUT3 (Prop_lut3_I2_O)        0.124     3.117 r  u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst_i_3/O
+                         net (fo=48, routed)          0.860     3.977    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/regceb
+    SLICE_X45Y49         FDRE                                         r  u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][44]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.924     3.924    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/clkb
+    SLICE_X45Y49         FDRE                                         r  u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][44]/C
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    SLICE_X45Y49         FDRE (Setup_fdre_C_CE)      -0.205     3.684    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][44]
+  -------------------------------------------------------------------
+                         required time                          3.684    
+                         arrival time                          -3.977    
+  -------------------------------------------------------------------
+                         slack                                 -0.293    
+
+Slack (VIOLATED) :        -0.285ns  (required time - arrival time)
+  Source:                 u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rdp_inst/count_value_i_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_rd_b_synth_template.gen_rf_narrow_pipe.doutb_reg_reg[42]/D
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        2.950ns  (logic 0.795ns (26.953%)  route 2.155ns (73.047%))
+  Logic Levels:           1  (RAMD32=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.973     0.973    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rdp_inst/rd_clk
+    SLICE_X34Y46         FDRE                                         r  u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rdp_inst/count_value_i_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X34Y46         FDRE (Prop_fdre_C_Q)         0.478     1.451 r  u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rdp_inst/count_value_i_reg[1]/Q
+                         net (fo=54, routed)          1.399     2.850    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_15_42_47/ADDRA1
+    SLICE_X42Y43         RAMD32 (Prop_ramd32_RADR1_O)
+                                                      0.317     3.167 r  u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_wr_a.gen_word_narrow.mem_reg_0_15_42_47/RAMA/O
+                         net (fo=1, routed)           0.755     3.923    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_rd_b_synth_template.gen_rf_narrow_pipe.doutb_reg_reg0[42]
+    SLICE_X44Y50         FDRE                                         r  u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_rd_b_synth_template.gen_rf_narrow_pipe.doutb_reg_reg[42]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.924     3.924    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/clkb
+    SLICE_X44Y50         FDRE                                         r  u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_rd_b_synth_template.gen_rf_narrow_pipe.doutb_reg_reg[42]/C
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    SLICE_X44Y50         FDRE (Setup_fdre_C_D)       -0.251     3.638    u_opfifo/slice[4].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_rd_b_synth_template.gen_rf_narrow_pipe.doutb_reg_reg[42]
+  -------------------------------------------------------------------
+                         required time                          3.638    
+                         arrival time                          -3.923    
+  -------------------------------------------------------------------
+                         slack                                 -0.285    
+
+Slack (VIOLATED) :        -0.256ns  (required time - arrival time)
+  Source:                 u_fast/can_take_reg_rep__6/C
+                            (rising edge-triggered cell FDSE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][10]/CE
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        2.967ns  (logic 0.704ns (23.725%)  route 2.263ns (76.275%))
+  Logic Levels:           2  (LUT3=1 LUT6=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.973     0.973    u_fast/clk_fast
+    SLICE_X45Y54         FDSE                                         r  u_fast/can_take_reg_rep__6/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X45Y54         FDSE (Prop_fdse_C_Q)         0.456     1.429 r  u_fast/can_take_reg_rep__6/Q
+                         net (fo=7, routed)           0.834     2.263    u_opfifo/slice[2].u_fifo/count_value_i_reg[1]
+    SLICE_X40Y55         LUT6 (Prop_lut6_I0_O)        0.124     2.387 r  u_opfifo/slice[2].u_fifo/u_xpm_i_1__0/O
+                         net (fo=45, routed)          0.766     3.153    u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rd_en
+    SLICE_X41Y55         LUT3 (Prop_lut3_I2_O)        0.124     3.277 r  u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst_i_3/O
+                         net (fo=46, routed)          0.663     3.940    u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/regceb
+    SLICE_X44Y55         FDRE                                         r  u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][10]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.924     3.924    u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/clkb
+    SLICE_X44Y55         FDRE                                         r  u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][10]/C
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    SLICE_X44Y55         FDRE (Setup_fdre_C_CE)      -0.205     3.684    u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][10]
+  -------------------------------------------------------------------
+                         required time                          3.684    
+                         arrival time                          -3.940    
+  -------------------------------------------------------------------
+                         slack                                 -0.256    
+
+Slack (VIOLATED) :        -0.256ns  (required time - arrival time)
+  Source:                 u_fast/can_take_reg_rep__6/C
+                            (rising edge-triggered cell FDSE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][15]/CE
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        2.967ns  (logic 0.704ns (23.725%)  route 2.263ns (76.275%))
+  Logic Levels:           2  (LUT3=1 LUT6=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.973     0.973    u_fast/clk_fast
+    SLICE_X45Y54         FDSE                                         r  u_fast/can_take_reg_rep__6/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X45Y54         FDSE (Prop_fdse_C_Q)         0.456     1.429 r  u_fast/can_take_reg_rep__6/Q
+                         net (fo=7, routed)           0.834     2.263    u_opfifo/slice[2].u_fifo/count_value_i_reg[1]
+    SLICE_X40Y55         LUT6 (Prop_lut6_I0_O)        0.124     2.387 r  u_opfifo/slice[2].u_fifo/u_xpm_i_1__0/O
+                         net (fo=45, routed)          0.766     3.153    u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rd_en
+    SLICE_X41Y55         LUT3 (Prop_lut3_I2_O)        0.124     3.277 r  u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst_i_3/O
+                         net (fo=46, routed)          0.663     3.940    u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/regceb
+    SLICE_X44Y55         FDRE                                         r  u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][15]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.924     3.924    u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/clkb
+    SLICE_X44Y55         FDRE                                         r  u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][15]/C
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    SLICE_X44Y55         FDRE (Setup_fdre_C_CE)      -0.205     3.684    u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][15]
+  -------------------------------------------------------------------
+                         required time                          3.684    
+                         arrival time                          -3.940    
+  -------------------------------------------------------------------
+                         slack                                 -0.256    
+
+Slack (VIOLATED) :        -0.256ns  (required time - arrival time)
+  Source:                 u_fast/can_take_reg_rep__6/C
+                            (rising edge-triggered cell FDSE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][16]/CE
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        2.967ns  (logic 0.704ns (23.725%)  route 2.263ns (76.275%))
+  Logic Levels:           2  (LUT3=1 LUT6=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.973     0.973    u_fast/clk_fast
+    SLICE_X45Y54         FDSE                                         r  u_fast/can_take_reg_rep__6/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X45Y54         FDSE (Prop_fdse_C_Q)         0.456     1.429 r  u_fast/can_take_reg_rep__6/Q
+                         net (fo=7, routed)           0.834     2.263    u_opfifo/slice[2].u_fifo/count_value_i_reg[1]
+    SLICE_X40Y55         LUT6 (Prop_lut6_I0_O)        0.124     2.387 r  u_opfifo/slice[2].u_fifo/u_xpm_i_1__0/O
+                         net (fo=45, routed)          0.766     3.153    u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rd_en
+    SLICE_X41Y55         LUT3 (Prop_lut3_I2_O)        0.124     3.277 r  u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst_i_3/O
+                         net (fo=46, routed)          0.663     3.940    u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/regceb
+    SLICE_X44Y55         FDRE                                         r  u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][16]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.924     3.924    u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/clkb
+    SLICE_X44Y55         FDRE                                         r  u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][16]/C
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    SLICE_X44Y55         FDRE (Setup_fdre_C_CE)      -0.205     3.684    u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][16]
+  -------------------------------------------------------------------
+                         required time                          3.684    
+                         arrival time                          -3.940    
+  -------------------------------------------------------------------
+                         slack                                 -0.256    
+
+Slack (VIOLATED) :        -0.256ns  (required time - arrival time)
+  Source:                 u_fast/can_take_reg_rep__6/C
+                            (rising edge-triggered cell FDSE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][23]/CE
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        2.967ns  (logic 0.704ns (23.725%)  route 2.263ns (76.275%))
+  Logic Levels:           2  (LUT3=1 LUT6=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.973     0.973    u_fast/clk_fast
+    SLICE_X45Y54         FDSE                                         r  u_fast/can_take_reg_rep__6/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X45Y54         FDSE (Prop_fdse_C_Q)         0.456     1.429 r  u_fast/can_take_reg_rep__6/Q
+                         net (fo=7, routed)           0.834     2.263    u_opfifo/slice[2].u_fifo/count_value_i_reg[1]
+    SLICE_X40Y55         LUT6 (Prop_lut6_I0_O)        0.124     2.387 r  u_opfifo/slice[2].u_fifo/u_xpm_i_1__0/O
+                         net (fo=45, routed)          0.766     3.153    u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rd_en
+    SLICE_X41Y55         LUT3 (Prop_lut3_I2_O)        0.124     3.277 r  u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst_i_3/O
+                         net (fo=46, routed)          0.663     3.940    u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/regceb
+    SLICE_X44Y55         FDRE                                         r  u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][23]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.924     3.924    u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/clkb
+    SLICE_X44Y55         FDRE                                         r  u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][23]/C
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    SLICE_X44Y55         FDRE (Setup_fdre_C_CE)      -0.205     3.684    u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][23]
+  -------------------------------------------------------------------
+                         required time                          3.684    
+                         arrival time                          -3.940    
+  -------------------------------------------------------------------
+                         slack                                 -0.256    
+
+Slack (VIOLATED) :        -0.256ns  (required time - arrival time)
+  Source:                 u_fast/can_take_reg_rep__6/C
+                            (rising edge-triggered cell FDSE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][35]/CE
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        2.967ns  (logic 0.704ns (23.725%)  route 2.263ns (76.275%))
+  Logic Levels:           2  (LUT3=1 LUT6=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.973     0.973    u_fast/clk_fast
+    SLICE_X45Y54         FDSE                                         r  u_fast/can_take_reg_rep__6/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X45Y54         FDSE (Prop_fdse_C_Q)         0.456     1.429 r  u_fast/can_take_reg_rep__6/Q
+                         net (fo=7, routed)           0.834     2.263    u_opfifo/slice[2].u_fifo/count_value_i_reg[1]
+    SLICE_X40Y55         LUT6 (Prop_lut6_I0_O)        0.124     2.387 r  u_opfifo/slice[2].u_fifo/u_xpm_i_1__0/O
+                         net (fo=45, routed)          0.766     3.153    u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rd_en
+    SLICE_X41Y55         LUT3 (Prop_lut3_I2_O)        0.124     3.277 r  u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst_i_3/O
+                         net (fo=46, routed)          0.663     3.940    u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/regceb
+    SLICE_X44Y55         FDRE                                         r  u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][35]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=1925, unset)         0.924     3.924    u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/clkb
+    SLICE_X44Y55         FDRE                                         r  u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][35]/C
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    SLICE_X44Y55         FDRE (Setup_fdre_C_CE)      -0.205     3.684    u_opfifo/slice[0].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][35]
+  -------------------------------------------------------------------
+                         required time                          3.684    
+                         arrival time                          -3.940    
+  -------------------------------------------------------------------
+                         slack                                 -0.256    
+
+
+
+

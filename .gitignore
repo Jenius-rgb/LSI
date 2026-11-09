@@ -27,3 +27,6 @@ usage_statistics_webtalk.*
 
 # Claude Code local skills are per-machine tooling, not project sources
 .claude/
+
+# Intermediate timing-closure rounds (kept locally; the final matrix is committed)
+fpga/reports/*_v[0-9]/

@@ -1,0 +1,13 @@
+part xc7s50ftgb196-1
+K 8
+LANE_IMPL 1
+C3_EN 0
+T_SAFE_NS 7.0
+T_FAST_NS 3.0
+NONMAC_FACTOR 1.0
+WNS_clk_safe 0.177
+WNS_clk_fast -0.373
+WNS_MAC -0.074
+WNS_NONMAC -0.373
+WORST_MAC_ENDPOINT u_fast/u_lanes/data_lane[5].impl.u/acc_reg/A[3]
+WORST_NONMAC_ENDPOINT u_fast/u_lanes/inj_ctrl.unit_match_reg[0]/D

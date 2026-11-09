@@ -1,0 +1,997 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2025.2 (win64) Build 6299465 Fri Nov 14 19:35:11 GMT 2025
+| Date         : Tue Nov 10 05:31:42 2026
+| Host         : LAPTOP-ER7J7A89 running 64-bit major release  (build 9200)
+| Command      : report_timing -max_paths 20 -nworst 1 -group clk_fast -file {C:\AF\SENTINEL-LSI-2027\fpga\reports\xc7s25csga225-1_s_k16_impl1_c1_final/timing_fast.rpt}
+| Design       : engine
+| Device       : 7s25-csga225
+| Speed File   : -1  PRODUCTION 1.23 2018-06-13
+| Design State : Routed
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack (VIOLATED) :        -4.182ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/data_lane[3].impl.u/p/CLK
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_fast/u_lanes/data_lane[3].impl.u/acc_reg/B[16]
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        5.160ns  (logic 4.009ns (77.688%)  route 1.151ns (22.312%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.973     0.973    u_fast/u_lanes/data_lane[3].impl.u/clk_fast
+    DSP48_X1Y20          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/p/CLK
+  -------------------------------------------------------------------    -------------------
+    DSP48_X1Y20          DSP48E1 (Prop_dsp48e1_CLK_P[16])
+                                                      4.009     4.982 r  u_fast/u_lanes/data_lane[3].impl.u/p/P[16]
+                         net (fo=16, routed)          1.151     6.133    u_fast/u_lanes/data_lane[3].impl.u/p_n_89
+    DSP48_X1Y24          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/acc_reg/B[16]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.924     3.924    u_fast/u_lanes/data_lane[3].impl.u/clk_fast
+    DSP48_X1Y24          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/acc_reg/CLK
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    DSP48_X1Y24          DSP48E1 (Setup_dsp48e1_CLK_B[16])
+                                                     -1.938     1.951    u_fast/u_lanes/data_lane[3].impl.u/acc_reg
+  -------------------------------------------------------------------
+                         required time                          1.951    
+                         arrival time                          -6.133    
+  -------------------------------------------------------------------
+                         slack                                 -4.182    
+
+Slack (VIOLATED) :        -4.182ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/data_lane[3].impl.u/p/CLK
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_fast/u_lanes/data_lane[3].impl.u/acc_reg/B[17]
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        5.160ns  (logic 4.009ns (77.688%)  route 1.151ns (22.312%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.973     0.973    u_fast/u_lanes/data_lane[3].impl.u/clk_fast
+    DSP48_X1Y20          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/p/CLK
+  -------------------------------------------------------------------    -------------------
+    DSP48_X1Y20          DSP48E1 (Prop_dsp48e1_CLK_P[16])
+                                                      4.009     4.982 r  u_fast/u_lanes/data_lane[3].impl.u/p/P[16]
+                         net (fo=16, routed)          1.151     6.133    u_fast/u_lanes/data_lane[3].impl.u/p_n_89
+    DSP48_X1Y24          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/acc_reg/B[17]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.924     3.924    u_fast/u_lanes/data_lane[3].impl.u/clk_fast
+    DSP48_X1Y24          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/acc_reg/CLK
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    DSP48_X1Y24          DSP48E1 (Setup_dsp48e1_CLK_B[17])
+                                                     -1.938     1.951    u_fast/u_lanes/data_lane[3].impl.u/acc_reg
+  -------------------------------------------------------------------
+                         required time                          1.951    
+                         arrival time                          -6.133    
+  -------------------------------------------------------------------
+                         slack                                 -4.182    
+
+Slack (VIOLATED) :        -4.171ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/data_lane[3].impl.u/p/CLK
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_fast/u_lanes/data_lane[3].impl.u/acc_reg/A[1]
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        5.129ns  (logic 4.009ns (78.164%)  route 1.120ns (21.836%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.973     0.973    u_fast/u_lanes/data_lane[3].impl.u/clk_fast
+    DSP48_X1Y20          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/p/CLK
+  -------------------------------------------------------------------    -------------------
+    DSP48_X1Y20          DSP48E1 (Prop_dsp48e1_CLK_P[16])
+                                                      4.009     4.982 r  u_fast/u_lanes/data_lane[3].impl.u/p/P[16]
+                         net (fo=16, routed)          1.120     6.102    u_fast/u_lanes/data_lane[3].impl.u/p_n_89
+    DSP48_X1Y24          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/acc_reg/A[1]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.924     3.924    u_fast/u_lanes/data_lane[3].impl.u/clk_fast
+    DSP48_X1Y24          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/acc_reg/CLK
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    DSP48_X1Y24          DSP48E1 (Setup_dsp48e1_CLK_A[1])
+                                                     -1.958     1.931    u_fast/u_lanes/data_lane[3].impl.u/acc_reg
+  -------------------------------------------------------------------
+                         required time                          1.931    
+                         arrival time                          -6.102    
+  -------------------------------------------------------------------
+                         slack                                 -4.171    
+
+Slack (VIOLATED) :        -4.138ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/data_lane[3].impl.u/p/CLK
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_fast/u_lanes/data_lane[3].impl.u/acc_reg/B[15]
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        5.116ns  (logic 4.009ns (78.364%)  route 1.107ns (21.636%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.973     0.973    u_fast/u_lanes/data_lane[3].impl.u/clk_fast
+    DSP48_X1Y20          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/p/CLK
+  -------------------------------------------------------------------    -------------------
+    DSP48_X1Y20          DSP48E1 (Prop_dsp48e1_CLK_P[15])
+                                                      4.009     4.982 r  u_fast/u_lanes/data_lane[3].impl.u/p/P[15]
+                         net (fo=1, routed)           1.107     6.089    u_fast/u_lanes/data_lane[3].impl.u/p_n_90
+    DSP48_X1Y24          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/acc_reg/B[15]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.924     3.924    u_fast/u_lanes/data_lane[3].impl.u/clk_fast
+    DSP48_X1Y24          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/acc_reg/CLK
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    DSP48_X1Y24          DSP48E1 (Setup_dsp48e1_CLK_B[15])
+                                                     -1.938     1.951    u_fast/u_lanes/data_lane[3].impl.u/acc_reg
+  -------------------------------------------------------------------
+                         required time                          1.951    
+                         arrival time                          -6.089    
+  -------------------------------------------------------------------
+                         slack                                 -4.138    
+
+Slack (VIOLATED) :        -4.100ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/data_lane[3].impl.u/p/CLK
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_fast/u_lanes/data_lane[3].impl.u/acc_reg/A[7]
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        5.058ns  (logic 4.009ns (79.258%)  route 1.049ns (20.742%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.973     0.973    u_fast/u_lanes/data_lane[3].impl.u/clk_fast
+    DSP48_X1Y20          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/p/CLK
+  -------------------------------------------------------------------    -------------------
+    DSP48_X1Y20          DSP48E1 (Prop_dsp48e1_CLK_P[16])
+                                                      4.009     4.982 r  u_fast/u_lanes/data_lane[3].impl.u/p/P[16]
+                         net (fo=16, routed)          1.049     6.031    u_fast/u_lanes/data_lane[3].impl.u/p_n_89
+    DSP48_X1Y24          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/acc_reg/A[7]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.924     3.924    u_fast/u_lanes/data_lane[3].impl.u/clk_fast
+    DSP48_X1Y24          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/acc_reg/CLK
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    DSP48_X1Y24          DSP48E1 (Setup_dsp48e1_CLK_A[7])
+                                                     -1.958     1.931    u_fast/u_lanes/data_lane[3].impl.u/acc_reg
+  -------------------------------------------------------------------
+                         required time                          1.931    
+                         arrival time                          -6.031    
+  -------------------------------------------------------------------
+                         slack                                 -4.100    
+
+Slack (VIOLATED) :        -4.094ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/data_lane[3].impl.u/p/CLK
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_fast/u_lanes/data_lane[3].impl.u/acc_reg/B[12]
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        5.072ns  (logic 4.009ns (79.035%)  route 1.063ns (20.965%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.973     0.973    u_fast/u_lanes/data_lane[3].impl.u/clk_fast
+    DSP48_X1Y20          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/p/CLK
+  -------------------------------------------------------------------    -------------------
+    DSP48_X1Y20          DSP48E1 (Prop_dsp48e1_CLK_P[12])
+                                                      4.009     4.982 r  u_fast/u_lanes/data_lane[3].impl.u/p/P[12]
+                         net (fo=1, routed)           1.063     6.045    u_fast/u_lanes/data_lane[3].impl.u/p_n_93
+    DSP48_X1Y24          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/acc_reg/B[12]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.924     3.924    u_fast/u_lanes/data_lane[3].impl.u/clk_fast
+    DSP48_X1Y24          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/acc_reg/CLK
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    DSP48_X1Y24          DSP48E1 (Setup_dsp48e1_CLK_B[12])
+                                                     -1.938     1.951    u_fast/u_lanes/data_lane[3].impl.u/acc_reg
+  -------------------------------------------------------------------
+                         required time                          1.951    
+                         arrival time                          -6.045    
+  -------------------------------------------------------------------
+                         slack                                 -4.094    
+
+Slack (VIOLATED) :        -4.090ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/data_lane[3].impl.u/p/CLK
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_fast/u_lanes/data_lane[3].impl.u/acc_reg/A[6]
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        5.048ns  (logic 4.009ns (79.413%)  route 1.039ns (20.587%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.973     0.973    u_fast/u_lanes/data_lane[3].impl.u/clk_fast
+    DSP48_X1Y20          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/p/CLK
+  -------------------------------------------------------------------    -------------------
+    DSP48_X1Y20          DSP48E1 (Prop_dsp48e1_CLK_P[16])
+                                                      4.009     4.982 r  u_fast/u_lanes/data_lane[3].impl.u/p/P[16]
+                         net (fo=16, routed)          1.039     6.021    u_fast/u_lanes/data_lane[3].impl.u/p_n_89
+    DSP48_X1Y24          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/acc_reg/A[6]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.924     3.924    u_fast/u_lanes/data_lane[3].impl.u/clk_fast
+    DSP48_X1Y24          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/acc_reg/CLK
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    DSP48_X1Y24          DSP48E1 (Setup_dsp48e1_CLK_A[6])
+                                                     -1.958     1.931    u_fast/u_lanes/data_lane[3].impl.u/acc_reg
+  -------------------------------------------------------------------
+                         required time                          1.931    
+                         arrival time                          -6.021    
+  -------------------------------------------------------------------
+                         slack                                 -4.090    
+
+Slack (VIOLATED) :        -4.088ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/data_lane[3].impl.u/p/CLK
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_fast/u_lanes/data_lane[3].impl.u/acc_reg/B[14]
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        5.066ns  (logic 4.009ns (79.132%)  route 1.057ns (20.868%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.973     0.973    u_fast/u_lanes/data_lane[3].impl.u/clk_fast
+    DSP48_X1Y20          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/p/CLK
+  -------------------------------------------------------------------    -------------------
+    DSP48_X1Y20          DSP48E1 (Prop_dsp48e1_CLK_P[14])
+                                                      4.009     4.982 r  u_fast/u_lanes/data_lane[3].impl.u/p/P[14]
+                         net (fo=1, routed)           1.057     6.039    u_fast/u_lanes/data_lane[3].impl.u/p_n_91
+    DSP48_X1Y24          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/acc_reg/B[14]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.924     3.924    u_fast/u_lanes/data_lane[3].impl.u/clk_fast
+    DSP48_X1Y24          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/acc_reg/CLK
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    DSP48_X1Y24          DSP48E1 (Setup_dsp48e1_CLK_B[14])
+                                                     -1.938     1.951    u_fast/u_lanes/data_lane[3].impl.u/acc_reg
+  -------------------------------------------------------------------
+                         required time                          1.951    
+                         arrival time                          -6.039    
+  -------------------------------------------------------------------
+                         slack                                 -4.088    
+
+Slack (VIOLATED) :        -4.073ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/data_lane[7].impl.u/p/CLK
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_fast/u_lanes/data_lane[7].impl.u/acc_reg/A[2]
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        5.031ns  (logic 4.009ns (79.690%)  route 1.022ns (20.310%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.973     0.973    u_fast/u_lanes/data_lane[7].impl.u/clk_fast
+    DSP48_X1Y34          DSP48E1                                      r  u_fast/u_lanes/data_lane[7].impl.u/p/CLK
+  -------------------------------------------------------------------    -------------------
+    DSP48_X1Y34          DSP48E1 (Prop_dsp48e1_CLK_P[16])
+                                                      4.009     4.982 r  u_fast/u_lanes/data_lane[7].impl.u/p/P[16]
+                         net (fo=16, routed)          1.022     6.004    u_fast/u_lanes/data_lane[7].impl.u/p_n_89
+    DSP48_X1Y36          DSP48E1                                      r  u_fast/u_lanes/data_lane[7].impl.u/acc_reg/A[2]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.924     3.924    u_fast/u_lanes/data_lane[7].impl.u/clk_fast
+    DSP48_X1Y36          DSP48E1                                      r  u_fast/u_lanes/data_lane[7].impl.u/acc_reg/CLK
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    DSP48_X1Y36          DSP48E1 (Setup_dsp48e1_CLK_A[2])
+                                                     -1.958     1.931    u_fast/u_lanes/data_lane[7].impl.u/acc_reg
+  -------------------------------------------------------------------
+                         required time                          1.931    
+                         arrival time                          -6.004    
+  -------------------------------------------------------------------
+                         slack                                 -4.073    
+
+Slack (VIOLATED) :        -4.064ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/data_lane[7].impl.u/p/CLK
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_fast/u_lanes/data_lane[7].impl.u/acc_reg/A[10]
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        5.022ns  (logic 4.009ns (79.833%)  route 1.013ns (20.167%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.973     0.973    u_fast/u_lanes/data_lane[7].impl.u/clk_fast
+    DSP48_X1Y34          DSP48E1                                      r  u_fast/u_lanes/data_lane[7].impl.u/p/CLK
+  -------------------------------------------------------------------    -------------------
+    DSP48_X1Y34          DSP48E1 (Prop_dsp48e1_CLK_P[16])
+                                                      4.009     4.982 r  u_fast/u_lanes/data_lane[7].impl.u/p/P[16]
+                         net (fo=16, routed)          1.013     5.995    u_fast/u_lanes/data_lane[7].impl.u/p_n_89
+    DSP48_X1Y36          DSP48E1                                      r  u_fast/u_lanes/data_lane[7].impl.u/acc_reg/A[10]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.924     3.924    u_fast/u_lanes/data_lane[7].impl.u/clk_fast
+    DSP48_X1Y36          DSP48E1                                      r  u_fast/u_lanes/data_lane[7].impl.u/acc_reg/CLK
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    DSP48_X1Y36          DSP48E1 (Setup_dsp48e1_CLK_A[10])
+                                                     -1.958     1.931    u_fast/u_lanes/data_lane[7].impl.u/acc_reg
+  -------------------------------------------------------------------
+                         required time                          1.931    
+                         arrival time                          -5.995    
+  -------------------------------------------------------------------
+                         slack                                 -4.064    
+
+Slack (VIOLATED) :        -4.058ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/data_lane[14].impl.u/p/CLK
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_fast/u_lanes/data_lane[14].impl.u/acc_reg/A[9]
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        5.016ns  (logic 4.009ns (79.918%)  route 1.007ns (20.082%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.973     0.973    u_fast/u_lanes/data_lane[14].impl.u/clk_fast
+    DSP48_X0Y20          DSP48E1                                      r  u_fast/u_lanes/data_lane[14].impl.u/p/CLK
+  -------------------------------------------------------------------    -------------------
+    DSP48_X0Y20          DSP48E1 (Prop_dsp48e1_CLK_P[16])
+                                                      4.009     4.982 r  u_fast/u_lanes/data_lane[14].impl.u/p/P[16]
+                         net (fo=16, routed)          1.007     5.989    u_fast/u_lanes/data_lane[14].impl.u/p_n_89
+    DSP48_X0Y22          DSP48E1                                      r  u_fast/u_lanes/data_lane[14].impl.u/acc_reg/A[9]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.924     3.924    u_fast/u_lanes/data_lane[14].impl.u/clk_fast
+    DSP48_X0Y22          DSP48E1                                      r  u_fast/u_lanes/data_lane[14].impl.u/acc_reg/CLK
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    DSP48_X0Y22          DSP48E1 (Setup_dsp48e1_CLK_A[9])
+                                                     -1.958     1.931    u_fast/u_lanes/data_lane[14].impl.u/acc_reg
+  -------------------------------------------------------------------
+                         required time                          1.931    
+                         arrival time                          -5.989    
+  -------------------------------------------------------------------
+                         slack                                 -4.058    
+
+Slack (VIOLATED) :        -4.056ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/data_lane[2].impl.u/p/CLK
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_fast/u_lanes/data_lane[2].impl.u/acc_reg/A[11]
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        5.014ns  (logic 4.009ns (79.949%)  route 1.005ns (20.051%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.973     0.973    u_fast/u_lanes/data_lane[2].impl.u/clk_fast
+    DSP48_X0Y25          DSP48E1                                      r  u_fast/u_lanes/data_lane[2].impl.u/p/CLK
+  -------------------------------------------------------------------    -------------------
+    DSP48_X0Y25          DSP48E1 (Prop_dsp48e1_CLK_P[16])
+                                                      4.009     4.982 r  u_fast/u_lanes/data_lane[2].impl.u/p/P[16]
+                         net (fo=16, routed)          1.005     5.987    u_fast/u_lanes/data_lane[2].impl.u/p_n_89
+    DSP48_X0Y26          DSP48E1                                      r  u_fast/u_lanes/data_lane[2].impl.u/acc_reg/A[11]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.924     3.924    u_fast/u_lanes/data_lane[2].impl.u/clk_fast
+    DSP48_X0Y26          DSP48E1                                      r  u_fast/u_lanes/data_lane[2].impl.u/acc_reg/CLK
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    DSP48_X0Y26          DSP48E1 (Setup_dsp48e1_CLK_A[11])
+                                                     -1.958     1.931    u_fast/u_lanes/data_lane[2].impl.u/acc_reg
+  -------------------------------------------------------------------
+                         required time                          1.931    
+                         arrival time                          -5.987    
+  -------------------------------------------------------------------
+                         slack                                 -4.056    
+
+Slack (VIOLATED) :        -4.053ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/data_lane[3].impl.u/p/CLK
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_fast/u_lanes/data_lane[3].impl.u/acc_reg/A[12]
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        5.011ns  (logic 4.009ns (79.999%)  route 1.002ns (20.001%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.973     0.973    u_fast/u_lanes/data_lane[3].impl.u/clk_fast
+    DSP48_X1Y20          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/p/CLK
+  -------------------------------------------------------------------    -------------------
+    DSP48_X1Y20          DSP48E1 (Prop_dsp48e1_CLK_P[16])
+                                                      4.009     4.982 r  u_fast/u_lanes/data_lane[3].impl.u/p/P[16]
+                         net (fo=16, routed)          1.002     5.984    u_fast/u_lanes/data_lane[3].impl.u/p_n_89
+    DSP48_X1Y24          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/acc_reg/A[12]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.924     3.924    u_fast/u_lanes/data_lane[3].impl.u/clk_fast
+    DSP48_X1Y24          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/acc_reg/CLK
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    DSP48_X1Y24          DSP48E1 (Setup_dsp48e1_CLK_A[12])
+                                                     -1.958     1.931    u_fast/u_lanes/data_lane[3].impl.u/acc_reg
+  -------------------------------------------------------------------
+                         required time                          1.931    
+                         arrival time                          -5.984    
+  -------------------------------------------------------------------
+                         slack                                 -4.053    
+
+Slack (VIOLATED) :        -4.053ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/data_lane[3].impl.u/p/CLK
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_fast/u_lanes/data_lane[3].impl.u/acc_reg/A[13]
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        5.011ns  (logic 4.009ns (79.999%)  route 1.002ns (20.001%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.973     0.973    u_fast/u_lanes/data_lane[3].impl.u/clk_fast
+    DSP48_X1Y20          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/p/CLK
+  -------------------------------------------------------------------    -------------------
+    DSP48_X1Y20          DSP48E1 (Prop_dsp48e1_CLK_P[16])
+                                                      4.009     4.982 r  u_fast/u_lanes/data_lane[3].impl.u/p/P[16]
+                         net (fo=16, routed)          1.002     5.984    u_fast/u_lanes/data_lane[3].impl.u/p_n_89
+    DSP48_X1Y24          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/acc_reg/A[13]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.924     3.924    u_fast/u_lanes/data_lane[3].impl.u/clk_fast
+    DSP48_X1Y24          DSP48E1                                      r  u_fast/u_lanes/data_lane[3].impl.u/acc_reg/CLK
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    DSP48_X1Y24          DSP48E1 (Setup_dsp48e1_CLK_A[13])
+                                                     -1.958     1.931    u_fast/u_lanes/data_lane[3].impl.u/acc_reg
+  -------------------------------------------------------------------
+                         required time                          1.931    
+                         arrival time                          -5.984    
+  -------------------------------------------------------------------
+                         slack                                 -4.053    
+
+Slack (VIOLATED) :        -4.052ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/data_lane[2].impl.u/p/CLK
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_fast/u_lanes/data_lane[2].impl.u/acc_reg/B[10]
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        5.030ns  (logic 4.009ns (79.698%)  route 1.021ns (20.302%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.973     0.973    u_fast/u_lanes/data_lane[2].impl.u/clk_fast
+    DSP48_X0Y25          DSP48E1                                      r  u_fast/u_lanes/data_lane[2].impl.u/p/CLK
+  -------------------------------------------------------------------    -------------------
+    DSP48_X0Y25          DSP48E1 (Prop_dsp48e1_CLK_P[10])
+                                                      4.009     4.982 r  u_fast/u_lanes/data_lane[2].impl.u/p/P[10]
+                         net (fo=1, routed)           1.021     6.003    u_fast/u_lanes/data_lane[2].impl.u/p_n_95
+    DSP48_X0Y26          DSP48E1                                      r  u_fast/u_lanes/data_lane[2].impl.u/acc_reg/B[10]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.924     3.924    u_fast/u_lanes/data_lane[2].impl.u/clk_fast
+    DSP48_X0Y26          DSP48E1                                      r  u_fast/u_lanes/data_lane[2].impl.u/acc_reg/CLK
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    DSP48_X0Y26          DSP48E1 (Setup_dsp48e1_CLK_B[10])
+                                                     -1.938     1.951    u_fast/u_lanes/data_lane[2].impl.u/acc_reg
+  -------------------------------------------------------------------
+                         required time                          1.951    
+                         arrival time                          -6.003    
+  -------------------------------------------------------------------
+                         slack                                 -4.052    
+
+Slack (VIOLATED) :        -4.052ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/data_lane[4].impl.u/p/CLK
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_fast/u_lanes/data_lane[4].impl.u/acc_reg/B[4]
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        5.030ns  (logic 4.009ns (79.698%)  route 1.021ns (20.302%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.973     0.973    u_fast/u_lanes/data_lane[4].impl.u/clk_fast
+    DSP48_X0Y21          DSP48E1                                      r  u_fast/u_lanes/data_lane[4].impl.u/p/CLK
+  -------------------------------------------------------------------    -------------------
+    DSP48_X0Y21          DSP48E1 (Prop_dsp48e1_CLK_P[4])
+                                                      4.009     4.982 r  u_fast/u_lanes/data_lane[4].impl.u/p/P[4]
+                         net (fo=1, routed)           1.021     6.003    u_fast/u_lanes/data_lane[4].impl.u/p_n_101
+    DSP48_X0Y23          DSP48E1                                      r  u_fast/u_lanes/data_lane[4].impl.u/acc_reg/B[4]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.924     3.924    u_fast/u_lanes/data_lane[4].impl.u/clk_fast
+    DSP48_X0Y23          DSP48E1                                      r  u_fast/u_lanes/data_lane[4].impl.u/acc_reg/CLK
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    DSP48_X0Y23          DSP48E1 (Setup_dsp48e1_CLK_B[4])
+                                                     -1.938     1.951    u_fast/u_lanes/data_lane[4].impl.u/acc_reg
+  -------------------------------------------------------------------
+                         required time                          1.951    
+                         arrival time                          -6.003    
+  -------------------------------------------------------------------
+                         slack                                 -4.052    
+
+Slack (VIOLATED) :        -4.052ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/data_lane[10].impl.u/p/CLK
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_fast/u_lanes/data_lane[10].impl.u/acc_reg/B[4]
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        5.030ns  (logic 4.009ns (79.698%)  route 1.021ns (20.302%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.973     0.973    u_fast/u_lanes/data_lane[10].impl.u/clk_fast
+    DSP48_X1Y30          DSP48E1                                      r  u_fast/u_lanes/data_lane[10].impl.u/p/CLK
+  -------------------------------------------------------------------    -------------------
+    DSP48_X1Y30          DSP48E1 (Prop_dsp48e1_CLK_P[4])
+                                                      4.009     4.982 r  u_fast/u_lanes/data_lane[10].impl.u/p/P[4]
+                         net (fo=1, routed)           1.021     6.003    u_fast/u_lanes/data_lane[10].impl.u/p_n_101
+    DSP48_X1Y32          DSP48E1                                      r  u_fast/u_lanes/data_lane[10].impl.u/acc_reg/B[4]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.924     3.924    u_fast/u_lanes/data_lane[10].impl.u/clk_fast
+    DSP48_X1Y32          DSP48E1                                      r  u_fast/u_lanes/data_lane[10].impl.u/acc_reg/CLK
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    DSP48_X1Y32          DSP48E1 (Setup_dsp48e1_CLK_B[4])
+                                                     -1.938     1.951    u_fast/u_lanes/data_lane[10].impl.u/acc_reg
+  -------------------------------------------------------------------
+                         required time                          1.951    
+                         arrival time                          -6.003    
+  -------------------------------------------------------------------
+                         slack                                 -4.052    
+
+Slack (VIOLATED) :        -4.052ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/data_lane[4].impl.u/p/CLK
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_fast/u_lanes/data_lane[4].impl.u/acc_reg/B[8]
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        5.030ns  (logic 4.009ns (79.698%)  route 1.021ns (20.302%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.973     0.973    u_fast/u_lanes/data_lane[4].impl.u/clk_fast
+    DSP48_X0Y21          DSP48E1                                      r  u_fast/u_lanes/data_lane[4].impl.u/p/CLK
+  -------------------------------------------------------------------    -------------------
+    DSP48_X0Y21          DSP48E1 (Prop_dsp48e1_CLK_P[8])
+                                                      4.009     4.982 r  u_fast/u_lanes/data_lane[4].impl.u/p/P[8]
+                         net (fo=1, routed)           1.021     6.003    u_fast/u_lanes/data_lane[4].impl.u/p_n_97
+    DSP48_X0Y23          DSP48E1                                      r  u_fast/u_lanes/data_lane[4].impl.u/acc_reg/B[8]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.924     3.924    u_fast/u_lanes/data_lane[4].impl.u/clk_fast
+    DSP48_X0Y23          DSP48E1                                      r  u_fast/u_lanes/data_lane[4].impl.u/acc_reg/CLK
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    DSP48_X0Y23          DSP48E1 (Setup_dsp48e1_CLK_B[8])
+                                                     -1.938     1.951    u_fast/u_lanes/data_lane[4].impl.u/acc_reg
+  -------------------------------------------------------------------
+                         required time                          1.951    
+                         arrival time                          -6.003    
+  -------------------------------------------------------------------
+                         slack                                 -4.052    
+
+Slack (VIOLATED) :        -4.052ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/data_lane[8].impl.u/p/CLK
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_fast/u_lanes/data_lane[8].impl.u/acc_reg/B[4]
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        5.030ns  (logic 4.009ns (79.698%)  route 1.021ns (20.302%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.973     0.973    u_fast/u_lanes/data_lane[8].impl.u/clk_fast
+    DSP48_X1Y35          DSP48E1                                      r  u_fast/u_lanes/data_lane[8].impl.u/p/CLK
+  -------------------------------------------------------------------    -------------------
+    DSP48_X1Y35          DSP48E1 (Prop_dsp48e1_CLK_P[4])
+                                                      4.009     4.982 r  u_fast/u_lanes/data_lane[8].impl.u/p/P[4]
+                         net (fo=1, routed)           1.021     6.003    u_fast/u_lanes/data_lane[8].impl.u/p_n_101
+    DSP48_X1Y37          DSP48E1                                      r  u_fast/u_lanes/data_lane[8].impl.u/acc_reg/B[4]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.924     3.924    u_fast/u_lanes/data_lane[8].impl.u/clk_fast
+    DSP48_X1Y37          DSP48E1                                      r  u_fast/u_lanes/data_lane[8].impl.u/acc_reg/CLK
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    DSP48_X1Y37          DSP48E1 (Setup_dsp48e1_CLK_B[4])
+                                                     -1.938     1.951    u_fast/u_lanes/data_lane[8].impl.u/acc_reg
+  -------------------------------------------------------------------
+                         required time                          1.951    
+                         arrival time                          -6.003    
+  -------------------------------------------------------------------
+                         slack                                 -4.052    
+
+Slack (VIOLATED) :        -4.052ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/data_lane[8].impl.u/p/CLK
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Destination:            u_fast/u_lanes/data_lane[8].impl.u/acc_reg/B[8]
+                            (rising edge-triggered cell DSP48E1 clocked by clk_fast  {rise@0.000ns fall@1.500ns period=3.000ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.000ns  (clk_fast rise@3.000ns - clk_fast rise@0.000ns)
+  Data Path Delay:        5.030ns  (logic 4.009ns (79.698%)  route 1.021ns (20.302%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 3.924 - 3.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.973     0.973    u_fast/u_lanes/data_lane[8].impl.u/clk_fast
+    DSP48_X1Y35          DSP48E1                                      r  u_fast/u_lanes/data_lane[8].impl.u/p/CLK
+  -------------------------------------------------------------------    -------------------
+    DSP48_X1Y35          DSP48E1 (Prop_dsp48e1_CLK_P[8])
+                                                      4.009     4.982 r  u_fast/u_lanes/data_lane[8].impl.u/p/P[8]
+                         net (fo=1, routed)           1.021     6.003    u_fast/u_lanes/data_lane[8].impl.u/p_n_97
+    DSP48_X1Y37          DSP48E1                                      r  u_fast/u_lanes/data_lane[8].impl.u/acc_reg/B[8]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      3.000     3.000 r  
+                                                      0.000     3.000 r  clk_fast (IN)
+                         net (fo=2718, unset)         0.924     3.924    u_fast/u_lanes/data_lane[8].impl.u/clk_fast
+    DSP48_X1Y37          DSP48E1                                      r  u_fast/u_lanes/data_lane[8].impl.u/acc_reg/CLK
+                         clock pessimism              0.000     3.924    
+                         clock uncertainty           -0.035     3.889    
+    DSP48_X1Y37          DSP48E1 (Setup_dsp48e1_CLK_B[8])
+                                                     -1.938     1.951    u_fast/u_lanes/data_lane[8].impl.u/acc_reg
+  -------------------------------------------------------------------
+                         required time                          1.951    
+                         arrival time                          -6.003    
+  -------------------------------------------------------------------
+                         slack                                 -4.052    
+
+
+
+
