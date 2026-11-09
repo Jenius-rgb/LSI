@@ -87,6 +87,20 @@ def _engine_vectors(model: str, count: int):
     return gen
 
 
+def _corner_vectors(kind: str):
+    def gen(workdir: Path, params: dict) -> list[str]:
+        from model.vectors import corner_images, corner_qmodel, engine_vectors_custom
+
+        images = corner_images()
+        v = engine_vectors_custom(corner_qmodel(kind), images, params["K"], workdir)
+        return [
+            f"+weights={v['weights']}", f"+params={v['params']}", f"+images={v['images']}", f"+logits={v['logits']}",
+            f"+classes={v['classes']}", f"+nclasses={v['n_classes']}", "+first=0", f"+count={len(images)}",
+        ]
+
+    return gen
+
+
 def _engine_params(model: str, k: int, c3: int = 0, impl: int = 0) -> dict:
     wc1, wc2, wc3 = wc_widths(k)
     aw = {"s": (13, 11), "xs": (12, 10)}[model]
@@ -110,6 +124,11 @@ def engine_benches() -> dict[str, Bench]:
             name, "tb_engine", [*ENGINE_SOURCES, "tb/tb_engine.v"], _engine_params(model, k),
             _engine_vectors(model, count), slow=slow, shards=shards, prefer_xsim=slow,
         )
+    # SPEC 13.4 corner cases on padded lanes, extreme values, ties, saturation, zero image.
+    for kind in ("zero_lanes", "extreme", "ties", "saturate"):
+        name = f"engine_corner_{kind}"
+        params = {**_engine_params("xs", 8), "WEIGHT_AW": 11, "ACT0_AW": 12, "ACT1_AW": 11}
+        out[name] = Bench(name, "tb_engine", [*ENGINE_SOURCES, "tb/tb_engine.v"], params, _corner_vectors(kind), prefer_xsim=True)
     return out
 
 

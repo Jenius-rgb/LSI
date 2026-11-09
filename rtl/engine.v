@@ -70,6 +70,7 @@ module engine #(
     output reg                   image_done,
     output reg  [MAX_LAYERS-1:0] gov_fail_mask,
     output reg  [15:0]           gov_corr_total,
+    output reg  [15:0]           lane_status,
 
     input  wire [6:0]            cnt_addr,
     output wire [31:0]           cnt_data
@@ -486,6 +487,7 @@ module engine #(
             chk_y_addr     <= 5'd0;
             gov_fail_mask  <= {MAX_LAYERS{1'b0}};
             gov_corr_total <= 16'd0;
+            lane_status    <= 16'd0;
         end else begin
             if (busy) cycles_total <= cycles_total + 1'b1;
             if (busy & pass_recompute) cycles_recompute <= cycles_recompute + 1'b1;
@@ -522,6 +524,7 @@ module engine #(
                             O_CORRECTED: begin
                                 cnt_inc      <= 1'b1;
                                 cnt_inc_addr <= {layer, C_CORRECTED};
+                                lane_status[latched_lane[3:0] - 1'b1] <= 1'b1;
                                 if (gov_corr_total != 16'hFFFF) gov_corr_total <= gov_corr_total + 1'b1;
                             end
                             O_CSUM: begin cnt_inc <= 1'b1; cnt_inc_addr <= {layer, C_CSUM}; end
@@ -588,6 +591,7 @@ module engine #(
                         cnt_clear        <= 1'b1;
                         gov_fail_mask    <= {MAX_LAYERS{1'b0}};
                         gov_corr_total   <= 16'd0;
+                        lane_status      <= 16'd0;
                         state            <= S_CLEAR;
                     end
                 end

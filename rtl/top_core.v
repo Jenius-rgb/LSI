@@ -90,6 +90,7 @@ module top_core #(
     wire        busy, done, fatal, log_ovf, image_done;
     wire [7:0]  gov_fail_mask;
     wire [15:0] gov_corr_total;
+    wire [15:0] lane_status;
     wire        gov_init, gov_busy, gov_level_changed;
     wire        seq_busy;
     reg         start_pending;
@@ -127,7 +128,7 @@ module top_core #(
         .starve_cycles(starve_cycles),
         .gov_state_level(gov_state_level), .gov_state_streak(gov_state_streak), .gov_state_turbo(gov_state_turbo),
         .clk_reconfig_busy(reconfig_busy), .clk_locked(clocks_locked & turbo_locked),
-        .lane_status(32'd0), .temp(32'd0),
+        .lane_status({16'd0, lane_status}), .temp(32'd0),
         .cnt_addr(cnt_addr), .cnt_data(cnt_data));
 
     // ---- engine ----------------------------------------------------------------------------
@@ -147,6 +148,7 @@ module top_core #(
         .busy(busy), .done(done), .fatal(fatal), .log_ovf(log_ovf), .result_class(result_class),
         .cycles_total(cycles_total), .cycles_recompute(cycles_recompute), .starve_cycles(starve_cycles),
         .image_done(image_done), .gov_fail_mask(gov_fail_mask), .gov_corr_total(gov_corr_total),
+        .lane_status(lane_status),
         .cnt_addr(cnt_addr), .cnt_data(cnt_data));
 
     // ---- governor and clock reconfiguration ------------------------------------------------

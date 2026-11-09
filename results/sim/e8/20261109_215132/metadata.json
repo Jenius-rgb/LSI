@@ -1,0 +1,12 @@
+{
+  "experiment": "e8",
+  "timestamp": "2026-11-09T21:51:32",
+  "git_hash": "21792e1fb8c4421552131c814c9a71cf54cdbe58",
+  "bitstream_id": "none (pre-board)",
+  "python": "3.13.1",
+  "numpy": "2.2.1",
+  "backend": "vivado-reports",
+  "label": "[SIM]",
+  "source": "results\\sim\\fit_report.json",
+  "note": "no Vivado reports: Spartan-7 device support missing"
+}

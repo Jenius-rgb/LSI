@@ -349,6 +349,77 @@ def governor_vectors(n_scenarios: int = 60, n_images: int = 40, seed: int = 2027
     return words, {"scenarios": n_scenarios, "images": n_images, "label": "[SYNTHETIC]"}
 
 
+CORNER_KINDS = ("zero_lanes", "extreme", "ties", "saturate")
+
+
+def corner_qmodel(kind: str, seed: int = 2027) -> QModel:
+    """SPEC 13.4 corner models. Output channels are not multiples of K, so lanes are padded."""
+    rng = np.random.default_rng(seed)
+    shape = [(3, 12), (12, 20), (20, 20)]
+    layers: list[QLayer] = []
+    for index, (cin, cout) in enumerate(shape):
+        name = f"conv{index + 1}"
+        if kind == "extreme":
+            w = rng.choice([-127, 127], size=(cout, cin, 3, 3)).astype(np.int64)
+            b = rng.choice([-100000, 100000], size=cout).astype(np.int64)
+            m, n = 40000, 24
+        elif kind == "ties":
+            w = np.zeros((cout, cin, 3, 3), dtype=np.int64)
+            b = np.full(cout, 12345, dtype=np.int64)
+            m, n = 1000, 16
+        elif kind == "saturate":
+            w = rng.integers(-3, 4, size=(cout, cin, 3, 3), dtype=np.int64)
+            b = rng.choice([-(10**7), 10**7], size=cout).astype(np.int64)
+            m, n = 65535, 0 if index == 0 else 31
+        else:
+            w = rng.integers(-127, 128, size=(cout, cin, 3, 3), dtype=np.int64)
+            b = rng.integers(-3000, 3000, size=cout, dtype=np.int64)
+            m, n = 20000, 22
+        layers.append(QLayer(name, "conv", w, b, m, n))
+    n_in = 20 * 4 * 4
+    if kind == "ties":
+        w = np.zeros((13, n_in), dtype=np.int64)
+        b = np.zeros(13, dtype=np.int64)
+        b[3:7] = 99  # equal maxima: the smallest index wins
+    else:
+        w = rng.integers(-127, 128, size=(13, n_in), dtype=np.int64)
+        b = rng.integers(-3000, 3000, size=13, dtype=np.int64)
+    layers.append(QLayer("fc", "fc", w, b, 0, 0))
+    return QModel(f"corner_{kind}", (3, 32, 32), layers)
+
+
+def corner_images(seed: int = 2027) -> np.ndarray:
+    """Zero image, full-scale image, and random images."""
+    rng = np.random.default_rng(seed)
+    images = rng.integers(0, 256, size=(6, 3, 32, 32), dtype=np.uint8)
+    images[0] = 0
+    images[1] = 255
+    return images
+
+
+def engine_vectors_custom(qm: QModel, images: np.ndarray, k: int, workdir) -> dict:
+    """Like engine_vectors, for an arbitrary QModel and image set."""
+    from model.config import load_hw_config
+    from model.export import write_artifacts
+    from model.golden import forward
+
+    hw = {**load_hw_config(), "K": k}
+    manifest = write_artifacts(qm, hw, workdir)
+    res = forward(qm, images)
+    with open(workdir / "images.mem", "w", newline="\n", encoding="ascii") as fh:
+        fh.writelines(f"{int(v):02x}\n" for v in images.reshape(-1).tolist())
+    padded = np.zeros((len(images), 16), dtype=np.int64)
+    padded[:, : res.logits.shape[1]] = res.logits
+    write_hex(workdir / "logits.mem", [int(v) & 0xFFFFFFFF for v in padded.reshape(-1).tolist()], 32)
+    write_hex(workdir / "classes.mem", [int(v) for v in np.atleast_1d(res.pred).tolist()], 32)
+    stem = f"{qm.name}_k{k}"
+    return {
+        "weights": (workdir / f"{stem}_weights.mem").as_posix(), "params": (workdir / f"{stem}_params.mem").as_posix(),
+        "images": (workdir / "images.mem").as_posix(), "logits": (workdir / "logits.mem").as_posix(),
+        "classes": (workdir / "classes.mem").as_posix(), "n_classes": int(res.logits.shape[1]), "manifest": manifest,
+    }
+
+
 def write_hex(path, values: list[int], width_bits: int) -> None:
     digits = (width_bits + 3) // 4
     with open(path, "w", newline="\n", encoding="ascii") as fh:

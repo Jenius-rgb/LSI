@@ -1,0 +1,13 @@
+{
+  "experiment": "e5",
+  "timestamp": "2026-11-09T21:51:31",
+  "git_hash": "21792e1fb8c4421552131c814c9a71cf54cdbe58",
+  "bitstream_id": "none (pre-board)",
+  "python": "3.13.1",
+  "numpy": "2.2.1",
+  "backend": "python-model",
+  "label": "[SIM]",
+  "source": "results\\sim\\campaign_s.json",
+  "note": "XOR masks injected into accumulators from the golden model; not a timing-error measurement.",
+  "criterion": "100% of single-lane errors corrected"
+}

@@ -196,6 +196,7 @@ def main() -> int:
     parser.add_argument("--list", action="store_true")
     parser.add_argument("--jobs", type=int, default=6)
     parser.add_argument("--sim", default="auto", choices=["auto", "icarus", "xsim"])
+    parser.add_argument("--record", default=None, help="append one JSON line per bench to this file")
     args = parser.parse_args()
 
     sys.path.insert(0, str(ROOT))
@@ -216,6 +217,16 @@ def main() -> int:
 
     def job(bench: Bench) -> tuple[str, bool, str]:
         passed, output = run_bench(bench, args.sim)
+        if args.record:
+            import datetime as dt
+            import json
+
+            entry = {
+                "date": dt.date.today().isoformat(), "bench": bench.name, "passed": passed,
+                "simulator": resolve_simulator(bench, args.sim), "summary": summarize(output), "params": bench.params,
+            }
+            with open(ROOT / args.record, "a", encoding="utf-8", newline="\n") as fh:
+                fh.write(json.dumps(entry) + "\n")
         return bench.name, passed, output
 
     failures = 0

@@ -65,3 +65,9 @@ ADR-001 sampai ADR-007 adalah usulan awal dari starter kit (2026-11-09). Boleh d
 - **Keputusan:** arsitektur memakai `clk_gen` dengan antarmuka `reconfig_start`/`reconfig_level`/`reconfig_busy`/`turbo_locked`. Pilihan utama pada fase board: Clocking Wizard via AXI4-Lite (PG065), sesuai SPEC. DRP langsung dan rencana B tetap sebagai cadangan jika IP Wizard tidak dapat dipakai. Model simulasi dan urutan §7.7 diverifikasi sekarang lewat `rtl/clk_seq.v` dan `tb/tb_system.v`; implementasi register PG065 pada `rtl/platform/xilinx/clk_gen_xilinx.v` ditunda karena butuh dukungan device, F_IN, dan PG065.
 - **Konsekuensi:** tabel frekuensi (`tools/gen_mmcm_table.py`) sudah tersedia dengan batas `verified: false` di `config/mmcm_limits.yaml`; batas ini wajib dicek ke DS189 beserta nomor halamannya sebelum fase board.
 - **Status:** Diterima sementara, ditinjau saat fase board.
+
+## ADR-011 — Rekomendasi lane checksum ketiga (C3)
+- **Konteks:** kampanye M3 [SIM] (`results/sim/campaign_s.json`, skrip `model/campaign.py`) pada akumulator nyata model `s`: 10.000 error dua lane tanpa C3 memberi 597 salah koreksi (K=8) dan 630 (K=16), sedangkan dengan C3 tidak ada salah koreksi (seluruhnya masuk RECOMPUTE). Error satu lane 100% terkoreksi di semua konfigurasi. Injeksi berupa mask XOR, bukan error timing terukur; laju error multi-lane yang nyata hanya bisa diukur di board (E1).
+- **Keputusan:** C3 tetap parameter sintesis `C3_EN`. Default repo tetap 0 sampai data resource M11 dan data E1 di board ada. Rekomendasi: aktifkan `C3_EN=1` bila resource part yang dipakai mencukupi, karena salah koreksi tanpa C3 adalah silent data corruption yang tidak terdeteksi oleh counter CORRECTED.
+- **Konsekuensi:** biaya C3 adalah satu lane checksum lagi (DSP atau LUT) dan satu kata per unit di FIFO hasil. Perbandingan keuntungan bersih dilakukan di E8 setelah M11.
+- **Status:** Diterima sementara, keputusan akhir setelah M11 dan E1.
