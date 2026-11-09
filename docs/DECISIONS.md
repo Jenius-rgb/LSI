@@ -59,3 +59,9 @@ ADR-001 sampai ADR-007 adalah usulan awal dari starter kit (2026-11-09). Boleh d
 - **Keputusan:** modul dan berkasnya bernama `lane_checker` (`rtl/lane_checker.v`). Model Python tetap `model/checker.py`.
 - **Konsekuensi:** hanya penamaan; perilaku tidak berubah.
 - **Status:** Diterima.
+
+## ADR-010 — Rekonfigurasi MMCM2 dan batas Spartan-7
+- **Konteks:** SPEC §7.6 meminta pemilihan antara Clocking Wizard via AXI4-Lite (PG065), DRP langsung (XAPP888), atau rencana B dengan beberapa CLKOUT tetap ditambah mux. Vivado 2025.2 di mesin ini belum memiliki dukungan device Spartan-7 (`get_parts xc7s*` kosong), F_IN belum diketahui, dan PG065/DS189 belum tersedia di repo.
+- **Keputusan:** arsitektur memakai `clk_gen` dengan antarmuka `reconfig_start`/`reconfig_level`/`reconfig_busy`/`turbo_locked`. Pilihan utama pada fase board: Clocking Wizard via AXI4-Lite (PG065), sesuai SPEC. DRP langsung dan rencana B tetap sebagai cadangan jika IP Wizard tidak dapat dipakai. Model simulasi dan urutan §7.7 diverifikasi sekarang lewat `rtl/clk_seq.v` dan `tb/tb_system.v`; implementasi register PG065 pada `rtl/platform/xilinx/clk_gen_xilinx.v` ditunda karena butuh dukungan device, F_IN, dan PG065.
+- **Konsekuensi:** tabel frekuensi (`tools/gen_mmcm_table.py`) sudah tersedia dengan batas `verified: false` di `config/mmcm_limits.yaml`; batas ini wajib dicek ke DS189 beserta nomor halamannya sebelum fase board.
+- **Status:** Diterima sementara, ditinjau saat fase board.

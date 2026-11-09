@@ -311,6 +311,44 @@ def system_scenarios(model: str, k: int, c3_hw: int, scenarios: list[dict], work
     return {"scenarios": len(scenarios), "injections_fired": fired, "weights": qsource, "images": isource}
 
 
+def governor_vectors(n_scenarios: int = 60, n_images: int = 40, seed: int = 2027) -> tuple[list[int], dict]:
+    """Closed-loop governor scenarios driven by the synthetic fault model. [SYNTHETIC]"""
+    from model.fault_model import FaultParams, TimingFaultModel
+    from model.governor import GovParams, reset, step
+
+    rng = np.random.default_rng(seed)
+    layers = 4
+    units_per_layer = [48, 32, 16, 2]
+    words: list[int] = []
+    for scenario in range(n_scenarios):
+        l_min = int(rng.integers(0, 4))
+        params = GovParams(
+            n_up=int(rng.integers(1, 7)), cooldown=int(rng.integers(0, 6)), corr_hi=int(rng.integers(0, 12)),
+            l_min=l_min, l_max=int(rng.integers(l_min + 1, 16)), auto=bool(scenario % 10 != 9),
+        )
+        fault = TimingFaultModel(
+            8, 2, FaultParams(seed=seed + scenario, f_onset_mhz=float(rng.uniform(120, 200)), spread=0.2, delta_mhz=float(rng.uniform(20, 60))),
+            sparsity=[0.1, 0.4, 0.6, 0.7],
+        )
+        state = reset(params, layers)
+        words += [1, params.n_up, params.cooldown, params.corr_hi, params.l_min, params.l_max, int(params.auto), n_images]
+        for image in range(n_images):
+            f_mhz = 100.0 + 5.0 * state.level
+            fails, corrected = [0] * layers, [0] * layers
+            for layer in range(layers):
+                for unit in range(units_per_layer[layer]):
+                    hit = sum(fault.error_occurs(image, layer, unit, lane, f_mhz) for lane in range(10))
+                    if hit == 1:
+                        corrected[layer] += 1
+                    elif hit > 1:
+                        fails[layer] += 1
+            step(state, params, fails, corrected)
+            mask = sum(1 << i for i, f in enumerate(fails) if f)
+            turbo_mask = sum(bit << i for i, bit in enumerate(state.turbo_en))
+            words += [mask, min(sum(corrected), 0xFFFF), state.level, turbo_mask, state.clean_streak, *state.cool]
+    return words, {"scenarios": n_scenarios, "images": n_images, "label": "[SYNTHETIC]"}
+
+
 def write_hex(path, values: list[int], width_bits: int) -> None:
     digits = (width_bits + 3) // 4
     with open(path, "w", newline="\n", encoding="ascii") as fh:

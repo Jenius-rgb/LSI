@@ -1,0 +1,24 @@
+# MMCM limits per speed grade, for tools/gen_mmcm_table.py.
+#
+# These values are PROVISIONAL. They were entered from general knowledge of 7-series
+# parts, without the data sheet at hand. Before the board phase, check each one against
+# AMD DS189 (Spartan-7 data sheet), table "MMCM Switching Characteristics", write the page
+# number in `page`, and set `verified: true`.
+source: "AMD DS189, MMCM Switching Characteristics (NOT YET CHECKED)"
+speed_grades:
+  "-1":
+    f_in_min:  {value: 10.0,   unit: MHz, page: null, verified: false}
+    f_in_max:  {value: 800.0,  unit: MHz, page: null, verified: false}
+    f_pfd_min: {value: 10.0,   unit: MHz, page: null, verified: false}
+    f_pfd_max: {value: 450.0,  unit: MHz, page: null, verified: false}
+    f_vco_min: {value: 600.0,  unit: MHz, page: null, verified: false}
+    f_vco_max: {value: 1200.0, unit: MHz, page: null, verified: false}
+    f_out_max: {value: 800.0,  unit: MHz, page: null, verified: false}
+  "-2":
+    f_in_min:  {value: 10.0,   unit: MHz, page: null, verified: false}
+    f_in_max:  {value: 933.0,  unit: MHz, page: null, verified: false}
+    f_pfd_min: {value: 10.0,   unit: MHz, page: null, verified: false}
+    f_pfd_max: {value: 500.0,  unit: MHz, page: null, verified: false}
+    f_vco_min: {value: 600.0,  unit: MHz, page: null, verified: false}
+    f_vco_max: {value: 1440.0, unit: MHz, page: null, verified: false}
+    f_out_max: {value: 933.0,  unit: MHz, page: null, verified: false}

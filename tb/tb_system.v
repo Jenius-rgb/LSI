@@ -21,6 +21,10 @@ module tb_system;
     parameter MAX_IMAGES = 400;
     parameter IMG_BYTES = 3072;
     parameter real TURBO_NS = 10.0;
+    parameter real TURBO_STEP_NS = 0.0;
+    parameter AUTO_GOV = 0;
+    parameter N_UP = 1;
+    parameter L_MAX = 8;
 
     localparam SCEN_WORDS = 69;
 
@@ -34,6 +38,30 @@ module tb_system;
         .clk_in(1'b0), .rst(rst), .spi_sclk(sclk), .spi_cs_n(cs_n), .spi_mosi(mosi), .spi_miso(miso), .led(led));
 
     defparam dut.u_clk.u_clk.TURBO_BASE = TURBO_NS;
+    defparam dut.u_clk.u_clk.TURBO_STEP = TURBO_STEP_NS;
+
+    // SPEC 7.7: reconfiguration only with clk_fast on the safe clock; turbo only when locked.
+    integer protocol_errors = 0;
+    integer reconfigs = 0;
+    reg sel_prev = 1'b0;
+    always @(posedge dut.clk_safe) begin
+        if (!rst && dut.reconfig_start) begin
+            reconfigs = reconfigs + 1;
+            if (dut.is_turbo !== 1'b0 || dut.sel_turbo !== 1'b0 || dut.u_engine.busy !== 1'b0) begin
+                $display("FAIL protocol: reconfiguration started with is_turbo=%b sel=%b busy=%b", dut.is_turbo, dut.sel_turbo, dut.u_engine.busy);
+                protocol_errors = protocol_errors + 1;
+            end
+        end
+        if (!rst && dut.sel_turbo === 1'b1 && (dut.reconfig_busy !== 1'b0 || dut.turbo_locked !== 1'b1)) begin
+            $display("FAIL protocol: turbo selected while MMCM2 busy or unlocked");
+            protocol_errors = protocol_errors + 1;
+        end
+        if (!rst && sel_prev !== dut.sel_turbo && dut.u_engine.gen_busy === 1'b1) begin
+            $display("FAIL protocol: sel changed while the operand generator was running");
+            protocol_errors = protocol_errors + 1;
+        end
+        sel_prev = dut.sel_turbo;
+    end
 
     reg [31:0] scen [0:MAX_SCEN*SCEN_WORDS-1];
     reg [7:0]  images [0:MAX_IMAGES*IMG_BYTES-1];
@@ -66,6 +94,21 @@ module tb_system;
             cs_n = 0;
             #40;
             xfer(8'h02, tmp); xfer(8'h00, tmp); xfer(8'h00, tmp); xfer(8'h08, tmp);
+            xfer(value, tmp);
+            #40;
+            cs_n = 1;
+            #80;
+        end
+    endtask
+
+    task spi_write_reg;
+        input [7:0] addr;
+        input [7:0] value;
+        reg [7:0] tmp;
+        begin
+            cs_n = 0;
+            #40;
+            xfer(8'h02, tmp); xfer(8'h00, tmp); xfer(8'h00, tmp); xfer(addr, tmp);
             xfer(value, tmp);
             #40;
             cs_n = 1;
@@ -116,6 +159,12 @@ module tb_system;
         wait (led[3] === 1'b0 || led[3] === 1'b1);
         #500;
 
+        if (AUTO_GOV != 0) begin
+            dut.u_regs.gov_param = N_UP | (L_MAX << 28);
+            spi_write_reg(8'h20, 8'h03);   // AUTO + INIT pulse
+            #200;
+        end
+
         for (s = 0; s < n; s = s + 1) begin
             base = s * SCEN_WORDS;
             for (c = 0; c < IMG_BYTES; c = c + 1)
@@ -123,7 +172,7 @@ module tb_system;
 
             cfg = scen[base + 1];
             dut.u_regs.ctrl         = (cfg[1:0] << 2) | (cfg[3] << 4) | (cfg[2] << 5);
-            dut.u_regs.gov_ctrl     = 32'h00FF0000;    // all layers on turbo
+            if (AUTO_GOV == 0) dut.u_regs.gov_ctrl = 32'h00FF0000;    // all layers on turbo
             dut.u_regs.inj0_ctrl    = scen[base + 2];
             dut.u_regs.inj0_unit    = scen[base + 3];
             dut.u_regs.inj0_mask_lo = scen[base + 4];
@@ -139,8 +188,8 @@ module tb_system;
             wait (dut.u_engine.done == 1'b0);
             #100;
 
-            if ({28'd0, dut.result_class_w} !== scen[base + 10]) begin
-                if (errors == 0) $display("FAIL scenario=%0d class expected=%0d got=%0d", s, scen[base+10], dut.result_class_w);
+            if ({28'd0, dut.u_engine.result_class} !== scen[base + 10]) begin
+                if (errors == 0) $display("FAIL scenario=%0d class expected=%0d got=%0d", s, scen[base+10], dut.u_engine.result_class);
                 errors = errors + 1;
             end
             if (dut.u_engine.fatal !== scen[base + 11][0]) begin
@@ -177,7 +226,15 @@ module tb_system;
             #100;
         end
 
-        $display("PASS %0d/%0d", passed, n);
+        if (protocol_errors != 0) begin
+            $display("FAIL protocol_errors=%0d", protocol_errors);
+            $fatal(1);
+        end
+        if (AUTO_GOV != 0 && dut.u_gov.level !== L_MAX[3:0]) begin
+            $display("FAIL governor level expected=%0d got=%0d", L_MAX, dut.u_gov.level);
+            $fatal(1);
+        end
+        $display("PASS %0d/%0d reconfigs=%0d", passed, n, reconfigs);
         $finish;
     end
 endmodule

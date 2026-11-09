@@ -22,6 +22,7 @@ module regfile (
     output wire         trust_csum,
     output wire         img_sel,
 
+    output reg          gov_init,
     output wire         gov_auto,
     output wire [3:0]   gov_level,
     output wire [7:0]   gov_turbo_mask,
@@ -114,6 +115,7 @@ module regfile (
         start              <= 1'b0;
         soft_reset         <= 1'b0;
         clk_reconfig_start <= 1'b0;
+        gov_init           <= 1'b0;
         if (rst) begin
             ctrl         <= 32'd0;
             gov_ctrl     <= 32'd0;
@@ -136,7 +138,10 @@ module regfile (
                         soft_reset <= bus_wdata[`SNT_CTRL_SOFT_RESET_LSB];
                     end
                 end
-                `SNT_REG_GOV_CTRL:  gov_ctrl  <= with_byte(gov_ctrl, byte_idx, bus_wdata);
+                `SNT_REG_GOV_CTRL: begin
+                    gov_ctrl <= with_byte(gov_ctrl, byte_idx, bus_wdata);
+                    if (byte_idx == 2'd0) gov_init <= bus_wdata[`SNT_GOV_CTRL_INIT_LSB];
+                end
                 `SNT_REG_GOV_PARAM: gov_param <= with_byte(gov_param, byte_idx, bus_wdata);
                 `SNT_REG_CLK_CTRL: begin
                     clk_ctrl <= with_byte(clk_ctrl, byte_idx, bus_wdata);

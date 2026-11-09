@@ -50,6 +50,7 @@ registers:
     access: rw
     fields:
       - {name: AUTO, bit: 0}
+      - {name: INIT, bit: 1, kind: pulse}
       - {name: LEVEL, lsb: 8, width: 4}
       - {name: TURBO_MASK, lsb: 16, width: 8}
   - name: GOV_PARAM

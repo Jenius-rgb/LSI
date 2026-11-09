@@ -68,6 +68,8 @@ module engine #(
     output reg  [31:0]           cycles_recompute,
     output wire [31:0]           starve_cycles,
     output reg                   image_done,
+    output reg  [MAX_LAYERS-1:0] gov_fail_mask,
+    output reg  [15:0]           gov_corr_total,
 
     input  wire [6:0]            cnt_addr,
     output wire [31:0]           cnt_data
@@ -482,6 +484,8 @@ module engine #(
             best_idx       <= 4'd0;
             gen_use_log    <= 1'b0;
             chk_y_addr     <= 5'd0;
+            gov_fail_mask  <= {MAX_LAYERS{1'b0}};
+            gov_corr_total <= 16'd0;
         end else begin
             if (busy) cycles_total <= cycles_total + 1'b1;
             if (busy & pass_recompute) cycles_recompute <= cycles_recompute + 1'b1;
@@ -514,10 +518,18 @@ module engine #(
                         cnt_inc_addr <= {layer, C_UNITS};
                     end else if (inc_phase == 2'd2) begin
                         case (latched_outcome)
-                            O_CLEAN:     begin cnt_inc <= 1'b1; cnt_inc_addr <= {layer, C_CLEAN}; end
-                            O_CORRECTED: begin cnt_inc <= 1'b1; cnt_inc_addr <= {layer, C_CORRECTED}; end
-                            O_CSUM:      begin cnt_inc <= 1'b1; cnt_inc_addr <= {layer, C_CSUM}; end
-                            O_RECOMPUTE: begin cnt_inc <= 1'b1; cnt_inc_addr <= {layer, C_RECOMPUTE}; end
+                            O_CLEAN: begin cnt_inc <= 1'b1; cnt_inc_addr <= {layer, C_CLEAN}; end
+                            O_CORRECTED: begin
+                                cnt_inc      <= 1'b1;
+                                cnt_inc_addr <= {layer, C_CORRECTED};
+                                if (gov_corr_total != 16'hFFFF) gov_corr_total <= gov_corr_total + 1'b1;
+                            end
+                            O_CSUM: begin cnt_inc <= 1'b1; cnt_inc_addr <= {layer, C_CSUM}; end
+                            O_RECOMPUTE: begin
+                                cnt_inc                  <= 1'b1;
+                                cnt_inc_addr             <= {layer, C_RECOMPUTE};
+                                gov_fail_mask[layer[2:0]] <= 1'b1;
+                            end
                             default: ;
                         endcase
                     end else if (latched_outcome == O_CORRECTED) begin
@@ -574,6 +586,8 @@ module engine #(
                         cycles_recompute <= 32'd0;
                         layer            <= 4'd0;
                         cnt_clear        <= 1'b1;
+                        gov_fail_mask    <= {MAX_LAYERS{1'b0}};
+                        gov_corr_total   <= 16'd0;
                         state            <= S_CLEAR;
                     end
                 end

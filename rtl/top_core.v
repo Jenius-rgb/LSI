@@ -30,6 +30,8 @@ module top_core #(
     wire clk_safe, clk_fast, clocks_locked, sel_turbo, is_turbo;
     wire reconfig_start, reconfig_busy, turbo_locked;
     wire [3:0] reconfig_level;
+    wire host_reconfig_start;
+    wire [3:0] host_reconfig_level;
 
     clk_gen u_clk (
         .clk_in(clk_in), .rst(rst), .clk_safe(clk_safe), .clk_fast(clk_fast), .locked(clocks_locked),
@@ -86,6 +88,12 @@ module top_core #(
     wire [11:0] inj_lane;
     wire [95:0] inj_mask;
     wire        busy, done, fatal, log_ovf, image_done;
+    wire [7:0]  gov_fail_mask;
+    wire [15:0] gov_corr_total;
+    wire        gov_init, gov_busy, gov_level_changed;
+    wire        seq_busy;
+    reg         start_pending;
+    wire        start_engine;
     wire [3:0]  result_class;
     wire [3:0]  result_class_w = result_class;
     wire [31:0] cycles_total, cycles_recompute, starve_cycles, cnt_data;
@@ -109,7 +117,8 @@ module top_core #(
         .gov_auto(gov_auto), .gov_level(gov_level), .gov_turbo_mask(gov_turbo_mask),
         .gov_n_up(gov_n_up), .gov_cooldown(gov_cooldown), .gov_corr_hi(gov_corr_hi),
         .gov_l_min(gov_l_min), .gov_l_max(gov_l_max),
-        .clk_reconfig_start(reconfig_start), .clk_reconfig_level(reconfig_level),
+        .gov_init(gov_init),
+        .clk_reconfig_start(host_reconfig_start), .clk_reconfig_level(host_reconfig_level),
         .inj_en(inj_en), .inj_any(inj_any), .inj_oneshot(inj_oneshot), .inj_layer(inj_layer),
         .inj_unit(inj_unit), .inj_lane(inj_lane), .inj_mask(inj_mask),
         .busy(busy), .done_flag(done_flag), .fatal(fatal), .log_ovf(log_ovf),
@@ -128,7 +137,7 @@ module top_core #(
         .WEIGHT_AW(WEIGHT_AW), .ACT0_AW(ACT0_AW), .ACT1_AW(ACT1_AW), .LOG_AW(LOG_AW)
     ) u_engine (
         .clk_safe(clk_safe), .clk_fast(clk_fast), .rst(rst_safe),
-        .start(start_reg), .mode(mode), .c3_on(c3_on), .trust_csum(trust_csum), .img_sel(img_sel),
+        .start(start_engine), .mode(mode), .c3_on(c3_on), .trust_csum(trust_csum), .img_sel(img_sel),
         .turbo_mask(turbo_mask),
         .clk_sel_turbo(sel_turbo), .clk_is_turbo(is_turbo),
         .host_en((bus_wr | bus_rd) & ~is_reg), .host_we(bus_wr), .host_addr(bus_addr),
@@ -137,17 +146,44 @@ module top_core #(
         .inj_layer(inj_layer), .inj_unit(inj_unit), .inj_lane(inj_lane), .inj_mask(inj_mask),
         .busy(busy), .done(done), .fatal(fatal), .log_ovf(log_ovf), .result_class(result_class),
         .cycles_total(cycles_total), .cycles_recompute(cycles_recompute), .starve_cycles(starve_cycles),
-        .image_done(image_done), .cnt_addr(cnt_addr), .cnt_data(cnt_data));
+        .image_done(image_done), .gov_fail_mask(gov_fail_mask), .gov_corr_total(gov_corr_total),
+        .cnt_addr(cnt_addr), .cnt_data(cnt_data));
 
-    // Governor arrives with M10: until then the host's manual mask decides.
-    assign turbo_mask       = gov_turbo_mask;
-    assign gov_state_level  = gov_level;
-    assign gov_state_streak = 8'd0;
-    assign gov_state_turbo  = gov_turbo_mask;
+    // ---- governor and clock reconfiguration ------------------------------------------------
+    wire [3:0] auto_level;
+    wire [7:0] auto_turbo;
+
+    governor #(.LAYERS(8)) u_gov (
+        .clk(clk_safe), .rst(rst_safe), .init(gov_init), .auto_mode(gov_auto),
+        .n_up(gov_n_up), .cooldown(gov_cooldown), .corr_hi({8'd0, gov_corr_hi}),
+        .l_min(gov_l_min), .l_max(gov_l_max),
+        .image_done(image_done), .fail_mask(gov_fail_mask), .corr_total(gov_corr_total),
+        .level(auto_level), .turbo_en(auto_turbo), .clean_streak(gov_state_streak),
+        .busy(gov_busy), .level_changed(gov_level_changed));
+
+    assign turbo_mask      = gov_auto ? auto_turbo : gov_turbo_mask;
+    assign gov_state_level = auto_level;
+    assign gov_state_turbo = auto_turbo;
+
+    // SPEC 7.7: reconfiguration only between images, after clk_fast is back on the safe clock.
+    wire seq_request = gov_auto ? gov_level_changed : host_reconfig_start;
+    wire [3:0] seq_level = gov_auto ? auto_level : host_reconfig_level;
+
+    clk_seq u_seq (
+        .clk(clk_safe), .rst(rst_safe), .request(seq_request), .level(seq_level),
+        .is_turbo(is_turbo), .reconfig_busy(reconfig_busy), .turbo_locked(turbo_locked),
+        .busy(seq_busy), .reconfig_start(reconfig_start), .reconfig_level(reconfig_level));
+
+    // START waits while the governor or the clock sequencer is working.
+    assign start_engine = start_pending & ~busy & ~gov_busy & ~gov_level_changed & ~seq_busy;
+    always @(posedge clk_safe) begin
+        if (rst_safe | start_engine) start_pending <= 1'b0;
+        else if (start_reg) start_pending <= 1'b1;
+    end
 
     assign led = {fatal, is_turbo, done_flag, busy};
 
-    wire unused_top = &{1'b0, gov_auto, gov_n_up, gov_cooldown, gov_corr_hi, gov_l_min, gov_l_max, image_done};
+    wire unused_top = &{1'b0, gov_level};
 endmodule
 
 `default_nettype wire

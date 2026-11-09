@@ -42,7 +42,7 @@ module tb_engine;
         .inj_lane(12'd0), .inj_mask(96'd0),
         .busy(busy), .done(done), .fatal(fatal), .log_ovf(log_ovf), .result_class(result_class),
         .cycles_total(cycles_total), .cycles_recompute(cycles_recompute), .starve_cycles(starve_cycles),
-        .image_done(image_done), .cnt_addr(7'd0), .cnt_data(cnt_data));
+        .image_done(image_done), .gov_fail_mask(), .gov_corr_total(), .cnt_addr(7'd0), .cnt_data(cnt_data));
 
     reg [8*200-1:0] path;
     reg [7:0]       image_mem [0:MAX_IMAGES*IMG_BYTES-1];

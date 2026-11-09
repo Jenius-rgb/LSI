@@ -114,7 +114,8 @@ def engine_benches() -> dict[str, Bench]:
 
 
 TOP_SOURCES = [
-    *ENGINE_SOURCES, "rtl/spi_slave.v", "rtl/regfile.v", "rtl/clk_gen.v", "rtl/platform/sim/clk_gen_sim.v", "rtl/top_core.v",
+    *ENGINE_SOURCES, "rtl/spi_slave.v", "rtl/regfile.v", "rtl/clk_gen.v", "rtl/platform/sim/clk_gen_sim.v",
+    "rtl/governor.v", "rtl/clk_seq.v", "rtl/top_core.v",
 ]
 
 
@@ -232,6 +233,11 @@ def system_benches() -> dict[str, Bench]:
         bench = f"system_xs_{name}"
         out[bench] = Bench(bench, "tb_system", SYSTEM_SOURCES, _system_params("xs", 8, 0, 10.0 / ratio),
                            _system_vectors("xs", _m8_scenarios), slow=True, prefer_xsim=True)
+    # Governor in automatic mode: the level climbs every image, so MMCM2 reconfigures between images.
+    bench = "system_micro_autogov"
+    out[bench] = Bench(bench, "tb_system", SYSTEM_SOURCES,
+                       {**_system_params("micro", 8, 0, 9.5), "AUTO_GOV": 1, "N_UP": 1, "L_MAX": 8, "TURBO_STEP_NS": 0.4},
+                       _system_vectors("micro", lambda k, c3: [{"image": i % MICRO_IMAGES, "mode": 2} for i in range(12)], micro=True), prefer_xsim=True)
     bench = "system_micro_corners"
     out[bench] = Bench(bench, "tb_system", SYSTEM_SOURCES, {**_system_params("micro", 8, 0, 7.0, log_aw=2)},
                        _system_vectors("micro", _corner_scenarios, n_log=4, micro=True), prefer_xsim=True)
@@ -242,8 +248,17 @@ def system_benches() -> dict[str, Bench]:
     return out
 
 
+def _governor_vectors(workdir: Path, params: dict) -> list[str]:
+    from model.vectors import governor_vectors, write_hex
+
+    words, _ = governor_vectors()
+    write_hex(workdir / "gov.mem", words, 32)
+    return [f"+vec={(workdir / 'gov.mem').as_posix()}", f"+n={len(words)}"]
+
+
 def misc_benches() -> dict[str, Bench]:
     return {
+        "governor": Bench("governor", "tb_governor", ["rtl/governor.v", "tb/tb_governor.v"], {}, _governor_vectors),
         "spi_slave": Bench("spi_slave", "tb_spi_slave", ["rtl/spi_slave.v", "tb/tb_spi_slave.v"]),
         "spi_session_xs": Bench(
             "spi_session_xs", "tb_spi_log", [*TOP_SOURCES, "tb/tb_spi_log.v"],
@@ -264,6 +279,8 @@ LINT_TARGETS = [
     {"id": "regfile", "top": "regfile", "sources": ["rtl/regfile.v"]},
     {"id": "top_core", "top": "top_core", "sources": TOP_SOURCES, "params": _W},
     {"id": "spi_slave", "top": "spi_slave", "sources": ["rtl/spi_slave.v"]},
+    {"id": "governor", "top": "governor", "sources": ["rtl/governor.v"]},
+    {"id": "clk_seq", "top": "clk_seq", "sources": ["rtl/clk_seq.v"]},
     *[
         {"id": f"engine_c{c3}", "top": "engine", "sources": ENGINE_SOURCES, "params": {"C3_EN": c3, **_W}}
         for c3 in (0, 1)
