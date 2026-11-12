@@ -153,13 +153,13 @@ Jika G1 meleset lebih dari satu minggu, buang pemilihan clock per layer dan paka
 - [B] Kelas target — belum diumumkan panitia (pakai CIFAR-10 sementara)
 
 - [B] `config/mmcm_limits.yaml` dan `config/parts.yaml`: angka batas DS189/DS180 belum diverifikasi (`verified: false`); butuh dokumen resmi
-- [B] Rekonfigurasi MMCM2 di `clk_gen_xilinx.v` (ADR-010): butuh Spartan-7 di Vivado, F_IN, dan PG065
+- [B] Rekonfigurasi MMCM2 di `clk_gen_xilinx.v` (ADR-010): butuh F_IN dan PG065 (dukungan Spartan-7 di Vivado sudah terpasang sejak 2026-11-10)
 
 ## Catatan untuk sesi berikutnya
 
-Ditulis di akhir sesi 2026-11-09.
+Ditulis di akhir sesi 2026-11-09, paragraf "Posisi" dikoreksi 2026-11-12.
 
-**Posisi:** semua milestone M0–M9, M12–M14 selesai di simulasi. M10 selesai untuk governor dan verifikasi protokol, tapi rekonfigurasi MMCM asli `[B]` (butuh dukungan device, F_IN, PG065; ADR-010). M11 menunggu dukungan device Spartan-7 di Vivado (`[B]`, langkah di bawah). Tidak ada satu pun hasil `[HW]` atau `[VIVADO-STA]` Spartan-7.
+**Posisi:** semua milestone M0–M9, M11–M14 selesai di simulasi dan Vivado OOC. M10 selesai untuk governor dan verifikasi protokol, tapi rekonfigurasi MMCM asli `[B]` (butuh F_IN dan PG065; ADR-010). M11 selesai: matriks 96 run `[VIVADO-STA]`, 48 berhasil di xc7s25/xc7s50 (lihat Temuan M11). Belum ada satu pun hasil `[HW]`.
 
 **Langkah berikutnya:**
 1. M11 selesai (lihat Temuan M11). Konfirmasi part dan speed grade ZERO7; jalankan ulang `python tools/run.py ooc --parts <part> --tag final` untuk part itu saja bila berbeda.
