@@ -1,0 +1,23 @@
+CHECK vivado_version 2025.2
+CHECK part_query xc7s25csga225-1
+CHECK part_found 1
+CHECK part_property FAMILY spartan7
+CHECK part_property DEVICE xc7s25
+CHECK part_property PACKAGE csga225
+CHECK part_property SPEED -1
+CHECK part_property TEMPERATURE_GRADE_LETTER 
+CHECK part_property LUT_ELEMENTS 14600
+CHECK part_property FLIPFLOPS 29200
+CHECK part_property SLICES 3650
+CHECK part_property BLOCK_RAMS 45
+CHECK part_property DSP 80
+CHECK part_property MMCM 3
+CHECK part_property PLL (not available)
+CHECK part_property IO_PIN_COUNT 225
+CHECK part_property AVAILABLE_IOBS 150
+CHECK part_property REF_OPERATING_VOLTAGE 0.950
+CHECK part_property MIN_OPERATING_TEMPERATURE 0
+CHECK part_property MAX_OPERATING_TEMPERATURE 0
+CHECK spartan7_parts_installed 64
+CHECK zynq7000_parts_installed 0
+CHECK status CUKUP

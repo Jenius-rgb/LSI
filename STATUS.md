@@ -150,9 +150,9 @@ Panitia menerbitkan fakta resmi baru pada 2 dan 10 Nov 2026 (ringkasan dan rujuk
 
 - [x] **T0** Orientasi: `check` dan `test` penuh
 - [x] **T1** Baca dan arsipkan sumber resmi; catatan referensi di `docs/references/`
-- [ ] **T2** Riset web dan media sosial 15 Okt–15 Nov 2026 (`docs/research/RISET_WEB_2026-11.md`)
-- [ ] **T3** Cek Vivado dan part; catatan Raspberry Pi di `board/BRINGUP.md`
-- [ ] **T4** `board/BOARD_INFO.md`, `board/zero7.xdc`, perbarui Terblokir
+- [x] **T2** Riset web dan media sosial 15 Okt–15 Nov 2026 (`docs/research/RISET_WEB_2026-11.md`)
+- [x] **T3** Cek Vivado dan part; catatan Raspberry Pi di `board/BRINGUP.md`
+- [x] **T4** `board/BOARD_INFO.md`, `board/zero7.xdc`, perbarui Terblokir
 - [ ] **T5** Review ulang repo (`docs/REVIEW_2026-11.md`)
 - [ ] **T6** ADR baru, lalu SPEC
 - [ ] **T7** Implementasi; prioritas laporan sintesis resmi XC7S25CSGA225-1
@@ -162,14 +162,18 @@ Panitia menerbitkan fakta resmi baru pada 2 dan 10 Nov 2026 (ringkasan dan rujuk
 
 ## Terblokir
 
-- [B] Part number, package, speed grade ZERO7 — belum dipublikasikan panitia
-- [B] XDC/pin, F_IN, metode programming — butuh dokumen board
-- [B] Kecepatan SPI nyata, antarmuka LED RGB, XADC — butuh board
-- [B] Semua eksperimen [HW] — butuh board
-- [B] Kelas target — belum diumumkan panitia (pakai CIFAR-10 sementara)
+Diperbarui 2026-11-16.
 
-- [B] `config/mmcm_limits.yaml` dan `config/parts.yaml`: angka batas DS189/DS180 belum diverifikasi (`verified: false`); butuh dokumen resmi
-- [B] Rekonfigurasi MMCM2 di `clk_gen_xilinx.v` (ADR-010): butuh F_IN dan PG065 (dukungan Spartan-7 di Vivado sudah terpasang sejak 2026-11-10)
+- [B] Board fisik ZERO7 — peminjaman sedang diproses. Semua eksperimen `[HW]` (E1–E4, E6, E7 di board) menunggu.
+- [B] `Zero7.xdc` resmi, tegangan VCCO, dan IOSTANDARD bank 14/15/34 — belum diterbitkan; `board/zero7.xdc` memakai LVCMOS33 bertanda TODO. Bitstream untuk board tidak boleh dibuat sebelum ini pasti.
+- [B] ZERO7 User Manual dan skematik — disebut panitia, belum tertaut di situs.
+- [B] Kabel JTAG-HS3 — belum jelas apakah termasuk paket pinjaman.
+- [B] Kecepatan SPI nyata, polaritas tombol, rantai WS2812B, boot dari flash QSPI — butuh board atau user manual.
+- [B] Kelas target — belum diumumkan panitia (pakai CIFAR-10 sementara).
+- [B] `config/mmcm_limits.yaml` dan `config/parts.yaml`: batas DS189/DS180 belum diverifikasi (`verified: false`); butuh PDF datasheet AMD (mengunduhnya perlu izin user).
+- [B] Rekonfigurasi MMCM2 di `clk_gen_xilinx.v` (ADR-010): F_IN sekarang diketahui (20 MHz); masih butuh PG065 atau XAPP888.
+
+Sudah tidak terblokir sejak dokumen resmi 10 Nov 2026: part number dan speed grade (xc7s25csga225-1), pin (tabel koneksi), F_IN, cara programming. Yang sekarang bisa dikerjakan tanpa board: XDC, tabel MMCM untuk 20 MHz, top-level board, sintesis dan implementasi di part resmi, dan laporan sintesis resmi.
 
 ## Catatan untuk sesi berikutnya
 
@@ -229,3 +233,7 @@ Ditulis di akhir sesi 2026-11-09, paragraf "Posisi" dikoreksi 2026-11-12.
 | 2026-11-09 | M14 | `pytest tests/test_board_package.py`; `python board/bringup.py validate --dry-run` | dry-run lulus; build menolak jalan karena BOARD_INFO UNKNOWN |
 | 2026-11-16 | T0 | `python tools/run.py check`; `python tools/run.py test` | semua alat ok (Vivado 2025.2, Icarus 12.0, Verilator 5.053); 190 passed in 227.70s; log `build/test_full_2026-11-16.log` |
 | 2026-11-16 | T1 | baca `GUIDE_LSI_2027_FINALE.pdf` (6 hlm), `ZERO7FPGA_Connection-table_261109_001.pdf` (7 hlm), `Initialize_20260618_EN.pdf` (59 slide), `index.html` dan `shiyou_1.html` (Jepang) | tiga PDF diarsipkan ke `docs/official/`, panduan lama ke `superseded/`; `docs/official/README.md` dan tiga catatan `docs/references/` ditulis; PDF Jepang `Initialize_20260618.pdf` belum diarsipkan (menunggu izin unduh) |
+| 2026-11-16 | T2 | pencarian web (20 kueri), OpenAlex, API arXiv; halaman panitia Jepang lewat browser | `docs/research/RISET_WEB_2026-11.md`; tidak ada proyek tim lain untuk kontes 2027 yang terlihat publik; teks lengkap Marty dkk. dan Li dkk. belum terbaca (akses ditolak) |
+| 2026-11-16 | T3 | `vivado -mode batch -source tools/vivado_check_part.tcl` | status CUKUP: Vivado 2025.2, xc7s25csga225-1 ditemukan; 14600 LUT, 29200 FF, 45 block RAM, 80 DSP, 3 MMCM [VIVADO] (`results/vivado/part_check.txt`); `vivado` tidak ada di PATH; Zynq-7000 tidak terpasang |
+| 2026-11-16 | T4 | `vivado -mode batch -source board/pin_check.tcl` | B13 = IO_L13P_T2_MRCC_15, clock-capable; bank 14/15/34 jenis HR [VIVADO] (`results/vivado/pin_check.txt`); `board/BOARD_INFO.md` diisi dari dokumen resmi; `board/zero7.xdc` dibuat |
+| 2026-11-16 | T4 | `pytest tests/test_board_package.py` | 8 passed. Test lama yang mewajibkan "Part number" dan "Clock input" masih UNKNOWN diganti (alasan: kedua fakta itu sekarang resmi): logika deteksi diuji dengan fixture, fakta resmi diuji tetap terisi, dan `board/zero7.xdc` diuji terhadap tabel koneksi; guard yang menolak build dan langkah hardware selama masih ada field UNKNOWN tidak diubah |
