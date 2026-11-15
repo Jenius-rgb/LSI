@@ -30,3 +30,7 @@ usage_statistics_webtalk.*
 
 # Intermediate timing-closure rounds (kept locally; the final matrix is committed)
 fpga/reports/*_v[0-9]/
+
+# Vivado droppings written to the working directory on every run
+clockInfo.txt
+dfx_runtime.txt

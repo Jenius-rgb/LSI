@@ -1,6 +1,7 @@
 # SPEC — SENTINEL v0.1 (pra-board)
 
 Tanggal: 2026-11-09. Status: usulan awal. Setiap perubahan dilakukan lewat ADR di `docs/DECISIONS.md`.
+Diperbarui 2026-11-16 lewat ADR-013 sampai ADR-020, sesudah panitia menerbitkan chip resmi dan dokumen ZERO7.
 Bagian bertanda **(normatif)** wajib diikuti persis oleh golden model dan RTL.
 
 ---
@@ -36,6 +37,8 @@ SENTINEL adalah akselerator CNN INT8 di Spartan-7 dengan **K lane MAC paralel**.
 | `IN_CH` | 3 | kanal input (RGB) |
 | `INJ_EN` | 1 | logika fault injection ikut disintesis |
 
+Varian resmi untuk ZERO7 dan laporan sintesis ada di `config/hw_zero7.yaml`: K = 8, R = 2, `C3_EN = 1`, `LANE_IMPL = lut`, model `s` (ADR-013).
+
 ---
 
 ## 2. Model CNN
@@ -43,7 +46,7 @@ SENTINEL adalah akselerator CNN INT8 di Spartan-7 dengan **K lane MAC paralel**.
 [OFFICIAL] Input 32×32. Level 3 bebas.
 [HISTORICAL] Spesifikasi kontes ke-23 memakai konvolusi, max pooling, aktivasi sigmoid/ReLU, dan fully connected.
 
-### 2.1 Varian `s` (default, untuk XC7S15 ke atas)
+### 2.1 Varian `s` (default; varian resmi untuk XC7S25CSGA225-1)
 
 | Layer | Operasi | Output | Bobot | MAC |
 | --- | --- | --- | --- | --- |
@@ -53,7 +56,7 @@ SENTINEL adalah akselerator CNN INT8 di Spartan-7 dengan **K lane MAC paralel**.
 | fc | 512→N | N | 5.120 (N = 10) | 5.120 |
 | **Total** | | | **19.376 + 90 bias** | **2.216.960** |
 
-### 2.2 Varian `xs` (untuk XC7S6, yang BRAM-nya hanya 180 Kb)
+### 2.2 Varian `xs` (varian kecil, dipakai untuk regresi cepat)
 
 | Layer | Operasi | Output | Bobot | MAC |
 | --- | --- | --- | --- | --- |
@@ -305,7 +308,7 @@ Syaratnya R · f_safe ≥ f_turbo_max. Siklus ketika FIFO operand kosong dihitun
 - Pilihan dicatat lewat ADR.
 - Rencana B: MMCM2 dengan beberapa CLKOUT tetap ditambah mux, tanpa rekonfigurasi.
 
-**Tabel frekuensi turbo** dibangkitkan `tools/gen_mmcm_table.py` dari F_IN dan batas datasheet. Batas VCO, PFD, dan input untuk speed grade yang dipakai diambil dari DS189, dengan nilai dan halamannya dicantumkan. F_IN adalah parameter board [UNKNOWN], jadi dipakai placeholder sampai board ada.
+**Tabel frekuensi turbo** dibangkitkan `tools/gen_mmcm_table.py` dari F_IN dan batas datasheet. Batas VCO, PFD, dan input untuk speed grade yang dipakai diambil dari DS189, dengan nilai dan halamannya dicantumkan. F_IN = 20 MHz di pin B13 [OFFICIAL] (ADR-015). Batas DS189 belum diverifikasi; sampai datasheet tersedia, setelan MMCM dicek dengan DRC Vivado.
 
 **Implementasi simulasi:** clock behavioral dengan periode yang bisa diubah, dan model mux bebas glitch.
 
@@ -417,7 +420,8 @@ Semantik injeksi sama persis di `model/checker.py`, sehingga outcome RTL bisa di
 - SPI mode 0 (CPOL = 0, CPHA = 0), MSB first, CS aktif rendah.
 - FPGA bertindak sebagai slave dengan oversampling di `clk_safe` (sinkronizer 2-FF).
 - Dijamin bekerja untuk f_SCLK ≤ f_safe / 8.
-- Pin dan level tegangan: [UNKNOWN], bergantung pada board.
+- Pin: SPI0 Raspberry Pi dengan CE0, yaitu SCLK A8, MOSI A6, MISO A7, CS D9 [OFFICIAL]. Sinyal selesai `irq_done` di RP_GPIO25, pin C9 (ADR-016).
+- Level tegangan belum tertulis di dokumen resmi [UNKNOWN]; lihat `board/BOARD_INFO.md`.
 
 ### 12.2 Perintah
 
@@ -454,7 +458,7 @@ Boleh ditambah. Nama final ada di YAML.
 - `INJ0_*`, `INJ1_*`
 - Counter per layer: `UNITS`, `CLEAN`, `CORRECTED`, `CSUM_LANE`, `RECOMPUTE`, `FATAL`
 - Counter koreksi per lane, dan `LANE_STATUS` (untuk LED)
-- `TEMP`, jika chip punya XADC [UNKNOWN]
+- `TEMP`: kode suhu dari XADC (ADR-018)
 
 ### 12.5 Format gambar
 
@@ -515,14 +519,15 @@ Dibangkitkan dengan seed tetap ke `build/vectors/`. Tidak di-commit; `run.py gen
   - `report_utilization -hierarchical`, `report_timing_summary`,
   - `report_timing -max_paths 20` per clock,
   - `report_power` (diberi label estimasi vectorless).
-- **Part kandidat**: ambil nama persis dari `get_parts xc7s*`, jangan menebak. Siapkan untuk XC7S6, XC7S15, XC7S25, dan XC7S50, speed grade −1 (dan −2 jika tersedia).
+- **Part**: target resmi `xc7s25csga225-1` (ADR-013). Matriks M11 untuk part lain dan speed grade −2 hanya data pembanding.
+- **`fpga/synth_official.tcl`** (ADR-014) mengimplementasikan desain lengkap `top_board` dengan `board/zero7.xdc` dan menyimpan laporan resmi di `results/vivado/official/`.
 - **Varian**: K ∈ {8, 16}, `LANE_IMPL` ∈ {lut, dsp_min, dsp_full}, `C3_EN` ∈ {0, 1}.
 - **Analisis wajib**:
   - Fmax STA domain cepat untuk setiap varian, dan Fmax domain aman,
   - 20 jalur kritis domain cepat harus jalur MAC,
   - gap slack antara jalur MAC dan non-MAC (§7.4),
   - kecocokan resource per part (BRAM36, DSP, LUT, FF).
-- **`tools/fit_report.py`** mengestimasi kebutuhan BRAM dan DSP dari config sebelum Vivado dijalankan. Catatan kasar: varian `s` dengan K = 8 dan R = 2 diperkirakan butuh sekitar 9 dari 10 BRAM36 di XC7S15. Ini belum terverifikasi.
+- **`tools/fit_report.py`** mengestimasi kebutuhan BRAM dan DSP dari config sebelum Vivado dijalankan. Di XC7S25 modul `engine` varian `s` dengan K = 8 memakai 14 dari 45 block RAM [VIVADO-STA].
 - Semua angka diberi label `[VIVADO-STA]`. STA bersifat konservatif; frekuensi gagal yang nyata hanya bisa diukur di board.
 - Jika Vivado tidak tersedia di lingkungan ini: buat skrip dan instruksi, tandai "perlu dijalankan user", lalu simpan laporan yang dikirim balik oleh user ke `fpga/reports/`.
 
@@ -594,9 +599,9 @@ sentinel/
 
 ## 18. Item yang terblokir oleh board
 
-- Part number, package, dan speed grade final.
-- XDC: pin SPI, clock, LED, tombol.
-- F_IN, serta metode konfigurasi dan programming.
-- Kecepatan SPI yang nyata, antarmuka LED RGB, dan ada tidaknya XADC.
+Sudah terjawab oleh dokumen resmi 10 Nov 2026: part number, package, speed grade, pin, F_IN, dan cara programming lewat JTAG (`board/BOARD_INFO.md`).
+
+- `Zero7.xdc` resmi, tegangan VCCO, dan standar I/O tiap bank.
+- Kecepatan SPI yang nyata, polaritas tombol, jumlah LED WS2812B per rantai, dan boot dari flash QSPI.
 - Metode pengukuran daya.
 - Semua hasil `[HW]`: E1–E4, E6, dan E7 di board.

@@ -153,12 +153,31 @@ Panitia menerbitkan fakta resmi baru pada 2 dan 10 Nov 2026 (ringkasan dan rujuk
 - [x] **T2** Riset web dan media sosial 15 Okt–15 Nov 2026 (`docs/research/RISET_WEB_2026-11.md`)
 - [x] **T3** Cek Vivado dan part; catatan Raspberry Pi di `board/BRINGUP.md`
 - [x] **T4** `board/BOARD_INFO.md`, `board/zero7.xdc`, perbarui Terblokir
-- [ ] **T5** Review ulang repo (`docs/REVIEW_2026-11.md`)
-- [ ] **T6** ADR baru, lalu SPEC
+- [x] **T5** Review ulang repo (`docs/REVIEW_2026-11.md`)
+- [x] **T6** ADR baru, lalu SPEC
 - [ ] **T7** Implementasi; prioritas laporan sintesis resmi XC7S25CSGA225-1
 - [ ] **T8** Simulasi juri (`docs/JUDGE_REVIEW.md`)
 - [ ] **T9** Revisi materi belajar
 - [ ] **T10** Catatan sesi, commit, ringkasan
+
+### Milestone baru dari ADR-013 sampai ADR-020
+
+- **M15 — Laporan sintesis resmi XC7S25CSGA225-1 (ADR-013, ADR-014, ADR-015, ADR-016)**
+  - [ ] `config/hw_zero7.yaml` (varian resmi: s, K = 8, R = 2, lut, C3 = 1)
+  - [ ] `clk_gen_xilinx` untuk input 20 MHz; `top_board` dengan port ADR-016; `board/zero7.xdc` mengikuti
+  - [ ] `fpga/synth_official.tcl` dan `python tools/run.py synth-official`
+  - [ ] laporan di `results/vivado/official/` dan ringkasan [VIVADO-STA] di `docs/RESULTS_SIM.md`
+  - Definition of Done: implementasi selesai tanpa error; semua resource di bawah kapasitas part; WNS `clk_safe` ≥ 0 pada f_safe yang dipilih; laporan utilisasi, timing, daya, DRC, dan metodologi tersimpan; setiap angka bisa dilacak ke file laporan.
+- **M16 — Regresi varian resmi di simulasi**
+  - [ ] engine model `s`, K = 8, C3 = 1 bit-exact terhadap golden model untuk ≥ 200 gambar [SIM]
+  - [ ] sistem dua clock dengan varian resmi
+- **M17 — Indikator WS2812B (ADR-017)**
+  - [ ] `rtl/ws2812_tx.v` dengan testbench lebar pulsa; encoder status; port di `top_board`
+- **M18 — Suhu XADC (ADR-018)**
+  - [ ] wrapper `xadc_temp` dan model simulasinya; register `TEMP`; kolom suhu di harness E6
+- **M19 — Sinyal selesai dan tombol (ADR-016)**
+  - [ ] `irq_done` di RTL dan driver; tombol START/STOP/RUN dibaca perangkat lunak Pi di mode kamera
+- [B] Boot dari flash QSPI (ADR-019): menunggu jenis flash dan posisi DIP SW7.
 
 ## Terblokir
 
@@ -237,3 +256,5 @@ Ditulis di akhir sesi 2026-11-09, paragraf "Posisi" dikoreksi 2026-11-12.
 | 2026-11-16 | T3 | `vivado -mode batch -source tools/vivado_check_part.tcl` | status CUKUP: Vivado 2025.2, xc7s25csga225-1 ditemukan; 14600 LUT, 29200 FF, 45 block RAM, 80 DSP, 3 MMCM [VIVADO] (`results/vivado/part_check.txt`); `vivado` tidak ada di PATH; Zynq-7000 tidak terpasang |
 | 2026-11-16 | T4 | `vivado -mode batch -source board/pin_check.tcl` | B13 = IO_L13P_T2_MRCC_15, clock-capable; bank 14/15/34 jenis HR [VIVADO] (`results/vivado/pin_check.txt`); `board/BOARD_INFO.md` diisi dari dokumen resmi; `board/zero7.xdc` dibuat |
 | 2026-11-16 | T4 | `pytest tests/test_board_package.py` | 8 passed. Test lama yang mewajibkan "Part number" dan "Clock input" masih UNKNOWN diganti (alasan: kedua fakta itu sekarang resmi): logika deteksi diuji dengan fixture, fakta resmi diuji tetap terisi, dan `board/zero7.xdc` diuji terhadap tabel koneksi; guard yang menolak build dan langkah hardware selama masih ada field UNKNOWN tidak diubah |
+| 2026-11-16 | T5 | pencarian teks terarah di seluruh repo | `docs/REVIEW_2026-11.md`: 20 temuan, masing-masing dengan tindak lanjut |
+| 2026-11-16 | T6 | ADR-013 sampai ADR-020 di `docs/DECISIONS.md`; SPEC §1, §2, §7.6, §12.1, §12.4, §14, §18 diperbarui | target dikunci ke xc7s25csga225-1; varian resmi K=8, lut, C3=1; milestone M15–M19 ditambahkan |
