@@ -1,6 +1,6 @@
 # STATUS — SENTINEL
 
-Terakhir diperbarui: 2026-11-09, akhir sesi pertama (pra-board).
+Terakhir diperbarui: 2026-11-16, sesi pembaruan ZERO7 (pra-board).
 Fase: **PRA-BOARD**
 
 Legenda: `[ ]` belum · `[~]` sedang dikerjakan · `[x]` selesai (ada bukti di Log bukti) · `[B]` terblokir (alasan di bagian Terblokir)
@@ -144,6 +144,22 @@ Jika G1 meleset lebih dari satu minggu, buang pemilihan clock per layer dan paka
 
 ---
 
+## Pembaruan ZERO7 (PROMPT_UPDATE_ZERO7, mulai 2026-11-16)
+
+Panitia menerbitkan fakta resmi baru pada 2 dan 10 Nov 2026 (ringkasan dan rujukan di `docs/official/README.md`). Fase tetap PRA-BOARD untuk semua eksperimen `[HW]`; board fisik belum ada.
+
+- [x] **T0** Orientasi: `check` dan `test` penuh
+- [x] **T1** Baca dan arsipkan sumber resmi; catatan referensi di `docs/references/`
+- [ ] **T2** Riset web dan media sosial 15 Okt–15 Nov 2026 (`docs/research/RISET_WEB_2026-11.md`)
+- [ ] **T3** Cek Vivado dan part; catatan Raspberry Pi di `board/BRINGUP.md`
+- [ ] **T4** `board/BOARD_INFO.md`, `board/zero7.xdc`, perbarui Terblokir
+- [ ] **T5** Review ulang repo (`docs/REVIEW_2026-11.md`)
+- [ ] **T6** ADR baru, lalu SPEC
+- [ ] **T7** Implementasi; prioritas laporan sintesis resmi XC7S25CSGA225-1
+- [ ] **T8** Simulasi juri (`docs/JUDGE_REVIEW.md`)
+- [ ] **T9** Revisi materi belajar
+- [ ] **T10** Catatan sesi, commit, ringkasan
+
 ## Terblokir
 
 - [B] Part number, package, speed grade ZERO7 — belum dipublikasikan panitia
@@ -211,3 +227,5 @@ Ditulis di akhir sesi 2026-11-09, paragraf "Posisi" dikoreksi 2026-11-12.
 | 2026-11-09 | M12 | `pytest tests/test_software.py`; `python -m sentinel.experiments.e1..e8`; `python tools/run.py plots` | 7 grafik; e1-e4,e6,e7 mock [SYNTHETIC], e5 [SIM], e8 estimasi [SIM] |
 | 2026-11-09 | M13 | `python tools/gen_results_doc.py` | docs/RESULTS_SIM.md dari file hasil; dokumen lain ditulis tanpa angka baru |
 | 2026-11-09 | M14 | `pytest tests/test_board_package.py`; `python board/bringup.py validate --dry-run` | dry-run lulus; build menolak jalan karena BOARD_INFO UNKNOWN |
+| 2026-11-16 | T0 | `python tools/run.py check`; `python tools/run.py test` | semua alat ok (Vivado 2025.2, Icarus 12.0, Verilator 5.053); 190 passed in 227.70s; log `build/test_full_2026-11-16.log` |
+| 2026-11-16 | T1 | baca `GUIDE_LSI_2027_FINALE.pdf` (6 hlm), `ZERO7FPGA_Connection-table_261109_001.pdf` (7 hlm), `Initialize_20260618_EN.pdf` (59 slide), `index.html` dan `shiyou_1.html` (Jepang) | tiga PDF diarsipkan ke `docs/official/`, panduan lama ke `superseded/`; `docs/official/README.md` dan tiga catatan `docs/references/` ditulis; PDF Jepang `Initialize_20260618.pdf` belum diarsipkan (menunggu izin unduh) |
