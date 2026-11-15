@@ -1,0 +1,20 @@
+# Official variant for ZERO7 and for the mandatory synthesis report (ADR-013, ADR-015).
+# Target chip: AMD Spartan-7 XC7S25CSGA225-1 [OFFICIAL: docs/official/README.md].
+part: xc7s25csga225-1
+top: top_board
+constraints: board/zero7.xdc
+MODEL: s
+K: 8
+R: 2
+C3_EN: 1
+LANE_IMPL: lut      # 0 in the RTL parameter
+INJ_EN: 1
+WEIGHT_AW: 12       # same address widths as fpga/run_matrix.py uses for model s
+ACT0_AW: 13
+ACT1_AW: 11
+clock:
+  f_in_mhz: 20.0    # CLK20M on pin B13 [OFFICIAL: board/BOARD_INFO.md]
+  vco_mhz: 1000.0   # M = 50, D = 1
+  f_safe_mhz: 125.0 # divider 8; falls back to 100.0 (divider 10) if timing is not met (ADR-015)
+  turbo_step_mhz: 10.0
+  turbo_levels: 16

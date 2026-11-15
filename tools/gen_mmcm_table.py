@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Generate the MMCM2 turbo frequency table (SPEC 7.6).
 
-F_IN is an unknown board fact, so it is a parameter with a placeholder default. MMCM limits
-live in config/mmcm_limits.yaml. Values there are marked ``verified: false`` until someone
+F_IN is the 20 MHz board clock CLK20M (board/BOARD_INFO.md, ADR-015); other values can still be
+passed for exploration and are then flagged as placeholders. MMCM limits live in
+config/mmcm_limits.yaml. Values there are marked ``verified: false`` until someone
 checks them against DS189 and records the page number; the generated table carries that flag.
 """
 from __future__ import annotations
@@ -14,6 +15,7 @@ from pathlib import Path
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
+BOARD_F_IN_MHZ = 20.0  # CLK20M on pin B13 [OFFICIAL: board/BOARD_INFO.md]
 LIMITS_PATH = ROOT / "config" / "mmcm_limits.yaml"
 
 
@@ -63,7 +65,8 @@ def build_table(f_in: float, f_base: float, step: float, levels: int, speed_grad
         table.append({"level": level, "target_mhz": target, **(cfg or {"m": None})})
     return {
         "f_in_mhz": f_in,
-        "f_in_is_placeholder": True,
+        "f_in_is_placeholder": f_in != BOARD_F_IN_MHZ,
+        "f_in_source": "board/BOARD_INFO.md: CLK20M, 20 MHz [OFFICIAL]" if f_in == BOARD_F_IN_MHZ else "caller-supplied value, not the board clock",
         "speed_grade": speed_grade,
         "limits": limits,
         "limits_verified_against_ds189": limits["verified"],
@@ -73,9 +76,9 @@ def build_table(f_in: float, f_base: float, step: float, levels: int, speed_grad
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--f-in", type=float, default=100.0, help="board clock in MHz; 100 is a placeholder [UNKNOWN]")
-    parser.add_argument("--f-base", type=float, default=100.0)
-    parser.add_argument("--step", type=float, default=5.0, help="turbo level spacing in MHz (E1 uses 5 MHz steps)")
+    parser.add_argument("--f-in", type=float, default=BOARD_F_IN_MHZ, help="board clock in MHz; 20 MHz on ZERO7")
+    parser.add_argument("--f-base", type=float, default=125.0, help="turbo level 0 in MHz; equals f_safe (ADR-015)")
+    parser.add_argument("--step", type=float, default=10.0, help="turbo level spacing in MHz (ADR-015)")
     parser.add_argument("--levels", type=int, default=16)
     parser.add_argument("--speed-grade", default="-1", choices=["-1", "-2"])
     parser.add_argument("--out", default="build/mmcm_table.json")

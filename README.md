@@ -1,7 +1,8 @@
 # SENTINEL
 
 CNN accelerator for the 30th LSI Design Contest (2027), targeting the AMD Spartan-7
-based ZERO7 board (Raspberry Pi HAT). "SENTINEL" is a working title.
+based ZERO7 board (Raspberry Pi HAT). "SENTINEL" is a working title. The contest chip is
+XC7S25CSGA225-1; every team must hand in a synthesis report for it (`docs/official/README.md`).
 
 The accelerator classifies 32×32 images bit-exactly against a Python golden model and
 protects its MAC lanes with dual checksums, so that errors from overclocking the lanes
@@ -38,6 +39,7 @@ python tools/run.py test
 | `python tools/run.py train --model s` | train the float model |
 | `python tools/run.py export --model s` | quantise and export |
 | `python tools/run.py sim <tb>` | run one testbench |
+| `python tools/run.py synth-official` | official synthesis report for XC7S25CSGA225-1 (`results/vivado/official/`) |
 | `python tools/run.py campaign` | fault-injection campaigns |
 | `python tools/run.py ooc` | Vivado out-of-context runs |
 | `python tools/run.py plots` | regenerate all plots |

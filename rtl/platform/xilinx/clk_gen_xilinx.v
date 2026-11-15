@@ -1,18 +1,28 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-// Xilinx clock generation (SPEC 7.6).  MMCM1 makes clk_safe, MMCM2 makes clk_turbo through
-// dynamic reconfiguration, BUFGCTRL muxes them into clk_fast.  Only used under Vivado.
+// Xilinx clock generation (SPEC 7.6, ADR-015).  MMCM1 makes clk_safe, MMCM2 makes clk_turbo,
+// BUFGCTRL muxes them into clk_fast.  Only used under Vivado.
 //
-// F_IN and the MMCM settings are board facts that are not known yet: the multiply and
-// divide values are placeholders and must come from tools/gen_mmcm_table.py once
-// board/BOARD_INFO.md names the clock.  The DRP write sequencer (XAPP888) is left for the
-// board phase and is selected by ADR when that phase starts.
+// The board clock is 20 MHz on pin B13 (board/BOARD_INFO.md).  Both MMCMs run their VCO at
+// F_IN * MULT = 1000 MHz.  The MMCM limits in config/mmcm_limits.yaml have not been checked
+// against DS189 yet; Vivado's DRC is the interim check.  MMCM2 starts at the safe frequency
+// (turbo level 0).  The DRP write sequencer that changes it (ADR-010) does not exist yet, so
+// reconfig_start is ignored and the turbo clock keeps its initial frequency.
+//
+// The safe divider can be set at synthesis time with -verilog_define SENTINEL_SAFE_DIV=10.0
+// (100 MHz) when 125 MHz does not meet timing.
+`ifndef SENTINEL_SAFE_DIV
+`define SENTINEL_SAFE_DIV 8.0
+`endif
+
 module clk_gen_xilinx #(
     parameter LEVELS_LOG2 = 4,
-    parameter real CLKIN_PERIOD = 10.0,   // placeholder: F_IN is [UNKNOWN]
-    parameter real SAFE_MULT    = 10.0,
-    parameter real SAFE_DIV     = 10.0
+    parameter real CLKIN_PERIOD = 50.0,                 // 20 MHz
+    parameter real SAFE_MULT    = 50.0,                 // VCO 1000 MHz
+    parameter real SAFE_DIV     = `SENTINEL_SAFE_DIV,   // clk_safe = 1000 / SAFE_DIV MHz
+    parameter real TURBO_MULT   = 50.0,
+    parameter real TURBO_DIV    = `SENTINEL_SAFE_DIV    // turbo level 0 equals the safe frequency
 ) (
     input  wire                   clk_in,
     input  wire                   rst,
@@ -41,7 +51,7 @@ module clk_gen_xilinx #(
     BUFG u_safe (.I(clk_safe_raw), .O(clk_safe_buf));
 
     MMCME2_ADV #(
-        .CLKIN1_PERIOD(CLKIN_PERIOD), .CLKFBOUT_MULT_F(SAFE_MULT), .CLKOUT0_DIVIDE_F(SAFE_DIV), .DIVCLK_DIVIDE(1)
+        .CLKIN1_PERIOD(CLKIN_PERIOD), .CLKFBOUT_MULT_F(TURBO_MULT), .CLKOUT0_DIVIDE_F(TURBO_DIV), .DIVCLK_DIVIDE(1)
     ) u_mmcm2 (
         .CLKIN1(clk_in), .CLKIN2(1'b0), .CLKINSEL(1'b1), .CLKFBIN(turbo_fb_buf), .RST(rst), .PWRDWN(1'b0),
         .CLKFBOUT(turbo_fb), .CLKFBOUTB(), .CLKOUT0(clk_turbo_raw), .CLKOUT0B(), .CLKOUT1(), .CLKOUT1B(),
@@ -60,7 +70,7 @@ module clk_gen_xilinx #(
     assign clk_safe      = clk_safe_buf;
     assign locked        = locked1;
     assign turbo_locked  = locked2;
-    // [UNKNOWN] until the DRP sequencer exists: no reconfiguration, selection reported as requested.
+    // No DRP sequencer yet: no reconfiguration, and the selection is reported as requested.
     assign is_turbo      = sel_turbo;
     assign reconfig_busy = 1'b0;
 

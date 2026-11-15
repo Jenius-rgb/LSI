@@ -65,10 +65,11 @@ def test_hardware_steps_refuse_on_the_real_path_while_unknown():
     assert res.returncode == 2 and "UNKNOWN" in res.stdout
 
 
-def test_xdc_template_has_placeholders_only():
-    text = (ROOT / "board" / "xdc" / "sentinel_board.xdc.template").read_text(encoding="utf-8")
-    assert "<PIN>" in text and all(line.startswith("#") or not line.strip() for line in text.splitlines())
-    assert not (ROOT / "board" / "xdc" / "sentinel_board.xdc").exists()
+def test_build_script_uses_zero7_xdc_and_checks_its_io_standards():
+    """ADR-016: board/zero7.xdc replaced the placeholder template on 2026-11-16."""
+    text = (ROOT / "board" / "build_bitstream.py").read_text(encoding="utf-8")
+    assert "zero7.xdc" in text and "TODO: belum dikonfirmasi" in text
+    assert not (ROOT / "board" / "xdc").exists()
 
 
 # Configuration pins of ZERO7 (connection table): QSPI, JTAG, PROG, INIT, DONE, MODE, PUDC_B.

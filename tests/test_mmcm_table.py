@@ -25,9 +25,18 @@ def test_infeasible_input_clock_is_reported_not_guessed():
 
 
 def test_table_records_placeholder_and_unverified_limits():
+    """A clock other than the board clock is still flagged; the limits stay unverified."""
     table = gmt.build_table(100.0, 100.0, 5.0, 4, "-1", LIMITS)
     assert table["f_in_is_placeholder"] is True
     assert table["limits_verified_against_ds189"] is False
+
+
+def test_board_clock_of_20_mhz_gives_an_exact_table():
+    """ADR-015: CLK20M is official since 2026-11-10, so 20 MHz is no longer a placeholder."""
+    table = gmt.build_table(gmt.BOARD_F_IN_MHZ, 125.0, 10.0, 16, "-1", LIMITS)
+    assert table["f_in_is_placeholder"] is False and "OFFICIAL" in table["f_in_source"]
+    assert [round(lv["f_out"], 6) for lv in table["levels"]] == [125.0 + 10.0 * i for i in range(16)]
+    assert all(lv["d"] == 1 and LIMITS["f_vco_min"] <= lv["f_vco"] <= LIMITS["f_vco_max"] for lv in table["levels"])
 
 
 def test_repository_limits_are_flagged_until_checked():

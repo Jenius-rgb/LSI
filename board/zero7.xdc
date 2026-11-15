@@ -31,23 +31,24 @@ set_property PACKAGE_PIN A6 [get_ports spi_mosi];                               
 set_property PACKAGE_PIN A7 [get_ports spi_miso];                                    # RP_GPIO9, MISO
 set_property IOSTANDARD LVCMOS33 [get_ports {spi_sclk spi_cs_n spi_mosi spi_miso}];  # TODO: belum dikonfirmasi
 
-## Plain LEDs.  D5 and D6 belong to the FPGA alone.  D9 (green) and D8 (red) share their
-## line with RP_GPIO13 and RP_GPIO19: the Raspberry Pi must leave those two GPIOs as inputs.
-set_property PACKAGE_PIN R3  [get_ports {led[0]}];                                   # GPIO_LED1, D5
-set_property PACKAGE_PIN R2  [get_ports {led[1]}];                                   # GPIO_LED2, D6
-set_property PACKAGE_PIN B10 [get_ports {led[2]}];                                   # RP_GPIO13, D9 green
-set_property PACKAGE_PIN B11 [get_ports {led[3]}];                                   # RP_GPIO19, D8 red
-set_property IOSTANDARD LVCMOS33 [get_ports {led[*]}];                               # TODO: belum dikonfirmasi
+## LEDs that belong to the FPGA alone (ADR-016).  D3, D8 and D9 share their lines with
+## RP_GPIO6, RP_GPIO19 and RP_GPIO13 and are left to the Raspberry Pi software.
+set_property PACKAGE_PIN R3 [get_ports led_busy];                                    # GPIO_LED1, D5
+set_property PACKAGE_PIN R2 [get_ports led_fatal];                                   # GPIO_LED2, D6
+set_property IOSTANDARD LVCMOS33 [get_ports {led_busy led_fatal}];                   # TODO: belum dikonfirmasi
 
-## The SPI pins are sampled by synchronisers in clk_safe and the LEDs are slow status
-## outputs, so none of these ports has a timing relationship with a clock.
+## Done signal to the Raspberry Pi (ADR-016).
+set_property PACKAGE_PIN C9 [get_ports irq_done];                                    # RP_GPIO25
+set_property IOSTANDARD LVCMOS33 [get_ports irq_done];                               # TODO: belum dikonfirmasi
+
+## The SPI pins are sampled by synchronisers in clk_safe; the LEDs and the done signal are
+## slow status outputs.  None of these ports has a timing relationship with a clock.
 set_false_path -from [get_ports {spi_sclk spi_cs_n spi_mosi}]
-set_false_path -to   [get_ports {spi_miso led[*]}]
+set_false_path -to   [get_ports {spi_miso led_busy led_fatal irq_done}]
 
 ## Pins reserved for ports that top_board does not have yet.  Uncomment together with the
 ## RTL change (see docs/DECISIONS.md).
 # set_property PACKAGE_PIN N1  [get_ports ws2812_dout];   # S7_LED0, LED1 (WS2812B), also J7
-# set_property PACKAGE_PIN C9  [get_ports irq_done];      # RP_GPIO25
 # set_property PACKAGE_PIN C14 [get_ports btn_start];     # SW5 START, shared with RP_GPIO20
 # set_property PACKAGE_PIN B15 [get_ports btn_stop];      # SW4 STOP,  shared with RP_GPIO21
 # set_property PACKAGE_PIN C13 [get_ports btn_run];       # SW6 RUN,   shared with RP_GPIO16

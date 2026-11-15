@@ -112,16 +112,19 @@ def _engine_params(model: str, k: int, c3: int = 0, impl: int = 0) -> dict:
 def engine_benches() -> dict[str, Bench]:
     out = {}
     # Quick smoke runs (part of `run.py test`), then the full DoD regressions (slow, xsim).
-    for model, k, count, slow, shards in [
-        ("xs", 8, 2, False, 1),
-        ("s", 8, 1, False, 1),
-        ("xs", 8, 200, True, 6),
-        ("s", 8, 200, True, 6),
-        ("s", 16, 20, True, 4),
+    # The c3 = 1 rows are the official ZERO7 variant of config/hw_zero7.yaml (ADR-013).
+    for model, k, c3, count, slow, shards in [
+        ("xs", 8, 0, 2, False, 1),
+        ("s", 8, 0, 1, False, 1),
+        ("s", 8, 1, 1, False, 1),
+        ("xs", 8, 0, 200, True, 6),
+        ("s", 8, 0, 200, True, 6),
+        ("s", 8, 1, 200, True, 6),
+        ("s", 16, 0, 20, True, 4),
     ]:
-        name = f"engine_{model}_k{k}" + (f"_n{count}" if count >= 20 else "")
+        name = f"engine_{model}_k{k}" + ("_c1" if c3 else "") + (f"_n{count}" if count >= 20 else "")
         out[name] = Bench(
-            name, "tb_engine", [*ENGINE_SOURCES, "tb/tb_engine.v"], _engine_params(model, k),
+            name, "tb_engine", [*ENGINE_SOURCES, "tb/tb_engine.v"], _engine_params(model, k, c3),
             _engine_vectors(model, count), slow=slow, shards=shards, prefer_xsim=slow,
         )
     # SPEC 13.4 corner cases on padded lanes, extreme values, ties, saturation, zero image.
@@ -297,6 +300,7 @@ _W = {f"WC{i+1}_W": v for i, v in enumerate(wc_widths(8))}
 LINT_TARGETS = [
     {"id": "regfile", "top": "regfile", "sources": ["rtl/regfile.v"]},
     {"id": "top_core", "top": "top_core", "sources": TOP_SOURCES, "params": _W},
+    {"id": "top_board", "top": "top_board", "sources": TOP_SOURCES + ["board/top_board.v"]},
     {"id": "spi_slave", "top": "spi_slave", "sources": ["rtl/spi_slave.v"]},
     {"id": "governor", "top": "governor", "sources": ["rtl/governor.v"]},
     {"id": "clk_seq", "top": "clk_seq", "sources": ["rtl/clk_seq.v"]},

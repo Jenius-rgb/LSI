@@ -68,6 +68,10 @@ def cmd_ooc(rest: list[str]) -> int:
     return call("fpga/run_matrix.py", *rest)
 
 
+def cmd_synth_official(rest: list[str]) -> int:
+    return call("fpga/run_official.py", *rest)
+
+
 def cmd_plots(rest: list[str]) -> int:
     return call("-m", "sentinel.plots.all", *rest)
 
@@ -81,6 +85,7 @@ COMMANDS = {
     "sim": (cmd_sim, "run one RTL testbench"),
     "campaign": (cmd_campaign, "run the fault-injection campaigns"),
     "ooc": (cmd_ooc, "Vivado out-of-context runs (when Vivado has the parts)"),
+    "synth-official": (cmd_synth_official, "official synthesis report for xc7s25csga225-1"),
     "plots": (cmd_plots, "regenerate all plots"),
 }
 

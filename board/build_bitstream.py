@@ -24,9 +24,9 @@ def main() -> int:
         for field in missing:
             print(f"  - {field}")
         return 2
-    xdc = ROOT / "board" / "xdc" / "sentinel_board.xdc"
-    if not xdc.exists():
-        print("Refusing to build: fill board/xdc/sentinel_board.xdc from the board documentation first.")
+    xdc = ROOT / "board" / "zero7.xdc"
+    if not xdc.exists() or "TODO: belum dikonfirmasi" in xdc.read_text(encoding="utf-8"):
+        print("Refusing to build: board/zero7.xdc still has unconfirmed I/O standards (see board/BOARD_INFO.md).")
         return 2
     print("Board facts present. The build flow (Vivado project, BRAM parameters from the model) is set up in the board phase.")
     return 0
