@@ -2,6 +2,7 @@
 
 Tanggal: 2026-11-09. Status: usulan awal. Setiap perubahan dilakukan lewat ADR di `docs/DECISIONS.md`.
 Diperbarui 2026-11-16 lewat ADR-013 sampai ADR-020, sesudah panitia menerbitkan chip resmi dan dokumen ZERO7.
+§7.8 diperluas 2026-11-16 lewat ADR-021, sesudah implementasi lengkap pertama di chip resmi.
 Bagian bertanda **(normatif)** wajib diikuti persis oleh golden model dan RTL.
 
 ---
@@ -318,12 +319,31 @@ Syaratnya R · f_safe ≥ f_turbo_max. Siklus ketika FIFO operand kosong dihitun
 2. Sebelum rekonfigurasi MMCM2: set `sel = safe` dan tunggu konfirmasi perpindahan. Baru setelah itu rekonfigurasi, lalu tunggu `LOCKED = 1`. Setelah itu `sel = turbo` boleh dipakai lagi.
 3. Rekonfigurasi hanya dilakukan di antara gambar.
 
-### 7.8 Constraint
+### 7.8 Constraint dan penyeberangan domain clock
 
 - `clk_safe` dan `clk_fast` adalah clock group asinkron.
 - Dua clock di keluaran BUFGCTRL bersifat physically exclusive.
 - Constraint XPM diterapkan otomatis.
 - Untuk OOC: `create_clock` pada port clock dengan periode target.
+
+**Reset (ADR-021).** Reset power-on dibangkitkan di domain clock board. Reset itu dan LOCKED MMCM1 masing-masing masuk ke `clk_safe` lewat synchronizer dua flop tanpa logika di depannya, lalu digabung dengan soft reset dan melewati dua flop lagi; flop terakhir menggerakkan net reset. Jalur dari clock board ke tahap pertama synchronizer adalah false path; tidak ada pengecualian timing lain. Reset `clk_fast` diturunkan dari reset `clk_safe` lewat synchronizer dua flop yang diikuti satu flop penggerak.
+
+**Penyeberangan yang diizinkan (ADR-021).** Setiap synchronizer diberi atribut `ASYNC_REG`. Sinyal di luar tabel ini tidak boleh menyeberang.
+
+| Sinyal | Arah | Cara |
+| --- | --- | --- |
+| operand dan hasil | `clk_safe` ↔ `clk_fast` | FIFO asinkron XPM |
+| reset | `clk_safe` → `clk_fast` | synchronizer dua flop |
+| `pass_active` | `clk_safe` → `clk_fast` | synchronizer dua flop |
+| konfigurasi injeksi (`INJ*`), indeks layer | `clk_safe` → `clk_fast` | quasi-statis: hanya berubah saat domain cepat idle |
+| `STARVE_CYCLES` | `clk_fast` → `clk_safe` | quasi-statis: hanya dibaca saat `STATUS.BUSY` = 0 |
+| pemilih clock `sel` | `clk_safe` → BUFGCTRL | urutan §7.7 |
+| pin SPI | luar → `clk_safe` | synchronizer dua flop |
+| LOCKED MMCM1 dan MMCM2 | asinkron → `clk_safe` | synchronizer |
+
+**Aturan host.** Register `INJ*` hanya ditulis saat `STATUS.BUSY` = 0.
+
+**Laporan.** Alur laporan resmi menjalankan `report_cdc` dan `report_bus_skew`; jumlah penyeberangan per kelas dicatat di `results/vivado/official/summary.md`.
 
 ---
 

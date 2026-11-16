@@ -27,9 +27,11 @@ module spi_slave (
     localparam [7:0] CMD_WRITE = 8'h02, CMD_READ = 8'h03, CMD_ID = 8'h9F;
     localparam [1:0] P_CMD = 2'd0, P_ADDR = 2'd1, P_DATA = 2'd2, P_ID = 2'd3;
 
-    reg sclk_s1, sclk_s2, sclk_d;
-    reg cs_s1, cs_s2, cs_d;
-    reg mosi_s1, mosi_s2;
+    // Two-flop synchronizers for the SPI pins (ADR-021); the _d flops are edge detectors.
+    (* ASYNC_REG = "TRUE" *) reg sclk_s1, sclk_s2;
+    (* ASYNC_REG = "TRUE" *) reg cs_s1, cs_s2;
+    (* ASYNC_REG = "TRUE" *) reg mosi_s1, mosi_s2;
+    reg sclk_d, cs_d;
 
     wire sclk_rise = sclk_s2 & ~sclk_d;
     wire sclk_fall = ~sclk_s2 & sclk_d;

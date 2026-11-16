@@ -34,3 +34,4 @@ fpga/reports/*_v[0-9]/
 # Vivado droppings written to the working directory on every run
 clockInfo.txt
 dfx_runtime.txt
+tight_setup_hold_pins.txt

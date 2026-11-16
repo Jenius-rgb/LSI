@@ -40,11 +40,30 @@ module top_core #(
         .reconfig_busy(reconfig_busy), .turbo_locked(turbo_locked));
 
     // Synchronous reset held until the clocks are stable; soft reset comes from the registers.
+    // rst is launched by the board clock and LOCKED is asynchronous.  Each has its own two-flop
+    // synchronizer with no logic in front of it (ADR-021); they meet the soft reset in the
+    // clk_safe domain.  Every source reaches rst_safe after four flops.  rst_safe_r drives the
+    // reset net and may be replicated.
     wire   soft_reset;
-    reg [3:0] rst_sync;
-    initial rst_sync = 4'hF;
-    always @(posedge clk_safe) rst_sync <= {rst_sync[2:0], rst | ~clocks_locked | soft_reset};
-    wire rst_safe = rst_sync[3];
+    (* ASYNC_REG = "TRUE" *) reg [1:0] por_meta;
+    (* ASYNC_REG = "TRUE" *) reg [1:0] lock_meta;
+    reg [1:0] soft_d;
+    reg       rst_req, rst_safe_r;
+    initial begin
+        por_meta   = 2'b11;
+        lock_meta  = 2'b00;
+        soft_d     = 2'b00;
+        rst_req    = 1'b1;
+        rst_safe_r = 1'b1;
+    end
+    always @(posedge clk_safe) begin
+        por_meta   <= {por_meta[0], rst};
+        lock_meta  <= {lock_meta[0], clocks_locked};
+        soft_d     <= {soft_d[0], soft_reset};
+        rst_req    <= por_meta[1] | ~lock_meta[1] | soft_d[1];
+        rst_safe_r <= rst_req;
+    end
+    wire rst_safe = rst_safe_r;
 
     // ---- host bus ------------------------------------------------------------------------
     wire        bus_wr, bus_rd;

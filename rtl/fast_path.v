@@ -64,7 +64,7 @@ module fast_path #(
     reg             set_valid;
 
     wire pass_active_sync;
-    reg  pass_s1, pass_s2;
+    (* ASYNC_REG = "TRUE" *) reg pass_s1, pass_s2;   // synchronizer from clk_safe (ADR-021)
     always @(posedge clk) begin
         pass_s1 <= pass_active;
         pass_s2 <= pass_s1;

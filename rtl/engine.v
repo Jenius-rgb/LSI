@@ -264,10 +264,12 @@ module engine #(
         .fifo_wr(opf_wr), .fifo_data(opf_wdata), .fifo_afull(opf_afull),
         .info_wr(info_wr), .info_data(info_wdata), .info_full(info_full));
 
-    // Reset for clk_fast logic, synchronized into that domain.
-    (* max_fanout = 64 *) reg [2:0] rst_fast_sync;
-    always @(posedge clk_fast) rst_fast_sync <= {rst_fast_sync[1:0], rst};
-    wire rst_fast = rst_fast_sync[2];
+    // Reset for clk_fast logic, synchronized into that domain: two synchronizer flops (ADR-021),
+    // then the flop that drives the reset net and may be replicated.
+    (* ASYNC_REG = "TRUE" *) reg [1:0] rst_fast_meta;
+    (* max_fanout = 64 *)    reg       rst_fast_r;
+    always @(posedge clk_fast) {rst_fast_r, rst_fast_meta} <= {rst_fast_meta, rst};
+    wire rst_fast = rst_fast_r;
 
     // ---- clock-domain crossing ---------------------------------------------------------
     wire              opf_empty, opf_rd;

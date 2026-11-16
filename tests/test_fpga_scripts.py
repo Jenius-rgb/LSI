@@ -113,3 +113,108 @@ def test_official_report_parsers():
     assert summary["clocks"][0] == {"name": "clk_fast_safe", "period_ns": 8.0, "wns_ns": 0.25, "whs_ns": None}
     report = "| TIMING-18 | Warning | Missing input or output delay | 3 |\n| NSTD-1 | Critical Warning | x | 1 |\n"
     assert ro.count_violations(report) == {"Warning": 3, "Critical Warning": 1}
+
+
+def test_reset_and_cdc_rules_of_the_complete_design():
+    """ADR-021: synchronizers are marked, the reset crossing is excepted, and the flow reports CDC and bus skew."""
+    import re
+
+    tcl = (ROOT / "fpga" / "constraints" / "top_board_timing.tcl").read_text(encoding="utf-8")
+    assert "set_false_path -from [get_clocks clk_in]" in tcl and "por_meta_reg[0]" in tcl
+    flow = (ROOT / "fpga" / "synth_official.tcl").read_text(encoding="utf-8")
+    assert "report_cdc" in flow and "report_bus_skew" in flow
+    marked = {
+        "rtl/top_core.v": "por_meta", "rtl/engine.v": "rst_fast_meta", "rtl/fast_path.v": "pass_s1",
+        "rtl/spi_slave.v": "sclk_s1", "rtl/platform/xilinx/clk_gen_xilinx.v": "locked2_meta",
+    }
+    for path, name in marked.items():
+        text = (ROOT / path).read_text(encoding="utf-8")
+        assert re.search(r'\(\* ASYNC_REG = "TRUE" \*\)[^;]*\b' + name + r"\b", text), path
+    # No logic in front of a synchronizer: each asynchronous reset source is sampled on its own.
+    core = (ROOT / "rtl" / "top_core.v").read_text(encoding="utf-8")
+    assert "{por_meta[0], rst}" in core and "{lock_meta[0], clocks_locked}" in core
+
+
+def test_official_cdc_parser():
+    import run_official as ro
+
+    text = (
+        "ID      Severity  Count  Description\n"
+        "------  --------  -----  --------------------------------------------------\n"
+        "CDC-1   Critical    696  1-bit unknown CDC circuitry\n"
+        "CDC-3   Info         32  1-bit synchronized with ASYNC_REG property\n"
+        "\nSource Clock: clk_safe_raw\n"
+        "  1  CDC-2   Warning   1-bit synchronized with missing ASYNC_REG property      2  Asynch Clock Groups  a/C  b/D\n"
+    )
+    assert ro.parse_cdc(text) == {
+        "CDC-1": {"severity": "Critical", "count": 696, "description": "1-bit unknown CDC circuitry"},
+        "CDC-3": {"severity": "Info", "count": 32, "description": "1-bit synchronized with ASYNC_REG property"},
+    }
+
+
+CLOCK_TABLES = """
+| Intra Clock Table
+| -----------------
+
+Clock                   WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints
+-----                   -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------
+clk_in                   48.466        0.000                      0                    2        0.257        0.000                      0                    2       15.000        0.000                       0                     5
+  clk_safe_raw            0.286        0.000                      0                11249        0.052        0.000                      0                11249        1.500        0.000                       0                  5766
+  clk_turbo_raw                                                                                                                                                       5.845        0.000                       0                     2
+
+
+| Inter Clock Table
+| -----------------
+
+From Clock     To Clock           WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints
+----------     --------           -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------
+clk_in         clk_safe_raw        -0.499       -0.499                      1                    1        0.073        0.000                      0                    1
+
+
+| Other Path Groups Table
+"""
+
+
+def test_official_clock_tables():
+    """Fmax is a property of the paths inside one clock, so it is read from the intra-clock table."""
+    import run_official as ro
+
+    tables = ro.parse_clock_tables(CLOCK_TABLES)
+    assert tables["intra"] == {
+        "clk_in": {"wns_ns": 48.466, "whs_ns": 0.257, "endpoints": 2},
+        "clk_safe_raw": {"wns_ns": 0.286, "whs_ns": 0.052, "endpoints": 11249},
+    }
+    assert tables["inter"] == [{"from": "clk_in", "to": "clk_safe_raw", "wns_ns": -0.499, "whs_ns": 0.073, "endpoints": 1}]
+
+
+def test_official_cdc_pairs_and_bus_skew():
+    import run_official as ro
+
+    pairs = ro.parse_cdc_pairs(
+        "Severity  Source Clock      Destination Clock  CDC Type                 Exceptions           Endpoints  Safe  Unsafe  Unknown  No ASYNC_REG  \n"
+        "--------  ----------------  -----------------  -----------------------  -------------------  ---------  ----  ------  -------  ------------  \n"
+        "Critical  clk_safe_raw      clk_fast_safe      User Ignored             Asynch Clock Groups        686   274       0      412             0  \n"
+        "Info      input port clock  clk_safe_raw       No Common Primary Clock  False Path                   3     3       0        0             0  \n"
+    )
+    assert pairs == [
+        {"severity": "Critical", "from": "clk_safe_raw", "to": "clk_fast_safe", "type": "User Ignored", "exception": "Asynch Clock Groups",
+         "endpoints": 686, "safe": 274, "unsafe": 0, "unknown": 412, "no_async_reg": 0},
+        {"severity": "Info", "from": "input port clock", "to": "clk_safe_raw", "type": "No Common Primary Clock", "exception": "False Path",
+         "endpoints": 3, "safe": 3, "unsafe": 0, "unknown": 0, "no_async_reg": 0},
+    ]
+    skew = ro.parse_bus_skew(
+        "1. Bus Skew Report Summary\n2. Bus Skew Report Per Constraint\n\n1. Bus Skew Report Summary\n---\n\n"
+        "Id  Position  From  To  Corner  Requirement(ns)  Actual(ns)  Slack(ns)\n"
+        "1   5         [get_cells a]\n              [get_cells b]\n                    Slow              8.000       0.558      7.442\n"
+        "2   7         [get_cells c]\n              [get_cells d]\n                    Fast              8.000       0.845      7.155\n"
+        "\n2. Bus Skew Report Per Constraint\n   Slow              8.000       9.000      -1.000\n"
+    )
+    assert skew == {"constraints": 2, "worst_slack_ns": 7.155, "worst_actual_ns": 0.845}
+
+
+def test_official_power_parser():
+    import run_official as ro
+
+    text = ("| Total On-Chip Power (W)  | 0.503        |\n| Design Power Budget (W)  | Unspecified* |\n| Dynamic (W)              | 0.440        |\n"
+            "| Device Static (W)        | 0.062        |\n| Confidence Level         | Medium       |\n")
+    assert ro.parse_power(text) == {"total_w": 0.503, "dynamic_w": 0.44, "static_w": 0.062, "confidence": "Medium"}

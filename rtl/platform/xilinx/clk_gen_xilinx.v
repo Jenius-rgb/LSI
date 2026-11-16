@@ -67,9 +67,15 @@ module clk_gen_xilinx #(
         .I0(clk_safe_buf), .I1(clk_turbo_buf), .S0(~sel_turbo), .S1(sel_turbo),
         .CE0(1'b1), .CE1(1'b1), .IGNORE0(1'b0), .IGNORE1(1'b0), .O(clk_fast));
 
+    // LOCKED of MMCM2 is asynchronous.  clk_seq and the status register read it in the clk_safe
+    // domain, so it goes through a synchronizer first (ADR-021).
+    (* ASYNC_REG = "TRUE" *) reg [1:0] locked2_meta;
+    initial locked2_meta = 2'b00;
+    always @(posedge clk_safe_buf) locked2_meta <= {locked2_meta[0], locked2};
+
     assign clk_safe      = clk_safe_buf;
     assign locked        = locked1;
-    assign turbo_locked  = locked2;
+    assign turbo_locked  = locked2_meta[1];
     // No DRP sequencer yet: no reconfiguration, and the selection is reported as requested.
     assign is_turbo      = sel_turbo;
     assign reconfig_busy = 1'b0;

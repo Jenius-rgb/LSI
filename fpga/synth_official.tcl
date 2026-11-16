@@ -63,6 +63,10 @@ report_io -file $outdir/impl_io.rpt
 report_power -file $outdir/impl_power.rpt
 report_drc -file $outdir/impl_drc.rpt
 report_methodology -file $outdir/impl_methodology.rpt
+# Clock-domain crossings (ADR-021): every crossing by class, and the bus skew of the FIFO pointers.
+report_cdc -file $outdir/impl_cdc.rpt
+report_cdc -details -file $outdir/impl_cdc_details.rpt
+report_bus_skew -file $outdir/impl_bus_skew.rpt
 report_route_status -file $outdir/impl_route_status.rpt
 
 # Key figures in one small file, so the Python side does not have to parse the big reports.

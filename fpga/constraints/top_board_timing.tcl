@@ -24,5 +24,13 @@ create_generated_clock -name clk_fast_turbo -source $mux_i1 -divide_by 1 -master
 set_clock_groups -physically_exclusive -group clk_fast_safe -group clk_fast_turbo
 set_clock_groups -asynchronous -group $safe_clk -group {clk_fast_safe clk_fast_turbo}
 
+# The power-on reset is launched by the board clock and enters the clk_safe domain through its
+# own synchronizer in top_core (ADR-021).  The input of a synchronizer has no timing requirement.
+set por_meta0 [get_cells -hierarchical -filter {NAME =~ "*por_meta_reg[0]"}]
+if {[llength $por_meta0] != 1} {
+    error "expected exactly one first stage of the power-on reset synchronizer, found [llength $por_meta0]"
+}
+set_false_path -from [get_clocks clk_in] -to $por_meta0
+
 puts "TIMING safe_clock [get_property NAME $safe_clk] period [get_property PERIOD $safe_clk]"
 puts "TIMING turbo_clock [get_property NAME $turbo_clk] period [get_property PERIOD $turbo_clk]"
