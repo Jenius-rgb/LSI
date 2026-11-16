@@ -50,43 +50,46 @@ Source: `results/sim/rtl_regression.jsonl` (script `tools/sim.py --record`; late
 
 | Bench | Simulator | Date | Result |
 | --- | --- | --- | --- |
-| checker_k16_c0 | icarus | 2026-11-10 | PASS: PASS 5050/5050 max_latency=21 |
-| checker_k16_c1 | icarus | 2026-11-10 | PASS: PASS 10100/10100 max_latency=22 |
-| checker_k8_c0 | icarus | 2026-11-10 | PASS: PASS 5034/5034 max_latency=13 |
-| checker_k8_c1 | icarus | 2026-11-10 | PASS: PASS 10068/10068 max_latency=14 |
-| engine_corner_extreme | xsim | 2026-11-10 | PASS: PASS 6/6 cycles_mean=173820 ideal=0 |
-| engine_corner_saturate | xsim | 2026-11-10 | PASS: PASS 6/6 cycles_mean=173820 ideal=0 |
-| engine_corner_ties | xsim | 2026-11-10 | PASS: PASS 6/6 cycles_mean=173820 ideal=0 |
-| engine_corner_zero_lanes | xsim | 2026-11-10 | PASS: PASS 6/6 cycles_mean=173820 ideal=0 |
-| engine_s_k16_n20 | xsim | 2026-11-10 | PASS: PASS 20/20 (5/5 cycles_mean=152498 ideal=138752) |
-| engine_s_k8 | icarus | 2026-11-10 | PASS: PASS 1/1 cycles_mean=277887 ideal=277504 |
-| engine_s_k8_n200 | xsim | 2026-11-10 | PASS: PASS 200/200 (34/34 cycles_mean=277887 ideal=277504) |
-| engine_xs_k8 | icarus | 2026-11-10 | PASS: PASS 2/2 cycles_mean=83839 ideal=83456 |
-| engine_xs_k8_n200 | xsim | 2026-11-10 | PASS: PASS 200/200 (34/34 cycles_mean=83839 ideal=83456) |
-| governor | icarus | 2026-11-10 | PASS: PASS 2400/2400 scenarios=60 |
-| lane_array_k16_c0_dsp_full | icarus | 2026-11-10 | PASS: PASS 9360/9360 |
-| lane_array_k16_c0_dsp_min | icarus | 2026-11-10 | PASS: PASS 9360/9360 |
-| lane_array_k16_c0_lut | icarus | 2026-11-10 | PASS: PASS 9360/9360 |
-| lane_array_k16_c1_dsp_full | icarus | 2026-11-10 | PASS: PASS 9880/9880 |
-| lane_array_k16_c1_dsp_min | icarus | 2026-11-10 | PASS: PASS 9880/9880 |
-| lane_array_k16_c1_lut | icarus | 2026-11-10 | PASS: PASS 9880/9880 |
-| lane_array_k8_c0_dsp_full | icarus | 2026-11-10 | PASS: PASS 101000/101000 |
-| lane_array_k8_c0_dsp_min | icarus | 2026-11-10 | PASS: PASS 101000/101000 |
-| lane_array_k8_c0_lut | icarus | 2026-11-10 | PASS: PASS 101000/101000 |
-| lane_array_k8_c1_dsp_full | icarus | 2026-11-10 | PASS: PASS 5720/5720 |
-| lane_array_k8_c1_dsp_min | icarus | 2026-11-10 | PASS: PASS 5720/5720 |
-| lane_array_k8_c1_lut | icarus | 2026-11-10 | PASS: PASS 5720/5720 |
-| spi_session_xs | xsim | 2026-11-10 | PASS: PASS 224/224 polls=421 |
-| spi_slave | icarus | 2026-11-10 | PASS: PASS 19/19 |
-| system_micro_autogov | xsim | 2026-11-10 | PASS: PASS 12/12 reconfigs=8 |
-| system_micro_campaign_k16_c1 | xsim | 2026-11-10 | PASS: PASS 2400/2400 reconfigs=0 |
-| system_micro_campaign_k8_c0 | xsim | 2026-11-10 | PASS: PASS 2400/2400 reconfigs=0 |
-| system_micro_campaign_k8_c1 | xsim | 2026-11-10 | PASS: PASS 2400/2400 reconfigs=0 |
-| system_micro_corners | xsim | 2026-11-10 | PASS: PASS 5/5 reconfigs=0 |
-| system_xs_r100 | xsim | 2026-11-10 | PASS: PASS 8/8 reconfigs=0 |
-| system_xs_r130 | xsim | 2026-11-10 | PASS: PASS 8/8 reconfigs=0 |
-| system_xs_r170 | xsim | 2026-11-10 | PASS: PASS 8/8 reconfigs=0 |
-| system_xs_r200 | xsim | 2026-11-10 | PASS: PASS 8/8 reconfigs=0 |
+| checker_k16_c0 | icarus | 2026-11-16 | PASS: PASS 5050/5050 max_latency=21 |
+| checker_k16_c1 | icarus | 2026-11-16 | PASS: PASS 10100/10100 max_latency=22 |
+| checker_k8_c0 | icarus | 2026-11-16 | PASS: PASS 5034/5034 max_latency=13 |
+| checker_k8_c1 | icarus | 2026-11-16 | PASS: PASS 10068/10068 max_latency=14 |
+| engine_corner_extreme | xsim | 2026-11-16 | PASS: PASS 6/6 cycles_mean=173820 ideal=0 |
+| engine_corner_saturate | xsim | 2026-11-16 | PASS: PASS 6/6 cycles_mean=173820 ideal=0 |
+| engine_corner_ties | xsim | 2026-11-16 | PASS: PASS 6/6 cycles_mean=173820 ideal=0 |
+| engine_corner_zero_lanes | xsim | 2026-11-16 | PASS: PASS 6/6 cycles_mean=173820 ideal=0 |
+| engine_s_k16_n20 | xsim | 2026-11-16 | PASS: PASS 20/20 (5/5 cycles_mean=152498 ideal=138752) |
+| engine_s_k8 | icarus | 2026-11-16 | PASS: PASS 1/1 cycles_mean=277887 ideal=277504 |
+| engine_s_k8_c1 | icarus | 2026-11-16 | PASS: PASS 1/1 cycles_mean=277895 ideal=277504 |
+| engine_s_k8_c1_n200 | xsim | 2026-11-16 | PASS: PASS 200/200 (34/34 cycles_mean=277895 ideal=277504) |
+| engine_s_k8_n200 | xsim | 2026-11-16 | PASS: PASS 200/200 (34/34 cycles_mean=277887 ideal=277504) |
+| engine_xs_k8 | icarus | 2026-11-16 | PASS: PASS 2/2 cycles_mean=83839 ideal=83456 |
+| engine_xs_k8_n200 | xsim | 2026-11-16 | PASS: PASS 200/200 (34/34 cycles_mean=83839 ideal=83456) |
+| governor | icarus | 2026-11-16 | PASS: PASS 2400/2400 scenarios=60 |
+| lane_array_k16_c0_dsp_full | icarus | 2026-11-16 | PASS: PASS 9360/9360 |
+| lane_array_k16_c0_dsp_min | icarus | 2026-11-16 | PASS: PASS 9360/9360 |
+| lane_array_k16_c0_lut | icarus | 2026-11-16 | PASS: PASS 9360/9360 |
+| lane_array_k16_c1_dsp_full | icarus | 2026-11-16 | PASS: PASS 9880/9880 |
+| lane_array_k16_c1_dsp_min | icarus | 2026-11-16 | PASS: PASS 9880/9880 |
+| lane_array_k16_c1_lut | icarus | 2026-11-16 | PASS: PASS 9880/9880 |
+| lane_array_k8_c0_dsp_full | icarus | 2026-11-16 | PASS: PASS 101000/101000 |
+| lane_array_k8_c0_dsp_min | icarus | 2026-11-16 | PASS: PASS 101000/101000 |
+| lane_array_k8_c0_lut | icarus | 2026-11-16 | PASS: PASS 101000/101000 |
+| lane_array_k8_c1_dsp_full | icarus | 2026-11-16 | PASS: PASS 5720/5720 |
+| lane_array_k8_c1_dsp_min | icarus | 2026-11-16 | PASS: PASS 5720/5720 |
+| lane_array_k8_c1_lut | icarus | 2026-11-16 | PASS: PASS 5720/5720 |
+| spi_session_xs | xsim | 2026-11-16 | PASS: PASS 224/224 polls=421 |
+| spi_slave | icarus | 2026-11-16 | PASS: PASS 19/19 |
+| system_micro_autogov | xsim | 2026-11-16 | PASS: PASS 12/12 reconfigs=8 |
+| system_micro_campaign_k16_c1 | xsim | 2026-11-16 | PASS: PASS 2400/2400 reconfigs=0 |
+| system_micro_campaign_k8_c0 | xsim | 2026-11-16 | PASS: PASS 2400/2400 reconfigs=0 |
+| system_micro_campaign_k8_c1 | xsim | 2026-11-16 | PASS: PASS 2400/2400 reconfigs=0 |
+| system_micro_corners | xsim | 2026-11-16 | PASS: PASS 5/5 reconfigs=0 |
+| system_s_k8_c1 | xsim | 2026-11-16 | PASS: PASS 10/10 reconfigs=0 |
+| system_xs_r100 | xsim | 2026-11-16 | PASS: PASS 8/8 reconfigs=0 |
+| system_xs_r130 | xsim | 2026-11-16 | PASS: PASS 8/8 reconfigs=0 |
+| system_xs_r170 | xsim | 2026-11-16 | PASS: PASS 8/8 reconfigs=0 |
+| system_xs_r200 | xsim | 2026-11-16 | PASS: PASS 8/8 reconfigs=0 |
 
 Passing means the RTL matched the golden or checker model bit for bit in simulation. Simulation cannot reproduce real timing errors.
 
@@ -164,3 +167,51 @@ Static timing is conservative; the frequency at which a real device fails can on
 | xc7s50ftgb196-2 | 16 | dsp_full | 1 | 6444 | 5996 | 22.0 | 41 | 136.4 | 295.7 | -0.382 | -0.222 |
 
 Did not fit (48 runs, parts xc7s15csga225-1, xc7s15csga225-2, xc7s6csga225-1, xc7s6csga225-2): the memories need more block RAM than these parts have (model s uses 14 BRAM36 tiles on xc7s25), so Vivado moved them to LUT RAM, which then overflowed (DRC UTLZ-1 in the local `*_final.log` files).
+
+## Official synthesis on XC7S25CSGA225-1, complete design [VIVADO-STA]
+
+Source: `results/vivado/official/summary.json` and the reports next to it (`python tools/run.py synth-official`, Vivado 2025.2).
+Top `top_board` with `board/zero7.xdc`: model s, K = 8, lut lanes, C3_EN = 1, clk_safe = 125 MHz. After place and route; no bitstream, because the I/O standards of the board are unconfirmed.
+
+| Resource | Used | Available | Utilisation |
+| --- | --- | --- | --- |
+| Slice LUTs | 6170 | 14600 | 42.26% |
+| Slice registers | 5704 | 29200 | 19.53% |
+| Block RAM tiles | 14 | 45 | 31.11% |
+| DSP48E1 | 3 | 80 | 3.75% |
+| Global clock buffers | 6 | 32 | 18.75% |
+| MMCM | 2 | 3 | 66.67% |
+
+| Clock | Period (ns) | Endpoints | WNS setup (ns) | WHS hold (ns) | Fmax (MHz) |
+| --- | --- | --- | --- | --- | --- |
+| clk_in | 50.000 | 1 | 48.466 | 0.357 | 651.9 |
+| clk_safe_raw | 8.000 | 11266 | 0.417 | 0.037 | 131.9 |
+| clk_fast_safe | 8.000 | 5597 | 0.481 | 0.054 | 133.0 |
+| clk_fast_turbo | 8.000 | 5597 | 0.481 | 0.054 | 133.0 |
+
+Paths inside one clock; Fmax = 1000 / (period - WNS). Design worst setup slack 0.417 ns, worst hold slack 0.037 ns, unrouted nets 0.
+`clk_fast_turbo` is analysed at turbo level 0, the safe frequency. Running the lanes faster than that is the experiment of the project; static timing says nothing about it.
+
+Clock-domain crossings by `report_cdc` rule: CDC-1 760 (critical), CDC-3 40 (info), CDC-4 2 (critical), CDC-15 784 (warning). Their meaning in this design is in `results/vivado/official/summary.md` and SPEC 7.8.
+
+Power by `report_power` without switching-activity data: total 0.505 W (dynamic 0.443 W, device static 0.062 W), Vivado confidence "Medium". An estimate, not a measurement.
+
+Side runs:
+
+- `results/vivado/official_adr021a/`: clk_safe = 125 MHz, design worst setup slack 0.326 ns. Intermediate run of 2026-11-16: synchronizers marked and the reset crossing excepted, but the three reset sources were still ORed in front of one synchronizer (CDC-10). Superseded by results/vivado/official/, where each asynchronous source has its own synchronizer.
+- `results/vivado/official_preadr021/`: clk_safe = 125 MHz, design worst setup slack -0.499 ns. Run of 2026-11-16 at commit 7a2d369, before ADR-021: the reset crossing from the board clock was still timed and the synchronizers were not marked. Kept as the evidence for ADR-021; a later commit cannot reproduce it.
+
+## Latency budget per image, official variant [SIM] x [VIVADO-STA]
+
+An estimate, not a measurement. Inputs: mean clk_safe cycles per image of bench `engine_s_k8_c1_n200` [SIM] (277895, `results/sim/rtl_regression.jsonl`) and the clock period of the official run [VIVADO-STA] (8.000 ns, `results/vivado/official/summary.json`), with clk_fast on the safe clock.
+Compute time = cycles x period = 2.223 ms per image, 450 images per second if nothing else took time.
+The image is 3072 bytes and travels over SPI. Transfer time below counts the payload bits only (no command bytes, no polling, no camera capture); the SPI clocks are assumptions, because the speed the board allows is [UNKNOWN].
+
+| Assumed SPI clock (MHz) | Image transfer (ms) | Compute (ms) | Sum (ms) | Share of transfer |
+| --- | --- | --- | --- | --- |
+| 1 | 24.576 | 2.223 | 26.799 | 92% |
+| 5 | 4.915 | 2.223 | 7.138 | 69% |
+| 10 | 2.458 | 2.223 | 4.681 | 53% |
+| 20 | 1.229 | 2.223 | 3.452 | 36% |
+
+Reading: a faster clk_fast only shortens the compute column. The measured SPI speed (board phase) decides how much of an overclocking gain is visible end to end, so results must report compute time and end-to-end time separately.

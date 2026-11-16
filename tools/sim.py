@@ -216,24 +216,25 @@ def main() -> int:
         print("iverilog not found", file=sys.stderr)
         return 2
 
-    def job(bench: Bench) -> tuple[str, bool, str]:
+    def job(bench: Bench) -> tuple[Bench, bool, str]:
         passed, output = run_bench(bench, args.sim)
-        if args.record:
-            import datetime as dt
-            import json
-
-            entry = {
-                "date": dt.date.today().isoformat(), "bench": bench.name, "passed": passed,
-                "simulator": resolve_simulator(bench, args.sim), "summary": summarize(output), "params": bench.params,
-            }
-            with open(ROOT / args.record, "a", encoding="utf-8", newline="\n") as fh:
-                fh.write(json.dumps(entry) + "\n")
-        return bench.name, passed, output
+        return bench, passed, output
 
     failures = 0
     with ThreadPoolExecutor(max_workers=args.jobs) as pool:
-        for name, passed, output in pool.map(job, chosen):
-            print(f"[{'ok' if passed else 'FAIL'}] {name}: {summarize(output)}", flush=True)
+        for bench, passed, output in pool.map(job, chosen):
+            if args.record:
+                # Written here, in the main thread only: appends from the worker threads lost a line on Windows.
+                import datetime as dt
+                import json
+
+                entry = {
+                    "date": dt.date.today().isoformat(), "bench": bench.name, "passed": passed,
+                    "simulator": resolve_simulator(bench, args.sim), "summary": summarize(output), "params": bench.params,
+                }
+                with open(ROOT / args.record, "a", encoding="utf-8", newline="\n") as fh:
+                    fh.write(json.dumps(entry) + "\n")
+            print(f"[{'ok' if passed else 'FAIL'}] {bench.name}: {summarize(output)}", flush=True)
             failures += not passed
     return 1 if failures else 0
 

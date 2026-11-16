@@ -201,6 +201,18 @@ def _m8_scenarios(k: int, c3: int) -> list[dict]:
     return out
 
 
+def _official_scenarios(k: int, c3: int) -> list[dict]:
+    """The M8 scenarios with the C3 lane in use, plus two data lanes hit in one unit (official variant, ADR-013)."""
+    from model.engine_model import InjectionSlot as S
+
+    dual = lambda: [S(enable=True, layer=1, unit=37, lane=2, mask=1 << 9, oneshot=True),  # noqa: E731
+                    S(enable=True, layer=1, unit=37, lane=6, mask=1 << 14, oneshot=True)]
+    out = [{**sc, "c3_on": bool(c3)} for sc in _m8_scenarios(k, c3)]
+    out.append({"image": 0, "mode": 2, "c3_on": bool(c3), "slots": dual()})
+    out.append({"image": 1, "mode": 1, "c3_on": bool(c3), "slots": dual()})
+    return out
+
+
 def _corner_scenarios(k: int, c3: int) -> list[dict]:
     """SPEC 13.4: log full and FATAL path, on the micro model."""
     from model.engine_model import InjectionSlot as S
@@ -255,6 +267,10 @@ def system_benches() -> dict[str, Bench]:
         bench = f"system_xs_{name}"
         out[bench] = Bench(bench, "tb_system", SYSTEM_SOURCES, _system_params("xs", 8, 0, 10.0 / ratio),
                            _system_vectors("xs", _m8_scenarios), slow=True, prefer_xsim=True)
+    # Official ZERO7 variant (ADR-013): model s, K = 8, C3 built in and in use, turbo period 10 / 1.3 ns.
+    bench = "system_s_k8_c1"
+    out[bench] = Bench(bench, "tb_system", SYSTEM_SOURCES, _system_params("s", 8, 1, 10.0 / 1.3),
+                       _system_vectors("s", _official_scenarios), slow=True, prefer_xsim=True)
     # Governor in automatic mode: the level climbs every image, so MMCM2 reconfigures between images.
     bench = "system_micro_autogov"
     out[bench] = Bench(bench, "tb_system", SYSTEM_SOURCES,

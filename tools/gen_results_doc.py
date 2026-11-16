@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -121,13 +122,89 @@ def vivado_section() -> list[str]:
     return lines
 
 
+def official_section() -> list[str]:
+    """Complete design on the contest chip (ADR-014); side runs are listed by their tag."""
+    base = ROOT / "results" / "vivado"
+    head = ["## Official synthesis on XC7S25CSGA225-1, complete design [VIVADO-STA]", ""]
+    main_run = _load(base / "official" / "summary.json")
+    if main_run is None:
+        return head + ["No data yet. Run `python tools/run.py synth-official`."]
+    util = main_run["utilization_post_route"]
+    names = {"lut": "Slice LUTs", "ff": "Slice registers", "bram_tile": "Block RAM tiles", "dsp": "DSP48E1", "bufgctrl": "Global clock buffers", "mmcm": "MMCM"}
+    lines = head + [
+        f"Source: `results/vivado/official/summary.json` and the reports next to it (`{main_run['command']}`, Vivado {main_run['vivado']}).",
+        f"Top `{main_run['top']}` with `board/zero7.xdc`: model s, K = {main_run['K']}, lut lanes, C3_EN = {main_run['C3_EN']}, "
+        f"clk_safe = {1000.0 / float(main_run['SAFE_DIV']):g} MHz. After place and route; no bitstream, because the I/O standards of the board are unconfirmed.",
+        "", "| Resource | Used | Available | Utilisation |", "| --- | --- | --- | --- |",
+    ]
+    lines += [f"| {label} | {util[key]['used']:g} | {util[key]['available']:g} | {util[key]['util_pct']:.2f}% |" for key, label in names.items() if key in util]
+    lines += ["", "| Clock | Period (ns) | Endpoints | WNS setup (ns) | WHS hold (ns) | Fmax (MHz) |", "| --- | --- | --- | --- | --- | --- |"]
+    lines += [f"| {c['name']} | {c['period_ns']:.3f} | {c['intra_endpoints']} | {c['intra_wns_ns']:.3f} | {c['intra_whs_ns']:.3f} | {c['fmax_mhz']:.1f} |"
+              for c in main_run["clocks"] if "fmax_mhz" in c]
+    lines += ["", f"Paths inside one clock; Fmax = 1000 / (period - WNS). Design worst setup slack {main_run['design_wns_ns']} ns, worst hold slack "
+                  f"{main_run['design_whs_ns']} ns, unrouted nets {main_run['unrouted_nets']}.",
+              "`clk_fast_turbo` is analysed at turbo level 0, the safe frequency. Running the lanes faster than that is the experiment of the project; "
+              "static timing says nothing about it."]
+    if main_run.get("cdc"):
+        counts = ", ".join(f"{rule} {row['count']} ({row['severity'].lower()})" for rule, row in main_run["cdc"].items())
+        lines += ["", f"Clock-domain crossings by `report_cdc` rule: {counts}. Their meaning in this design is in `results/vivado/official/summary.md` and SPEC 7.8."]
+    if main_run.get("power"):
+        power = main_run["power"]
+        lines += ["", f"Power by `report_power` without switching-activity data: total {power['total_w']} W (dynamic {power['dynamic_w']} W, "
+                      f"device static {power['static_w']} W), Vivado confidence \"{power['confidence']}\". An estimate, not a measurement."]
+    side = [(d.name, _load(d / "summary.json")) for d in sorted(base.glob("official_*")) if (d / "summary.json").exists()]
+    if side:
+        lines += ["", "Side runs:", ""]
+        lines += [f"- `results/vivado/{name}/`: clk_safe = {1000.0 / float(run['SAFE_DIV']):g} MHz, design worst setup slack {run['design_wns_ns']} ns. {run.get('note', '')}".rstrip()
+                  for name, run in side]
+    return lines
+
+
+SPI_CLOCKS_MHZ = (1, 5, 10, 20)   # assumptions for the table; the real limit of the board is unknown
+IMAGE_BYTES = 3 * 32 * 32
+
+
+def latency_section() -> list[str]:
+    """Where the time of one image goes: compute from simulated cycles and the STA clock, transfer as a function of the SPI clock."""
+    head = ["## Latency budget per image, official variant [SIM] x [VIVADO-STA]", ""]
+    run = _load(ROOT / "results" / "vivado" / "official" / "summary.json")
+    path = ROOT / "results" / "sim" / "rtl_regression.jsonl"
+    cycles = None
+    if path.exists():
+        for line in path.read_text(encoding="utf-8").splitlines():
+            entry = json.loads(line)
+            m = re.search(r"cycles_mean=(\d+)", entry["summary"])
+            if entry["bench"] == "engine_s_k8_c1_n200" and entry["passed"] and m:
+                cycles = int(m.group(1))
+    if run is None or cycles is None:
+        return head + ["No data yet."]
+    period_ns = next(c["period_ns"] for c in run["clocks"] if c["name"] == "clk_fast_safe")
+    compute_ms = cycles * period_ns * 1e-6
+    lines = head + [
+        "An estimate, not a measurement. Inputs: mean clk_safe cycles per image of bench `engine_s_k8_c1_n200` [SIM] "
+        f"({cycles}, `results/sim/rtl_regression.jsonl`) and the clock period of the official run [VIVADO-STA] ({period_ns:.3f} ns, "
+        "`results/vivado/official/summary.json`), with clk_fast on the safe clock.",
+        f"Compute time = cycles x period = {compute_ms:.3f} ms per image, {1000.0 / compute_ms:.0f} images per second if nothing else took time.",
+        f"The image is {IMAGE_BYTES} bytes and travels over SPI. Transfer time below counts the payload bits only (no command bytes, no polling, "
+        "no camera capture); the SPI clocks are assumptions, because the speed the board allows is [UNKNOWN].",
+        "", "| Assumed SPI clock (MHz) | Image transfer (ms) | Compute (ms) | Sum (ms) | Share of transfer |", "| --- | --- | --- | --- | --- |",
+    ]
+    for mhz in SPI_CLOCKS_MHZ:
+        transfer_ms = IMAGE_BYTES * 8 / (mhz * 1e6) * 1e3
+        total = transfer_ms + compute_ms
+        lines.append(f"| {mhz} | {transfer_ms:.3f} | {compute_ms:.3f} | {total:.3f} | {100.0 * transfer_ms / total:.0f}% |")
+    lines += ["", "Reading: a faster clk_fast only shortens the compute column. The measured SPI speed (board phase) decides how much of an "
+                  "overclocking gain is visible end to end, so results must report compute time and end-to-end time separately."]
+    return lines
+
+
 def main() -> int:
     parts = [
         "# RESULTS_SIM", "",
         "Generated by `python tools/gen_results_doc.py`. Do not edit by hand.", "",
         "No number in this file was measured on hardware. Labels: [SIM] simulation or Python model, [VIVADO-STA] static Vivado estimate.", "",
     ]
-    for section in (accuracy_section, arch_section, campaign_section, rtl_section, fit_section, vivado_section):
+    for section in (accuracy_section, arch_section, campaign_section, rtl_section, fit_section, vivado_section, official_section, latency_section):
         parts += section() + [""]
     OUT.write_text("\n".join(parts), encoding="utf-8", newline="\n")
     print(f"wrote {OUT.relative_to(ROOT)}")
