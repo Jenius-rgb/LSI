@@ -40,6 +40,21 @@ class SpidevTransport:
                 raise TimeoutError(f"register 0x{offset:03x}: timeout waiting for {value:#x} under {mask:#x}")
 
 
+class GpioDoneLine:
+    """irq_done on a Raspberry Pi GPIO: RP_GPIO25, high while STATUS.DONE is set (ADR-016).
+
+    Uses gpiozero with BCM numbering. Not exercised before the board phase; the tests use a stand-in.
+    """
+
+    def __init__(self, bcm_pin: int = 25):
+        from gpiozero import DigitalInputDevice  # available on the Pi only
+
+        self.line = DigitalInputDevice(bcm_pin, pull_up=False)
+
+    def wait(self, timeout_s: float) -> bool:
+        return bool(self.line.wait_for_active(timeout=timeout_s))
+
+
 OP_BYTE = 0x01
 OP_CS_LOW = 0x02
 OP_CS_HIGH = 0x03

@@ -179,3 +179,41 @@ def test_every_experiment_script_exists_and_runs_help():
     for name in ("e1", "e2", "e3", "e4", "e5", "e6", "e7", "e8"):
         mod = importlib.import_module(f"sentinel.experiments.{name}")
         assert callable(mod.main)
+
+
+class _FakeDoneLine:
+    def __init__(self, active: bool):
+        self.active = active
+        self.waits: list[float] = []
+
+    def wait(self, timeout_s: float) -> bool:
+        self.waits.append(timeout_s)
+        return self.active
+
+
+def test_driver_waits_on_the_done_line_instead_of_polling():
+    """ADR-016: irq_done on RP_GPIO25 is high while STATUS.DONE is set."""
+    from sentinel.transport import OP_POLL
+
+    qm = micro_qm()
+    transport = LogTransport(ModelDevice(qm, k=8))
+    line = _FakeDoneLine(active=True)
+    drv = SentinelDriver(transport, done_line=line)
+    drv.write_image(images(1)[0].tobytes(), slot=0)
+    drv.configure(mode=2)
+    drv.start()
+    drv.wait_done(timeout_s=2.0)
+    assert line.waits == [2.0]
+    assert not any(entry >> 24 == OP_POLL for entry in transport.entries)
+    assert drv.result_class() == golden.forward(qm, images(1)[0]).pred
+
+
+def test_driver_done_line_timeout_and_disagreement():
+    qm = micro_qm()
+    drv = SentinelDriver(LogTransport(ModelDevice(qm, k=8)), done_line=_FakeDoneLine(active=False))
+    with pytest.raises(TimeoutError):
+        drv.wait_done(timeout_s=0.1)
+    # The line reads high although nothing was started: the driver checks STATUS.DONE before it believes the line.
+    drv = SentinelDriver(LogTransport(ModelDevice(qm, k=8)), done_line=_FakeDoneLine(active=True))
+    with pytest.raises(RuntimeError):
+        drv.wait_done()

@@ -24,8 +24,10 @@ class DeviceId:
 
 
 class SentinelDriver:
-    def __init__(self, transport: Transport):
+    def __init__(self, transport: Transport, done_line=None):
+        """done_line: optional object with wait(timeout_s) -> bool, for irq_done on RP_GPIO25 (ADR-016)."""
         self.t = transport
+        self.done_line = done_line
 
     # ---- raw access ---------------------------------------------------------------------
     def read_id(self) -> DeviceId:
@@ -75,8 +77,15 @@ class SentinelDriver:
         self.write_reg(rm.REG_CTRL, self._ctrl | (1 << rm.CTRL_START_LSB))
 
     def wait_done(self, timeout_s: float = 5.0) -> None:
+        """Wait for STATUS.DONE: on the done line when there is one, otherwise by polling the register."""
         done = 1 << rm.STATUS_DONE_LSB
-        self.t.poll_status(rm.REG_STATUS, done, done, timeout_s)
+        if self.done_line is None:
+            self.t.poll_status(rm.REG_STATUS, done, done, timeout_s)
+            return
+        if not self.done_line.wait(timeout_s):
+            raise TimeoutError("irq_done stayed low")
+        if not self.status() & done:
+            raise RuntimeError("irq_done is high but STATUS.DONE is clear: check the wiring of RP_GPIO25")
 
     def status(self) -> int:
         return self.read_reg(rm.REG_STATUS)
