@@ -45,14 +45,20 @@ module clk_gen_xilinx #(
     BUFG u_fb1 (.I(safe_fb), .O(safe_fb_buf));
     BUFG u_safe (.I(clk_safe_raw), .O(clk_safe_buf));
 
-    // ---- AXI reset for the wizard: held until MMCM1 has locked (ADR-021 style synchroniser) ----
-    (* ASYNC_REG = "TRUE" *) reg [1:0] axi_rst_meta;
+    // ---- AXI reset for the wizard (ADR-021) -------------------------------------------------
+    // MMCM1 is held in reset by rst, so its LOCKED is low during the power-on reset: synchronising
+    // LOCKED alone covers both.  A second synchronizer on rst would fan the power-on reset flop out
+    // to two synchronizers in clk_safe (report_cdc CDC-11).
+    (* ASYNC_REG = "TRUE" *) reg [1:0] axi_lock_meta;
     reg axi_rst;
     initial begin
-        axi_rst_meta = 2'b11;
-        axi_rst      = 1'b1;
+        axi_lock_meta = 2'b00;
+        axi_rst       = 1'b1;
     end
-    always @(posedge clk_safe_buf) {axi_rst, axi_rst_meta} <= {axi_rst_meta, rst | ~locked1};
+    always @(posedge clk_safe_buf) begin
+        axi_lock_meta <= {axi_lock_meta[0], locked1};
+        axi_rst       <= ~axi_lock_meta[1];
+    end
 
     // ---- MMCM2 inside the Clocking Wizard, reconfigured over AXI4-Lite -----------------------
     wire [10:0] awaddr, araddr;

@@ -120,7 +120,7 @@ def test_reset_and_cdc_rules_of_the_complete_design():
     import re
 
     tcl = (ROOT / "fpga" / "constraints" / "top_board_timing.tcl").read_text(encoding="utf-8")
-    assert "set_false_path -from [get_clocks clk_in]" in tcl and "por_meta_reg[0]" in tcl and "axi_rst_meta_reg[0]" in tcl
+    assert "set_false_path -from [get_clocks clk_in]" in tcl and "por_meta_reg[0]" in tcl
     flow = (ROOT / "fpga" / "synth_official.tcl").read_text(encoding="utf-8")
     assert "report_cdc" in flow and "report_bus_skew" in flow
     marked = {
@@ -133,6 +133,9 @@ def test_reset_and_cdc_rules_of_the_complete_design():
     # No logic in front of a synchronizer: each asynchronous reset source is sampled on its own.
     core = (ROOT / "rtl" / "top_core.v").read_text(encoding="utf-8")
     assert "{por_meta[0], rst}" in core and "{lock_meta[0], clocks_locked}" in core
+    wizard = (ROOT / "rtl" / "platform" / "xilinx" / "clk_gen_xilinx.v").read_text(encoding="utf-8")
+    # The wizard reset follows LOCKED of MMCM1 only, so the power-on reset feeds one synchronizer (no CDC-11).
+    assert "{axi_lock_meta[0], locked1}" in wizard and "axi_rst_meta" not in wizard
 
 
 def test_official_cdc_parser():
@@ -228,3 +231,14 @@ def test_turbo_mmcm_is_a_reconfigurable_clocking_wizard():
     wrapper = (ROOT / "rtl" / "platform" / "xilinx" / "clk_gen_xilinx.v").read_text(encoding="utf-8")
     assert "clk_wiz_turbo" in wrapper and "clkwiz_seq" in wrapper and "MMCME2_ADV" not in wrapper
     assert "assign is_turbo      = sel_turbo;" not in wrapper   # the mux state is reported after a settle time
+
+
+def test_committed_official_report_is_clean():
+    """The official report in the repository meets timing and has no unsafe or logic-fed crossing (ADR-014, ADR-021)."""
+    import json
+
+    summary = json.loads((ROOT / "results" / "vivado" / "official" / "summary.json").read_text(encoding="utf-8"))
+    assert float(summary["design_wns_ns"]) >= 0 and float(summary["design_whs_ns"]) >= 0
+    assert int(summary["unrouted_nets"]) == 0
+    assert not {"CDC-2", "CDC-10", "CDC-11"} & set(summary["cdc"])
+    assert all(row["unsafe"] == 0 and row["no_async_reg"] == 0 for row in summary["cdc_pairs"])

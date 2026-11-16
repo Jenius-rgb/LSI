@@ -54,6 +54,7 @@ Source: `results/sim/rtl_regression.jsonl` (script `tools/sim.py --record`; late
 | checker_k16_c1 | icarus | 2026-11-16 | PASS: PASS 10100/10100 max_latency=22 |
 | checker_k8_c0 | icarus | 2026-11-16 | PASS: PASS 5034/5034 max_latency=13 |
 | checker_k8_c1 | icarus | 2026-11-16 | PASS: PASS 10068/10068 max_latency=14 |
+| clkwiz_seq | icarus | 2026-11-16 | PASS: PASS 49/49 |
 | engine_corner_extreme | xsim | 2026-11-16 | PASS: PASS 6/6 cycles_mean=173820 ideal=0 |
 | engine_corner_saturate | xsim | 2026-11-16 | PASS: PASS 6/6 cycles_mean=173820 ideal=0 |
 | engine_corner_ties | xsim | 2026-11-16 | PASS: PASS 6/6 cycles_mean=173820 ideal=0 |
@@ -78,8 +79,10 @@ Source: `results/sim/rtl_regression.jsonl` (script `tools/sim.py --record`; late
 | lane_array_k8_c1_dsp_full | icarus | 2026-11-16 | PASS: PASS 5720/5720 |
 | lane_array_k8_c1_dsp_min | icarus | 2026-11-16 | PASS: PASS 5720/5720 |
 | lane_array_k8_c1_lut | icarus | 2026-11-16 | PASS: PASS 5720/5720 |
+| regfile_guard | icarus | 2026-11-16 | PASS: PASS 6/6 |
 | spi_session_xs | xsim | 2026-11-16 | PASS: PASS 224/224 polls=421 |
 | spi_slave | icarus | 2026-11-16 | PASS: PASS 19/19 |
+| status_led | icarus | 2026-11-16 | PASS: PASS 7/7 frames=10 |
 | system_micro_autogov | xsim | 2026-11-16 | PASS: PASS 12/12 reconfigs=8 |
 | system_micro_campaign_k16_c1 | xsim | 2026-11-16 | PASS: PASS 2400/2400 reconfigs=0 |
 | system_micro_campaign_k8_c0 | xsim | 2026-11-16 | PASS: PASS 2400/2400 reconfigs=0 |
@@ -90,6 +93,8 @@ Source: `results/sim/rtl_regression.jsonl` (script `tools/sim.py --record`; late
 | system_xs_r130 | xsim | 2026-11-16 | PASS: PASS 8/8 reconfigs=0 |
 | system_xs_r170 | xsim | 2026-11-16 | PASS: PASS 8/8 reconfigs=0 |
 | system_xs_r200 | xsim | 2026-11-16 | PASS: PASS 8/8 reconfigs=0 |
+| ws2812_tx | icarus | 2026-11-16 | PASS: PASS 49/49 |
+| xadc_temp | icarus | 2026-11-16 | PASS: PASS 4/4 reads=6 |
 
 Passing means the RTL matched the golden or checker model bit for bit in simulation. Simulation cannot reproduce real timing errors.
 
@@ -175,8 +180,8 @@ Top `top_board` with `board/zero7.xdc`: model s, K = 8, lut lanes, C3_EN = 1, cl
 
 | Resource | Used | Available | Utilisation |
 | --- | --- | --- | --- |
-| Slice LUTs | 6170 | 14600 | 42.26% |
-| Slice registers | 5704 | 29200 | 19.53% |
+| Slice LUTs | 6862 | 14600 | 47.00% |
+| Slice registers | 6154 | 29200 | 21.08% |
 | Block RAM tiles | 14 | 45 | 31.11% |
 | DSP48E1 | 3 | 80 | 3.75% |
 | Global clock buffers | 6 | 32 | 18.75% |
@@ -185,16 +190,16 @@ Top `top_board` with `board/zero7.xdc`: model s, K = 8, lut lanes, C3_EN = 1, cl
 | Clock | Period (ns) | Endpoints | WNS setup (ns) | WHS hold (ns) | Fmax (MHz) |
 | --- | --- | --- | --- | --- | --- |
 | clk_in | 50.000 | 1 | 48.466 | 0.357 | 651.9 |
-| clk_safe_raw | 8.000 | 11266 | 0.417 | 0.037 | 131.9 |
-| clk_fast_safe | 8.000 | 5597 | 0.481 | 0.054 | 133.0 |
-| clk_fast_turbo | 8.000 | 5597 | 0.481 | 0.054 | 133.0 |
+| clk_safe_raw | 8.000 | 12240 | 0.711 | 0.062 | 137.2 |
+| clk_fast_safe | 8.000 | 5599 | 0.849 | 0.040 | 139.8 |
+| clk_fast_turbo | 8.000 | 5599 | 0.849 | 0.040 | 139.8 |
 
-Paths inside one clock; Fmax = 1000 / (period - WNS). Design worst setup slack 0.417 ns, worst hold slack 0.037 ns, unrouted nets 0.
+Paths inside one clock; Fmax = 1000 / (period - WNS). Design worst setup slack 0.648 ns, worst hold slack 0.040 ns, unrouted nets 0.
 `clk_fast_turbo` is analysed at turbo level 0, the safe frequency. Running the lanes faster than that is the experiment of the project; static timing says nothing about it.
 
 Clock-domain crossings by `report_cdc` rule: CDC-1 760 (critical), CDC-3 40 (info), CDC-4 2 (critical), CDC-15 784 (warning). Their meaning in this design is in `results/vivado/official/summary.md` and SPEC 7.8.
 
-Power by `report_power` without switching-activity data: total 0.505 W (dynamic 0.443 W, device static 0.062 W), Vivado confidence "Medium". An estimate, not a measurement.
+Power by `report_power` without switching-activity data: total 0.51 W (dynamic 0.448 W, device static 0.062 W), Vivado confidence "Medium". An estimate, not a measurement.
 
 Side runs:
 
@@ -213,5 +218,7 @@ The image is 3072 bytes and travels over SPI. Transfer time below counts the pay
 | 5 | 4.915 | 2.223 | 7.138 | 69% |
 | 10 | 2.458 | 2.223 | 4.681 | 53% |
 | 20 | 1.229 | 2.223 | 3.452 | 36% |
+
+With the definitions of Jiang et al. (arXiv 2505.13461): compute efficiency = MACs / (data lanes x cycles) = 2216960 / (8 x 277895) = 99.72%, throughput 1.99 GOP/s at 125 MHz (one operation = one multiply or one add). Small next to the designs in that review, because the official variant has eight lanes; the point of SENTINEL is how fast those lanes can run without wrong results, which only the board can show.
 
 Reading: a faster clk_fast only shortens the compute column. The measured SPI speed (board phase) decides how much of an overclocking gain is visible end to end, so results must report compute time and end-to-end time separately.

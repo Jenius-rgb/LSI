@@ -1,6 +1,6 @@
 # STATUS — SENTINEL
 
-Terakhir diperbarui: 2026-11-16, sesi pembaruan ZERO7 (pra-board).
+Terakhir diperbarui: 2026-11-16 malam, sesi pembaruan ZERO7 sesudah jawaban user (pra-board).
 Fase: **PRA-BOARD**
 
 Legenda: `[ ]` belum · `[~]` sedang dikerjakan · `[x]` selesai (ada bukti di Log bukti) · `[B]` terblokir (alasan di bagian Terblokir)
@@ -155,7 +155,7 @@ Panitia menerbitkan fakta resmi baru pada 2 dan 10 Nov 2026 (ringkasan dan rujuk
 - [x] **T4** `board/BOARD_INFO.md`, `board/zero7.xdc`, perbarui Terblokir
 - [x] **T5** Review ulang repo (`docs/REVIEW_2026-11.md`)
 - [x] **T6** ADR baru, lalu SPEC
-- [~] **T7** Implementasi; prioritas laporan sintesis resmi XC7S25CSGA225-1 — M15, M16, dan M20 (bagian tanpa board) selesai; M19 sebagian; M17 dan M18 belum mulai
+- [x] **T7** Implementasi; prioritas laporan sintesis resmi XC7S25CSGA225-1 — semua bagian tanpa board dari M15 sampai M21 selesai; sisanya butuh board (lihat "Belum dikerjakan")
 - [x] **T8** Simulasi juri (`docs/JUDGE_REVIEW.md`), tiga putaran
 - [x] **T9** Revisi materi belajar ke versi 1.1 (sumber di `tools/study_guide/`, hasil di `build/study_guide/`)
 - [x] **T10** Catatan sesi, commit, ringkasan
@@ -173,74 +173,78 @@ Panitia menerbitkan fakta resmi baru pada 2 dan 10 Nov 2026 (ringkasan dan rujuk
   - [x] engine model `s`, K = 8, C3 = 1 bit-exact terhadap golden model untuk ≥ 200 gambar [SIM] (`engine_s_k8_c1_n200`)
   - [x] sistem dua clock dengan varian resmi (`system_s_k8_c1`, C3 dipakai, termasuk injeksi dua lane)
 - **M17 — Indikator WS2812B (ADR-017)**
-  - [ ] `rtl/ws2812_tx.v` dengan testbench lebar pulsa; encoder status; port di `top_board`
+  - [x] `rtl/ws2812_tx.v` dengan testbench lebar pulsa; encoder status (`rtl/status_led.v`); port `ws2812_dout` di `top_board`, pin N1
+  - [B] waktu pulsa dicek ke datasheet LED di ZERO7 (jenis LED dan datasheet belum ada)
 - **M18 — Suhu XADC (ADR-018)**
-  - [ ] wrapper `xadc_temp` dan model simulasinya; register `TEMP`; kolom suhu di harness E6
+  - [x] `rtl/xadc_temp.v`, `rtl/platform/xilinx/xadc_prim_xilinx.v` (setelan UG480), model `rtl/platform/sim/xadc_prim_sim.v`; register `TEMP`; `sentinel.xadc` (UG480 Pers. 2-6)
+  - [B] kolom suhu di harness E6 dengan pembacaan nyata (butuh board)
 - **M19 — Sinyal selesai dan tombol (ADR-016)**
   - [x] `irq_done` di RTL (`top_board`) dan di driver (`SentinelDriver(done_line=...)`, `GpioDoneLine`; kelas GPIO belum pernah dijalankan di Pi)
-  - [ ] `board/bringup.py` dan mode kamera memakai done line; tombol START/STOP/RUN dibaca perangkat lunak Pi
+  - [x] `board/bringup.py` memakai done line di board; mode kamera mengikuti tombol START/STOP/RUN (`--buttons`)
+  - [B] polaritas tombol diukur di board
 - **M20 — Aturan penyeberangan domain clock (ADR-021)**
   - [x] synchronizer bertanda `ASYNC_REG`; satu synchronizer per sumber reset asinkron; LOCKED MMCM2 disinkronkan
   - [x] false path reset power-on; `report_cdc` dan `report_bus_skew` di alur resmi; SPEC §7.8
-  - [ ] penjagaan di `regfile` supaya tulis `INJ*` saat `STATUS.BUSY` = 1 ditolak (sekarang aturan host)
-  - [ ] konfirmasi perpindahan mux yang nyata di `clk_gen_xilinx` (bersama sequencer DRP, ADR-010)
+  - [x] penjagaan di `regfile`: tulis `INJ*` selama BUSY dibuang (`tb_regfile_guard`)
+  - [x] status mux dilaporkan sesudah jeda tetap di `clk_gen_xilinx`
+- **M21 — Rekonfigurasi MMCM2 lewat Clocking Wizard (ADR-023, menutup ADR-010)**
+  - [x] tabel level ke `rtl/gen/mmcm_turbo_table.vh` (aturan: tepat, M dan O bulat, VCO tertinggi); test kesegaran
+  - [x] `rtl/clkwiz_seq.v` (master AXI4-Lite, urutan PG065) dengan `tb_clkwiz_seq` dan model register perilaku
+  - [x] `clk_wiz_turbo` dibangkitkan di `fpga/synth_official.tcl`; `clk_gen_xilinx` memakainya
+  - [B] rekonfigurasi sungguhan diukur di board (B4)
 - [B] Boot dari flash QSPI (ADR-019): menunggu jenis flash dan posisi DIP SW7.
 
 ## Terblokir
 
 Diperbarui 2026-11-16.
 
-- [B] Board fisik ZERO7 — peminjaman sedang diproses. Semua eksperimen `[HW]` (E1–E4, E6, E7 di board) menunggu.
+- [B] Board fisik ZERO7 dan Raspberry Pi 4 — dipakai mulai Desember 2026 atau Januari 2027 [USER]. Semua eksperimen `[HW]` (E1–E4, E6, E7 di board) menunggu.
 - [B] `Zero7.xdc` resmi, tegangan VCCO, dan IOSTANDARD bank 14/15/34 — belum diterbitkan; `board/zero7.xdc` memakai LVCMOS33 bertanda TODO. Bitstream untuk board tidak boleh dibuat sebelum ini pasti.
 - [B] ZERO7 User Manual dan skematik — disebut panitia, belum tertaut di situs.
 - [B] Kabel JTAG-HS3 — belum jelas apakah termasuk paket pinjaman.
 - [B] Kecepatan SPI nyata, polaritas tombol, rantai WS2812B, boot dari flash QSPI — butuh board atau user manual.
 - [B] Kelas target — belum diumumkan panitia (pakai CIFAR-10 sementara).
 - [B] Format laporan sintesis resmi — belum dijelaskan panitia; sementara berupa file `.rpt` Vivado dan `summary.md` di `results/vivado/official/`.
-- [B] Teks lengkap Marty dkk. (FPT 2018, TCAD 2020) dan Li dkk. (ITC-Asia 2019) — semua salinan daring menolak akses; butuh akses kampus.
-- [B] `config/mmcm_limits.yaml` dan `config/parts.yaml`: batas DS189/DS180 belum diverifikasi (`verified: false`); butuh PDF datasheet AMD (mengunduhnya perlu izin user).
-- [B] Rekonfigurasi MMCM2 di `clk_gen_xilinx.v` (ADR-010): F_IN sekarang diketahui (20 MHz); masih butuh PG065 atau XAPP888.
+- [B] Teks lengkap Li dkk. (ITC-Asia 2019): user tidak menemukannya; klaim tentang pemulihan memakai kata "sejauh penelusuran kami".
 
 Sudah tidak terblokir sejak dokumen resmi 10 Nov 2026: part number dan speed grade (xc7s25csga225-1), pin (tabel koneksi), F_IN, cara programming. Yang sekarang bisa dikerjakan tanpa board: XDC, tabel MMCM untuk 20 MHz, top-level board, sintesis dan implementasi di part resmi, dan laporan sintesis resmi.
 
 ## Catatan untuk sesi berikutnya
 
-Ditulis di akhir sesi 2026-11-16 (PROMPT_UPDATE_ZERO7).
+Ditulis 2026-11-16 malam, sesudah jawaban user atas pertanyaan sesi.
 
-**Posisi:** T0 sampai T6, T8, T9, dan T10 selesai. T7 berjalan: M15 (laporan sintesis resmi), M16 (regresi varian resmi), dan bagian tanpa board dari M20 (aturan CDC, ADR-021) selesai; M19 sebagian (driver sudah bisa menunggu `irq_done`); M17 dan M18 belum mulai. Desain lengkap `top_board` muat dan lolos timing di xc7s25csga225-1 pada clk_safe 125 MHz [VIVADO-STA]. Belum ada satu pun hasil `[HW]`. Fase tetap PRA-BOARD: board belum ada dan `board/BOARD_INFO.md` masih punya field wajib `UNKNOWN`.
+**Posisi:** PROMPT_UPDATE_ZERO7 Tahap 0 sampai 10 selesai. Semua pekerjaan yang bisa dilakukan tanpa board sudah dikerjakan dan diuji di simulasi; yang tersisa butuh board, data panitia, atau keputusan user (lihat "Belum dikerjakan" di bawah). Desain lengkap, termasuk Clocking Wizard, XADC, dan WS2812B, muat dan lolos timing di xc7s25csga225-1 pada clk_safe 125 MHz [VIVADO-STA]. Belum ada hasil `[HW]`. Fase tetap PRA-BOARD.
 
-**Untuk melanjutkan:** perintah "lanjutkan PROMPT_UPDATE_ZERO7 dari tahap terakhir di STATUS.md" berarti lanjut T7 dari M17.
+**Untuk melanjutkan:** perintah "lanjutkan PROMPT_UPDATE_ZERO7 dari tahap terakhir di STATUS.md" berarti: tidak ada tahap prompt yang tersisa; kerjakan butir terbuka di bawah sesuai urutan, lalu fase board sesudah user menulis "board siap".
 
-**Langkah berikutnya, berurutan:**
-1. M17: `rtl/ws2812_tx.v` dengan testbench lebar pulsa (ADR-017). Waktu bit WS2812B harus diambil dari datasheet LED yang dipakai board; sebelum itu jadikan parameter bertanda belum terverifikasi.
-2. M18: wrapper `xadc_temp` di `rtl/platform/xilinx/` dengan model simulasi, register `TEMP` (ADR-018). Rumus konversi butuh UG480.
-3. M19 sisa: `board/bringup.py` dan mode kamera memakai `GpioDoneLine` (GPIO25); tombol START/STOP/RUN di perangkat lunak Pi (ADR-016).
-4. M20 sisa: penjagaan tulis `INJ*` saat BUSY di `regfile` (test dulu; golden model dan `sw/sentinel/device_model.py` ikut).
-5. Sequencer rekonfigurasi MMCM2 (ADR-010). Butuh PG065 atau XAPP888 dan DS189; mengunduhnya perlu izin user. Tanpa ini tidak ada overclocking nyata.
-6. Verifikasi `config/mmcm_limits.yaml` ke DS189 dan `config/parts.yaml` ke DS180, lalu ganti `verified: false`.
-7. Sesudah `Zero7.xdc` resmi atau user manual ada: pastikan IOSTANDARD di `board/zero7.xdc`, hapus tanda TODO, baru `board/build_bitstream.py` boleh jalan.
-8. Sesudah semua field wajib `board/BOARD_INFO.md` terisi dan user menulis "board siap": B1 sesuai `board/BRINGUP.md`, mulai dari clock aman.
-9. Setiap kali RTL berubah: ulangi `python tools/run.py synth-official` (sekitar 8 menit bila mesin tidak sibuk, sekitar 14 menit bila simulasi berjalan bersamaan) dan `python tools/gen_results_doc.py`. Margin timing di 125 MHz tipis (WNS +0,417 ns); kalau gagal, cadangannya `--safe-div 10` (100 MHz, ADR-015).
-10. Sesudah kelas target diumumkan: latih ulang, ekspor, ulangi regresi dan materi belajar.
+**Belum dikerjakan dan alasannya:**
+1. Bitstream untuk board: standar I/O masih [INFERENCE] (ADR-024); tegangan VCCO diukur dulu di langkah bring-up 1. Pemeriksaan bitstream kering sudah lolos (lihat Log bukti).
+2. Rekonfigurasi MMCM2, suhu XADC, WS2812B, tombol, done line: RTL dan perangkat lunak selesai dan diuji dengan model; perilaku perangkat AMD dan board hanya bisa dibuktikan di board.
+3. Waktu pulsa WS2812B: jenis LED dan datasheet di ZERO7 belum diketahui.
+4. Kelas target dan format laporan sintesis: menunggu panitia (user akan mengirim).
+5. Li dkk. (ITC-Asia 2019): teks lengkap tidak ditemukan.
+6. Draf laporan akhir dan slide (`docs/REPORT_DRAFT.md`, `docs/SLIDES_OUTLINE.md`): butuh angka `[HW]`; struktur sudah ada.
 
-**Temuan sesi ini:**
-- Run resmi pertama gagal timing hanya di satu jalur, yaitu reset power-on yang menyeberang dari `clk_in` ke `clk_safe` (−0,499 ns). Itu masalah constraint dan struktur reset, bukan logika; diselesaikan lewat ADR-021, bukan dengan menurunkan f_safe.
-- `report_cdc` adalah alat yang menemukan kelemahan nyata: synchronizer tanpa `ASYNC_REG`, logika OR di depan synchronizer reset (CDC-10), dan sinyal injeksi quasi-statis yang aturannya belum tertulis. Sisa "unknown" di laporan adalah sinyal quasi-statis itu.
-- `set_clock_groups -asynchronous` menimpa `set_max_delay -datapath_only` milik XPM (peringatan TIMING-24), tetapi constraint bus skew XPM tetap berlaku dan dilaporkan di `impl_bus_skew.rpt`.
-- Anggaran latensi [SIM] × [VIVADO-STA] di `docs/RESULTS_SIM.md`: pengiriman gambar lewat SPI bisa sama besar atau lebih besar dari waktu komputasi. Kecepatan SPI board masih [UNKNOWN].
-- `tools/sim.py --record` kehilangan satu baris saat beberapa bench selesai bersamaan (catatan `system_xs_r200` tidak tertulis walaupun bench-nya lulus). Sekarang catatan ditulis dari thread utama saja (`tests/test_sim_runner.py`).
-- Temuan M11 tetap berlaku: lane `lut` membuat jalur MAC menjadi jalur kritis `clk_fast`, dan suplai operand R·f_safe memberi ruang overclock.
+**Tahapan yang butuh board (fase BOARD, `board/BRINGUP.md`):**
+1. B1: pasang ZERO7 di Pi 4, ukur arus 5 V dan tegangan VCCO bank 14, 15, 34; `board/pi_check.py`; isi field `UNKNOWN` di `board/BOARD_INFO.md`.
+2. Hapus tanda TODO di `board/zero7.xdc` bila tegangan cocok, lalu `board/build_bitstream.py`; program lewat JTAG.
+3. B2: SPI loopback, `ID`, unggah bobot; ukur kecepatan SPI tertinggi yang stabil (mulai 1 MHz, batas desain 15,6 MHz).
+4. B3 (E7): bit-exact di clock aman untuk seluruh set validasi.
+5. Cek rekonfigurasi MMCM2 per level, warna WS2812B, polaritas tombol, pembacaan suhu.
+6. B4 (E1–E3): sapuan frekuensi, uji H1; B5 (E4, E6): tiga mode, governor otomatis, suhu; B6: hasil final, laporan, video demo.
 
-**Jebakan yang ditemukan:**
-- Nama register synchronizer dipakai constraint: `fpga/constraints/top_board_timing.tcl` mencari `*por_meta_reg[0]` dan berhenti dengan error kalau tidak tepat satu. Kalau register itu diganti nama, ubah juga constraint dan `tests/test_fpga_scripts.py`.
-- Run sampingan memakai `--tag` (`results/vivado/official_<tag>/`); folder `official/` hanya untuk varian dan constraint yang berlaku. `official_preadr021/` dan `official_adr021a/` adalah bukti ADR-021 dan tidak bisa direproduksi dari commit sesudahnya.
-- Vivado dan simulasi berebut CPU, jadi run resmi bisa hampir dua kali lebih lama saat regresi berjalan. Jangan menjalankan dua bench yang sama bersamaan, karena folder kerjanya sama.
-- Di Git Bash milik harness: heredoc panjang gagal dengan "unexpected EOF", dan `\\` di dalam heredoc menjadi satu backslash. Tulis skrip panjang lewat alat tulis file, dan pakai raw string untuk pola berisi backslash.
-- `Read` dengan parameter `pages` gagal (pdftoppm tidak ada), tanpa `pages` berhasil. WebFetch salah membaca halaman Shift_JIS panitia; pakai browser bawaan.
-- `.bat` Vivado memecah argumen berisi `=`. Di Windows, `write_text` Python menulis CRLF; file repo memakai LF (`.gitattributes`).
-- `verilator` di oss-cad-suite Windows hanya dipakai untuk lint. Icarus sekitar 14x lebih lambat dari xsim untuk engine; regresi panjang pakai xsim.
-- `always @*` tidak peka sinyal yang hanya dibaca di dalam function (membuat X di Icarus). `checker` adalah kata kunci SystemVerilog (ADR-009). Verilator menolak `reg x = v;` yang juga di-assign secara prosedural; pakai `initial`.
-- Kampanye RTL (M9) memakai model `micro` berbobot acak karena tiap skenario harus cepat; kampanye model nyata ada di M3 (Python) dan M8 (RTL, xs).
+**Langkah berikutnya tanpa board (bila ada waktu):**
+1. Draf laporan akhir dan 10 slide dengan angka `[SIM]` dan `[VIVADO-STA]` yang sudah ada, bertanda jelas.
+2. Latih ulang begitu kelas target diumumkan; ulangi regresi, laporan resmi, dan materi belajar.
+3. Setiap kali RTL berubah: `python tools/run.py synth-official`, `vivado -mode batch -source fpga/bitstream_dryrun.tcl`, `python tools/gen_results_doc.py`.
+
+**Jebakan yang ditemukan (tambahan):**
+- Di heredoc Git Bash, `\n` di dalam string Python menjadi baris baru sungguhan; perbaiki dengan `chr(92)` atau tulis file lewat alat tulis.
+- `before` adalah kata kunci SystemVerilog (iverilog -g2012); `always @*` tanpa perubahan input tidak dievaluasi Icarus di waktu 0, jadi pakai `assign` untuk logika kombinasional sederhana.
+- Nama register synchronizer dipakai constraint (`*por_meta_reg[0]`, `*axi_rst_meta_reg[0]`); ganti nama berarti ganti constraint dan test.
+- `report_cdc` menolak dua bentuk reset: logika di depan synchronizer (CDC-10) dan satu flop ke dua synchronizer di clock yang sama (CDC-11). `tests/test_fpga_scripts.py::test_committed_official_report_is_clean` sekarang menjaga laporan resmi yang di-commit.
+- Clocking Wizard dibangkitkan ulang setiap run resmi di `build/ip_official/`; tidak ada sumber IP yang di-commit.
+- PDF AMD di `docs/vendor/` tidak di-commit (syarat redistribusi); checksum ada di `docs/vendor/README.md`.
 
 ## Log bukti
 
@@ -290,3 +294,10 @@ Ditulis di akhir sesi 2026-11-16 (PROMPT_UPDATE_ZERO7).
 | 2026-11-16 | M19 | `pytest tests/test_software.py` | 13 passed; driver menunggu `irq_done` lewat done line lalu memeriksa `STATUS.DONE`; test memakai pengganti, bukan GPIO sungguhan |
 | 2026-11-16 | T8 | `docs/JUDGE_REVIEW.md` | tiga putaran dengan rubrik internal [PROPOSAL]; kelemahan terbesar: belum ada hasil [HW] dan sequencer MMCM2 belum ada |
 | 2026-11-16 | T9 | `python tools/study_guide/figures.py`; `build_docx.py`; `finalize_word.ps1` | materi belajar versi 1.1 dengan bagian "Perubahan" di awal; `build/study_guide/SENTINEL_materi_belajar.pdf`, 46 halaman (folder `build/` tidak di-commit) |
+| 2026-11-16 | ADR-023 | baca DS189 Tabel 37 (PDF hlm. 40), DS180 Tabel 2 (hlm. 2), UG480 v1.11, PG065; `pytest tests/test_mmcm_table.py` | batas dan kapasitas `verified: true` dengan halaman; nilai −2 input/keluaran maksimum dikoreksi 933 → 800 MHz; test lama yang mewajibkan `verified: false` diganti (alasan: datasheet sudah dicek) |
+| 2026-11-16 | PRIOR_ART | baca penuh Marty dkk. TCAD 2020 (14 hlm.), Xue dkk. arXiv 2202.08675 (7 hlm.), Jiang dkk. arXiv 2505.13461 (19 hlm.) | jawaban atas tiga alasan Marty dkk. menolak koreksi di `docs/PRIOR_ART.md` |
+| 2026-11-16 | M17–M21 | `python tools/run.py sim xadc_temp regfile_guard ws2812_tx status_led clkwiz_seq` | [SIM] `PASS 4/4 reads=6`, `PASS 6/6`, `PASS 49/49`, `PASS 7/7 frames=10`, `PASS 49/49` |
+| 2026-11-16 | M15 | `python tools/run.py synth-official` (dengan Clocking Wizard, XADC, WS2812B) | [VIVADO-STA] 6.862/14.600 LUT (47,00%), 6.154 FF, 14/45 block RAM, 3 DSP; WNS +0,648 ns, WHS +0,040 ns; daya 0,510 W (estimasi) |
+| 2026-11-16 | ADR-024 | `vivado -mode batch -source fpga/bitstream_dryrun.tcl` | [VIVADO] `write_bitstream` lolos (Bitgen Completed Successfully); DRC bitstream: 0 error, 1 warning (RTSTAT-10); file `build/bitstream_dryrun/top_board_DRYRUN_NOT_FOR_BOARD.bit`, tidak dipakai di board dan tidak di-commit |
+| 2026-11-16 | semua | `python tools/run.py sim <semua bench> --record ...`; `python tools/run.py test` | [SIM] 45 bench, semuanya lulus; 224 passed in 303.17s (0:05:03); log `build/test_full_partb.log` |
+| 2026-11-16 | T9 | `python tools/study_guide/figures.py`; `build_docx.py`; `finalize_word.ps1` | materi belajar 1.1 dibangun ulang dengan Pi 4, ADR-022 sampai ADR-024, dan laporan resmi terbaru; 46 halaman (`build/`, tidak di-commit) |

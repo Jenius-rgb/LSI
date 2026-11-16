@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.2 (win64) Build 6299465 Fri Nov 14 19:35:11 GMT 2025
-| Date         : Mon Nov 16 06:24:56 2026
+| Date         : Mon Nov 16 17:55:01 2026
 | Host         : LAPTOP-ER7J7A89 running 64-bit major release  (build 9200)
 | Command      : report_cdc -file {C:\AF\SENTINEL-LSI-2027\results\vivado\official/impl_cdc.rpt}
 | Design       : top_board
@@ -12,13 +12,13 @@ Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanc
 
 CDC Report
 
-Severity  Source Clock      Destination Clock  CDC Type                 Exceptions           Endpoints  Safe  Unsafe  Unknown  No ASYNC_REG  
---------  ----------------  -----------------  -----------------------  -------------------  ---------  ----  ------  -------  ------------  
-Critical  clk_safe_raw      clk_fast_safe      User Ignored             Asynch Clock Groups        686   274       0      412             0  
-Critical  clk_safe_raw      clk_fast_turbo     User Ignored             Asynch Clock Groups        686   274       0      412             0  
-Warning   clk_fast_safe     clk_safe_raw       User Ignored             Asynch Clock Groups        136   136       0        0             0  
-Warning   clk_fast_turbo    clk_safe_raw       User Ignored             Asynch Clock Groups        136   136       0        0             0  
-Info      clk_in            clk_safe_raw       User Ignored             False Path                   1     1       0        0             0  
-Info      input port clock  clk_safe_raw       No Common Primary Clock  False Path                   3     3       0        0             0  
-Info      clk_safe_raw      clk_turbo_raw      Safely Timed             None                         1     1       0        0             0  
+Severity  Source Clock      Destination Clock       CDC Type                 Exceptions           Endpoints  Safe  Unsafe  Unknown  No ASYNC_REG  
+--------  ----------------  ----------------------  -----------------------  -------------------  ---------  ----  ------  -------  ------------  
+Critical  clk_safe_raw      clk_fast_safe           User Ignored             Asynch Clock Groups        686   274       0      412             0  
+Critical  clk_safe_raw      clk_fast_turbo          User Ignored             Asynch Clock Groups        686   274       0      412             0  
+Warning   clk_fast_safe     clk_safe_raw            User Ignored             Asynch Clock Groups        136   136       0        0             0  
+Warning   clk_fast_turbo    clk_safe_raw            User Ignored             Asynch Clock Groups        136   136       0        0             0  
+Info      clk_safe_raw      clk_out1_clk_wiz_turbo  Safely Timed             None                         1     1       0        0             0  
+Info      clk_in            clk_safe_raw            User Ignored             False Path                   1     1       0        0             0  
+Info      input port clock  clk_safe_raw            No Common Primary Clock  False Path                   3     3       0        0             0  
 

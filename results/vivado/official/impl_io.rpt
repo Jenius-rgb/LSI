@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version              : Vivado v.2025.2 (win64) Build 6299465 Fri Nov 14 19:35:11 GMT 2025
-| Date                      : Mon Nov 16 06:24:34 2026
+| Date                      : Mon Nov 16 17:54:42 2026
 | Host                      : LAPTOP-ER7J7A89 running 64-bit major release  (build 9200)
 | Command                   : report_io -file {C:\AF\SENTINEL-LSI-2027\results\vivado\official/impl_io.rpt}
 | Design                    : top_board
@@ -25,7 +25,7 @@ Table of Contents
 +---------------+
 | Total User IO |
 +---------------+
-|             8 |
+|             9 |
 +---------------+
 
 
@@ -215,7 +215,7 @@ Table of Contents
 | M13        |             | High Range | IO_L8P_T1_D11_14             | User IO     |             |      14 |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |
 | M14        |             | High Range | IO_L9P_T1_DQS_14             | User IO     |             |      14 |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |
 | M15        |             | High Range | IO_L9N_T1_DQS_D13_14         | User IO     |             |      14 |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |
-| N1         |             | High Range | IO_L22N_T3_34                | User IO     |             |      34 |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |
+| N1         | ws2812_dout | High Range | IO_L22N_T3_34                | OUTPUT      | LVCMOS33    |      34 |         12 | SLOW |                     |            FP_VTT_50 |         | FIXED      |           |          |      | NONE             |              |                   |              |
 | N2         |             | High Range | IO_L20P_T3_34                | User IO     |             |      34 |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |
 | N3         |             | High Range | IO_L21N_T3_DQS_34            | User IO     |             |      34 |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |
 | N4         |             | High Range | IO_25_34                     | User IO     |             |      34 |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |

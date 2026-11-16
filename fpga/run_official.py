@@ -101,6 +101,7 @@ CDC_MEANING = {
     "CDC-3": "two-flop synchronizer with ASYNC_REG",
     "CDC-4": "multi-bit crossing without a synchronizer: quasi-static injection masks (SPEC 7.8)",
     "CDC-10": "logic in front of a synchronizer; SPEC 7.8 does not allow it",
+    "CDC-11": "one launch flop feeding several synchronizers in one clock; SPEC 7.8 does not allow it",
     "CDC-15": "crossing captured under a clock enable: the memories of the asynchronous FIFOs and the quasi-static STARVE_CYCLES word",
 }
 
