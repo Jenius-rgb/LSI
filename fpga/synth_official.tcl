@@ -23,7 +23,7 @@ set sources {
     rtl/ram_tdp.v rtl/sum_tree.v rtl/wc_gen.v rtl/operand_gen.v rtl/postproc.v rtl/pool.v
     rtl/counter_bank.v rtl/cdc_fifo.v rtl/platform/xilinx/cdc_fifo_xpm.v rtl/fast_path.v rtl/engine.v
     rtl/spi_slave.v rtl/regfile.v rtl/governor.v rtl/clk_seq.v rtl/clk_gen.v
-    rtl/platform/xilinx/clk_gen_xilinx.v rtl/xadc_temp.v rtl/platform/xilinx/xadc_prim_xilinx.v rtl/top_core.v board/top_board.v
+    rtl/platform/xilinx/clk_gen_xilinx.v rtl/xadc_temp.v rtl/platform/xilinx/xadc_prim_xilinx.v rtl/ws2812_tx.v rtl/status_led.v rtl/top_core.v board/top_board.v
 }
 set_part $part
 set_property XPM_LIBRARIES {XPM_CDC XPM_MEMORY XPM_FIFO} [current_project]

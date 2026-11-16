@@ -17,7 +17,8 @@ module top_core #(
     parameter WEIGHT_AW  = 12,
     parameter ACT0_AW    = 13,
     parameter ACT1_AW    = 12,
-    parameter LOG_AW     = 8
+    parameter LOG_AW     = 8,
+    parameter LED_CLK_HZ = 125_000_000   // clk_safe frequency, for the WS2812B pulse timing
 ) (
     input  wire clk_in,
     input  wire rst,
@@ -25,7 +26,8 @@ module top_core #(
     input  wire spi_cs_n,
     input  wire spi_mosi,
     output wire spi_miso,
-    output wire [3:0] led
+    output wire [3:0] led,
+    output wire       ws2812     // status colour for the WS2812B LED1 (ADR-017)
 );
     wire clk_safe, clk_fast, clocks_locked, sel_turbo, is_turbo;
     wire reconfig_start, reconfig_busy, turbo_locked;
@@ -207,6 +209,9 @@ module top_core #(
     end
 
     assign led = {fatal, is_turbo, done_flag, busy};
+
+    status_led #(.CLK_HZ(LED_CLK_HZ)) u_status_led (
+        .clk(clk_safe), .rst(rst_safe), .fatal(fatal), .is_turbo(is_turbo), .done(done_flag), .busy(busy), .dout(ws2812));
 
     wire unused_top = &{1'b0, gov_level};
 endmodule

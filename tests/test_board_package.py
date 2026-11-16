@@ -89,7 +89,7 @@ def test_zero7_xdc_matches_the_connection_table():
                 pins[m.group(2)] = m.group(1)
         if "IOSTANDARD" in line and not line.lstrip().startswith("#"):
             assert "TODO: belum dikonfirmasi" in line, line
-    expected = {"clk_in": "B13", "spi_sclk": "A8", "spi_mosi": "A6", "spi_miso": "A7", "spi_cs_n": "D9"}
+    expected = {"clk_in": "B13", "spi_sclk": "A8", "spi_mosi": "A6", "spi_miso": "A7", "spi_cs_n": "D9", "ws2812_dout": "N1"}
     assert {k: pins.get(k) for k in expected} == expected
     assert len(set(pins.values())) == len(pins)
     assert "create_clock -name clk_in -period 50.000" in text

@@ -18,7 +18,8 @@ module top_board #(
     output wire spi_miso,    // RP_GPIO9
     output wire led_busy,    // D5
     output wire led_fatal,   // D6
-    output wire irq_done     // RP_GPIO25, high while STATUS.DONE is set
+    output wire irq_done,    // RP_GPIO25, high while STATUS.DONE is set
+    output wire ws2812_dout  // N1, S7_LED0: WS2812B LED1 status colour (ADR-017)
 );
     // Power-on reset from the board clock, before the MMCMs lock.
     reg [7:0] por;
@@ -33,13 +34,13 @@ module top_board #(
     ) u_core (
         .clk_in(clk_in), .rst(por[7]),
         .spi_sclk(spi_sclk), .spi_cs_n(spi_cs_n), .spi_mosi(spi_mosi), .spi_miso(spi_miso),
-        .led(status));
+        .led(status), .ws2812(ws2812_dout));
 
     assign led_busy  = status[0];
     assign irq_done  = status[1];
     assign led_fatal = status[3];
 
-    wire unused_turbo = status[2];   // shown on the WS2812B indicator once it exists (ADR-017)
+    wire unused_turbo = status[2];   // shown as a colour on the WS2812B indicator (ADR-017)
 endmodule
 
 `default_nettype wire

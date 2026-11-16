@@ -37,6 +37,10 @@ set_property PACKAGE_PIN R3 [get_ports led_busy];                               
 set_property PACKAGE_PIN R2 [get_ports led_fatal];                                   # GPIO_LED2, D6
 set_property IOSTANDARD LVCMOS33 [get_ports {led_busy led_fatal}];                   # TODO: belum dikonfirmasi
 
+## WS2812B LED1 driven by the FPGA (ADR-017).
+set_property PACKAGE_PIN N1 [get_ports ws2812_dout];                                 # S7_LED0, LED1, also J7
+set_property IOSTANDARD LVCMOS33 [get_ports ws2812_dout];                            # TODO: belum dikonfirmasi
+
 ## Done signal to the Raspberry Pi (ADR-016).
 set_property PACKAGE_PIN C9 [get_ports irq_done];                                    # RP_GPIO25
 set_property IOSTANDARD LVCMOS33 [get_ports irq_done];                               # TODO: belum dikonfirmasi
@@ -44,11 +48,10 @@ set_property IOSTANDARD LVCMOS33 [get_ports irq_done];                          
 ## The SPI pins are sampled by synchronisers in clk_safe; the LEDs and the done signal are
 ## slow status outputs.  None of these ports has a timing relationship with a clock.
 set_false_path -from [get_ports {spi_sclk spi_cs_n spi_mosi}]
-set_false_path -to   [get_ports {spi_miso led_busy led_fatal irq_done}]
+set_false_path -to   [get_ports {spi_miso led_busy led_fatal irq_done ws2812_dout}]
 
 ## Pins reserved for ports that top_board does not have yet.  Uncomment together with the
 ## RTL change (see docs/DECISIONS.md).
-# set_property PACKAGE_PIN N1  [get_ports ws2812_dout];   # S7_LED0, LED1 (WS2812B), also J7
 # set_property PACKAGE_PIN C14 [get_ports btn_start];     # SW5 START, shared with RP_GPIO20
 # set_property PACKAGE_PIN B15 [get_ports btn_stop];      # SW4 STOP,  shared with RP_GPIO21
 # set_property PACKAGE_PIN C13 [get_ports btn_run];       # SW6 RUN,   shared with RP_GPIO16

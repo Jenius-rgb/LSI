@@ -441,6 +441,7 @@ Semantik injeksi sama persis di `model/checker.py`, sehingga outcome RTL bisa di
 - FPGA bertindak sebagai slave dengan oversampling di `clk_safe` (sinkronizer 2-FF).
 - Dijamin bekerja untuk f_SCLK ≤ f_safe / 8.
 - Pin: SPI0 Raspberry Pi dengan CE0, yaitu SCLK A8, MOSI A6, MISO A7, CS D9 [OFFICIAL]. Sinyal selesai `irq_done` di RP_GPIO25, pin C9 (ADR-016).
+- Indikator WS2812B LED1 di pin N1 (ADR-017), digerakkan `status_led` di domain `clk_safe`: FATAL merah, sibuk di turbo magenta, sibuk biru, selesai hijau, diam putih redup. Waktu pulsa (T0H 400 ns, T1H 800 ns, bit 1.250 ns, jeda latch 300 µs) belum dicek ke datasheet LED di ZERO7.
 - Level tegangan belum tertulis di dokumen resmi [UNKNOWN]; lihat `board/BOARD_INFO.md`.
 
 ### 12.2 Perintah
