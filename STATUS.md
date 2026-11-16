@@ -93,11 +93,11 @@ Jika G1 meleset lebih dari satu minggu, buang pemilihan clock per layer dan paka
 
 ### M10 — Governor dan rekonfigurasi clock
 - [x] `model/governor.py`, `rtl/governor.v`
-- [B] Rekonfigurasi MMCM2: pilihan dicatat di ADR-010 (Clocking Wizard via AXI-Lite); implementasi di `rtl/platform/xilinx/clk_gen_xilinx.v` menunggu dukungan device Spartan-7, F_IN, dan PG065 (lihat Terblokir)
-- [B] `tools/gen_mmcm_table.py` selesai dan lolos test batas, tetapi batas di `config/mmcm_limits.yaml` belum dicek ke DS189 (halaman belum ada, `verified: false`); F_IN placeholder
+- [x] Rekonfigurasi MMCM2 di RTL: Clocking Wizard dengan AXI4-Lite dan `clkwiz_seq` (ADR-023, M21; dikoreksi 2026-11-16, butir ini sebelumnya masih `[B]`). Bukti di hardware menunggu board (M21, B4)
+- [x] `tools/gen_mmcm_table.py` dengan batas DS189 terverifikasi (Tabel 37, PDF hlm. 40) dan F_IN = 20 MHz [OFFICIAL] (ADR-015, ADR-023)
 - [x] Testbench ≥ 50 skenario dengan event dari fault model sintetis
 
-**Status:** `[~]` governor dan protokol selesai di simulasi; rekonfigurasi MMCM asli `[B]` (ADR-010); batas MMCM belum diverifikasi ke DS189.
+**Status:** `[x]` untuk semua bagian tanpa board: governor, protokol, rekonfigurasi MMCM2 di RTL, dan batas DS189. Rekonfigurasi sungguhan diukur di board (B4).
 
 **DoD:** trajektori state RTL sama dengan model untuk semua skenario. Urutan SPEC §7.7 terverifikasi di simulasi. Tabel MMCM lolos test batas.
 
