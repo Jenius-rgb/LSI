@@ -1,24 +1,27 @@
 # MMCM limits per speed grade, for tools/gen_mmcm_table.py.
 #
-# These values are PROVISIONAL. They were entered from general knowledge of 7-series
-# parts, without the data sheet at hand. Before the board phase, check each one against
-# AMD DS189 (Spartan-7 data sheet), table "MMCM Switching Characteristics", write the page
-# number in `page`, and set `verified: true`.
-source: "AMD DS189, MMCM Switching Characteristics (NOT YET CHECKED)"
+# Checked on 2026-11-16 against AMD DS189 "Spartan-7 FPGAs Data Sheet: DC and AC Switching
+# Characteristics", edition of 2024-10-18 (docs/vendor/amd/ds189/), Table 37 "MMCM Specification",
+# PDF page 40, VCCINT = 1.0 V columns. The provisional -2 values for f_in_max and f_out_max (933 MHz)
+# were wrong; DS189 gives 800 MHz for every speed grade.
+# Other figures from the same table that the design relies on: MMCM_TLOCKMAX 100 us,
+# MMCM_FOUTMIN 4.69 MHz, DRP clock FDCK up to 200 MHz. Table 32: global clock tree FMAX_BUFG
+# 464 MHz (-1) and 628 MHz (-2).
+source: "AMD DS189 (edition 2024-10-18), Table 37 MMCM Specification, PDF page 40"
 speed_grades:
   "-1":
-    f_in_min:  {value: 10.0,   unit: MHz, page: null, verified: false}
-    f_in_max:  {value: 800.0,  unit: MHz, page: null, verified: false}
-    f_pfd_min: {value: 10.0,   unit: MHz, page: null, verified: false}
-    f_pfd_max: {value: 450.0,  unit: MHz, page: null, verified: false}
-    f_vco_min: {value: 600.0,  unit: MHz, page: null, verified: false}
-    f_vco_max: {value: 1200.0, unit: MHz, page: null, verified: false}
-    f_out_max: {value: 800.0,  unit: MHz, page: null, verified: false}
+    f_in_min:  {value: 10.0,   unit: MHz, page: 40, verified: true}
+    f_in_max:  {value: 800.0,  unit: MHz, page: 40, verified: true}
+    f_pfd_min: {value: 10.0,   unit: MHz, page: 40, verified: true}
+    f_pfd_max: {value: 450.0,  unit: MHz, page: 40, verified: true}
+    f_vco_min: {value: 600.0,  unit: MHz, page: 40, verified: true}
+    f_vco_max: {value: 1200.0, unit: MHz, page: 40, verified: true}
+    f_out_max: {value: 800.0,  unit: MHz, page: 40, verified: true}
   "-2":
-    f_in_min:  {value: 10.0,   unit: MHz, page: null, verified: false}
-    f_in_max:  {value: 933.0,  unit: MHz, page: null, verified: false}
-    f_pfd_min: {value: 10.0,   unit: MHz, page: null, verified: false}
-    f_pfd_max: {value: 500.0,  unit: MHz, page: null, verified: false}
-    f_vco_min: {value: 600.0,  unit: MHz, page: null, verified: false}
-    f_vco_max: {value: 1440.0, unit: MHz, page: null, verified: false}
-    f_out_max: {value: 933.0,  unit: MHz, page: null, verified: false}
+    f_in_min:  {value: 10.0,   unit: MHz, page: 40, verified: true}
+    f_in_max:  {value: 800.0,  unit: MHz, page: 40, verified: true}
+    f_pfd_min: {value: 10.0,   unit: MHz, page: 40, verified: true}
+    f_pfd_max: {value: 500.0,  unit: MHz, page: 40, verified: true}
+    f_vco_min: {value: 600.0,  unit: MHz, page: 40, verified: true}
+    f_vco_max: {value: 1440.0, unit: MHz, page: 40, verified: true}
+    f_out_max: {value: 800.0,  unit: MHz, page: 40, verified: true}

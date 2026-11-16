@@ -84,14 +84,22 @@ Membangun akselerator CNN di FPGA Spartan-7 (board ZERO7, Raspberry Pi HAT) yang
 
 ## 7. Konteks lomba (ringkas; verifikasi ke docs/official)
 
-- [OFFICIAL] 30th LSI Design Contest 2027 di Chitose, Hokkaido. Tema: implementasi hardware CNN.
+Diperbarui 2026-11-16 dengan persetujuan user, dari `docs/official/README.md`.
+
+- [OFFICIAL] 30th LSI Design Contest 2027 di Chitose, Hokkaido. Tema: implementasi hardware CNN, jumlah layer bebas.
 - [OFFICIAL] Batas laporan 31 Jan 2027. Lomba 5 Mar 2027, hybrid. Presentasi 10 menit (maksimal 10 slide) dan tanya jawab 5 menit.
-- [OFFICIAL] Juri menilai bukan hanya kecepatan dan area, tetapi juga ide, orisinalitas, keunikan, dan presentasi.
+- [OFFICIAL] Yang dikumpulkan: laporan akhir dan laporan sintesis untuk AMD Spartan-7 XC7S25CSGA225-1. Laporan sintesis wajib untuk semua kelas; formatnya belum dijelaskan (user akan mengirim begitu terbit).
+- [OFFICIAL] Juri menilai bukan hanya kecepatan dan area, tetapi juga ide, orisinalitas, keunikan, dan presentasi. Tingkat pendidikan peserta ikut dipertimbangkan.
 - [OFFICIAL] Syarat tujuan: data validasi yang ditentukan panitia dan input kamera real-time. Gambar validasi diberikan pada hari lomba (dari kamera, kartu SD, dll.). Presentasi harus menunjukkan seberapa cepat hasil pengenalan keluar.
 - [OFFICIAL] CNN menerima input 32×32. Struktur mengacu ke design overview kontes ke-23; struktur hidden layer bebas.
-- [OFFICIAL] Class 1: board bebas, hanya klasifikasi gambar. Level 1 (CNN sederhana, misalnya input 3×3), Level 2 (CNN untuk input 32×32 dengan training dan validasi), Level 3 (bebas). Class 2: hanya ZERO7, tugas bebas, hanya Level 3.
-- [OFFICIAL, halaman Jepang] Dataset latih bebas, tetapi kelas target ditentukan panitia dan belum diumumkan. Karena itu model harus bisa dilatih ulang, dan bobot harus bisa dimuat ulang lewat SPI **tanpa sintesis ulang**.
-- [UNKNOWN] Bobot penilaian, format laporan, kelas target, apakah demo hardware langsung diizinkan, dan aturan penggunaan AI.
+- [OFFICIAL] Class 1 (Image Classification): hanya klasifikasi gambar. Level 1 dan Level 2 menargetkan XC7S25CSGA225-1. Level 3 bebas board dan arsitektur, tetapi tetap harus menunjukkan laporan sintesis yang muat di XC7S25CSGA225-1.
+- [OFFICIAL] Class 2 (ZERO7): hanya board ZERO7, tugas bebas, hanya Level 3.
+- [OFFICIAL] ZERO7 buatan Gigafirm adalah HAT Raspberry Pi; panitia menyebut board pinjaman bisa dipasang di Raspberry Pi 5. Vivado yang direkomendasikan: 2025.2.
+- [USER] Tim memakai Raspberry Pi 4 Model B (ADR-022). Board dan Pi dipakai fisik mulai Desember 2026 atau Januari 2027.
+- [OFFICIAL] Dataset latih bebas, tetapi kelas target ditentukan panitia dan belum diumumkan. Karena itu model harus bisa dilatih ulang, dan bobot harus bisa dimuat ulang lewat SPI **tanpa sintesis ulang**.
+- [OFFICIAL, berbeda antar halaman] Ukuran tim: halaman Inggris 1–3 orang, halaman Jepang paling banyak 4 orang. [USER] Tim berjumlah 4 orang, jadi bergantung pada aturan halaman Jepang; tulis ini apa adanya bila ditanya.
+- [OFFICIAL] Dokumen resmi tidak memuat aturan penggunaan AI. [USER] Keputusan user: AI boleh dipakai selama sesuai ketentuan lomba.
+- [UNKNOWN] Bobot penilaian, format laporan dan laporan sintesis, kelas target, dan apakah demo hardware langsung diizinkan.
 - **Target kategori [PROPOSAL, menunggu konfirmasi panitia]: Class 2 (ZERO7 Class), Level 3.** Tetap pertahankan klasifikasi gambar, mode data validasi, dan mode kamera real-time, supaya proyek juga memenuhi syarat Class 1 Level 3 jika ternyata harus pindah kelas. Jangan menulis kategori ini sebagai fakta di laporan sebelum dikonfirmasi.
 
 ## 8. Fase BOARD

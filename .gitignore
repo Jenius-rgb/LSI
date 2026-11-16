@@ -35,3 +35,6 @@ fpga/reports/*_v[0-9]/
 clockInfo.txt
 dfx_runtime.txt
 tight_setup_hold_pins.txt
+
+# AMD documents: downloaded with the user's permission, kept locally only (docs/vendor/README.md)
+docs/vendor/**/*.pdf

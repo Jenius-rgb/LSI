@@ -37,7 +37,7 @@ Rujukan singkat:
 | Jumlah CMT/MMCM di chip | 3 MMCM menurut basis data part [VIVADO]. DS180 belum dicek | part_check |
 | Kecepatan SPI stabil yang terukur | UNKNOWN | ukur saat bring-up |
 | Cara mengukur daya (USB power meter, dll.) | UNKNOWN | |
-| Model Raspberry Pi yang dipakai dan versi OS | Raspberry Pi 5 [OFFICIAL: board pinjaman "can be connected to a Raspberry Pi 5"]. Versi OS: UNKNOWN; contoh resmi berjalan dengan Python 3.13.5 dan `gpiozero` | G-6; IN-9 |
+| Model Raspberry Pi yang dipakai dan versi OS | Raspberry Pi 4 Model B [USER, 2026-11-16: tim hanya punya Pi 4] (ADR-022). Panitia hanya menyebut Raspberry Pi 5 [OFFICIAL: board pinjaman "can be connected to a Raspberry Pi 5"]. Kecocokan header 40-pin dan nomor GPIO Pi 4 dengan Pi 5: [INFERENCE], dicek fisik saat board datang. Versi OS: UNKNOWN; contoh resmi berjalan dengan Python 3.13.5 dan `gpiozero` | G-6; IN-9; user |
 | Modul kamera yang dipakai | UNKNOWN | |
 | Clock eksternal | EXT_CLK = H1 (`IO_L12P_T1_MRCC_34`) ke J16 [OFFICIAL; VIVADO] | TK-3; pin_check |
 | I2C | FPGA_SDA = H3, FPGA_SCL = H4 ke U11; RP_GPIO2 = B1 dan RP_GPIO3 = B2 ke J6 dan U11 [OFFICIAL]. Fungsi U11: UNKNOWN | TK-1, TK-3 |

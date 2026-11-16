@@ -39,6 +39,32 @@ def test_board_clock_of_20_mhz_gives_an_exact_table():
     assert all(lv["d"] == 1 and LIMITS["f_vco_min"] <= lv["f_vco"] <= LIMITS["f_vco_max"] for lv in table["levels"])
 
 
-def test_repository_limits_are_flagged_until_checked():
-    limits = gmt.load_limits("-1")
-    assert limits["verified"] is False  # flip only after DS189 has been checked, with page numbers
+def test_repository_limits_match_ds189():
+    """The limits were checked against DS189 on 2026-11-16 (Table 37, PDF page 40), so every value now
+    carries a page and verified: true. This replaces the test that required verified: false before the
+    data sheet was available. The -2 input and output maxima were wrong (933 MHz) and are 800 MHz."""
+    import yaml
+
+    data = yaml.safe_load((gmt.LIMITS_PATH).read_text(encoding="utf-8"))
+    expected = {
+        "-1": {"f_in_min": 10.0, "f_in_max": 800.0, "f_pfd_min": 10.0, "f_pfd_max": 450.0,
+               "f_vco_min": 600.0, "f_vco_max": 1200.0, "f_out_max": 800.0},
+        "-2": {"f_in_min": 10.0, "f_in_max": 800.0, "f_pfd_min": 10.0, "f_pfd_max": 500.0,
+               "f_vco_min": 600.0, "f_vco_max": 1440.0, "f_out_max": 800.0},
+    }
+    for grade, values in expected.items():
+        for key, value in values.items():
+            entry = data["speed_grades"][grade][key]
+            assert entry["value"] == value and entry["verified"] is True and entry["page"] == 40, (grade, key)
+    assert gmt.load_limits("-1")["verified"] is True
+
+
+def test_part_capacities_match_ds180():
+    """DS180 v2.6.1, Table 2 (page 2), read 2026-11-16."""
+    import yaml
+
+    parts = yaml.safe_load((gmt.ROOT / "config" / "parts.yaml").read_text(encoding="utf-8"))["parts"]
+    expected = {"xc7s6": (5, 10), "xc7s15": (10, 20), "xc7s25": (45, 80), "xc7s50": (75, 120)}
+    for name, (bram36, dsp) in expected.items():
+        assert parts[name]["bram36"] == {"value": bram36, "verified": True}
+        assert parts[name]["dsp"] == {"value": dsp, "verified": True}

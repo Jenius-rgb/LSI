@@ -11,6 +11,7 @@
 - Media boot: kartu microSD (model baru juga bisa USB, jaringan, atau NVMe). Minimum yang disarankan: 32 GB untuk Raspberry Pi OS desktop, 8 GB untuk Lite. Kartu 2 TB atau lebih tidak didukung.
 - Layar: Pi 4B, 400, 5, 500 memakai kabel micro-HDMI ke HDMI; layar utama di HDMI0.
 - Catu daya Pi 5: 5 V 5 A (adaptor USB-C 27 W). Dengan 5 V 3 A, arus periferal USB dibatasi 600 mA. Pi menyala begitu diberi daya.
+- Catatan SENTINEL (2026-11-16): tim memakai Raspberry Pi 4 Model B dengan catu daya resmi Pi 4 (5,1 V 3 A); lihat `board/BRINGUP.md` dan ADR-022.
 - Jaringan: Pi 3B+ dan yang lebih baru punya Wi-Fi dual-band; Pi 4B dan yang lebih baru punya Gigabit Ethernet.
 
 **Memasang OS dengan Raspberry Pi Imager**

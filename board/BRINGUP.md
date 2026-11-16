@@ -49,21 +49,36 @@ Sources: `docs/official/Initialize_20260618_EN.pdf` (IN-n = slide n), `docs/offi
   `xc7s25_0`, ID code `037C4093` (IN-46). Program with the `.bit` file (IN-49).
 - Not known: whether the cable comes with the loaned board. Ask when arranging the loan.
 
-### Raspberry Pi
+### Raspberry Pi (the team uses a Raspberry Pi 4 Model B, ADR-022)
 
-- [OFFICIAL] The loaned boards connect to a Raspberry Pi 5 (G-6). A Pi 5 wants a 5 V 5 A supply; ZERO7
-  takes its power from the header (IN-41).
-- Operating system: Raspberry Pi Imager, pick the device, Raspberry Pi OS and the microSD card (32 GB or
-  more for the desktop image). In the customisation step set hostname, user, Wi-Fi and enable SSH.
+- [OFFICIAL] The organisers say the loaned boards connect to a Raspberry Pi 5 (G-6), and ZERO7 takes
+  its power from the header (IN-41). The team only has a Raspberry Pi 4 Model B [USER].
+- [INFERENCE] The Pi 4 has the same 40-pin header and the same BCM GPIO numbers as the Pi 5, including
+  SPI0 on GPIO 7 to 11, so `board/zero7.xdc` and the software do not change. Nothing in the repository
+  is Pi 5 specific: `spidev`, `gpiozero` and `picamera2` run on both. Check on arrival: the board seats
+  fully on the header, nothing underneath touches the Pi 4's USB or Ethernet jacks, and the mounting
+  holes line up.
+- Power: use the official Raspberry Pi 4 supply (5.1 V, 3 A, USB-C). How much current ZERO7 draws from
+  the 5 V pins is [UNKNOWN]; measure it with a USB power meter in step 1 and keep USB loads off the Pi
+  while the FPGA runs. The Pi 4 has no power button; it starts when power is applied.
+- Operating system: Raspberry Pi Imager, device "Raspberry Pi 4", Raspberry Pi OS (64-bit), microSD of
+  32 GB or more. In the customisation step set hostname, user, Wi-Fi and enable SSH.
+- Packages: `sudo apt install python3-spidev python3-gpiozero python3-numpy python3-picamera2 python3-opencv`.
 - SPI: `sudo raspi-config`, `3 Interface Options`, `I4 SPI`, then reboot. `ls /dev/spidev0.*` must list
   `spidev0.0`. SENTINEL uses SPI0 with CE0: GPIO11 SCLK, GPIO10 MOSI, GPIO9 MISO, GPIO8 CE0.
+  Start at 1 MHz (`SpidevTransport` default). The FPGA side is guaranteed up to f_safe / 8 = 15.6 MHz
+  (SPEC 12.1); the speed the wiring allows is measured in step 3.
+- Camera: the Pi 4 takes the standard 15-pin camera ribbon (the Pi 5 needs a different, 22-pin cable).
+  Check with `rpicam-hello --list-cameras`.
+- Done signal: `irq_done` arrives on GPIO25 (pin C9); `sentinel.transport.GpioDoneLine` waits on it.
+- Run `python3 board/pi_check.py` on the Pi before step 2. It prints the Pi model, whether
+  `/dev/spidev0.0` exists, and whether `spidev`, `gpiozero` and `picamera2` import.
 - SSH: `3 Interface Options`, `I1 SSH`. Wi-Fi from a terminal: `nmcli dev wifi list`, then
   `sudo nmcli --ask dev wifi connect <ssid>`.
 - GPIO lines that ZERO7 shares with its own parts must stay inputs on the Pi unless a script means to
-  drive them: GPIO13 and GPIO19 (LEDs D9 and D8, driven by the FPGA in `board/zero7.xdc`), GPIO6 (LED D3),
-  GPIO16, GPIO20, GPIO21 (buttons RUN, START, STOP), GPIO18 (WS2812B LED2).
-- Copy the repository to the Pi and install the Python packages the Pi scripts import (`spidev`, `numpy`,
-  and a camera package) before step 4.
+  drive them: GPIO13 and GPIO19 (LEDs D9 and D8), GPIO6 (LED D3), GPIO16, GPIO20, GPIO21 (buttons RUN,
+  START, STOP), GPIO18 (WS2812B LED2).
+- Copy the repository to the Pi before step 4.
 
 ### Still open
 

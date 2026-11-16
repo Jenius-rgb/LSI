@@ -2,7 +2,7 @@
 
 Tanggal: 2026-11-09. Status: usulan awal. Setiap perubahan dilakukan lewat ADR di `docs/DECISIONS.md`.
 Diperbarui 2026-11-16 lewat ADR-013 sampai ADR-020, sesudah panitia menerbitkan chip resmi dan dokumen ZERO7.
-§7.8 diperluas 2026-11-16 lewat ADR-021, sesudah implementasi lengkap pertama di chip resmi.
+§7.8 diperluas 2026-11-16 lewat ADR-021, sesudah implementasi lengkap pertama di chip resmi. §7.6 dan §12.4 diperbarui lewat ADR-023; host Raspberry Pi 4 lewat ADR-022.
 Bagian bertanda **(normatif)** wajib diikuti persis oleh golden model dan RTL.
 
 ---
@@ -309,7 +309,7 @@ Syaratnya R · f_safe ≥ f_turbo_max. Siklus ketika FIFO operand kosong dihitun
 - Pilihan dicatat lewat ADR.
 - Rencana B: MMCM2 dengan beberapa CLKOUT tetap ditambah mux, tanpa rekonfigurasi.
 
-**Tabel frekuensi turbo** dibangkitkan `tools/gen_mmcm_table.py` dari F_IN dan batas datasheet. Batas VCO, PFD, dan input untuk speed grade yang dipakai diambil dari DS189, dengan nilai dan halamannya dicantumkan. F_IN = 20 MHz di pin B13 [OFFICIAL] (ADR-015). Batas DS189 belum diverifikasi; sampai datasheet tersedia, setelan MMCM dicek dengan DRC Vivado.
+**Tabel frekuensi turbo** dibangkitkan `tools/gen_mmcm_table.py` dari F_IN dan batas datasheet. Batas VCO, PFD, dan input untuk speed grade yang dipakai diambil dari DS189, dengan nilai dan halamannya dicantumkan. F_IN = 20 MHz di pin B13 [OFFICIAL] (ADR-015). Batas diambil dari DS189 Tabel 37, PDF hlm. 40 (ADR-023). MMCM2 direkonfigurasi lewat Clocking Wizard v6.0 dengan AXI4-Lite: register 0x200 dan 0x208, tunggu SR bit 0, tulis 0x25C = 0x3, tunggu lock (PG065; ADR-023).
 
 **Implementasi simulasi:** clock behavioral dengan periode yang bisa diubah, dan model mux bebas glitch.
 
@@ -478,7 +478,7 @@ Boleh ditambah. Nama final ada di YAML.
 - `INJ0_*`, `INJ1_*`
 - Counter per layer: `UNITS`, `CLEAN`, `CORRECTED`, `CSUM_LANE`, `RECOMPUTE`, `FATAL`
 - Counter koreksi per lane, dan `LANE_STATUS` (untuk LED)
-- `TEMP`: kode suhu dari XADC (ADR-018)
+- `TEMP`: kode suhu 12 bit dari XADC di bit [11:0] dan bit valid di bit 16 (ADR-018, ADR-023). Suhu °C = kode × 503,975 / 4096 − 273,15 (UG480 Persamaan 2-6), dihitung di perangkat lunak.
 
 ### 12.5 Format gambar
 

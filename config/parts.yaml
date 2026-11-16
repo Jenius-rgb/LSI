@@ -1,11 +1,12 @@
 # Spartan-7 device capacities, for tools/fit_report.py only.
 #
-# PROVISIONAL: entered without the data sheet. Check each value against AMD DS180 or the
-# Vivado part properties, then set `verified: true`. The ZERO7 part is xc7s25csga225-1
-# [OFFICIAL]; its two values were checked against the Vivado 2025.2 part properties
-# (results/vivado/part_check.txt: BLOCK_RAMS 45, DSP 80). DS180 has not been read.
+# Checked on 2026-11-16 against AMD DS180 "7 Series FPGAs Data Sheet: Overview" v2.6.1
+# (docs/vendor/amd/ds180/), Table 2 "Spartan-7 FPGA Feature Summary by Device", page 2.
+# bram36 = 36 Kb block RAMs, dsp = DSP slices. The xc7s25 values also match the Vivado 2025.2
+# part properties (results/vivado/part_check.txt: BLOCK_RAMS 45, DSP 80). The contest part is
+# xc7s25csga225-1 [OFFICIAL]; the others are kept for comparison.
 parts:
-  xc7s6:  {bram36: {value: 5,  verified: false}, dsp: {value: 10,  verified: false}}
-  xc7s15: {bram36: {value: 10, verified: false}, dsp: {value: 20,  verified: false}}
-  xc7s25: {bram36: {value: 45, verified: true},  dsp: {value: 80,  verified: true}}
-  xc7s50: {bram36: {value: 75, verified: false}, dsp: {value: 120, verified: false}}
+  xc7s6:  {bram36: {value: 5,  verified: true}, dsp: {value: 10,  verified: true}}
+  xc7s15: {bram36: {value: 10, verified: true}, dsp: {value: 20,  verified: true}}
+  xc7s25: {bram36: {value: 45, verified: true}, dsp: {value: 80,  verified: true}}
+  xc7s50: {bram36: {value: 75, verified: true}, dsp: {value: 120, verified: true}}
