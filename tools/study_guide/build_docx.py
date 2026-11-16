@@ -46,6 +46,15 @@ def load_context() -> dict:
     reports = ROOT / "fpga" / "reports"
     ctx["viv_failed"] = sorted(p.name[: -len(".log")] for p in reports.glob("*_final.log") if not (p.with_suffix("") / "summary.txt").exists())
     ctx["n_tests"] = len(list((ROOT / "tests").glob("test_*.py")))
+    official = ROOT / "results" / "vivado" / "official" / "summary.json"
+    ctx["official"] = json.loads(official.read_text(encoding="utf-8")) if official.exists() else None
+    part_check = ROOT / "results" / "vivado" / "part_check.txt"
+    ctx["part"] = {}
+    if part_check.exists():
+        for line in part_check.read_text(encoding="utf-8").splitlines():
+            words = line.split()
+            if len(words) >= 4 and words[:2] == ["CHECK", "part_property"]:
+                ctx["part"][words[2]] = words[3]
     return ctx
 
 
@@ -71,7 +80,7 @@ def cover(d: Doc, ctx) -> None:
     d.p("Materi ini menjelaskan CNN dari nol, cara CNN dijalankan sebagai hardware di FPGA, dan apa yang sudah dibangun di repo SENTINEL: "
         "akselerator CNN INT8 dengan dual checksum dan overclocking per layer untuk board ZERO7 (Spartan-7). Satu bab khusus menjelaskan "
         "dengan jujur apa yang belum bisa dijawab karena board belum ada, dan bab terakhir memberi daftar bacaan.", after=240)
-    rows = [["Versi materi", "1.0, 12 November 2026"],
+    rows = [["Versi materi", "1.1, 16 November 2026 (versi 1.0: 12 November 2026)"],
             ["Fase proyek", "PRA-BOARD: board ZERO7 belum ada di tangan"],
             ["Sumber angka", f"repo SENTINEL, branch `pra-board`, commit `{ctx['head']}`"],
             ["Dibangun ulang dengan", "`python tools/study_guide/figures.py` lalu `python tools/study_guide/build_docx.py`"],
@@ -81,6 +90,58 @@ def cover(d: Doc, ctx) -> None:
     d.page_break()
     d.add(para([run("Daftar isi", b=True, color=NAVY, size=40)], after=240, border_bottom=BLUE))
     d.toc()
+
+
+# ============================================================================ change log
+
+
+def changes(d: Doc, ctx) -> None:
+    off = ctx["official"]
+    d.chapter = "P"
+    d.add(para([run("Perubahan sejak versi 1.0")], style="Heading1", page_break_before=True))
+    d.p("Versi 1.0 ditulis 12 November 2026, sebelum dokumen ZERO7 dibaca. Versi 1.1 memuat fakta resmi yang terbit 2 dan 10 November 2026, "
+        "keputusan baru, dan hasil pengembangan sesudahnya. Dasar CNN, kuantisasi, dan timing (Bab 2 sampai 4) tidak berubah.")
+    d.h2("Fakta resmi baru")
+    d.bullets(["Chip lomba adalah AMD Spartan-7 XC7S25CSGA225-1, dan laporan sintesis untuk chip itu wajib bagi semua tim [OFFICIAL].",
+               "Tugas dibagi dua kelas: Image Classification Class dan ZERO7 Class [OFFICIAL].",
+               "Dokumen ZERO7 terbit: tabel pin FPGA dan panduan penyiapan. Clock board 20 MHz di pin B13, SPI0 Raspberry Pi di pin A8, A6, A7, D9, "
+               "LED WS2812B di pin N1, pemrograman lewat kabel JTAG-HS3, dan board dipasang di Raspberry Pi 5 [OFFICIAL].",
+               "Yang masih belum tertulis: tegangan dan standar I/O tiap bank, serta file `Zero7.xdc` resmi [UNKNOWN]."])
+    d.h2("Keputusan baru")
+    d.bullets(["ADR-013: target dikunci ke XC7S25CSGA225-1 dengan varian resmi model `s`, K = 8, lane `lut`, C3 aktif.",
+               "ADR-014: laporan sintesis resmi untuk desain lengkap menjadi deliverable utama.",
+               "ADR-015: clock 20 MHz menjadi input MMCM; clk_safe diturunkan dari VCO 1.000 MHz dan frekuensinya ditetapkan hasil STA (Bagian 7.5).",
+               "ADR-016: peta I/O ZERO7. FPGA hanya memakai jalur miliknya; tombol dan LED yang berbagi jalur diserahkan ke perangkat lunak Pi.",
+               "ADR-017 dan ADR-018: indikator WS2812B dan suhu XADC diterima, implementasinya menyusul.",
+               "ADR-019: boot dari flash QSPI ditunda. ADR-020: kategori tetap Class 2 Level 3 dan kalimat klaim diperketat.",
+               "ADR-021: aturan reset, synchronizer, dan penyeberangan domain clock, ditulis sesudah implementasi lengkap pertama."])
+    d.h2("Hasil baru")
+    items = []
+    if off:
+        u = off["utilization_post_route"]
+        items.append(f"Desain lengkap `top_board` terimplementasi di chip resmi dengan clk_safe {nf(1000 / float(off['SAFE_DIV']))} MHz: "
+                     f"{nf(u['lut']['used'])} dari {nf(u['lut']['available'])} LUT "
+                     f"({nf(u['lut']['util_pct'], 1)}%), {nf(u['ff']['used'])} flip-flop, {nf(u['bram_tile']['used'], 1 if u['bram_tile']['used'] % 1 else 0)} dari "
+                     f"{nf(u['bram_tile']['available'])} block RAM, slack setup terburuk {nf(float(off['design_wns_ns']), 3)} ns [VIVADO-STA] (Bagian 7.5).")
+    c1 = ctx["reg"].get("engine_s_k8_c1_n200")
+    if c1:
+        items.append(f"Varian resmi (C3 aktif) bit-exact di simulasi RTL: `{c1['summary']}` [SIM].")
+    sysb = ctx["reg"].get("system_s_k8_c1")
+    if sysb:
+        items.append(f"Sistem dua clock dengan varian resmi lulus di simulasi RTL: `{sysb['summary']}` [SIM].")
+    items.append("Penelusuran literatur diperbarui (`docs/research/RISET_WEB_2026-11.md`): koreksi berbasis checksum dan overclocking akselerator CNN "
+                 "sudah ada di literatur, sehingga laporan memakai kalimat \"sejauh penelusuran kami\".")
+    d.bullets(items)
+    d.h2("Bagian materi yang berubah")
+    d.table(["Bagian", "Perubahan"], [
+        ["1.2", "aturan lomba terbaru: dua kelas, laporan sintesis wajib, Raspberry Pi 5"],
+        ["4.1", "chip dan resource-nya sekarang resmi"],
+        ["5.7", "clock input 20 MHz; yang belum ada tinggal sequencer rekonfigurasi"],
+        ["6.5", "ADR-013 sampai ADR-021"],
+        ["7.5, 7.6", "laporan sintesis resmi; ringkasan status baru"],
+        ["8.3, 8.4, 8.6", "fakta board yang sudah dan belum diketahui; pekerjaan yang menunggu"],
+        ["9.5, Lampiran C", "dokumen ZERO7 dari panitia; file sumber baru"],
+    ], [1800, TEXT_W - 1800], size=18)
 
 
 # ============================================================================ chapter 0
@@ -146,12 +207,18 @@ def ch1(d: Doc, ctx) -> None:
         "layer dilakukan seluruhnya di dalam FPGA. Klaim seperti ini baru boleh ditulis di laporan kalau datanya sudah diukur di board "
         "(`docs/PRIOR_ART.md`).")
     d.h2("1.2 Lomba dan kategori")
-    d.bullets(["Tema lomba adalah implementasi hardware CNN, dengan syarat data validasi dari panitia dan input kamera real-time. Gambar validasi diberikan pada hari lomba [OFFICIAL].",
-               "CNN menerima input 32×32. Dataset dan target pengenalan akan diumumkan kemudian [OFFICIAL], sehingga model harus bisa dilatih ulang.",
-               "Class 2 hanya untuk board ZERO7 dan hanya Level 3 [OFFICIAL]. Target SENTINEL adalah Class 2 Level 3, tetapi ini masih usulan yang menunggu konfirmasi panitia [PROPOSAL].",
-               "Batas laporan 31 Januari 2027 dan lomba 5 Maret 2027 [OFFICIAL]."])
-    d.figure(fig("fig_roadmap"), "Posisi proyek per 12 November 2026. Atas: milestone pra-board M0–M14 sudah selesai di simulasi (M10 sebagian), "
-                                 "fase board B1–B6 belum mulai. Bawah: gerbang internal dari `STATUS.md` dan tanggal resmi panitia.")
+    d.bullets(["Tema lomba adalah implementasi hardware CNN dengan jumlah layer bebas. Syaratnya data validasi dari panitia dan input kamera real-time. "
+               "Gambar validasi diberikan pada hari lomba, dan presentasi harus menunjukkan seberapa cepat hasil pengenalan keluar [OFFICIAL].",
+               "CNN menerima input 32\u00d732. Dataset latih bebas, tetapi kelas target ditentukan panitia dan belum diumumkan [OFFICIAL].",
+               "Sejak 2 November 2026 tugas dibagi dua kelas. Class 1 terbatas pada klasifikasi gambar. Class 2 hanya boleh memakai board ZERO7, "
+               "tugasnya bebas, dan hanya punya Level 3 [OFFICIAL]. Target SENTINEL adalah Class 2 Level 3; ini masih usulan yang menunggu "
+               "konfirmasi panitia [PROPOSAL].",
+               "Sejak 10 November 2026 semua kelas wajib menyerahkan laporan sintesis untuk chip AMD Spartan-7 XC7S25CSGA225-1, yaitu chip di ZERO7 [OFFICIAL].",
+               "Board pinjaman dipasang di Raspberry Pi 5 [OFFICIAL].",
+               "Batas laporan 31 Januari 2027. Presentasi 5 Maret 2027: 10 menit dengan maksimal 10 slide, lalu 5 menit tanya jawab [OFFICIAL]."])
+    d.figure(fig("fig_roadmap"), "Posisi proyek per 16 November 2026. Atas: milestone pra-board M0\u2013M14 sudah selesai di simulasi (M10 sebagian), "
+                                 "fase board B1\u2013B6 belum mulai; milestone M15 sampai M19 ditambahkan sesudah fakta resmi terbit (Bagian 7.6). "
+                                 "Bawah: gerbang internal dari `STATUS.md` dan tanggal resmi panitia.")
 
 
 # ============================================================================ chapter 2
@@ -393,8 +460,14 @@ def ch4(d: Doc, ctx) -> None:
         ["DSP48E1", "pengali 25×18 dengan akumulator 48 bit", "lane `dsp_min` dan `dsp_full`"],
         ["MMCM, BUFG, BUFGCTRL", "membangkitkan dan memilih clock", "clk_safe, clk_turbo, clk_fast"],
     ], [2300, 3700, TEXT_W - 6000], caption="Blok utama FPGA 7-series (UG474, UG473, UG479, UG472) dan pemakaiannya di SENTINEL.")
-    d.p("Board ZERO7 memakai Spartan-7 [OFFICIAL], tetapi part number dan speed grade-nya belum diketahui [UNKNOWN]. Foto chip yang buram mengarah ke "
-        "XC7S25 paket CSGA225, tetapi itu belum terverifikasi dan tidak boleh dipakai sebagai fakta (`board/BOARD_INFO.md`).")
+    part = ctx["part"]
+    if part:
+        d.p(f"Board ZERO7 memakai AMD Spartan-7 XC7S25CSGA225-1, speed grade \u22121 [OFFICIAL]. Menurut basis data Vivado, chip ini punya "
+            f"{nf(int(part['LUT_ELEMENTS']))} LUT, {nf(int(part['FLIPFLOPS']))} flip-flop, {part['BLOCK_RAMS']} block RAM, {part['DSP']} DSP, dan "
+            f"{part['MMCM']} MMCM (`results/vivado/part_check.txt`). Clock board 20 MHz masuk di pin B13, sebuah pin clock-capable "
+            "[OFFICIAL] (`board/BOARD_INFO.md`).")
+    else:
+        d.p("Board ZERO7 memakai AMD Spartan-7 XC7S25CSGA225-1, speed grade \u22121 [OFFICIAL] (`board/BOARD_INFO.md`).")
     d.h2("4.2 Clock, jalur kritis, dan slack")
     d.p("Desain digital sinkron bekerja seperti lari estafet. Di setiap tepi clock, flip-flop pertama mengeluarkan data, data melewati logika "
         "kombinasional, lalu harus sudah stabil di flip-flop berikutnya sebelum tepi clock berikutnya. Jadi periode clock harus lebih panjang dari "
@@ -623,8 +696,10 @@ def ch5(d: Doc, ctx) -> None:
                 "sebelum memakai turbo lagi.",
                 "Rekonfigurasi hanya dilakukan di antara gambar."])
     d.figure(fig("fig_clockswitch"), "Urutan clock untuk satu gambar dan perpindahan ke gambar berikutnya. Diagram konsep tanpa skala waktu.")
-    d.callout("catatan", ["Protokol ini sudah diverifikasi di simulasi oleh monitor di `tb/tb_system.v` [SIM]. Rekonfigurasi MMCM2 yang sesungguhnya "
-                          "(Clocking Wizard lewat AXI4-Lite, PG065) belum diimplementasi karena butuh F_{IN} dan verifikasi batas datasheet DS189 (ADR-010)."])
+    d.callout("catatan", ["Protokol ini sudah diverifikasi di simulasi oleh monitor di `tb/tb_system.v` [SIM]. Clock input sekarang diketahui, "
+                          "yaitu 20 MHz di pin B13 [OFFICIAL], dan `clk_gen_xilinx` memakai VCO 1.000 MHz (ADR-015). Yang "
+                          "belum ada adalah sequencer yang mengubah frekuensi MMCM2 saat berjalan (ADR-010); tanpa itu clock turbo tetap sama "
+                          "dengan clock aman."])
     g = f["governor"]
     gp = g["params"]
     d.h2("5.8 Governor")
@@ -755,6 +830,15 @@ def ch6(d: Doc, ctx) -> None:
         ["ADR-010", "rekonfigurasi MMCM2 lewat Clocking Wizard AXI4-Lite (menunggu fase board)"],
         ["ADR-011", "rekomendasi C3: aktifkan bila resource cukup; keputusan akhir setelah E1"],
         ["ADR-012", "pipeline tambahan dan tafsir margin 30% SPEC §7.4"],
+        ["ADR-013", "target dikunci ke XC7S25CSGA225-1; varian resmi model `s`, K = 8, lane `lut`, C3 aktif"],
+        ["ADR-014", "laporan sintesis resmi desain lengkap sebagai deliverable utama"],
+        ["ADR-015", "clock board 20 MHz sebagai input MMCM; clk_safe 125 MHz"],
+        ["ADR-016", "peta I/O ZERO7: SPI0, sinyal selesai di GPIO25, LED milik FPGA; tombol dibaca Pi"],
+        ["ADR-017", "indikator WS2812B yang digerakkan FPGA"],
+        ["ADR-018", "suhu chip dari XADC"],
+        ["ADR-019", "boot dari flash QSPI ditunda"],
+        ["ADR-020", "kategori Class 2 Level 3 dan batas klaim"],
+        ["ADR-021", "reset, synchronizer, dan aturan penyeberangan domain clock"],
     ], [1400, TEXT_W - 1400], caption="Daftar ADR di `docs/DECISIONS.md`.", size=18)
     d.h2("6.6 Urutan membaca dokumen repo")
     d.numbered(["`CLAUDE.md`: misi, aturan keras, cara kerja.",
@@ -848,19 +932,55 @@ def ch7(d: Doc, ctx) -> None:
                f"estimasi awal {nf(est['bram36_equivalent'], 1)} BRAM36-ekuivalen dari `tools/fit_report.py` [SIM]. Karena itu XC7S6 dan XC7S15 tidak muat.",
                f"**Margin SPEC §7.4.** Dengan semua jalur non-MAC dibatasi 0,7 × periode, lane `lut` C3 = 0 di XC7S25 −1 memenuhi syarat (WNS non-MAC "
                f"{sn_float(r0['wns_nonmac_ns'])} ns), sedangkan C3 = 1 meleset tipis (WNS non-MAC {sn_float(r1['wns_nonmac_ns'])} ns) [VIVADO-STA].",
+               "**Chip resmi adalah XC7S25 \u22121.** Baris lain di tabel dan grafik ini sekarang hanya pembanding (ADR-013).",
                "**STA itu konservatif.** Frekuensi saat chip benar-benar gagal hanya bisa diukur di board."])
-    d.h2("7.5 Ringkasan status")
+    off = ctx["official"]
+    d.h2("7.5 Laporan sintesis resmi XC7S25CSGA225-1 [VIVADO-STA]")
+    d.p("Sejak 10 November 2026 laporan sintesis untuk chip ini wajib bagi semua tim [OFFICIAL]. `python tools/run.py synth-official` "
+        "mengimplementasikan desain lengkap `top_board` (SPI, register, engine, governor, dan dua MMCM) dengan `board/zero7.xdc` pada varian "
+        "resmi: model `s`, K = 8, lane `lut`, C3 aktif (ADR-013, ADR-014). Bitstream belum dibuat karena standar I/O board belum pasti.")
+    if off:
+        util = off["utilization_post_route"]
+        label = {"lut": "Slice LUT", "ff": "Slice register", "bram_tile": "Block RAM", "dsp": "DSP48E1", "iob": "IOB", "bufgctrl": "Buffer clock global", "mmcm": "MMCM"}
+        rows = [[label[k], nf(util[k]["used"], 1 if util[k]["used"] % 1 else 0), nf(util[k]["available"]), f"{nf(util[k]['util_pct'], 2)}%"]
+                for k in label if k in util]
+        d.table(["Resource", "Terpakai", "Tersedia", "Utilisasi"], rows, [3200, 2000, 2000, TEXT_W - 7200],
+                caption="Resource desain lengkap sesudah place and route [VIVADO-STA], dari `results/vivado/official/summary.json`.",
+                align=["left", "right", "right", "right"])
+        crow = [[f"`{c['name']}`", nf(c["period_ns"], 3), nf(c["intra_endpoints"]), sn_float(str(c["intra_wns_ns"])), sn_float(str(c["intra_whs_ns"])),
+                 nf(c["fmax_mhz"], 1)] for c in off["clocks"] if "fmax_mhz" in c]
+        d.table(["Clock", "Periode (ns)", "Endpoint", "WNS setup (ns)", "WHS hold (ns)", "Fmax (MHz)"], crow, [2600, 1400, 1300, 1600, 1600, TEXT_W - 8500],
+                caption="Timing jalur di dalam satu clock sesudah place and route [VIVADO-STA]. Fmax = 1000 / (periode − WNS).",
+                align=["left", "right", "right", "right", "right", "right"], size=17)
+        inter = "; ".join(f"`{r['from']}` ke `{r['to']}` {sn_float(str(r['wns_ns']))} ns" for r in off["inter_clock"]) or "tidak ada"
+        d.p(f"Run ini memakai clk_safe {nf(1000 / float(off['SAFE_DIV']))} MHz. Jalur antar-clock yang ikut dianalisis: {inter}. Slack setup terburuk "
+            f"desain {sn_float(off['design_wns_ns'])} ns, slack hold terburuk {sn_float(off['design_whs_ns'])} ns, dan net yang tidak ter-route "
+            f"{off['unrouted_nets']} [VIVADO-STA]. Clock `clk_fast_turbo` dianalisis pada level turbo 0, yaitu sama dengan frekuensi aman. "
+            "Menjalankan lane di atas frekuensi itu adalah eksperimen proyek ini dan berada di luar jangkauan analisis statis.")
+        if off.get("cdc"):
+            counts = ", ".join(f"{rule} {nf(row['count'])}" for rule, row in off["cdc"].items())
+            d.p(f"Penyeberangan domain clock menurut `report_cdc` [VIVADO-STA]: {counts}. CDC-3 adalah synchronizer yang sudah bertanda. CDC-15 adalah "
+                "memori FIFO asinkron dan kata status yang dibaca saat engine diam. CDC-1 dan CDC-4 adalah sinyal quasi-statis, yaitu konfigurasi "
+                "injeksi dan indeks layer, yang hanya berubah saat domain cepat diam. Aturannya ada di SPEC §7.8 (ADR-021).")
+    else:
+        d.p("Laporan resmi belum dijalankan saat materi ini dibangun.")
+    d.h2("7.6 Ringkasan status")
+    c1 = ctx["reg"].get("engine_s_k8_c1_n200")
     d.table(["Bagian", "Status", "Bukti"], [
         ["Model dan kuantisasi", "selesai", "akurasi [SIM]"],
-        ["Golden model dan RTL bit-exact", "selesai di simulasi", "200/200 gambar [SIM]"],
+        ["Golden model dan RTL bit-exact", "selesai di simulasi", "200/200 gambar" + (", juga untuk varian resmi" if c1 else "") + " [SIM]"],
         ["Checker, koreksi, recompute", "selesai di simulasi", "kampanye dan regresi [SIM]"],
-        ["Dua domain clock, protokol §7.7", "selesai di simulasi", "`tb_system` [SIM]"],
+        ["Dua domain clock, protokol \u00a77.7", "selesai di simulasi", "`tb_system` [SIM]"],
         ["Governor", "selesai di simulasi", "`tb_governor` [SIM]"],
-        ["Rekonfigurasi MMCM2 asli", "belum", "menunggu F_IN, PG065, DS189"],
-        ["Vivado OOC", "selesai untuk 4 part", "[VIVADO-STA]"],
+        ["Clock 20 MHz dan peta I/O ZERO7", "selesai di RTL dan XDC", "ADR-015, ADR-016; standar I/O belum pasti"],
+        ["Aturan penyeberangan domain clock", "selesai", "ADR-021; `report_cdc` [VIVADO-STA]"],
+        ["Laporan sintesis resmi", "selesai" if off else "belum", "[VIVADO-STA]"],
+        ["Sequencer rekonfigurasi MMCM2", "belum", "ADR-010"],
+        ["Sinyal selesai `irq_done` di driver", "selesai, diuji dengan pengganti GPIO", "ADR-016"],
+        ["Indikator WS2812B dan suhu XADC", "belum", "ADR-017, ADR-018"],
         ["Software Pi dan skrip eksperimen", "selesai, diuji dengan mock", "[SYNTHETIC]"],
-        ["Semua eksperimen di board", "belum mulai", "—"],
-    ], [3600, 2600, TEXT_W - 6200], caption="Status per 12 November 2026.")
+        ["Semua eksperimen di board", "belum mulai", "\u2014"],
+    ], [3900, 2400, TEXT_W - 6300], caption="Status per 16 November 2026.")
 
 
 def sn_float(v: str) -> str:
@@ -894,24 +1014,29 @@ def ch8(d: Doc, ctx) -> None:
         ["E8", "Biaya: resource, daya, keuntungan bersih", "keuntungan bersih positif", "resource [VIVADO-STA]; daya belum"],
     ], [600, 3700, 2800, TEXT_W - 7100], caption="Eksperimen SENTINEL (`docs/SPEC.md` §16).", size=17)
     d.p("Hipotesis H1–H3 bisa saja salah. Hasil negatif yang diukur dengan jujur tetap dilaporkan (`docs/SPEC.md` §16).")
-    d.h2("8.3 Fakta board yang belum diketahui")
-    d.p("Semua field wajib di `board/BOARD_INFO.md` masih [UNKNOWN]:")
-    d.bullets(["nama dan revisi board; part number FPGA lengkap; speed grade",
-               "cara konfigurasi FPGA dan alat programming",
-               "clock input ke FPGA: pin dan frekuensi (F_IN)",
-               "pin SPI Pi ↔ FPGA (SCLK, MOSI, MISO, CS), bank I/O, dan tegangannya",
-               "pin LED1–LED4, serta file XDC atau skematik resmi"])
-    d.callout("catatan", ["Foto chip yang buram terbaca `XC7S?5` dan `CSGA225`. Kandidat paling masuk akal adalah XC7S25 paket CSGA225, tetapi digit yang "
-                          "buram, speed grade yang tidak terlihat, dan daftar paket yang baru diingat dari DS180 membuatnya tetap dugaan [INFERENCE]. Cara "
-                          "memastikannya: dokumen resmi Gigafirm atau panitia, foto yang lebih tajam, atau IDCODE lewat JTAG di Vivado Hardware Manager "
-                          "(IDCODE menunjukkan device, bukan speed grade)."])
+    d.h2("8.3 Fakta board: yang sudah dan yang belum diketahui")
+    d.p("Dokumen resmi 10 November 2026 menjawab sebagian besar pertanyaan (`board/BOARD_INFO.md`):")
+    d.bullets(["Chip xc7s25csga225-1, speed grade \u22121 [OFFICIAL].",
+               "Clock 20 MHz di pin B13 [OFFICIAL].",
+               "SPI0 Raspberry Pi: SCLK di A8, MOSI di A6, MISO di A7, CE0 di D9 [OFFICIAL].",
+               "LED WS2812B yang digerakkan FPGA di pin N1, LED biasa D5 dan D6, serta tombol START, STOP, dan RUN [OFFICIAL].",
+               "Pemrograman lewat kabel Digilent JTAG-HS3 dari Vivado Hardware Manager dengan clock JTAG 3 MHz [OFFICIAL].",
+               "Board dipasang di Raspberry Pi 5 [OFFICIAL]."])
+    d.p("Yang masih [UNKNOWN]:")
+    d.bullets(["tegangan VCCO dan standar I/O tiap bank; file `Zero7.xdc` resmi belum terbit",
+               "ZERO7 User Manual dan skematik",
+               "revisi board, LED3 dan LED4, polaritas tombol, dan jumlah LED WS2812B per rantai",
+               "jenis flash QSPI dan posisi DIP mode untuk boot dari flash",
+               "apakah kabel JTAG termasuk paket pinjaman"])
+    d.callout("catatan", ["Versi 1.0 materi ini menduga chipnya XC7S25 dari foto yang buram. Dokumen resmi sekarang memastikannya. Aturannya tetap "
+                          "berlaku: dugaan dicatat sebagai dugaan sampai ada sumber."])
     d.h2("8.4 Pekerjaan teknis yang menunggu")
-    d.bullets(["Implementasi rekonfigurasi MMCM2 di `rtl/platform/xilinx/clk_gen_xilinx.v` (ADR-010).",
-               "Verifikasi `config/mmcm_limits.yaml` ke DS189 dan `config/parts.yaml` ke DS180; keduanya masih `verified: false`.",
-               "File XDC dari dokumen resmi ZERO7, bitstream, dan cara programming (B1).",
-               "Jika part ternyata XC7S15 atau XC7S6: organisasi memori harus dihemat (kedalaman bukan pangkat dua, tanpa ping-pong, atau model `xs`).",
-               "Keputusan akhir C3 setelah data E1 (ADR-011).",
-               "Pengukuran kecepatan SPI, antarmuka LED RGB, dan ada tidaknya XADC untuk membaca suhu."])
+    d.bullets(["Sequencer rekonfigurasi MMCM2 (ADR-010). Ini syarat overclocking nyata: tanpa itu clock turbo tidak bisa dinaikkan.",
+               "Verifikasi batas MMCM ke DS189 dan kapasitas chip ke DS180; keduanya butuh datasheet AMD.",
+               "Konfirmasi standar I/O dari `Zero7.xdc` resmi, lalu bitstream pertama.",
+               "Indikator WS2812B (ADR-017), suhu XADC (ADR-018), dan tombol di perangkat lunak Pi (ADR-016).",
+               "Keputusan akhir C3 setelah data E1 (ADR-011); varian resmi sementara memakai C3 aktif (ADR-013).",
+               "Pengukuran kecepatan SPI di board."])
     d.h2("8.5 Seperti apa grafiknya nanti")
     d.p("Skrip eksperimen sudah diuji dengan MockBackend, yang memakai model error buatan. Grafiknya berguna untuk memeriksa skrip dan tata letak, tetapi "
         "bentuk kurvanya ~bukan ramalan~: bentuk itu berasal dari parameter yang kita pilih sendiri di `model/fault_model.py`. Semua grafik mock diberi "
@@ -941,10 +1066,10 @@ def ch8(d: Doc, ctx) -> None:
         ["9. Turbo bertahap", "`bringup.py turbo`", "level naik satu per satu dan berhenti di FATAL pertama"],
     ], [2000, 3300, TEXT_W - 5300], caption="Langkah bring-up (`board/BRINGUP.md`). Setiap langkah bisa dilatih dulu dengan `--dry-run`, yang tidak "
                                             "membuktikan apa pun tentang hardware.", size=17)
-    d.callout("catatan", [("bullet", "Pastikan part number dan speed grade ZERO7 dari sumber resmi."),
-                          ("bullet", "Isi field wajib `board/BOARD_INFO.md` beserta sumbernya."),
-                          ("bullet", "Baca DS180, DS189, UG472, dan PG065 (Bab 9) supaya rekonfigurasi MMCM bisa segera dibuat."),
-                          ("bullet", "Siapkan Raspberry Pi (OS, SPI aktif, Python) dan modul kamera."),
+    d.callout("catatan", [("bullet", "Minta `Zero7.xdc`, ZERO7 User Manual, dan file contoh ke panitia saat mengurus peminjaman board."),
+                          ("bullet", "Tanyakan apakah kabel JTAG-HS3 termasuk paket pinjaman."),
+                          ("bullet", "Siapkan Raspberry Pi 5 (catu daya 5 V 5 A, OS, SPI aktif, SSH) dan modul kamera."),
+                          ("bullet", "Baca teks lengkap Marty dkk. dan Li dkk. (Bab 9) sebelum menulis klaim di laporan."),
                           ("bullet", "Konfirmasi kategori Class 2 Level 3 ke panitia dan tunggu pengumuman kelas target.")],
               title="YANG BISA DIKERJAKAN SEKARANG")
 
@@ -985,7 +1110,8 @@ def ch9(d: Doc, ctx) -> None:
                "Chen, Krishna, Emer, dan Sze (2017). ~Eyeriss: An Energy-Efficient Reconfigurable Accelerator for Deep Convolutional Neural Networks~. IEEE JSSC 52(1).",
                "Zhang dkk. (2015). ~Optimizing FPGA-based Accelerator Design for Deep Convolutional Neural Networks~. FPGA ’15."])
     d.h2("9.5 Desain digital, FPGA, dan Vivado")
-    d.bullets(["Harris dan Harris. ~Digital Design and Computer Architecture~. Morgan Kaufmann. Bab timing (setup dan hold) serta Verilog.",
+    d.bullets(["Dokumen ZERO7 dari panitia: `docs/official/Initialize_20260618_EN.pdf` (penyiapan Raspberry Pi, proyek Vivado, JTAG) dan `docs/official/ZERO7FPGA_Connection-table_261109_001.pdf` (tabel pin). Ringkasannya di `board/BOARD_INFO.md`.",
+               "Harris dan Harris. ~Digital Design and Computer Architecture~. Morgan Kaufmann. Bab timing (setup dan hold) serta Verilog.",
                "Cummings (2002). ~Simulation and Synthesis Techniques for Asynchronous FIFO Design~. SNUG San Jose. Rujukan klasik FIFO asinkron dengan Gray code.",
                "Cummings (2008). ~Clock Domain Crossing (CDC) Design & Verification Techniques Using SystemVerilog~. SNUG Boston.",
                "AMD 7-series: UG474 (CLB), UG473 (memori blok), UG479 (DSP48E1), UG472 (clocking: MMCM, BUFGCTRL), DS180 (ringkasan keluarga dan jumlah "
@@ -1097,6 +1223,9 @@ def appendix_c(d: Doc, ctx) -> None:
         ["Estimasi BRAM", "`results/sim/fit_report.json`", "`tools/fit_report.py`"],
         ["Resource dan Fmax Vivado", "`fpga/reports/summary.csv`; run yang tidak muat dari log lokal `fpga/reports/*_final.log`", "`fpga/run_matrix.py`, `fpga/parse_reports.py`"],
         ["Grafik mock E1, E4, E6", "`results/mock/<exp>/<timestamp>/`", "`sw/sentinel/experiments/`, `sw/sentinel/plots/all.py`"],
+        ["Laporan sintesis resmi", "`results/vivado/official/summary.json` dan file `.rpt` di folder yang sama", "`fpga/run_official.py`, `fpga/synth_official.tcl`"],
+        ["Resource chip dan fungsi pin", "`results/vivado/part_check.txt`, `results/vivado/pin_check.txt`", "`tools/vivado_check_part.tcl`, `board/pin_check.tcl`"],
+        ["Fakta board", "`board/BOARD_INFO.md`", "dokumen resmi di `docs/official/`"],
         ["Trajektori governor", "urutan event buatan di skrip", "`model/governor.py` lewat `tools/study_guide/figures.py`"],
     ], [2900, 3800, TEXT_W - 6700], caption="Jejak setiap angka ke file dan skrip di repo.", size=17)
     d.p(f"Materi ini dibangkitkan dari commit `{ctx['head']}`. Kalau hasil di repo berubah, jalankan ulang dua perintah di Bagian 0.3.", before=200)
@@ -1106,7 +1235,7 @@ def main() -> int:
     ctx = load_context()
     d = Doc()
     cover(d, ctx)
-    for chapter in (ch0, ch1, ch2, ch3, ch4, ch5, ch6, ch7, ch8, ch9, appendix_a, appendix_b, appendix_c):
+    for chapter in (changes, ch0, ch1, ch2, ch3, ch4, ch5, ch6, ch7, ch8, ch9, appendix_a, appendix_b, appendix_c):
         chapter(d, ctx)
     d.save(OUT_DOCX, "SENTINEL — Materi Belajar", "SENTINEL  ·  Materi belajar CNN, FPGA, dan repo")
     print(f"wrote {OUT_DOCX.relative_to(ROOT)} ({OUT_DOCX.stat().st_size // 1024} KB, {len(d.media)} gambar)")

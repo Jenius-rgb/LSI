@@ -934,7 +934,7 @@ def fig_roadmap():
     ax2.set_yticks([])
     months = [date(2026, 11, 1), date(2026, 12, 1), date(2027, 1, 1), date(2027, 2, 1), date(2027, 3, 1)]
     ax2.set_xticks(months, ["Nov 2026", "Des", "Jan 2027", "Feb", "Mar"], fontsize=7.4)
-    ev = [(date(2026, 11, 12), "hari ini\n12 Nov", "now", 1), (date(2026, 12, 13), "G1 (internal)\n13 Des", "int", -1),
+    ev = [(date(2026, 11, 16), "hari ini\n16 Nov", "now", 1), (date(2026, 12, 13), "G1 (internal)\n13 Des", "int", -1),
           (date(2027, 1, 3), "G2 (internal)\n3 Jan", "int", 1), (date(2027, 1, 17), "bekukan HW\n17 Jan", "int", -1),
           (date(2027, 1, 31), "laporan [OFFICIAL]\n31 Jan", "off", 1), (date(2027, 3, 5), "lomba [OFFICIAL]\n5 Mar", "off", -1)]
     for dt, lab, kind, side in ev:
