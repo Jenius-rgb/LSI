@@ -164,6 +164,16 @@ SPI_CLOCKS_MHZ = (1, 5, 10, 20)   # assumptions for the table; the real limit of
 IMAGE_BYTES = 3 * 32 * 32
 
 
+def efficiency(macs: int, cycles: int, lanes: int, f_mhz: float) -> tuple[float, float]:
+    """Compute efficiency and throughput as defined by Jiang et al. (arXiv 2505.13461, Eq. 5-7).
+
+    Throughput = 2 x MACs / latency; compute efficiency = throughput / (2 x MAC units x f), which for
+    one image is MACs / (MAC units x cycles). Only the data lanes count as MAC units here.
+    """
+    latency_s = cycles / (f_mhz * 1e6)
+    return macs / (lanes * cycles), 2 * macs / latency_s / 1e9
+
+
 def latency_section() -> list[str]:
     """Where the time of one image goes: compute from simulated cycles and the STA clock, transfer as a function of the SPI clock."""
     head = ["## Latency budget per image, official variant [SIM] x [VIVADO-STA]", ""]
@@ -193,6 +203,14 @@ def latency_section() -> list[str]:
         transfer_ms = IMAGE_BYTES * 8 / (mhz * 1e6) * 1e3
         total = transfer_ms + compute_ms
         lines.append(f"| {mhz} | {transfer_ms:.3f} | {compute_ms:.3f} | {total:.3f} | {100.0 * transfer_ms / total:.0f}% |")
+    arch = _load(ROOT / "results" / "model" / "arch_s.json")
+    if arch:
+        f_mhz = 1000.0 / period_ns
+        eff, gops = efficiency(arch["total_macs"], cycles, run["K"] if isinstance(run.get("K"), int) else int(run["K"]), f_mhz)
+        lines += ["", f"With the definitions of Jiang et al. (arXiv 2505.13461): compute efficiency = MACs / (data lanes x cycles) = "
+                      f"{arch['total_macs']} / ({run['K']} x {cycles}) = {100 * eff:.2f}%, throughput {gops:.2f} GOP/s at {f_mhz:g} MHz "
+                      "(one operation = one multiply or one add). Small next to the designs in that review, because the official variant has "
+                      "eight lanes; the point of SENTINEL is how fast those lanes can run without wrong results, which only the board can show."]
     lines += ["", "Reading: a faster clk_fast only shortens the compute column. The measured SPI speed (board phase) decides how much of an "
                   "overclocking gain is visible end to end, so results must report compute time and end-to-end time separately."]
     return lines

@@ -294,10 +294,23 @@ def _governor_vectors(workdir: Path, params: dict) -> list[str]:
     return [f"+vec={(workdir / 'gov.mem').as_posix()}", f"+n={len(words)}"]
 
 
+def _clkwiz_vectors(workdir: Path, params: dict) -> list[str]:
+    """Expected Clocking Wizard words per level, straight from tools/gen_mmcm_table.py (ADR-023)."""
+    import gen_mmcm_table as gmt
+
+    table = gmt.build_table(gmt.BOARD_F_IN_MHZ, 125.0, 10.0, 16, "-1")
+    path = workdir / "clkwiz_expected.mem"
+    with open(path, "w", newline="\n", encoding="ascii") as fh:
+        for lv in table["levels"]:
+            fh.writelines(f"{w:08x}\n" for w in gmt.clkwiz_words(lv))
+    return [f"+exp={path.as_posix()}"]
+
+
 def misc_benches() -> dict[str, Bench]:
     return {
         "governor": Bench("governor", "tb_governor", ["rtl/governor.v", "tb/tb_governor.v"], {}, _governor_vectors),
         "spi_slave": Bench("spi_slave", "tb_spi_slave", ["rtl/spi_slave.v", "tb/tb_spi_slave.v"]),
+        "clkwiz_seq": Bench("clkwiz_seq", "tb_clkwiz_seq", ["rtl/clkwiz_seq.v", "tb/tb_clkwiz_seq.v"], {}, _clkwiz_vectors),
         "regfile_guard": Bench("regfile_guard", "tb_regfile_guard", ["rtl/regfile.v", "tb/tb_regfile_guard.v"]),
         "ws2812_tx": Bench("ws2812_tx", "tb_ws2812_tx", ["rtl/ws2812_tx.v", "tb/tb_ws2812_tx.v"]),
         "status_led": Bench("status_led", "tb_status_led", ["rtl/ws2812_tx.v", "rtl/status_led.v", "tb/tb_status_led.v"]),
@@ -324,6 +337,7 @@ LINT_TARGETS = [
     {"id": "spi_slave", "top": "spi_slave", "sources": ["rtl/spi_slave.v"]},
     {"id": "governor", "top": "governor", "sources": ["rtl/governor.v"]},
     {"id": "clk_seq", "top": "clk_seq", "sources": ["rtl/clk_seq.v"]},
+    {"id": "clkwiz_seq", "top": "clkwiz_seq", "sources": ["rtl/clkwiz_seq.v"]},
     *[
         {"id": f"engine_c{c3}", "top": "engine", "sources": ENGINE_SOURCES, "params": {"C3_EN": c3, **_W}}
         for c3 in (0, 1)

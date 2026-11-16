@@ -68,3 +68,25 @@ def test_part_capacities_match_ds180():
     for name, (bram36, dsp) in expected.items():
         assert parts[name]["bram36"] == {"value": bram36, "verified": True}
         assert parts[name]["dsp"] == {"value": dsp, "verified": True}
+
+
+def test_selection_prefers_integer_settings_then_the_highest_vco():
+    """ADR-023: among exact settings, integer M and O first (as Clocking Wizard picks M = 50, O = 8 for
+    125 MHz from 20 MHz), then the highest VCO."""
+    table = gmt.build_table(gmt.BOARD_F_IN_MHZ, 125.0, 10.0, 16, "-1")
+    lv0 = table["levels"][0]
+    assert (lv0["m"], lv0["d"], lv0["o"]) == (50.0, 1, 8.0)
+    for lv in table["levels"]:
+        assert abs(lv["f_out"] - lv["target_mhz"]) < 1e-9
+
+
+def test_clocking_wizard_register_words():
+    """PG065 Table 2-2: 0x200 = DIVCLK[7:0] | MULT[15:8] | MULT_FRAC[25:16]; 0x208 = DIV[7:0] | FRAC[17:8]
+    (fractions in thousandths)."""
+    assert gmt.clkwiz_words({"m": 50.0, "d": 1, "o": 8.0}) == (0x0000_3201, 0x0000_0008)
+    assert gmt.clkwiz_words({"m": 8.125, "d": 2, "o": 2.25}) == ((125 << 16) | (8 << 8) | 2, (250 << 8) | 2)
+
+
+def test_generated_verilog_table_is_up_to_date():
+    for path, text in gmt.outputs().items():
+        assert path.read_text(encoding="utf-8") == text, f"{path} is stale: run python tools/run.py gen --regmap"

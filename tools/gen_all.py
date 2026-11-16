@@ -20,6 +20,11 @@ def main() -> int:
     parser.add_argument("--no-vectors", action="store_true", help="skip verification vectors")
     args = parser.parse_args()
     gen_regmap.main()
+    import gen_mmcm_table
+
+    for path, text in gen_mmcm_table.outputs().items():
+        path.write_text(text, encoding="utf-8", newline="\n")
+        print(f"wrote {path.relative_to(ROOT).as_posix()}")
     if args.regmap:
         return 0
     from model.config import load_hw_config

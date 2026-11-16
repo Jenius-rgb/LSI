@@ -32,5 +32,13 @@ if {[llength $por_meta0] != 1} {
 }
 set_false_path -from [get_clocks clk_in] -to $por_meta0
 
+# The AXI reset of the Clocking Wizard comes from the same power-on reset, through its own
+# synchronizer in clk_gen_xilinx (ADR-021, ADR-023).
+set axi_meta0 [get_cells -hierarchical -filter {NAME =~ "*axi_rst_meta_reg[0]"}]
+if {[llength $axi_meta0] != 1} {
+    error "expected exactly one first stage of the wizard reset synchronizer, found [llength $axi_meta0]"
+}
+set_false_path -from [get_clocks clk_in] -to $axi_meta0
+
 puts "TIMING safe_clock [get_property NAME $safe_clk] period [get_property PERIOD $safe_clk]"
 puts "TIMING turbo_clock [get_property NAME $turbo_clk] period [get_property PERIOD $turbo_clk]"

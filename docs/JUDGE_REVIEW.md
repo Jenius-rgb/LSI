@@ -119,3 +119,17 @@ Tidak ada perbaikan berarti lagi yang bisa dikerjakan tanpa board, dokumen AMD, 
 ## 6. Kesimpulan juri simulasi
 
 Nilai internal naik dari 52,5 ke 62,5 [PROPOSAL] karena syarat wajib (laporan sintesis) sekarang terpenuhi dengan bukti, dan desain lengkap terbukti muat dan lolos timing di chip resmi [VIVADO-STA]. Butir yang paling berat, yaitu ide dan bukti di hardware, tidak bergerak dan tidak bisa bergerak tanpa board. Urutan kerja yang paling menaikkan nilai: sequencer MMCM2, bring-up dan E7 di clock aman, E1 untuk menguji H1, lalu demo dengan WS2812B dan kamera.
+
+## 7. Pembaruan sesudah putaran 3 (2026-11-16, sesudah jawaban user)
+
+Tidak ada putaran keempat; bagian ini hanya mencatat kelemahan bagian 4 yang berubah. Rubrik tidak dinilai ulang.
+
+| No | Kelemahan | Perubahan |
+| --- | --- | --- |
+| 2 | Sequencer rekonfigurasi MMCM2 belum ada | MMCM2 sekarang di dalam Clocking Wizard v6.0 dengan AXI4-Lite; `clkwiz_seq` lulus bench dengan model register yang mengikuti PG065 [SIM]. Perilaku IP yang sebenarnya baru terbukti di board. |
+| 3 | Dua karya terdekat belum dibaca penuh | Marty dkk. (TCAD 2020) sudah dibaca penuh; alasan mereka menolak koreksi dan jawaban SENTINEL ada di `docs/PRIOR_ART.md`. Li dkk. (ITC-Asia 2019) masih abstrak. |
+| 6 | Belum ada demo yang terlihat mata | Indikator WS2812B di LED1 menunjukkan status dengan warna; tombol START/STOP/RUN bisa mengendalikan mode kamera. |
+| 8 | Aturan host `INJ*` belum dijaga hardware | `regfile` membuang tulis `INJ*` selama BUSY [SIM]. |
+| 9 | Kategori, ukuran tim, aturan AI | Tim 4 orang (sesuai halaman Jepang, tidak sesuai halaman Inggris 1–3); dokumen resmi tidak memuat aturan AI. Kategori tetap perlu dikonfirmasi. |
+
+Yang tetap paling berat: belum ada hasil [HW], dan H1 belum teruji. Board dan Raspberry Pi 4 baru dipakai Desember 2026 atau Januari 2027.

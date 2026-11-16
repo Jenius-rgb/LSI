@@ -120,7 +120,7 @@ def test_reset_and_cdc_rules_of_the_complete_design():
     import re
 
     tcl = (ROOT / "fpga" / "constraints" / "top_board_timing.tcl").read_text(encoding="utf-8")
-    assert "set_false_path -from [get_clocks clk_in]" in tcl and "por_meta_reg[0]" in tcl
+    assert "set_false_path -from [get_clocks clk_in]" in tcl and "por_meta_reg[0]" in tcl and "axi_rst_meta_reg[0]" in tcl
     flow = (ROOT / "fpga" / "synth_official.tcl").read_text(encoding="utf-8")
     assert "report_cdc" in flow and "report_bus_skew" in flow
     marked = {
@@ -218,3 +218,13 @@ def test_official_power_parser():
     text = ("| Total On-Chip Power (W)  | 0.503        |\n| Design Power Budget (W)  | Unspecified* |\n| Dynamic (W)              | 0.440        |\n"
             "| Device Static (W)        | 0.062        |\n| Confidence Level         | Medium       |\n")
     assert ro.parse_power(text) == {"total_w": 0.503, "dynamic_w": 0.44, "static_w": 0.062, "confidence": "Medium"}
+
+
+def test_turbo_mmcm_is_a_reconfigurable_clocking_wizard():
+    """ADR-023: MMCM2 lives in a Clocking Wizard v6.0 with AXI4-Lite reconfiguration, driven by clkwiz_seq."""
+    flow = (ROOT / "fpga" / "synth_official.tcl").read_text(encoding="utf-8")
+    assert "create_ip -name clk_wiz" in flow and "CONFIG.USE_DYN_RECONFIG {true}" in flow and "CONFIG.INTERFACE_SELECTION {Enable_AXI}" in flow
+    assert "CONFIG.PRIM_IN_FREQ {20.000}" in flow and "rtl/clkwiz_seq.v" in flow
+    wrapper = (ROOT / "rtl" / "platform" / "xilinx" / "clk_gen_xilinx.v").read_text(encoding="utf-8")
+    assert "clk_wiz_turbo" in wrapper and "clkwiz_seq" in wrapper and "MMCME2_ADV" not in wrapper
+    assert "assign is_turbo      = sel_turbo;" not in wrapper   # the mux state is reported after a settle time

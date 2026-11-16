@@ -105,7 +105,7 @@ def changes(d: Doc, ctx) -> None:
     d.bullets(["Chip lomba adalah AMD Spartan-7 XC7S25CSGA225-1, dan laporan sintesis untuk chip itu wajib bagi semua tim [OFFICIAL].",
                "Tugas dibagi dua kelas: Image Classification Class dan ZERO7 Class [OFFICIAL].",
                "Dokumen ZERO7 terbit: tabel pin FPGA dan panduan penyiapan. Clock board 20 MHz di pin B13, SPI0 Raspberry Pi di pin A8, A6, A7, D9, "
-               "LED WS2812B di pin N1, pemrograman lewat kabel JTAG-HS3, dan board dipasang di Raspberry Pi 5 [OFFICIAL].",
+               "LED WS2812B di pin N1, pemrograman lewat kabel JTAG-HS3, dan board dipasang di Raspberry Pi 5 [OFFICIAL]. Tim memakai Raspberry Pi 4 (ADR-022).",
                "Yang masih belum tertulis: tegangan dan standar I/O tiap bank, serta file `Zero7.xdc` resmi [UNKNOWN]."])
     d.h2("Keputusan baru")
     d.bullets(["ADR-013: target dikunci ke XC7S25CSGA225-1 dengan varian resmi model `s`, K = 8, lane `lut`, C3 aktif.",
@@ -114,7 +114,8 @@ def changes(d: Doc, ctx) -> None:
                "ADR-016: peta I/O ZERO7. FPGA hanya memakai jalur miliknya; tombol dan LED yang berbagi jalur diserahkan ke perangkat lunak Pi.",
                "ADR-017 dan ADR-018: indikator WS2812B dan suhu XADC diterima, implementasinya menyusul.",
                "ADR-019: boot dari flash QSPI ditunda. ADR-020: kategori tetap Class 2 Level 3 dan kalimat klaim diperketat.",
-               "ADR-021: aturan reset, synchronizer, dan penyeberangan domain clock, ditulis sesudah implementasi lengkap pertama."])
+               "ADR-021: aturan reset, synchronizer, dan penyeberangan domain clock, ditulis sesudah implementasi lengkap pertama.",
+               "ADR-022: host Raspberry Pi 4. ADR-023: batas MMCM dari DS189, rekonfigurasi MMCM2 lewat Clocking Wizard, suhu XADC dari UG480. ADR-024: standar I/O LVCMOS33 sebagai dugaan berbukti."])
     d.h2("Hasil baru")
     items = []
     if off:
@@ -134,10 +135,10 @@ def changes(d: Doc, ctx) -> None:
     d.bullets(items)
     d.h2("Bagian materi yang berubah")
     d.table(["Bagian", "Perubahan"], [
-        ["1.2", "aturan lomba terbaru: dua kelas, laporan sintesis wajib, Raspberry Pi 5"],
+        ["1.2", "aturan lomba terbaru: dua kelas, laporan sintesis wajib, Raspberry Pi 5; tim memakai Pi 4"],
         ["4.1", "chip dan resource-nya sekarang resmi"],
         ["5.7", "clock input 20 MHz; yang belum ada tinggal sequencer rekonfigurasi"],
-        ["6.5", "ADR-013 sampai ADR-021"],
+        ["6.5", "ADR-013 sampai ADR-024"],
         ["7.5, 7.6", "laporan sintesis resmi; ringkasan status baru"],
         ["8.3, 8.4, 8.6", "fakta board yang sudah dan belum diketahui; pekerjaan yang menunggu"],
         ["9.5, Lampiran C", "dokumen ZERO7 dari panitia; file sumber baru"],
@@ -214,7 +215,7 @@ def ch1(d: Doc, ctx) -> None:
                "tugasnya bebas, dan hanya punya Level 3 [OFFICIAL]. Target SENTINEL adalah Class 2 Level 3; ini masih usulan yang menunggu "
                "konfirmasi panitia [PROPOSAL].",
                "Sejak 10 November 2026 semua kelas wajib menyerahkan laporan sintesis untuk chip AMD Spartan-7 XC7S25CSGA225-1, yaitu chip di ZERO7 [OFFICIAL].",
-               "Board pinjaman dipasang di Raspberry Pi 5 [OFFICIAL].",
+               "Board pinjaman dipasang di Raspberry Pi 5 [OFFICIAL]. Tim memakai Raspberry Pi 4 Model B; kecocokannya dicek saat board datang (ADR-022).",
                "Batas laporan 31 Januari 2027. Presentasi 5 Maret 2027: 10 menit dengan maksimal 10 slide, lalu 5 menit tanya jawab [OFFICIAL]."])
     d.figure(fig("fig_roadmap"), "Posisi proyek per 16 November 2026. Atas: milestone pra-board M0\u2013M14 sudah selesai di simulasi (M10 sebagian), "
                                  "fase board B1\u2013B6 belum mulai; milestone M15 sampai M19 ditambahkan sesudah fakta resmi terbit (Bagian 7.6). "
@@ -697,9 +698,9 @@ def ch5(d: Doc, ctx) -> None:
                 "Rekonfigurasi hanya dilakukan di antara gambar."])
     d.figure(fig("fig_clockswitch"), "Urutan clock untuk satu gambar dan perpindahan ke gambar berikutnya. Diagram konsep tanpa skala waktu.")
     d.callout("catatan", ["Protokol ini sudah diverifikasi di simulasi oleh monitor di `tb/tb_system.v` [SIM]. Clock input sekarang diketahui, "
-                          "yaitu 20 MHz di pin B13 [OFFICIAL], dan `clk_gen_xilinx` memakai VCO 1.000 MHz (ADR-015). Yang "
-                          "belum ada adalah sequencer yang mengubah frekuensi MMCM2 saat berjalan (ADR-010); tanpa itu clock turbo tetap sama "
-                          "dengan clock aman."])
+                          "yaitu 20 MHz di pin B13 [OFFICIAL], dan `clk_gen_xilinx` memakai VCO 1.000 MHz (ADR-015). Clock turbo "
+                          "sekarang dibuat lewat Clocking Wizard yang direkonfigurasi `clkwiz_seq` lewat AXI4-Lite (ADR-023). Simulasi memakai model "
+                          "register; perilaku IP AMD yang sebenarnya baru terbukti di board."])
     g = f["governor"]
     gp = g["params"]
     d.h2("5.8 Governor")
@@ -772,7 +773,7 @@ def ch6(d: Doc, ctx) -> None:
     d.p("**Tujuan bab ini:** tahu di mana setiap bagian berada, bagaimana alur kerja dari data sampai board, dan dokumen mana yang dibaca lebih dulu.")
     d.h2("6.1 Peta folder")
     d.table(["Folder", "Isi", "File penting"], [
-        ["`config/`", "parameter model dan hardware", "`model_s.yaml`, `hw_default.yaml`; `mmcm_limits.yaml` dan `parts.yaml` belum diverifikasi ke datasheet"],
+        ["`config/`", "parameter model dan hardware", "`model_s.yaml`, `hw_default.yaml`; `mmcm_limits.yaml` (DS189) dan `parts.yaml` (DS180), sudah dicek ke datasheet"],
         ["`spec/`", "satu-satunya sumber register map", "`regmap.yaml`"],
         ["`model/`", "Python: training, kuantisasi, golden model, checker, governor, model error sintetis, kampanye", "`golden.py`, `checker.py`, `export.py`"],
         ["`rtl/`", "Verilog-2005 yang bisa disintesis", "`engine.v`, `lane_array.v`, `lane_checker.v`"],
@@ -839,6 +840,9 @@ def ch6(d: Doc, ctx) -> None:
         ["ADR-019", "boot dari flash QSPI ditunda"],
         ["ADR-020", "kategori Class 2 Level 3 dan batas klaim"],
         ["ADR-021", "reset, synchronizer, dan aturan penyeberangan domain clock"],
+        ["ADR-022", "host Raspberry Pi 4 Model B"],
+        ["ADR-023", "batas MMCM dari DS189; MMCM2 lewat Clocking Wizard AXI4-Lite; suhu XADC dari UG480"],
+        ["ADR-024", "standar I/O LVCMOS33 dari bukti resmi; bitstream untuk board menunggu pengukuran"],
     ], [1400, TEXT_W - 1400], caption="Daftar ADR di `docs/DECISIONS.md`.", size=18)
     d.h2("6.6 Urutan membaca dokumen repo")
     d.numbered(["`CLAUDE.md`: misi, aturan keras, cara kerja.",
@@ -975,9 +979,9 @@ def ch7(d: Doc, ctx) -> None:
         ["Clock 20 MHz dan peta I/O ZERO7", "selesai di RTL dan XDC", "ADR-015, ADR-016; standar I/O belum pasti"],
         ["Aturan penyeberangan domain clock", "selesai", "ADR-021; `report_cdc` [VIVADO-STA]"],
         ["Laporan sintesis resmi", "selesai" if off else "belum", "[VIVADO-STA]"],
-        ["Sequencer rekonfigurasi MMCM2", "belum", "ADR-010"],
+        ["Rekonfigurasi MMCM2 lewat Clocking Wizard", "selesai di RTL; IP belum diuji di board", "ADR-023; bench `clkwiz_seq` [SIM]"],
         ["Sinyal selesai `irq_done` di driver", "selesai, diuji dengan pengganti GPIO", "ADR-016"],
-        ["Indikator WS2812B dan suhu XADC", "belum", "ADR-017, ADR-018"],
+        ["Indikator WS2812B dan suhu XADC", "selesai di simulasi", "ADR-017, ADR-018; bench `status_led`, `xadc_temp` [SIM]"],
         ["Software Pi dan skrip eksperimen", "selesai, diuji dengan mock", "[SYNTHETIC]"],
         ["Semua eksperimen di board", "belum mulai", "\u2014"],
     ], [3900, 2400, TEXT_W - 6300], caption="Status per 16 November 2026.")
@@ -1021,7 +1025,7 @@ def ch8(d: Doc, ctx) -> None:
                "SPI0 Raspberry Pi: SCLK di A8, MOSI di A6, MISO di A7, CE0 di D9 [OFFICIAL].",
                "LED WS2812B yang digerakkan FPGA di pin N1, LED biasa D5 dan D6, serta tombol START, STOP, dan RUN [OFFICIAL].",
                "Pemrograman lewat kabel Digilent JTAG-HS3 dari Vivado Hardware Manager dengan clock JTAG 3 MHz [OFFICIAL].",
-               "Board dipasang di Raspberry Pi 5 [OFFICIAL]."])
+               "Board dipasang di Raspberry Pi 5 [OFFICIAL]; tim memakai Raspberry Pi 4 (ADR-022)."])
     d.p("Yang masih [UNKNOWN]:")
     d.bullets(["tegangan VCCO dan standar I/O tiap bank; file `Zero7.xdc` resmi belum terbit",
                "ZERO7 User Manual dan skematik",
@@ -1031,10 +1035,9 @@ def ch8(d: Doc, ctx) -> None:
     d.callout("catatan", ["Versi 1.0 materi ini menduga chipnya XC7S25 dari foto yang buram. Dokumen resmi sekarang memastikannya. Aturannya tetap "
                           "berlaku: dugaan dicatat sebagai dugaan sampai ada sumber."])
     d.h2("8.4 Pekerjaan teknis yang menunggu")
-    d.bullets(["Sequencer rekonfigurasi MMCM2 (ADR-010). Ini syarat overclocking nyata: tanpa itu clock turbo tidak bisa dinaikkan.",
-               "Verifikasi batas MMCM ke DS189 dan kapasitas chip ke DS180; keduanya butuh datasheet AMD.",
+    d.bullets(["Uji rekonfigurasi MMCM2 di board: Clocking Wizard dan `clkwiz_seq` sudah ada, tetapi IP AMD baru terbukti di hardware.",
                "Konfirmasi standar I/O dari `Zero7.xdc` resmi, lalu bitstream pertama.",
-               "Indikator WS2812B (ADR-017), suhu XADC (ADR-018), dan tombol di perangkat lunak Pi (ADR-016).",
+               "Cek di board: waktu pulsa WS2812B ke datasheet LED, polaritas tombol, dan pembacaan suhu XADC.",
                "Keputusan akhir C3 setelah data E1 (ADR-011); varian resmi sementara memakai C3 aktif (ADR-013).",
                "Pengukuran kecepatan SPI di board."])
     d.h2("8.5 Seperti apa grafiknya nanti")
@@ -1068,7 +1071,7 @@ def ch8(d: Doc, ctx) -> None:
                                             "membuktikan apa pun tentang hardware.", size=17)
     d.callout("catatan", [("bullet", "Minta `Zero7.xdc`, ZERO7 User Manual, dan file contoh ke panitia saat mengurus peminjaman board."),
                           ("bullet", "Tanyakan apakah kabel JTAG-HS3 termasuk paket pinjaman."),
-                          ("bullet", "Siapkan Raspberry Pi 5 (catu daya 5 V 5 A, OS, SPI aktif, SSH) dan modul kamera."),
+                          ("bullet", "Siapkan Raspberry Pi 4 (catu daya resmi 5,1 V 3 A, Raspberry Pi OS 64-bit, SPI aktif, SSH), kabel kamera 15-pin, dan jalankan `board/pi_check.py`."),
                           ("bullet", "Baca teks lengkap Marty dkk. dan Li dkk. (Bab 9) sebelum menulis klaim di laporan."),
                           ("bullet", "Konfirmasi kategori Class 2 Level 3 ke panitia dan tunggu pengumuman kelas target.")],
               title="YANG BISA DIKERJAKAN SEKARANG")

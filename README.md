@@ -40,6 +40,8 @@ python tools/run.py test
 | `python tools/run.py export --model s` | quantise and export |
 | `python tools/run.py sim <tb>` | run one testbench |
 | `python tools/run.py synth-official` | official synthesis report for XC7S25CSGA225-1 (`results/vivado/official/`) |
+| `vivado -mode batch -source fpga/bitstream_dryrun.tcl` | bitstream dry run on the routed official design (`build/bitstream_dryrun/`, not for the board; ADR-024) |
+| `python3 board/pi_check.py` | on the Raspberry Pi 4: model, `/dev/spidev0.0`, Python packages (ADR-022) |
 | `python tools/run.py campaign` | fault-injection campaigns |
 | `python tools/run.py ooc` | Vivado out-of-context runs |
 | `python tools/run.py plots` | regenerate all plots |

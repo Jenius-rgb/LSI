@@ -23,12 +23,24 @@ set sources {
     rtl/ram_tdp.v rtl/sum_tree.v rtl/wc_gen.v rtl/operand_gen.v rtl/postproc.v rtl/pool.v
     rtl/counter_bank.v rtl/cdc_fifo.v rtl/platform/xilinx/cdc_fifo_xpm.v rtl/fast_path.v rtl/engine.v
     rtl/spi_slave.v rtl/regfile.v rtl/governor.v rtl/clk_seq.v rtl/clk_gen.v
-    rtl/platform/xilinx/clk_gen_xilinx.v rtl/xadc_temp.v rtl/platform/xilinx/xadc_prim_xilinx.v rtl/ws2812_tx.v rtl/status_led.v rtl/top_core.v board/top_board.v
+    rtl/clkwiz_seq.v rtl/platform/xilinx/clk_gen_xilinx.v rtl/xadc_temp.v rtl/platform/xilinx/xadc_prim_xilinx.v rtl/ws2812_tx.v rtl/status_led.v rtl/top_core.v board/top_board.v
 }
 set_part $part
 set_property XPM_LIBRARIES {XPM_CDC XPM_MEMORY XPM_FIFO} [current_project]
 foreach f $sources { read_verilog [file join $root $f] }
 read_xdc [file join $root board/zero7.xdc]
+
+# MMCM2 inside a Clocking Wizard v6.0 with AXI4-Lite dynamic reconfiguration (ADR-023, PG065).
+# Level 0 of the turbo table equals clk_safe; the IP is regenerated on every run.
+set ipdir [file join $root build ip_official]
+file delete -force $ipdir
+file mkdir $ipdir
+create_ip -name clk_wiz -vendor xilinx.com -library ip -module_name clk_wiz_turbo -dir $ipdir
+set turbo_mhz [format %.3f [expr {1000.0 / $safe_div}]]
+set_property -dict [list CONFIG.PRIM_IN_FREQ {20.000} CONFIG.PRIM_SOURCE {No_buffer} CONFIG.USE_DYN_RECONFIG {true} CONFIG.INTERFACE_SELECTION {Enable_AXI} CONFIG.CLKOUT1_REQUESTED_OUT_FREQ $turbo_mhz CONFIG.USE_LOCKED {true}] [get_ips clk_wiz_turbo]
+set_property GENERATE_SYNTH_CHECKPOINT false [get_files clk_wiz_turbo.xci]
+generate_target {synthesis} [get_ips clk_wiz_turbo]
+puts "TIMING turbo_ip M [get_property CONFIG.MMCM_CLKFBOUT_MULT_F [get_ips clk_wiz_turbo]] D [get_property CONFIG.MMCM_DIVCLK_DIVIDE [get_ips clk_wiz_turbo]] O [get_property CONFIG.MMCM_CLKOUT0_DIVIDE_F [get_ips clk_wiz_turbo]]"
 
 set wc [exec python -c "import sys; sys.path.insert(0, r'$root/tools'); from sim import wc_widths; print(*wc_widths($k))"]
 lassign $wc wc1 wc2 wc3
