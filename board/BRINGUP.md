@@ -48,16 +48,19 @@ Sources: `docs/official/Initialize_20260618_EN.pdf` (IN-n = slide n), `docs/offi
 - [OFFICIAL] In "Open New Target" set the JTAG clock to 3,000,000 Hz (IN-46). The device shows as
   `xc7s25_0`, ID code `037C4093` (IN-46). Program with the `.bit` file (IN-49).
 - Not known: whether the cable comes with the loaned board. Ask when arranging the loan.
-- Cheaper cable options [INFERENCE, not in the official guide; check each product page for the 3.3 V
-  Vref and Spartan-7 support before buying]:
-  1. Digilent JTAG-HS2: same family as the HS3 and works in the Vivado Hardware Manager the same way,
-     so the official steps (IN-42 to IN-50) stay valid.
-  2. A generic FT232H or FT2232H USB module with openFPGALoader (open source, runs on the PC or on the
-     Raspberry Pi 4): programs the `.bit` file, but not through the Vivado Hardware Manager, so the
-     official screens do not apply.
-  3. Raspberry Pi 4 GPIO as the JTAG master (openFPGALoader bit-bang or a Xilinx Virtual Cable server):
-     costs nothing, but every Pi GPIO under the HAT is already wired to the FPGA (TK-1, TK-2), so it needs
-     free lines reachable with jumper wires. Decide only with the board in hand.
+- Cheaper cable options [INFERENCE, not in the official guide and not tried on ZERO7; checked on 2026-11-17
+  against the project pages linked below]. The JTAG pins of ZERO7 sit on configuration bank 0, whose
+  VCCO is VCC3V3 [OFFICIAL, TK-2 to TK-6], so 3.3 V logic matches; 100 ohm series resistors on TMS, TCK
+  and TDI, and ground connected first, are cheap protection. None of these options senses Vref.
+  1. Raspberry Pi Pico with xvc-pico (https://github.com/kholia/xvc-pico): a Xilinx Virtual Cable server,
+     so the Vivado Hardware Manager connects through "Add Xilinx Virtual Cable" (UG908) and the official
+     screens mostly still apply. Cheapest option that keeps Vivado.
+  2. The Raspberry Pi 4 itself with xvcpi (https://github.com/derekmulcahy/xvcpi): free and also XVC, but
+     the four Pi GPIOs it uses are under the HAT and wired to FPGA pins (TK-1, TK-2), so it needs a
+     stacking header and a design that leaves those FPGA pins unused.
+  3. A generic FT232H or FT2232H module with openFPGALoader (https://github.com/trabucayre/openFPGALoader):
+     xc7s25 is listed for SRAM loading; programs the `.bit` file without the Vivado Hardware Manager.
+  4. Digilent JTAG-HS2: the safe choice; same family as the HS3 of the official guide.
   Unofficial clones of AMD/Xilinx cables are not recommended.
 
 ### Raspberry Pi (the team uses a Raspberry Pi 4 Model B, ADR-022)
