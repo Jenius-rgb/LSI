@@ -130,6 +130,8 @@ module regfile (
             inj1_mask_lo <= 32'd0;
             inj1_mask_hi <= 32'd0;
         end else if (bus_wr) begin
+            // INJ* cross into clk_fast without a synchronizer, so they only change while the engine
+            // is idle (SPEC 7.8, ADR-021): writes while BUSY is set are dropped.
             case (word_addr)
                 `SNT_REG_CTRL: begin
                     if (byte_idx == 2'd0) begin
@@ -147,14 +149,14 @@ module regfile (
                     clk_ctrl <= with_byte(clk_ctrl, byte_idx, bus_wdata);
                     if (byte_idx == 2'd0) clk_reconfig_start <= bus_wdata[`SNT_CLK_CTRL_RECONFIG_START_LSB];
                 end
-                `SNT_REG_INJ0_CTRL:    inj0_ctrl    <= with_byte(inj0_ctrl, byte_idx, bus_wdata);
-                `SNT_REG_INJ0_UNIT:    inj0_unit    <= with_byte(inj0_unit, byte_idx, bus_wdata);
-                `SNT_REG_INJ0_MASK_LO: inj0_mask_lo <= with_byte(inj0_mask_lo, byte_idx, bus_wdata);
-                `SNT_REG_INJ0_MASK_HI: inj0_mask_hi <= with_byte(inj0_mask_hi, byte_idx, bus_wdata);
-                `SNT_REG_INJ1_CTRL:    inj1_ctrl    <= with_byte(inj1_ctrl, byte_idx, bus_wdata);
-                `SNT_REG_INJ1_UNIT:    inj1_unit    <= with_byte(inj1_unit, byte_idx, bus_wdata);
-                `SNT_REG_INJ1_MASK_LO: inj1_mask_lo <= with_byte(inj1_mask_lo, byte_idx, bus_wdata);
-                `SNT_REG_INJ1_MASK_HI: inj1_mask_hi <= with_byte(inj1_mask_hi, byte_idx, bus_wdata);
+                `SNT_REG_INJ0_CTRL:    if (!busy) inj0_ctrl    <= with_byte(inj0_ctrl, byte_idx, bus_wdata);
+                `SNT_REG_INJ0_UNIT:    if (!busy) inj0_unit    <= with_byte(inj0_unit, byte_idx, bus_wdata);
+                `SNT_REG_INJ0_MASK_LO: if (!busy) inj0_mask_lo <= with_byte(inj0_mask_lo, byte_idx, bus_wdata);
+                `SNT_REG_INJ0_MASK_HI: if (!busy) inj0_mask_hi <= with_byte(inj0_mask_hi, byte_idx, bus_wdata);
+                `SNT_REG_INJ1_CTRL:    if (!busy) inj1_ctrl    <= with_byte(inj1_ctrl, byte_idx, bus_wdata);
+                `SNT_REG_INJ1_UNIT:    if (!busy) inj1_unit    <= with_byte(inj1_unit, byte_idx, bus_wdata);
+                `SNT_REG_INJ1_MASK_LO: if (!busy) inj1_mask_lo <= with_byte(inj1_mask_lo, byte_idx, bus_wdata);
+                `SNT_REG_INJ1_MASK_HI: if (!busy) inj1_mask_hi <= with_byte(inj1_mask_hi, byte_idx, bus_wdata);
                 default: ;
             endcase
         end

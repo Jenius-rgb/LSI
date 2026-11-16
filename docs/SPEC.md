@@ -341,7 +341,7 @@ Syaratnya R · f_safe ≥ f_turbo_max. Siklus ketika FIFO operand kosong dihitun
 | pin SPI | luar → `clk_safe` | synchronizer dua flop |
 | LOCKED MMCM1 dan MMCM2 | asinkron → `clk_safe` | synchronizer |
 
-**Aturan host.** Register `INJ*` hanya ditulis saat `STATUS.BUSY` = 0.
+**Aturan host, dijaga hardware.** Register `INJ*` hanya ditulis saat `STATUS.BUSY` = 0; `regfile` membuang tulis ke `INJ*` selama BUSY = 1 (`tb/tb_regfile_guard.v`).
 
 **Laporan.** Alur laporan resmi menjalankan `report_cdc` dan `report_bus_skew`; jumlah penyeberangan per kelas dicatat di `results/vivado/official/summary.md`.
 

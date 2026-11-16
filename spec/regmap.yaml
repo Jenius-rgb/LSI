@@ -106,4 +106,10 @@ registers:
   - {name: INJ1_MASK_LO, offset: 0x058, access: rw}
   - {name: INJ1_MASK_HI, offset: 0x05C, access: rw}
   - {name: LANE_STATUS, offset: 0x060, access: ro}
-  - {name: TEMP, offset: 0x064, access: ro, doc: "XADC temperature if the part has one [UNKNOWN]"}
+  - name: TEMP
+    offset: 0x064
+    access: ro
+    doc: "XADC temperature code (ADR-018, ADR-023): degrees C = CODE * 503.975 / 4096 - 273.15"
+    fields:
+      - {name: CODE, lsb: 0, width: 12}
+      - {name: VALID, bit: 16}

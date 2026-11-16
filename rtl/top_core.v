@@ -65,6 +65,11 @@ module top_core #(
     end
     wire rst_safe = rst_safe_r;
 
+    // On-chip temperature for the TEMP register (ADR-018, ADR-023).
+    wire [11:0] temp_code;
+    wire        temp_valid;
+    xadc_temp u_temp (.clk(clk_safe), .rst(rst_safe), .code(temp_code), .valid(temp_valid));
+
     // ---- host bus ------------------------------------------------------------------------
     wire        bus_wr, bus_rd;
     wire [23:0] bus_addr;
@@ -146,7 +151,7 @@ module top_core #(
         .starve_cycles(starve_cycles),
         .gov_state_level(gov_state_level), .gov_state_streak(gov_state_streak), .gov_state_turbo(gov_state_turbo),
         .clk_reconfig_busy(reconfig_busy), .clk_locked(clocks_locked & turbo_locked),
-        .lane_status({16'd0, lane_status}), .temp(32'd0),
+        .lane_status({16'd0, lane_status}), .temp({15'd0, temp_valid, 4'd0, temp_code}),
         .cnt_addr(cnt_addr), .cnt_data(cnt_data));
 
     // ---- engine ----------------------------------------------------------------------------

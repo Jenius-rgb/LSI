@@ -16,8 +16,9 @@ CHECK_NONE = 0x00
 
 
 class ModelDevice:
-    def __init__(self, qm: QModel, k: int = 8, c3_hw: bool = False, flags: int = 0):
+    def __init__(self, qm: QModel, k: int = 8, c3_hw: bool = False, flags: int = 0, temp_code: int = 2423):
         self.qm = qm
+        self.temp_code = temp_code
         self.k = k
         self.c3_hw = c3_hw
         self.flags = flags
@@ -102,6 +103,8 @@ class ModelDevice:
             return self.status_word(), False
         if offset == rm.REG_RESULT_CLASS:
             return (self.result.pred if self.result else 0), True
+        if offset == rm.REG_TEMP:
+            return (1 << rm.TEMP_VALID_LSB) | self.temp_code, True   # SIM_CODE of rtl/xadc_temp.v
         if offset in (rm.REG_CYCLES_TOTAL, rm.REG_CYCLES_RECOMPUTE, rm.REG_STARVE_CYCLES):
             return 0, False
         if rm.COUNTER_BASE <= offset < rm.COUNTER_BASE + 0x400:

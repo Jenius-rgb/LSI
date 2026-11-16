@@ -158,7 +158,7 @@ ADR-001 sampai ADR-007 adalah usulan awal dari starter kit (2026-11-09). Boleh d
   4. Operand dan hasil tetap hanya menyeberang lewat FIFO asinkron XPM.
   5. Alur laporan resmi menambah `report_cdc` dan `report_bus_skew`, dan ringkasannya memuat jumlah penyeberangan per kelas beserta artinya di desain ini.
 - **Dampak:** SPEC §7.8 diperluas. `rtl/top_core.v`, `rtl/engine.v`, `rtl/fast_path.v`, `rtl/spi_slave.v`, `rtl/platform/xilinx/clk_gen_xilinx.v`, constraint, dan alur resmi berubah; seluruh regresi diulang. Pilihan f_safe pada ADR-015 diambil dari run sesudah perubahan ini. Masih terbuka dan dikerjakan bersama sequencer DRP (ADR-010): penjagaan di hardware supaya tulis `INJ*` saat BUSY ditolak (sekarang hanya aturan host), dan konfirmasi perpindahan mux yang nyata (`is_turbo` di `clk_gen_xilinx` masih melaporkan permintaan).
-- **Status:** Diterima.
+- **Status:** Diterima. Tambahan 2026-11-16: penjagaan tulis `INJ*` selama BUSY sudah diimplementasikan di `regfile` (M20).
 
 ## ADR-022 — Host Raspberry Pi 4 Model B
 

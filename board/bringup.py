@@ -49,7 +49,10 @@ def open_driver(dry_run: bool, model: str = "xs") -> tuple[SentinelDriver, objec
     qm, source = load_or_random_qmodel(model)
     if dry_run:
         return SentinelDriver(LogTransport(ModelDevice(qm))), qm, f"dry-run ({source})"
-    return SentinelDriver(SpidevTransport()), qm, f"board ({source})"
+    from sentinel.transport import GpioDoneLine
+
+    # irq_done on RP_GPIO25 (ADR-016): wait_done() waits on the line instead of polling over SPI.
+    return SentinelDriver(SpidevTransport(), done_line=GpioDoneLine(25)), qm, f"board ({source})"
 
 
 def step_power(args) -> int:

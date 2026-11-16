@@ -217,3 +217,89 @@ def test_driver_done_line_timeout_and_disagreement():
     drv = SentinelDriver(LogTransport(ModelDevice(qm, k=8)), done_line=_FakeDoneLine(active=True))
     with pytest.raises(RuntimeError):
         drv.wait_done()
+
+
+def test_xadc_code_to_celsius_follows_ug480():
+    """UG480 Equation 2-6: T = code * 503.975 / 4096 - 273.15 (ADR-023)."""
+    from sentinel.xadc import code_to_celsius, temperature_from_register
+
+    assert code_to_celsius(0) == pytest.approx(-273.15)
+    assert code_to_celsius(2423) == pytest.approx(2423 * 503.975 / 4096 - 273.15)
+    assert 24.9 < code_to_celsius(2423) < 25.0
+    assert temperature_from_register((1 << 16) | 2423) == pytest.approx(code_to_celsius(2423))
+    assert temperature_from_register(2423) is None   # VALID clear: no reading yet
+    with pytest.raises(ValueError):
+        code_to_celsius(4096)
+
+
+def test_device_model_reports_the_simulated_temperature():
+    from sentinel import regmap as rm
+
+    drv = SentinelDriver(LogTransport(ModelDevice(micro_qm(), k=8)))
+    assert drv.read_reg(rm.REG_TEMP) == (1 << rm.TEMP_VALID_LSB) | 2423
+    assert 24.9 < drv.temperature_c() < 25.0
+
+
+class _FakeButton:
+    def __init__(self):
+        self.when_pressed = None
+
+    def press(self):
+        self.when_pressed()
+
+
+def test_buttons_start_stop_run_drive_the_camera_loop():
+    """M19 (ADR-016): START runs continuously, STOP pauses, RUN classifies one frame while paused."""
+    from sentinel.buttons import ButtonControl
+
+    start, stop, run = _FakeButton(), _FakeButton(), _FakeButton()
+    ctl = ButtonControl(start, stop, run)
+    assert ctl.should_classify() is False          # paused until START
+    run.press()
+    assert ctl.should_classify() is True and ctl.should_classify() is False   # one frame only
+    start.press()
+    assert all(ctl.should_classify() for _ in range(3))
+    stop.press()
+    assert ctl.should_classify() is False
+
+
+def test_camera_loop_skips_frames_while_paused(monkeypatch):
+    import numpy as np
+
+    from sentinel import camera_mode
+    from sentinel.buttons import ButtonControl
+
+    frames = [np.zeros((48, 64, 3), dtype=np.uint8)] * 5
+    monkeypatch.setattr(camera_mode, "open_source", lambda source: iter(frames))
+    calls = []
+
+    class Backend:
+        def classify(self, image, image_id=None):
+            calls.append(image_id)
+            return type("R", (), {"pred": 1})()
+
+    start, stop, run = _FakeButton(), _FakeButton(), _FakeButton()
+    ctl = ButtonControl(start, stop, run)
+    run.press()
+    report = camera_mode.run(Backend(), "x", control=ctl)
+    assert report["frames"] == 1 and report["skipped"] == 4 and calls == [0]
+
+
+def test_pi_check_reports_what_it_finds(tmp_path):
+    """board/pi_check.py on a fake Pi file system (ADR-022)."""
+    import importlib.util
+    from pathlib import Path
+
+    spec = importlib.util.spec_from_file_location("pi_check", Path(__file__).resolve().parents[1] / "board" / "pi_check.py")
+    pc = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(pc)
+    model = tmp_path / "model"
+    model.write_bytes(b"Raspberry Pi 4 Model B Rev 1.5\x00")
+    dev = tmp_path / "spidev0.0"
+    dev.write_text("")
+    rows = pc.check(model_path=model, spidev_path=dev, modules=("json", "no_such_module_xyz"))
+    assert rows["model"] == ("ok", "Raspberry Pi 4 Model B Rev 1.5")
+    assert rows["spidev0.0"][0] == "ok"
+    assert rows["import json"][0] == "ok" and rows["import no_such_module_xyz"][0] == "missing"
+    rows = pc.check(model_path=tmp_path / "none", spidev_path=tmp_path / "none", modules=())
+    assert rows["model"][0] == "missing" and rows["spidev0.0"][0] == "missing"

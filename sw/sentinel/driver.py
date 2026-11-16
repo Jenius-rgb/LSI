@@ -87,6 +87,12 @@ class SentinelDriver:
         if not self.status() & done:
             raise RuntimeError("irq_done is high but STATUS.DONE is clear: check the wiring of RP_GPIO25")
 
+    def temperature_c(self) -> float | None:
+        """Die temperature from the XADC, or None before the first reading (ADR-023)."""
+        from sentinel.xadc import temperature_from_register
+
+        return temperature_from_register(self.read_reg(rm.REG_TEMP))
+
     def status(self) -> int:
         return self.read_reg(rm.REG_STATUS)
 

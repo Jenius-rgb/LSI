@@ -137,7 +137,7 @@ def engine_benches() -> dict[str, Bench]:
 
 TOP_SOURCES = [
     *ENGINE_SOURCES, "rtl/spi_slave.v", "rtl/regfile.v", "rtl/clk_gen.v", "rtl/platform/sim/clk_gen_sim.v",
-    "rtl/governor.v", "rtl/clk_seq.v", "rtl/top_core.v",
+    "rtl/governor.v", "rtl/clk_seq.v", "rtl/xadc_temp.v", "rtl/platform/sim/xadc_prim_sim.v", "rtl/top_core.v",
 ]
 
 
@@ -298,6 +298,8 @@ def misc_benches() -> dict[str, Bench]:
     return {
         "governor": Bench("governor", "tb_governor", ["rtl/governor.v", "tb/tb_governor.v"], {}, _governor_vectors),
         "spi_slave": Bench("spi_slave", "tb_spi_slave", ["rtl/spi_slave.v", "tb/tb_spi_slave.v"]),
+        "regfile_guard": Bench("regfile_guard", "tb_regfile_guard", ["rtl/regfile.v", "tb/tb_regfile_guard.v"]),
+        "xadc_temp": Bench("xadc_temp", "tb_xadc_temp", ["rtl/xadc_temp.v", "rtl/platform/sim/xadc_prim_sim.v", "tb/tb_xadc_temp.v"]),
         "spi_session_xs": Bench(
             "spi_session_xs", "tb_spi_log", [*TOP_SOURCES, "tb/tb_spi_log.v"],
             {k: v for k, v in _engine_params("xs", 8).items() if k != "LANE_IMPL"},

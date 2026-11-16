@@ -114,5 +114,9 @@
 `define SNT_REG_INJ1_MASK_HI 12'h05C
 `define SNT_REG_LANE_STATUS 12'h060
 `define SNT_REG_TEMP 12'h064
+`define SNT_TEMP_CODE_LSB 0
+`define SNT_TEMP_CODE_W 12
+`define SNT_TEMP_VALID_LSB 16
+`define SNT_TEMP_VALID_W 1
 
 `endif
