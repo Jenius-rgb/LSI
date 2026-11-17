@@ -1,0 +1,49 @@
+{
+  "label": "[SIM]",
+  "model": "xs",
+  "k": 8,
+  "images": 1000,
+  "images_source": "cifar10 test set, first 1000 images",
+  "layers": [
+    {
+      "name": "conv1",
+      "kind": "conv",
+      "groups": 1,
+      "operands_per_image": 27648,
+      "zero_fraction": 0.043496563946759256,
+      "ideal_cycles_per_image": 27648,
+      "zero_cycles_per_image": 1202.593
+    },
+    {
+      "name": "conv2",
+      "kind": "conv",
+      "groups": 2,
+      "operands_per_image": 18432,
+      "zero_fraction": 0.29623084852430553,
+      "ideal_cycles_per_image": 36864,
+      "zero_cycles_per_image": 10920.254
+    },
+    {
+      "name": "conv3",
+      "kind": "conv",
+      "groups": 2,
+      "operands_per_image": 9216,
+      "zero_fraction": 0.47673480902777776,
+      "ideal_cycles_per_image": 18432,
+      "zero_cycles_per_image": 8787.176
+    },
+    {
+      "name": "fc",
+      "kind": "fc",
+      "groups": 2,
+      "operands_per_image": 256,
+      "zero_fraction": 0.51396484375,
+      "ideal_cycles_per_image": 512,
+      "zero_cycles_per_image": 263.15
+    }
+  ],
+  "ideal_cycles_per_image": 83456,
+  "zero_cycles_per_image": 21173.173000000003,
+  "zero_cycle_fraction": 0.2537046227952454,
+  "ideal_cycles_arch_report": 83456
+}
