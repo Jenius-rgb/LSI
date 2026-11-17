@@ -25,7 +25,7 @@ Statements about SENTINEL are [INFERENCE] unless they point to a file or result 
 | 1 | Introduction to Digital Signal Processing Systems | 18–59 | read 17 Nov 2026 | [CH01.md](CH01.md); no failed pages |
 | 2 | Iteration Bound | 60–79 | read 17 Nov 2026 | [CH02.md](CH02.md); PDF 79 repeats book p. 60, book p. 62 missing from the scan |
 | 3 | Pipelining and Parallel Processing | 80–106 | read 17 Nov 2026 | [CH03.md](CH03.md); no failed pages |
-| 4 | Retiming | 107–134 | not read | |
+| 4 | Retiming | 107–134 | read 17 Nov 2026 | [CH04.md](CH04.md); book p. 90 not in the scan (book page = PDF − 16 from here) |
 | 5 | Unfolding | 135–164 | not read | |
 | 6 | Folding | 165–203 | not read | |
 | 7 | Systolic Architecture Design | 204–241 | not read | |
