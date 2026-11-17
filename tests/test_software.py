@@ -355,3 +355,23 @@ def test_vivado_tcl_commands_for_axi_transactions():
     assert "create_hw_axi_txn" in w and "-type write" in w and "-address 00030000" in w and "-data 11223344" in w and "run_hw_axi" in w
     r = VivadoTclAxi.read_command(0x000004)
     assert "-type read" in r and "-address 00000004" in r and "get_property DATA" in r
+
+
+def test_camera_mode_runs_on_a_video_file_without_a_pi(tmp_path):
+    """docs/CAMERA.md: the camera path works on a laptop with a video file and MockBackend [SYNTHETIC]."""
+    import cv2
+    import numpy as np
+
+    from sentinel import camera_mode
+    from sentinel.harness import make_backend
+
+    path = tmp_path / "clip.avi"
+    writer = cv2.VideoWriter(str(path), cv2.VideoWriter_fourcc(*"MJPG"), 10, (64, 48))
+    assert writer.isOpened()
+    rng = np.random.default_rng(2027)
+    for _ in range(12):
+        writer.write(rng.integers(0, 256, size=(48, 64, 3), dtype=np.uint8))
+    writer.release()
+    backend, _ = make_backend("xs")
+    report = camera_mode.run(backend, str(path), max_frames=10)
+    assert report["frames"] == 10 and report["last_pred"] is not None

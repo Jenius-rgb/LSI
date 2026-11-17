@@ -228,6 +228,15 @@ Belum dari dokumen resmi:
 
 PROMPT_UPDATE_ZERO7 dari sesi sebelumnya sudah selesai (T0–T10 `[x]`); tidak ada tahap yang tersisa. Sesi 17 Nov 2026 mengerjakan PROMPT_PARHI_KAMERA_TANPA_PI.
 
+## Pertanyaan untuk panitia (17 Nov 2026)
+
+1. **Q1 Daya:** bagaimana cara memberi daya ZERO7 tanpa Raspberry Pi? Dokumen hanya menyebut daya dari header Pi (IN-41). Rekomendasi: tanyakan; sampai ada jawaban, pakai Raspberry Pi mana pun hanya sebagai sumber daya.
+2. **Q2 Kamera di Class 2:** apakah input kamera real-time wajib juga untuk Class 2 bila tugasnya klasifikasi gambar? Rekomendasi: anggap wajib (`docs/CAMERA.md`).
+3. **Q3 Raspberry Pi 4:** apakah ZERO7 resmi kompatibel dengan Pi 4? Rekomendasi: minta konfirmasi tertulis.
+4. **Q4 Dokumen:** kapan `Zero7.xdc`, ZERO7 User Manual, dan skematik terbit? Rekomendasi: minta bersama board.
+5. **Q5 Ukuran tim:** halaman Inggris 1–3 orang, halaman Jepang paling banyak 4; tim berjumlah 4. Rekomendasi: konfirmasi tertulis.
+6. **Q6 Kategori dan format laporan:** konfirmasi Class 2 Level 3 dan format laporan sintesis. Rekomendasi: tanyakan sekaligus.
+
 ## Terblokir
 
 Diperbarui 2026-11-16.
@@ -341,3 +350,4 @@ Ditulis 2026-11-16 malam, sesudah jawaban user atas pertanyaan sesi.
 | 2026-11-17 | M22 | `python tools/run.py sim bringup jtag_session_xs spi_session_xs system_s_k8_c1 system_micro ... --record` | [SIM] `bringup` PASS 10/10, `jtag_session_xs` PASS 25/25, `spi_session_xs` PASS 224/224, sistem lulus semua |
 | 2026-11-17 | M22 | `python tools/run.py bringup blink/vcco_probe/io_test/jtag_host --accept-inferred-io` | [VIVADO] empat bitstream bring-up di `build/bringup/` (tidak di-commit); `top_jtag`: 8.048 LUT (55,12%), 16,5 block RAM, WNS +0,147 ns di 125 MHz [VIVADO-STA] |
 | 2026-11-17 | M22 | `python board/bringup.py id/validate --dry-run --host jtag` | [SIM] ID OK, 3/3 gambar sama dengan golden model lewat jalur JTAG (model perangkat) |
+| 2026-11-17 | Tugas B | kutipan dari `GUIDE_LSI_2027_FINALE.pdf` (OCR) dan `shiyou_1.html` (Shift_JIS, decode lokal); harga dari raspberrypi.com, waveshare.com, logitech.com (akses 17 Nov 2026); `python -m sentinel.camera_mode --source ../build/camera_dryrun.avi` | `docs/CAMERA.md`: kamera wajib di Class 1 [OFFICIAL], Class 2 [UNKNOWN] (Q2); rekomendasi webcam USB; uji tanpa Pi lulus [SYNTHETIC] |
