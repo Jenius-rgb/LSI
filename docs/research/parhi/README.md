@@ -41,7 +41,7 @@ Statements about SENTINEL are [INFERENCE] unless they point to a file or result 
 | 7 | Systolic Architecture Design | 204–241 | read 17 Nov 2026 | [CH07.md](CH07.md); book p. 188 not in the scan (book page = PDF − 15 from here) |
 | 8 | Fast Convolution | 242–268 | read 17 Nov 2026 | [CH08.md](CH08.md); no failed pages |
 | 9 | Algorithmic Strength Reduction in Filters and Transforms | 269–325 | read 17 Nov 2026 | [CH09.md](CH09.md); book p. 254 not in the scan (book page = PDF − 14 from here) |
-| 10 | Pipelined and Parallel Recursive and Adaptive Filters | 326–388 | not read | |
+| 10 | Pipelined and Parallel Recursive and Adaptive Filters | 326–388 | read 17 Nov 2026 | [CH10.md](CH10.md); book p. 312 not in the scan (book page = PDF − 13 from here) |
 | 11 | Scaling and Roundoff Noise | 389–431 | not read | |
 | 12 | Digital Lattice Filter Structures | 432–487 | not read | |
 | 13 | Bit-Level Arithmetic Architectures | 488–539 | not read | |
@@ -53,5 +53,5 @@ Statements about SENTINEL are [INFERENCE] unless they point to a file or result 
 | A–G | Appendices: shortest paths, scheduling and allocation, Euclidean GCD, Schur polynomials, fast adders and multipliers, bit-serial scheduling, FIR coefficient quantization | 726–784 | not read | |
 
 Chapter titles 3–18 and the appendices are taken from the OCR of the contents pages (PDF pages 5–10);
-titles 10 and 13 are to be confirmed (titles 1, 2, 7, 8 and 9 confirmed from their first pages) from their first pages (the OCR of those contents lines
+title 13 is to be confirmed (titles 1, 2 and 7–10 confirmed from their first pages) from their first pages (the OCR of those contents lines
 was incomplete). PDF page ranges come from the first section heading of each chapter ("N.1 INTRODUCTION") in the OCR text; the index is on PDF pages 785–791. Appendix A starts on 726, B 732, C 752, D 756, E 761, F 771, G 778.
