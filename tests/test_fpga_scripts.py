@@ -284,3 +284,26 @@ def test_official_turbo_override_needs_a_tag():
     assert args.turbo_mhz == 250.0
     tcl = (ROOT / "fpga" / "synth_official.tcl").read_text(encoding="utf-8")
     assert "turbo_arg" in tcl and "ip_[file tail $outdir]" in tcl  # parallel side runs keep separate IP folders
+
+
+def test_tagged_matrix_run_keeps_the_other_rows(tmp_path):
+    """A tagged OOC run adds or replaces its own rows; the committed rows of other variants stay in summary.csv."""
+    out = tmp_path / "summary.csv"
+    pr.write_csv([{"variant": "a_final", "lut": 1.0}, {"variant": "b_pre029", "lut": 2.0}], out, tag="")
+    pr.write_csv([{"variant": "b_pre029", "lut": 3.0}, {"variant": "c_pre029", "lut": 4.0}], out, tag="pre029")
+    rows = pr.read_csv(out)
+    assert [r["variant"] for r in rows] == ["a_final", "b_pre029", "c_pre029"]
+    assert [r["lut"] for r in rows] == ["1.0", "3.0", "4.0"]
+    pr.write_csv([{"variant": "d_final", "lut": 5.0}], out, tag="")  # an untagged run still rebuilds the whole table
+    assert [r["variant"] for r in pr.read_csv(out)] == ["d_final"]
+
+
+def test_official_summary_states_the_turbo_frequency():
+    """A side run with --turbo-mhz must not be described as analysed at turbo level 0."""
+    import run_official as ro
+
+    same = [{"name": "clk_fast_safe", "period_ns": 8.0}, {"name": "clk_fast_turbo", "period_ns": 8.0}]
+    faster = [{"name": "clk_fast_safe", "period_ns": 8.0}, {"name": "clk_fast_turbo", "period_ns": 4.0}]
+    assert "turbo level 0, which equals the safe frequency" in ro.turbo_note(same)
+    note = ro.turbo_note(faster)
+    assert "250 MHz" in note and "equals the safe frequency" not in note

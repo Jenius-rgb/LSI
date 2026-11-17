@@ -1,0 +1,1297 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2025.2 (win64) Build 6299465 Fri Nov 14 19:35:11 GMT 2025
+| Date         : Tue Nov 17 23:53:41 2026
+| Host         : LAPTOP-ER7J7A89 running 64-bit major release  (build 9200)
+| Command      : report_timing -max_paths 20 -nworst 1 -group clk_fast -file {C:\AF\SENTINEL-LSI-2027\fpga\reports\xc7s25csga225-1_s_k8_impl0_c1_pre029/timing_fast.rpt}
+| Design       : engine
+| Device       : 7s25-csga225
+| Speed File   : -1  PRODUCTION 1.23 2018-06-13
+| Design State : Routed
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack (VIOLATED) :        -0.035ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Destination:            u_fast/u_lanes/data_lane[5].impl.u/p_reg[16]/D
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            6.400ns  (clk_fast rise@6.400ns - clk_fast rise@0.000ns)
+  Data Path Delay:        6.460ns  (logic 2.911ns (45.065%)  route 3.549ns (54.935%))
+  Logic Levels:           9  (CARRY4=5 LUT3=1 LUT4=1 LUT6=2)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 7.324 - 6.400 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.973     0.973    u_fast/u_lanes/csum_lane[1].impl.u/clk_fast
+    SLICE_X22Y35         FDRE                                         r  u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X22Y35         FDRE (Prop_fdre_C_Q)         0.518     1.491 r  u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[2]/Q
+                         net (fo=133, routed)         1.341     2.832    u_fast/u_lanes/data_lane[5].impl.u/a_r[2]
+    SLICE_X12Y35         LUT6 (Prop_lut6_I3_O)        0.124     2.956 r  u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_31/O
+                         net (fo=2, routed)           0.560     3.516    u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_31_n_0
+    SLICE_X11Y35         LUT6 (Prop_lut6_I0_O)        0.124     3.640 r  u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_35__4/O
+                         net (fo=1, routed)           0.000     3.640    u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_35__4_n_0
+    SLICE_X11Y35         CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532     4.172 r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[11]_i_12/CO[3]
+                         net (fo=1, routed)           0.000     4.172    u_fast/u_lanes/data_lane[5].impl.u/p_reg[11]_i_12_n_0
+    SLICE_X11Y36         CARRY4 (Prop_carry4_CI_O[2])
+                                                      0.239     4.411 r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[15]_i_10/O[2]
+                         net (fo=2, routed)           0.955     5.366    u_fast/u_lanes/data_lane[5].impl.u/p_reg[15]_i_10_n_5
+    SLICE_X14Y36         LUT3 (Prop_lut3_I2_O)        0.331     5.697 r  u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_2/O
+                         net (fo=2, routed)           0.692     6.390    u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_2_n_0
+    SLICE_X14Y36         LUT4 (Prop_lut4_I0_O)        0.331     6.721 r  u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_6/O
+                         net (fo=1, routed)           0.000     6.721    u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_6_n_0
+    SLICE_X14Y36         CARRY4 (Prop_carry4_S[3]_CO[3])
+                                                      0.376     7.097 r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[11]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     7.097    u_fast/u_lanes/data_lane[5].impl.u/p_reg[11]_i_1_n_0
+    SLICE_X14Y37         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.117     7.214 r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[15]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     7.214    u_fast/u_lanes/data_lane[5].impl.u/p_reg[15]_i_1_n_0
+    SLICE_X14Y38         CARRY4 (Prop_carry4_CI_O[0])
+                                                      0.219     7.433 r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[16]_i_1/O[0]
+                         net (fo=1, routed)           0.000     7.433    u_fast/u_lanes/data_lane[5].impl.u/p_0_in[16]
+    SLICE_X14Y38         FDRE                                         r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[16]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      6.400     6.400 r  
+                                                      0.000     6.400 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.924     7.324    u_fast/u_lanes/data_lane[5].impl.u/clk_fast
+    SLICE_X14Y38         FDRE                                         r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[16]/C
+                         clock pessimism              0.000     7.324    
+                         clock uncertainty           -0.035     7.289    
+    SLICE_X14Y38         FDRE (Setup_fdre_C_D)        0.109     7.398    u_fast/u_lanes/data_lane[5].impl.u/p_reg[16]
+  -------------------------------------------------------------------
+                         required time                          7.398    
+                         arrival time                          -7.433    
+  -------------------------------------------------------------------
+                         slack                                 -0.035    
+
+Slack (VIOLATED) :        -0.022ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Destination:            u_fast/u_lanes/data_lane[5].impl.u/p_reg[13]/D
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            6.400ns  (clk_fast rise@6.400ns - clk_fast rise@0.000ns)
+  Data Path Delay:        6.447ns  (logic 2.898ns (44.954%)  route 3.549ns (55.046%))
+  Logic Levels:           8  (CARRY4=4 LUT3=1 LUT4=1 LUT6=2)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 7.324 - 6.400 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.973     0.973    u_fast/u_lanes/csum_lane[1].impl.u/clk_fast
+    SLICE_X22Y35         FDRE                                         r  u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X22Y35         FDRE (Prop_fdre_C_Q)         0.518     1.491 r  u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[2]/Q
+                         net (fo=133, routed)         1.341     2.832    u_fast/u_lanes/data_lane[5].impl.u/a_r[2]
+    SLICE_X12Y35         LUT6 (Prop_lut6_I3_O)        0.124     2.956 r  u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_31/O
+                         net (fo=2, routed)           0.560     3.516    u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_31_n_0
+    SLICE_X11Y35         LUT6 (Prop_lut6_I0_O)        0.124     3.640 r  u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_35__4/O
+                         net (fo=1, routed)           0.000     3.640    u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_35__4_n_0
+    SLICE_X11Y35         CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532     4.172 r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[11]_i_12/CO[3]
+                         net (fo=1, routed)           0.000     4.172    u_fast/u_lanes/data_lane[5].impl.u/p_reg[11]_i_12_n_0
+    SLICE_X11Y36         CARRY4 (Prop_carry4_CI_O[2])
+                                                      0.239     4.411 r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[15]_i_10/O[2]
+                         net (fo=2, routed)           0.955     5.366    u_fast/u_lanes/data_lane[5].impl.u/p_reg[15]_i_10_n_5
+    SLICE_X14Y36         LUT3 (Prop_lut3_I2_O)        0.331     5.697 r  u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_2/O
+                         net (fo=2, routed)           0.692     6.390    u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_2_n_0
+    SLICE_X14Y36         LUT4 (Prop_lut4_I0_O)        0.331     6.721 r  u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_6/O
+                         net (fo=1, routed)           0.000     6.721    u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_6_n_0
+    SLICE_X14Y36         CARRY4 (Prop_carry4_S[3]_CO[3])
+                                                      0.376     7.097 r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[11]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     7.097    u_fast/u_lanes/data_lane[5].impl.u/p_reg[11]_i_1_n_0
+    SLICE_X14Y37         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.323     7.420 r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[15]_i_1/O[1]
+                         net (fo=1, routed)           0.000     7.420    u_fast/u_lanes/data_lane[5].impl.u/p_0_in[13]
+    SLICE_X14Y37         FDRE                                         r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[13]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      6.400     6.400 r  
+                                                      0.000     6.400 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.924     7.324    u_fast/u_lanes/data_lane[5].impl.u/clk_fast
+    SLICE_X14Y37         FDRE                                         r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[13]/C
+                         clock pessimism              0.000     7.324    
+                         clock uncertainty           -0.035     7.289    
+    SLICE_X14Y37         FDRE (Setup_fdre_C_D)        0.109     7.398    u_fast/u_lanes/data_lane[5].impl.u/p_reg[13]
+  -------------------------------------------------------------------
+                         required time                          7.398    
+                         arrival time                          -7.420    
+  -------------------------------------------------------------------
+                         slack                                 -0.022    
+
+Slack (VIOLATED) :        -0.014ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Destination:            u_fast/u_lanes/data_lane[5].impl.u/p_reg[15]/D
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            6.400ns  (clk_fast rise@6.400ns - clk_fast rise@0.000ns)
+  Data Path Delay:        6.439ns  (logic 2.890ns (44.885%)  route 3.549ns (55.115%))
+  Logic Levels:           8  (CARRY4=4 LUT3=1 LUT4=1 LUT6=2)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 7.324 - 6.400 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.973     0.973    u_fast/u_lanes/csum_lane[1].impl.u/clk_fast
+    SLICE_X22Y35         FDRE                                         r  u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X22Y35         FDRE (Prop_fdre_C_Q)         0.518     1.491 r  u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[2]/Q
+                         net (fo=133, routed)         1.341     2.832    u_fast/u_lanes/data_lane[5].impl.u/a_r[2]
+    SLICE_X12Y35         LUT6 (Prop_lut6_I3_O)        0.124     2.956 r  u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_31/O
+                         net (fo=2, routed)           0.560     3.516    u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_31_n_0
+    SLICE_X11Y35         LUT6 (Prop_lut6_I0_O)        0.124     3.640 r  u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_35__4/O
+                         net (fo=1, routed)           0.000     3.640    u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_35__4_n_0
+    SLICE_X11Y35         CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532     4.172 r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[11]_i_12/CO[3]
+                         net (fo=1, routed)           0.000     4.172    u_fast/u_lanes/data_lane[5].impl.u/p_reg[11]_i_12_n_0
+    SLICE_X11Y36         CARRY4 (Prop_carry4_CI_O[2])
+                                                      0.239     4.411 r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[15]_i_10/O[2]
+                         net (fo=2, routed)           0.955     5.366    u_fast/u_lanes/data_lane[5].impl.u/p_reg[15]_i_10_n_5
+    SLICE_X14Y36         LUT3 (Prop_lut3_I2_O)        0.331     5.697 r  u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_2/O
+                         net (fo=2, routed)           0.692     6.390    u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_2_n_0
+    SLICE_X14Y36         LUT4 (Prop_lut4_I0_O)        0.331     6.721 r  u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_6/O
+                         net (fo=1, routed)           0.000     6.721    u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_6_n_0
+    SLICE_X14Y36         CARRY4 (Prop_carry4_S[3]_CO[3])
+                                                      0.376     7.097 r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[11]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     7.097    u_fast/u_lanes/data_lane[5].impl.u/p_reg[11]_i_1_n_0
+    SLICE_X14Y37         CARRY4 (Prop_carry4_CI_O[3])
+                                                      0.315     7.412 r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[15]_i_1/O[3]
+                         net (fo=1, routed)           0.000     7.412    u_fast/u_lanes/data_lane[5].impl.u/p_0_in[15]
+    SLICE_X14Y37         FDRE                                         r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[15]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      6.400     6.400 r  
+                                                      0.000     6.400 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.924     7.324    u_fast/u_lanes/data_lane[5].impl.u/clk_fast
+    SLICE_X14Y37         FDRE                                         r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[15]/C
+                         clock pessimism              0.000     7.324    
+                         clock uncertainty           -0.035     7.289    
+    SLICE_X14Y37         FDRE (Setup_fdre_C_D)        0.109     7.398    u_fast/u_lanes/data_lane[5].impl.u/p_reg[15]
+  -------------------------------------------------------------------
+                         required time                          7.398    
+                         arrival time                          -7.412    
+  -------------------------------------------------------------------
+                         slack                                 -0.014    
+
+Slack (MET) :             0.009ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[3]/C
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Destination:            u_fast/u_lanes/data_lane[6].impl.u/p_reg[16]/D
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            6.400ns  (clk_fast rise@6.400ns - clk_fast rise@0.000ns)
+  Data Path Delay:        6.416ns  (logic 3.071ns (47.865%)  route 3.345ns (52.135%))
+  Logic Levels:           10  (CARRY4=6 LUT2=1 LUT4=2 LUT6=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 7.324 - 6.400 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.973     0.973    u_fast/u_lanes/csum_lane[1].impl.u/clk_fast
+    SLICE_X21Y35         FDRE                                         r  u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[3]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X21Y35         FDRE (Prop_fdre_C_Q)         0.456     1.429 f  u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[3]/Q
+                         net (fo=139, routed)         1.345     2.774    u_fast/u_lanes/data_lane[6].impl.u/a_r[3]
+    SLICE_X15Y37         LUT2 (Prop_lut2_I0_O)        0.152     2.926 r  u_fast/u_lanes/data_lane[6].impl.u/p[2]_i_9/O
+                         net (fo=1, routed)           0.434     3.360    u_fast/u_lanes/csum_lane[1].impl.u/p_reg[2]_6
+    SLICE_X13Y37         LUT6 (Prop_lut6_I1_O)        0.332     3.692 r  u_fast/u_lanes/csum_lane[1].impl.u/p[2]_i_5__5/O
+                         net (fo=1, routed)           0.000     3.692    u_fast/u_lanes/data_lane[6].impl.u/p_reg[2]_0[2]
+    SLICE_X13Y37         CARRY4 (Prop_carry4_S[3]_CO[3])
+                                                      0.401     4.093 r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[2]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     4.093    u_fast/u_lanes/data_lane[6].impl.u/p_reg[2]_i_1_n_0
+    SLICE_X13Y38         CARRY4 (Prop_carry4_CI_O[2])
+                                                      0.239     4.332 r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[11]_i_12/O[2]
+                         net (fo=2, routed)           0.886     5.219    u_fast/u_lanes/data_lane[6].impl.u/p_reg[11]_i_12_n_5
+    SLICE_X10Y39         LUT4 (Prop_lut4_I3_O)        0.331     5.550 r  u_fast/u_lanes/data_lane[6].impl.u/p[7]_i_2/O
+                         net (fo=2, routed)           0.679     6.229    u_fast/u_lanes/data_lane[6].impl.u/p[7]_i_2_n_0
+    SLICE_X10Y39         LUT4 (Prop_lut4_I3_O)        0.331     6.560 r  u_fast/u_lanes/data_lane[6].impl.u/p[7]_i_6/O
+                         net (fo=1, routed)           0.000     6.560    u_fast/u_lanes/data_lane[6].impl.u/p[7]_i_6_n_0
+    SLICE_X10Y39         CARRY4 (Prop_carry4_S[3]_CO[3])
+                                                      0.376     6.936 r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[7]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     6.936    u_fast/u_lanes/data_lane[6].impl.u/p_reg[7]_i_1_n_0
+    SLICE_X10Y40         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.117     7.053 r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[11]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     7.053    u_fast/u_lanes/data_lane[6].impl.u/p_reg[11]_i_1_n_0
+    SLICE_X10Y41         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.117     7.170 r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[15]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     7.170    u_fast/u_lanes/data_lane[6].impl.u/p_reg[15]_i_1_n_0
+    SLICE_X10Y42         CARRY4 (Prop_carry4_CI_O[0])
+                                                      0.219     7.389 r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[16]_i_1/O[0]
+                         net (fo=1, routed)           0.000     7.389    u_fast/u_lanes/data_lane[6].impl.u/p_0_in[16]
+    SLICE_X10Y42         FDRE                                         r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[16]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      6.400     6.400 r  
+                                                      0.000     6.400 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.924     7.324    u_fast/u_lanes/data_lane[6].impl.u/clk_fast
+    SLICE_X10Y42         FDRE                                         r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[16]/C
+                         clock pessimism              0.000     7.324    
+                         clock uncertainty           -0.035     7.289    
+    SLICE_X10Y42         FDRE (Setup_fdre_C_D)        0.109     7.398    u_fast/u_lanes/data_lane[6].impl.u/p_reg[16]
+  -------------------------------------------------------------------
+                         required time                          7.398    
+                         arrival time                          -7.389    
+  -------------------------------------------------------------------
+                         slack                                  0.009    
+
+Slack (MET) :             0.022ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[3]/C
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Destination:            u_fast/u_lanes/data_lane[6].impl.u/p_reg[13]/D
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            6.400ns  (clk_fast rise@6.400ns - clk_fast rise@0.000ns)
+  Data Path Delay:        6.403ns  (logic 3.058ns (47.759%)  route 3.345ns (52.241%))
+  Logic Levels:           9  (CARRY4=5 LUT2=1 LUT4=2 LUT6=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 7.324 - 6.400 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.973     0.973    u_fast/u_lanes/csum_lane[1].impl.u/clk_fast
+    SLICE_X21Y35         FDRE                                         r  u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[3]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X21Y35         FDRE (Prop_fdre_C_Q)         0.456     1.429 f  u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[3]/Q
+                         net (fo=139, routed)         1.345     2.774    u_fast/u_lanes/data_lane[6].impl.u/a_r[3]
+    SLICE_X15Y37         LUT2 (Prop_lut2_I0_O)        0.152     2.926 r  u_fast/u_lanes/data_lane[6].impl.u/p[2]_i_9/O
+                         net (fo=1, routed)           0.434     3.360    u_fast/u_lanes/csum_lane[1].impl.u/p_reg[2]_6
+    SLICE_X13Y37         LUT6 (Prop_lut6_I1_O)        0.332     3.692 r  u_fast/u_lanes/csum_lane[1].impl.u/p[2]_i_5__5/O
+                         net (fo=1, routed)           0.000     3.692    u_fast/u_lanes/data_lane[6].impl.u/p_reg[2]_0[2]
+    SLICE_X13Y37         CARRY4 (Prop_carry4_S[3]_CO[3])
+                                                      0.401     4.093 r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[2]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     4.093    u_fast/u_lanes/data_lane[6].impl.u/p_reg[2]_i_1_n_0
+    SLICE_X13Y38         CARRY4 (Prop_carry4_CI_O[2])
+                                                      0.239     4.332 r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[11]_i_12/O[2]
+                         net (fo=2, routed)           0.886     5.219    u_fast/u_lanes/data_lane[6].impl.u/p_reg[11]_i_12_n_5
+    SLICE_X10Y39         LUT4 (Prop_lut4_I3_O)        0.331     5.550 r  u_fast/u_lanes/data_lane[6].impl.u/p[7]_i_2/O
+                         net (fo=2, routed)           0.679     6.229    u_fast/u_lanes/data_lane[6].impl.u/p[7]_i_2_n_0
+    SLICE_X10Y39         LUT4 (Prop_lut4_I3_O)        0.331     6.560 r  u_fast/u_lanes/data_lane[6].impl.u/p[7]_i_6/O
+                         net (fo=1, routed)           0.000     6.560    u_fast/u_lanes/data_lane[6].impl.u/p[7]_i_6_n_0
+    SLICE_X10Y39         CARRY4 (Prop_carry4_S[3]_CO[3])
+                                                      0.376     6.936 r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[7]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     6.936    u_fast/u_lanes/data_lane[6].impl.u/p_reg[7]_i_1_n_0
+    SLICE_X10Y40         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.117     7.053 r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[11]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     7.053    u_fast/u_lanes/data_lane[6].impl.u/p_reg[11]_i_1_n_0
+    SLICE_X10Y41         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.323     7.376 r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[15]_i_1/O[1]
+                         net (fo=1, routed)           0.000     7.376    u_fast/u_lanes/data_lane[6].impl.u/p_0_in[13]
+    SLICE_X10Y41         FDRE                                         r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[13]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      6.400     6.400 r  
+                                                      0.000     6.400 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.924     7.324    u_fast/u_lanes/data_lane[6].impl.u/clk_fast
+    SLICE_X10Y41         FDRE                                         r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[13]/C
+                         clock pessimism              0.000     7.324    
+                         clock uncertainty           -0.035     7.289    
+    SLICE_X10Y41         FDRE (Setup_fdre_C_D)        0.109     7.398    u_fast/u_lanes/data_lane[6].impl.u/p_reg[13]
+  -------------------------------------------------------------------
+                         required time                          7.398    
+                         arrival time                          -7.376    
+  -------------------------------------------------------------------
+                         slack                                  0.022    
+
+Slack (MET) :             0.030ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[3]/C
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Destination:            u_fast/u_lanes/data_lane[6].impl.u/p_reg[15]/D
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            6.400ns  (clk_fast rise@6.400ns - clk_fast rise@0.000ns)
+  Data Path Delay:        6.395ns  (logic 3.050ns (47.693%)  route 3.345ns (52.307%))
+  Logic Levels:           9  (CARRY4=5 LUT2=1 LUT4=2 LUT6=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 7.324 - 6.400 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.973     0.973    u_fast/u_lanes/csum_lane[1].impl.u/clk_fast
+    SLICE_X21Y35         FDRE                                         r  u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[3]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X21Y35         FDRE (Prop_fdre_C_Q)         0.456     1.429 f  u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[3]/Q
+                         net (fo=139, routed)         1.345     2.774    u_fast/u_lanes/data_lane[6].impl.u/a_r[3]
+    SLICE_X15Y37         LUT2 (Prop_lut2_I0_O)        0.152     2.926 r  u_fast/u_lanes/data_lane[6].impl.u/p[2]_i_9/O
+                         net (fo=1, routed)           0.434     3.360    u_fast/u_lanes/csum_lane[1].impl.u/p_reg[2]_6
+    SLICE_X13Y37         LUT6 (Prop_lut6_I1_O)        0.332     3.692 r  u_fast/u_lanes/csum_lane[1].impl.u/p[2]_i_5__5/O
+                         net (fo=1, routed)           0.000     3.692    u_fast/u_lanes/data_lane[6].impl.u/p_reg[2]_0[2]
+    SLICE_X13Y37         CARRY4 (Prop_carry4_S[3]_CO[3])
+                                                      0.401     4.093 r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[2]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     4.093    u_fast/u_lanes/data_lane[6].impl.u/p_reg[2]_i_1_n_0
+    SLICE_X13Y38         CARRY4 (Prop_carry4_CI_O[2])
+                                                      0.239     4.332 r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[11]_i_12/O[2]
+                         net (fo=2, routed)           0.886     5.219    u_fast/u_lanes/data_lane[6].impl.u/p_reg[11]_i_12_n_5
+    SLICE_X10Y39         LUT4 (Prop_lut4_I3_O)        0.331     5.550 r  u_fast/u_lanes/data_lane[6].impl.u/p[7]_i_2/O
+                         net (fo=2, routed)           0.679     6.229    u_fast/u_lanes/data_lane[6].impl.u/p[7]_i_2_n_0
+    SLICE_X10Y39         LUT4 (Prop_lut4_I3_O)        0.331     6.560 r  u_fast/u_lanes/data_lane[6].impl.u/p[7]_i_6/O
+                         net (fo=1, routed)           0.000     6.560    u_fast/u_lanes/data_lane[6].impl.u/p[7]_i_6_n_0
+    SLICE_X10Y39         CARRY4 (Prop_carry4_S[3]_CO[3])
+                                                      0.376     6.936 r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[7]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     6.936    u_fast/u_lanes/data_lane[6].impl.u/p_reg[7]_i_1_n_0
+    SLICE_X10Y40         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.117     7.053 r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[11]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     7.053    u_fast/u_lanes/data_lane[6].impl.u/p_reg[11]_i_1_n_0
+    SLICE_X10Y41         CARRY4 (Prop_carry4_CI_O[3])
+                                                      0.315     7.368 r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[15]_i_1/O[3]
+                         net (fo=1, routed)           0.000     7.368    u_fast/u_lanes/data_lane[6].impl.u/p_0_in[15]
+    SLICE_X10Y41         FDRE                                         r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[15]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      6.400     6.400 r  
+                                                      0.000     6.400 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.924     7.324    u_fast/u_lanes/data_lane[6].impl.u/clk_fast
+    SLICE_X10Y41         FDRE                                         r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[15]/C
+                         clock pessimism              0.000     7.324    
+                         clock uncertainty           -0.035     7.289    
+    SLICE_X10Y41         FDRE (Setup_fdre_C_D)        0.109     7.398    u_fast/u_lanes/data_lane[6].impl.u/p_reg[15]
+  -------------------------------------------------------------------
+                         required time                          7.398    
+                         arrival time                          -7.368    
+  -------------------------------------------------------------------
+                         slack                                  0.030    
+
+Slack (MET) :             0.053ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Destination:            u_fast/u_lanes/csum_lane[1].impl.u/p_reg[21]/D
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            6.400ns  (clk_fast rise@6.400ns - clk_fast rise@0.000ns)
+  Data Path Delay:        6.325ns  (logic 2.846ns (44.996%)  route 3.479ns (55.004%))
+  Logic Levels:           9  (CARRY4=6 LUT3=1 LUT6=2)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 7.324 - 6.400 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.973     0.973    u_fast/u_lanes/csum_lane[1].impl.u/clk_fast
+    SLICE_X23Y33         FDRE                                         r  u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X23Y33         FDRE (Prop_fdre_C_Q)         0.456     1.429 r  u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[0]/Q
+                         net (fo=142, routed)         1.207     2.636    u_fast/u_lanes/csum_lane[1].impl.u/a_r[0]
+    SLICE_X25Y35         LUT6 (Prop_lut6_I4_O)        0.124     2.760 r  u_fast/u_lanes/csum_lane[1].impl.u/p[11]_i_24/O
+                         net (fo=2, routed)           0.570     3.330    u_fast/u_lanes/csum_lane[1].impl.u/p[11]_i_24_n_0
+    SLICE_X24Y33         LUT6 (Prop_lut6_I0_O)        0.124     3.454 r  u_fast/u_lanes/csum_lane[1].impl.u/p[11]_i_28/O
+                         net (fo=1, routed)           0.000     3.454    u_fast/u_lanes/csum_lane[1].impl.u/p[11]_i_28_n_0
+    SLICE_X24Y33         CARRY4 (Prop_carry4_S[0]_O[2])
+                                                      0.547     4.001 r  u_fast/u_lanes/csum_lane[1].impl.u/p_reg[11]_i_13/O[2]
+                         net (fo=2, routed)           0.930     4.931    u_fast/u_lanes/csum_lane[1].impl.u/p_reg[11]_i_13_n_5
+    SLICE_X25Y36         LUT3 (Prop_lut3_I2_O)        0.331     5.262 r  u_fast/u_lanes/csum_lane[1].impl.u/p[7]_i_2/O
+                         net (fo=2, routed)           0.772     6.034    u_fast/u_lanes/csum_lane[1].impl.u/p[7]_i_2_n_0
+    SLICE_X25Y36         CARRY4 (Prop_carry4_DI[3]_CO[3])
+                                                      0.588     6.622 r  u_fast/u_lanes/csum_lane[1].impl.u/p_reg[7]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     6.622    u_fast/u_lanes/csum_lane[1].impl.u/p_reg[7]_i_1_n_0
+    SLICE_X25Y37         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     6.736 r  u_fast/u_lanes/csum_lane[1].impl.u/p_reg[11]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     6.736    u_fast/u_lanes/csum_lane[1].impl.u/p_reg[11]_i_1_n_0
+    SLICE_X25Y38         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     6.850 r  u_fast/u_lanes/csum_lane[1].impl.u/p_reg[15]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     6.850    u_fast/u_lanes/csum_lane[1].impl.u/p_reg[15]_i_1_n_0
+    SLICE_X25Y39         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     6.964 r  u_fast/u_lanes/csum_lane[1].impl.u/p_reg[19]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     6.964    u_fast/u_lanes/csum_lane[1].impl.u/p_reg[19]_i_1_n_0
+    SLICE_X25Y40         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.334     7.298 r  u_fast/u_lanes/csum_lane[1].impl.u/p_reg[22]_i_1/O[1]
+                         net (fo=1, routed)           0.000     7.298    u_fast/u_lanes/csum_lane[1].impl.u/p_0_in[21]
+    SLICE_X25Y40         FDRE                                         r  u_fast/u_lanes/csum_lane[1].impl.u/p_reg[21]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      6.400     6.400 r  
+                                                      0.000     6.400 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.924     7.324    u_fast/u_lanes/csum_lane[1].impl.u/clk_fast
+    SLICE_X25Y40         FDRE                                         r  u_fast/u_lanes/csum_lane[1].impl.u/p_reg[21]/C
+                         clock pessimism              0.000     7.324    
+                         clock uncertainty           -0.035     7.289    
+    SLICE_X25Y40         FDRE (Setup_fdre_C_D)        0.062     7.351    u_fast/u_lanes/csum_lane[1].impl.u/p_reg[21]
+  -------------------------------------------------------------------
+                         required time                          7.351    
+                         arrival time                          -7.298    
+  -------------------------------------------------------------------
+                         slack                                  0.053    
+
+Slack (MET) :             0.057ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/inj_ctrl.fired_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Destination:            u_fast/u_lanes/inj_ctrl.lane_fire_reg[1][3]/R
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            4.480ns  (MaxDelay Path 4.480ns)
+  Data Path Delay:        3.612ns  (logic 0.981ns (27.163%)  route 2.631ns (72.837%))
+  Logic Levels:           4  (LUT2=2 LUT3=1 LUT6=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+  Timing Exception:       MaxDelay Path 4.480ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.973     0.973    u_fast/u_lanes/clk_fast
+    SLICE_X16Y37         FDRE                                         r  u_fast/u_lanes/inj_ctrl.fired_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X16Y37         FDRE (Prop_fdre_C_Q)         0.456     1.429 r  u_fast/u_lanes/inj_ctrl.fired_reg[1]/Q
+                         net (fo=2, routed)           0.507     1.936    u_fast/u_lanes/p_0_in45_in
+    SLICE_X16Y37         LUT2 (Prop_lut2_I1_O)        0.124     2.060 f  u_fast/u_lanes/inj_ctrl.fire_r[1]_i_3/O
+                         net (fo=1, routed)           0.280     2.339    u_fast/u_lanes/inj_ctrl.fire_r[1]_i_3_n_0
+    SLICE_X16Y37         LUT6 (Prop_lut6_I5_O)        0.124     2.463 f  u_fast/u_lanes/inj_ctrl.fire_r[1]_i_1/O
+                         net (fo=2, routed)           0.314     2.777    u_fast/u_lanes/p_1_in
+    SLICE_X16Y38         LUT3 (Prop_lut3_I2_O)        0.124     2.901 f  u_fast/u_lanes/inj_ctrl.lane_fire[1][8]_i_2/O
+                         net (fo=5, routed)           0.999     3.900    u_fast/u_lanes/inj_ctrl.lane_fire[1][8]_i_2_n_0
+    SLICE_X15Y40         LUT2 (Prop_lut2_I0_O)        0.153     4.053 r  u_fast/u_lanes/inj_ctrl.lane_fire[1][6]_i_1/O
+                         net (fo=4, routed)           0.532     4.585    u_fast/u_lanes/inj_ctrl.lane_fire[1][6]_i_1_n_0
+    SLICE_X14Y40         FDRE                                         r  u_fast/u_lanes/inj_ctrl.lane_fire_reg[1][3]/R
+  -------------------------------------------------------------------    -------------------
+
+                         max delay                    4.480     4.480    
+                                                      0.000     4.480 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.924     5.404    u_fast/u_lanes/clk_fast
+    SLICE_X14Y40         FDRE                                         r  u_fast/u_lanes/inj_ctrl.lane_fire_reg[1][3]/C
+                         clock pessimism              0.000     5.404    
+                         clock uncertainty           -0.035     5.369    
+    SLICE_X14Y40         FDRE (Setup_fdre_C_R)       -0.727     4.642    u_fast/u_lanes/inj_ctrl.lane_fire_reg[1][3]
+  -------------------------------------------------------------------
+                         required time                          4.642    
+                         arrival time                          -4.585    
+  -------------------------------------------------------------------
+                         slack                                  0.057    
+
+Slack (MET) :             0.057ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/inj_ctrl.fired_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Destination:            u_fast/u_lanes/inj_ctrl.lane_fire_reg[1][4]/R
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            4.480ns  (MaxDelay Path 4.480ns)
+  Data Path Delay:        3.612ns  (logic 0.981ns (27.163%)  route 2.631ns (72.837%))
+  Logic Levels:           4  (LUT2=2 LUT3=1 LUT6=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+  Timing Exception:       MaxDelay Path 4.480ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.973     0.973    u_fast/u_lanes/clk_fast
+    SLICE_X16Y37         FDRE                                         r  u_fast/u_lanes/inj_ctrl.fired_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X16Y37         FDRE (Prop_fdre_C_Q)         0.456     1.429 r  u_fast/u_lanes/inj_ctrl.fired_reg[1]/Q
+                         net (fo=2, routed)           0.507     1.936    u_fast/u_lanes/p_0_in45_in
+    SLICE_X16Y37         LUT2 (Prop_lut2_I1_O)        0.124     2.060 f  u_fast/u_lanes/inj_ctrl.fire_r[1]_i_3/O
+                         net (fo=1, routed)           0.280     2.339    u_fast/u_lanes/inj_ctrl.fire_r[1]_i_3_n_0
+    SLICE_X16Y37         LUT6 (Prop_lut6_I5_O)        0.124     2.463 f  u_fast/u_lanes/inj_ctrl.fire_r[1]_i_1/O
+                         net (fo=2, routed)           0.314     2.777    u_fast/u_lanes/p_1_in
+    SLICE_X16Y38         LUT3 (Prop_lut3_I2_O)        0.124     2.901 f  u_fast/u_lanes/inj_ctrl.lane_fire[1][8]_i_2/O
+                         net (fo=5, routed)           0.999     3.900    u_fast/u_lanes/inj_ctrl.lane_fire[1][8]_i_2_n_0
+    SLICE_X15Y40         LUT2 (Prop_lut2_I0_O)        0.153     4.053 r  u_fast/u_lanes/inj_ctrl.lane_fire[1][6]_i_1/O
+                         net (fo=4, routed)           0.532     4.585    u_fast/u_lanes/inj_ctrl.lane_fire[1][6]_i_1_n_0
+    SLICE_X14Y40         FDRE                                         r  u_fast/u_lanes/inj_ctrl.lane_fire_reg[1][4]/R
+  -------------------------------------------------------------------    -------------------
+
+                         max delay                    4.480     4.480    
+                                                      0.000     4.480 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.924     5.404    u_fast/u_lanes/clk_fast
+    SLICE_X14Y40         FDRE                                         r  u_fast/u_lanes/inj_ctrl.lane_fire_reg[1][4]/C
+                         clock pessimism              0.000     5.404    
+                         clock uncertainty           -0.035     5.369    
+    SLICE_X14Y40         FDRE (Setup_fdre_C_R)       -0.727     4.642    u_fast/u_lanes/inj_ctrl.lane_fire_reg[1][4]
+  -------------------------------------------------------------------
+                         required time                          4.642    
+                         arrival time                          -4.585    
+  -------------------------------------------------------------------
+                         slack                                  0.057    
+
+Slack (MET) :             0.057ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/inj_ctrl.fired_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Destination:            u_fast/u_lanes/inj_ctrl.lane_fire_reg[1][5]/R
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            4.480ns  (MaxDelay Path 4.480ns)
+  Data Path Delay:        3.612ns  (logic 0.981ns (27.163%)  route 2.631ns (72.837%))
+  Logic Levels:           4  (LUT2=2 LUT3=1 LUT6=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+  Timing Exception:       MaxDelay Path 4.480ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.973     0.973    u_fast/u_lanes/clk_fast
+    SLICE_X16Y37         FDRE                                         r  u_fast/u_lanes/inj_ctrl.fired_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X16Y37         FDRE (Prop_fdre_C_Q)         0.456     1.429 r  u_fast/u_lanes/inj_ctrl.fired_reg[1]/Q
+                         net (fo=2, routed)           0.507     1.936    u_fast/u_lanes/p_0_in45_in
+    SLICE_X16Y37         LUT2 (Prop_lut2_I1_O)        0.124     2.060 f  u_fast/u_lanes/inj_ctrl.fire_r[1]_i_3/O
+                         net (fo=1, routed)           0.280     2.339    u_fast/u_lanes/inj_ctrl.fire_r[1]_i_3_n_0
+    SLICE_X16Y37         LUT6 (Prop_lut6_I5_O)        0.124     2.463 f  u_fast/u_lanes/inj_ctrl.fire_r[1]_i_1/O
+                         net (fo=2, routed)           0.314     2.777    u_fast/u_lanes/p_1_in
+    SLICE_X16Y38         LUT3 (Prop_lut3_I2_O)        0.124     2.901 f  u_fast/u_lanes/inj_ctrl.lane_fire[1][8]_i_2/O
+                         net (fo=5, routed)           0.999     3.900    u_fast/u_lanes/inj_ctrl.lane_fire[1][8]_i_2_n_0
+    SLICE_X15Y40         LUT2 (Prop_lut2_I0_O)        0.153     4.053 r  u_fast/u_lanes/inj_ctrl.lane_fire[1][6]_i_1/O
+                         net (fo=4, routed)           0.532     4.585    u_fast/u_lanes/inj_ctrl.lane_fire[1][6]_i_1_n_0
+    SLICE_X14Y40         FDRE                                         r  u_fast/u_lanes/inj_ctrl.lane_fire_reg[1][5]/R
+  -------------------------------------------------------------------    -------------------
+
+                         max delay                    4.480     4.480    
+                                                      0.000     4.480 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.924     5.404    u_fast/u_lanes/clk_fast
+    SLICE_X14Y40         FDRE                                         r  u_fast/u_lanes/inj_ctrl.lane_fire_reg[1][5]/C
+                         clock pessimism              0.000     5.404    
+                         clock uncertainty           -0.035     5.369    
+    SLICE_X14Y40         FDRE (Setup_fdre_C_R)       -0.727     4.642    u_fast/u_lanes/inj_ctrl.lane_fire_reg[1][5]
+  -------------------------------------------------------------------
+                         required time                          4.642    
+                         arrival time                          -4.585    
+  -------------------------------------------------------------------
+                         slack                                  0.057    
+
+Slack (MET) :             0.057ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/inj_ctrl.fired_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Destination:            u_fast/u_lanes/inj_ctrl.lane_fire_reg[1][6]/R
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            4.480ns  (MaxDelay Path 4.480ns)
+  Data Path Delay:        3.612ns  (logic 0.981ns (27.163%)  route 2.631ns (72.837%))
+  Logic Levels:           4  (LUT2=2 LUT3=1 LUT6=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+  Timing Exception:       MaxDelay Path 4.480ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.973     0.973    u_fast/u_lanes/clk_fast
+    SLICE_X16Y37         FDRE                                         r  u_fast/u_lanes/inj_ctrl.fired_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X16Y37         FDRE (Prop_fdre_C_Q)         0.456     1.429 r  u_fast/u_lanes/inj_ctrl.fired_reg[1]/Q
+                         net (fo=2, routed)           0.507     1.936    u_fast/u_lanes/p_0_in45_in
+    SLICE_X16Y37         LUT2 (Prop_lut2_I1_O)        0.124     2.060 f  u_fast/u_lanes/inj_ctrl.fire_r[1]_i_3/O
+                         net (fo=1, routed)           0.280     2.339    u_fast/u_lanes/inj_ctrl.fire_r[1]_i_3_n_0
+    SLICE_X16Y37         LUT6 (Prop_lut6_I5_O)        0.124     2.463 f  u_fast/u_lanes/inj_ctrl.fire_r[1]_i_1/O
+                         net (fo=2, routed)           0.314     2.777    u_fast/u_lanes/p_1_in
+    SLICE_X16Y38         LUT3 (Prop_lut3_I2_O)        0.124     2.901 f  u_fast/u_lanes/inj_ctrl.lane_fire[1][8]_i_2/O
+                         net (fo=5, routed)           0.999     3.900    u_fast/u_lanes/inj_ctrl.lane_fire[1][8]_i_2_n_0
+    SLICE_X15Y40         LUT2 (Prop_lut2_I0_O)        0.153     4.053 r  u_fast/u_lanes/inj_ctrl.lane_fire[1][6]_i_1/O
+                         net (fo=4, routed)           0.532     4.585    u_fast/u_lanes/inj_ctrl.lane_fire[1][6]_i_1_n_0
+    SLICE_X14Y40         FDRE                                         r  u_fast/u_lanes/inj_ctrl.lane_fire_reg[1][6]/R
+  -------------------------------------------------------------------    -------------------
+
+                         max delay                    4.480     4.480    
+                                                      0.000     4.480 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.924     5.404    u_fast/u_lanes/clk_fast
+    SLICE_X14Y40         FDRE                                         r  u_fast/u_lanes/inj_ctrl.lane_fire_reg[1][6]/C
+                         clock pessimism              0.000     5.404    
+                         clock uncertainty           -0.035     5.369    
+    SLICE_X14Y40         FDRE (Setup_fdre_C_R)       -0.727     4.642    u_fast/u_lanes/inj_ctrl.lane_fire_reg[1][6]
+  -------------------------------------------------------------------
+                         required time                          4.642    
+                         arrival time                          -4.585    
+  -------------------------------------------------------------------
+                         slack                                  0.057    
+
+Slack (MET) :             0.062ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Destination:            u_fast/u_lanes/data_lane[5].impl.u/p_reg[14]/D
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            6.400ns  (clk_fast rise@6.400ns - clk_fast rise@0.000ns)
+  Data Path Delay:        6.363ns  (logic 2.814ns (44.227%)  route 3.549ns (55.773%))
+  Logic Levels:           8  (CARRY4=4 LUT3=1 LUT4=1 LUT6=2)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 7.324 - 6.400 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.973     0.973    u_fast/u_lanes/csum_lane[1].impl.u/clk_fast
+    SLICE_X22Y35         FDRE                                         r  u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X22Y35         FDRE (Prop_fdre_C_Q)         0.518     1.491 r  u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[2]/Q
+                         net (fo=133, routed)         1.341     2.832    u_fast/u_lanes/data_lane[5].impl.u/a_r[2]
+    SLICE_X12Y35         LUT6 (Prop_lut6_I3_O)        0.124     2.956 r  u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_31/O
+                         net (fo=2, routed)           0.560     3.516    u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_31_n_0
+    SLICE_X11Y35         LUT6 (Prop_lut6_I0_O)        0.124     3.640 r  u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_35__4/O
+                         net (fo=1, routed)           0.000     3.640    u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_35__4_n_0
+    SLICE_X11Y35         CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532     4.172 r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[11]_i_12/CO[3]
+                         net (fo=1, routed)           0.000     4.172    u_fast/u_lanes/data_lane[5].impl.u/p_reg[11]_i_12_n_0
+    SLICE_X11Y36         CARRY4 (Prop_carry4_CI_O[2])
+                                                      0.239     4.411 r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[15]_i_10/O[2]
+                         net (fo=2, routed)           0.955     5.366    u_fast/u_lanes/data_lane[5].impl.u/p_reg[15]_i_10_n_5
+    SLICE_X14Y36         LUT3 (Prop_lut3_I2_O)        0.331     5.697 r  u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_2/O
+                         net (fo=2, routed)           0.692     6.390    u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_2_n_0
+    SLICE_X14Y36         LUT4 (Prop_lut4_I0_O)        0.331     6.721 r  u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_6/O
+                         net (fo=1, routed)           0.000     6.721    u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_6_n_0
+    SLICE_X14Y36         CARRY4 (Prop_carry4_S[3]_CO[3])
+                                                      0.376     7.097 r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[11]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     7.097    u_fast/u_lanes/data_lane[5].impl.u/p_reg[11]_i_1_n_0
+    SLICE_X14Y37         CARRY4 (Prop_carry4_CI_O[2])
+                                                      0.239     7.336 r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[15]_i_1/O[2]
+                         net (fo=1, routed)           0.000     7.336    u_fast/u_lanes/data_lane[5].impl.u/p_0_in[14]
+    SLICE_X14Y37         FDRE                                         r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[14]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      6.400     6.400 r  
+                                                      0.000     6.400 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.924     7.324    u_fast/u_lanes/data_lane[5].impl.u/clk_fast
+    SLICE_X14Y37         FDRE                                         r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[14]/C
+                         clock pessimism              0.000     7.324    
+                         clock uncertainty           -0.035     7.289    
+    SLICE_X14Y37         FDRE (Setup_fdre_C_D)        0.109     7.398    u_fast/u_lanes/data_lane[5].impl.u/p_reg[14]
+  -------------------------------------------------------------------
+                         required time                          7.398    
+                         arrival time                          -7.336    
+  -------------------------------------------------------------------
+                         slack                                  0.062    
+
+Slack (MET) :             0.081ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[2]_rep/C
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Destination:            u_fast/u_lanes/data_lane[0].impl.u/p_reg[16]/D
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            6.400ns  (clk_fast rise@6.400ns - clk_fast rise@0.000ns)
+  Data Path Delay:        6.297ns  (logic 2.961ns (47.022%)  route 3.336ns (52.978%))
+  Logic Levels:           8  (CARRY4=5 LUT2=1 LUT3=1 LUT6=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 7.324 - 6.400 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.973     0.973    u_fast/u_lanes/csum_lane[1].impl.u/clk_fast
+    SLICE_X7Y39          FDRE                                         r  u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[2]_rep/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X7Y39          FDRE (Prop_fdre_C_Q)         0.456     1.429 f  u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[2]_rep/Q
+                         net (fo=85, routed)          1.037     2.466    u_fast/u_lanes/data_lane[0].impl.u/p_reg[2]_3
+    SLICE_X6Y41          LUT2 (Prop_lut2_I0_O)        0.150     2.616 r  u_fast/u_lanes/data_lane[0].impl.u/p[11]_i_43/O
+                         net (fo=1, routed)           0.647     3.262    u_fast/u_lanes/data_lane[0].impl.u/p[11]_i_43_n_0
+    SLICE_X7Y41          LUT6 (Prop_lut6_I3_O)        0.328     3.590 r  u_fast/u_lanes/data_lane[0].impl.u/p[11]_i_35/O
+                         net (fo=1, routed)           0.000     3.590    u_fast/u_lanes/data_lane[0].impl.u/p[11]_i_35_n_0
+    SLICE_X7Y41          CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532     4.122 r  u_fast/u_lanes/data_lane[0].impl.u/p_reg[11]_i_12/CO[3]
+                         net (fo=1, routed)           0.000     4.122    u_fast/u_lanes/data_lane[0].impl.u/p_reg[11]_i_12_n_0
+    SLICE_X7Y42          CARRY4 (Prop_carry4_CI_O[2])
+                                                      0.239     4.361 r  u_fast/u_lanes/data_lane[0].impl.u/p_reg[15]_i_10/O[2]
+                         net (fo=2, routed)           0.780     5.142    u_fast/u_lanes/data_lane[0].impl.u/p_reg[15]_i_10_n_5
+    SLICE_X4Y42          LUT3 (Prop_lut3_I2_O)        0.331     5.473 r  u_fast/u_lanes/data_lane[0].impl.u/p[11]_i_2/O
+                         net (fo=2, routed)           0.872     6.345    u_fast/u_lanes/data_lane[0].impl.u/p[11]_i_2_n_0
+    SLICE_X4Y42          CARRY4 (Prop_carry4_DI[3]_CO[3])
+                                                      0.588     6.933 r  u_fast/u_lanes/data_lane[0].impl.u/p_reg[11]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     6.933    u_fast/u_lanes/data_lane[0].impl.u/p_reg[11]_i_1_n_0
+    SLICE_X4Y43          CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     7.047 r  u_fast/u_lanes/data_lane[0].impl.u/p_reg[15]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     7.047    u_fast/u_lanes/data_lane[0].impl.u/p_reg[15]_i_1_n_0
+    SLICE_X4Y44          CARRY4 (Prop_carry4_CI_O[0])
+                                                      0.223     7.270 r  u_fast/u_lanes/data_lane[0].impl.u/p_reg[16]_i_1/O[0]
+                         net (fo=1, routed)           0.000     7.270    u_fast/u_lanes/data_lane[0].impl.u/p_0_in[16]
+    SLICE_X4Y44          FDRE                                         r  u_fast/u_lanes/data_lane[0].impl.u/p_reg[16]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      6.400     6.400 r  
+                                                      0.000     6.400 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.924     7.324    u_fast/u_lanes/data_lane[0].impl.u/clk_fast
+    SLICE_X4Y44          FDRE                                         r  u_fast/u_lanes/data_lane[0].impl.u/p_reg[16]/C
+                         clock pessimism              0.000     7.324    
+                         clock uncertainty           -0.035     7.289    
+    SLICE_X4Y44          FDRE (Setup_fdre_C_D)        0.062     7.351    u_fast/u_lanes/data_lane[0].impl.u/p_reg[16]
+  -------------------------------------------------------------------
+                         required time                          7.351    
+                         arrival time                          -7.270    
+  -------------------------------------------------------------------
+                         slack                                  0.081    
+
+Slack (MET) :             0.082ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Destination:            u_fast/u_lanes/data_lane[5].impl.u/p_reg[12]/D
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            6.400ns  (clk_fast rise@6.400ns - clk_fast rise@0.000ns)
+  Data Path Delay:        6.343ns  (logic 2.794ns (44.051%)  route 3.549ns (55.949%))
+  Logic Levels:           8  (CARRY4=4 LUT3=1 LUT4=1 LUT6=2)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 7.324 - 6.400 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.973     0.973    u_fast/u_lanes/csum_lane[1].impl.u/clk_fast
+    SLICE_X22Y35         FDRE                                         r  u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X22Y35         FDRE (Prop_fdre_C_Q)         0.518     1.491 r  u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[2]/Q
+                         net (fo=133, routed)         1.341     2.832    u_fast/u_lanes/data_lane[5].impl.u/a_r[2]
+    SLICE_X12Y35         LUT6 (Prop_lut6_I3_O)        0.124     2.956 r  u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_31/O
+                         net (fo=2, routed)           0.560     3.516    u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_31_n_0
+    SLICE_X11Y35         LUT6 (Prop_lut6_I0_O)        0.124     3.640 r  u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_35__4/O
+                         net (fo=1, routed)           0.000     3.640    u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_35__4_n_0
+    SLICE_X11Y35         CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532     4.172 r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[11]_i_12/CO[3]
+                         net (fo=1, routed)           0.000     4.172    u_fast/u_lanes/data_lane[5].impl.u/p_reg[11]_i_12_n_0
+    SLICE_X11Y36         CARRY4 (Prop_carry4_CI_O[2])
+                                                      0.239     4.411 r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[15]_i_10/O[2]
+                         net (fo=2, routed)           0.955     5.366    u_fast/u_lanes/data_lane[5].impl.u/p_reg[15]_i_10_n_5
+    SLICE_X14Y36         LUT3 (Prop_lut3_I2_O)        0.331     5.697 r  u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_2/O
+                         net (fo=2, routed)           0.692     6.390    u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_2_n_0
+    SLICE_X14Y36         LUT4 (Prop_lut4_I0_O)        0.331     6.721 r  u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_6/O
+                         net (fo=1, routed)           0.000     6.721    u_fast/u_lanes/data_lane[5].impl.u/p[11]_i_6_n_0
+    SLICE_X14Y36         CARRY4 (Prop_carry4_S[3]_CO[3])
+                                                      0.376     7.097 r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[11]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     7.097    u_fast/u_lanes/data_lane[5].impl.u/p_reg[11]_i_1_n_0
+    SLICE_X14Y37         CARRY4 (Prop_carry4_CI_O[0])
+                                                      0.219     7.316 r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[15]_i_1/O[0]
+                         net (fo=1, routed)           0.000     7.316    u_fast/u_lanes/data_lane[5].impl.u/p_0_in[12]
+    SLICE_X14Y37         FDRE                                         r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[12]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      6.400     6.400 r  
+                                                      0.000     6.400 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.924     7.324    u_fast/u_lanes/data_lane[5].impl.u/clk_fast
+    SLICE_X14Y37         FDRE                                         r  u_fast/u_lanes/data_lane[5].impl.u/p_reg[12]/C
+                         clock pessimism              0.000     7.324    
+                         clock uncertainty           -0.035     7.289    
+    SLICE_X14Y37         FDRE (Setup_fdre_C_D)        0.109     7.398    u_fast/u_lanes/data_lane[5].impl.u/p_reg[12]
+  -------------------------------------------------------------------
+                         required time                          7.398    
+                         arrival time                          -7.316    
+  -------------------------------------------------------------------
+                         slack                                  0.082    
+
+Slack (MET) :             0.084ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[2]_rep/C
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Destination:            u_fast/u_lanes/data_lane[0].impl.u/p_reg[13]/D
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            6.400ns  (clk_fast rise@6.400ns - clk_fast rise@0.000ns)
+  Data Path Delay:        6.294ns  (logic 2.958ns (46.997%)  route 3.336ns (53.003%))
+  Logic Levels:           7  (CARRY4=4 LUT2=1 LUT3=1 LUT6=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 7.324 - 6.400 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.973     0.973    u_fast/u_lanes/csum_lane[1].impl.u/clk_fast
+    SLICE_X7Y39          FDRE                                         r  u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[2]_rep/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X7Y39          FDRE (Prop_fdre_C_Q)         0.456     1.429 f  u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[2]_rep/Q
+                         net (fo=85, routed)          1.037     2.466    u_fast/u_lanes/data_lane[0].impl.u/p_reg[2]_3
+    SLICE_X6Y41          LUT2 (Prop_lut2_I0_O)        0.150     2.616 r  u_fast/u_lanes/data_lane[0].impl.u/p[11]_i_43/O
+                         net (fo=1, routed)           0.647     3.262    u_fast/u_lanes/data_lane[0].impl.u/p[11]_i_43_n_0
+    SLICE_X7Y41          LUT6 (Prop_lut6_I3_O)        0.328     3.590 r  u_fast/u_lanes/data_lane[0].impl.u/p[11]_i_35/O
+                         net (fo=1, routed)           0.000     3.590    u_fast/u_lanes/data_lane[0].impl.u/p[11]_i_35_n_0
+    SLICE_X7Y41          CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532     4.122 r  u_fast/u_lanes/data_lane[0].impl.u/p_reg[11]_i_12/CO[3]
+                         net (fo=1, routed)           0.000     4.122    u_fast/u_lanes/data_lane[0].impl.u/p_reg[11]_i_12_n_0
+    SLICE_X7Y42          CARRY4 (Prop_carry4_CI_O[2])
+                                                      0.239     4.361 r  u_fast/u_lanes/data_lane[0].impl.u/p_reg[15]_i_10/O[2]
+                         net (fo=2, routed)           0.780     5.142    u_fast/u_lanes/data_lane[0].impl.u/p_reg[15]_i_10_n_5
+    SLICE_X4Y42          LUT3 (Prop_lut3_I2_O)        0.331     5.473 r  u_fast/u_lanes/data_lane[0].impl.u/p[11]_i_2/O
+                         net (fo=2, routed)           0.872     6.345    u_fast/u_lanes/data_lane[0].impl.u/p[11]_i_2_n_0
+    SLICE_X4Y42          CARRY4 (Prop_carry4_DI[3]_CO[3])
+                                                      0.588     6.933 r  u_fast/u_lanes/data_lane[0].impl.u/p_reg[11]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     6.933    u_fast/u_lanes/data_lane[0].impl.u/p_reg[11]_i_1_n_0
+    SLICE_X4Y43          CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.334     7.267 r  u_fast/u_lanes/data_lane[0].impl.u/p_reg[15]_i_1/O[1]
+                         net (fo=1, routed)           0.000     7.267    u_fast/u_lanes/data_lane[0].impl.u/p_0_in[13]
+    SLICE_X4Y43          FDRE                                         r  u_fast/u_lanes/data_lane[0].impl.u/p_reg[13]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      6.400     6.400 r  
+                                                      0.000     6.400 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.924     7.324    u_fast/u_lanes/data_lane[0].impl.u/clk_fast
+    SLICE_X4Y43          FDRE                                         r  u_fast/u_lanes/data_lane[0].impl.u/p_reg[13]/C
+                         clock pessimism              0.000     7.324    
+                         clock uncertainty           -0.035     7.289    
+    SLICE_X4Y43          FDRE (Setup_fdre_C_D)        0.062     7.351    u_fast/u_lanes/data_lane[0].impl.u/p_reg[13]
+  -------------------------------------------------------------------
+                         required time                          7.351    
+                         arrival time                          -7.267    
+  -------------------------------------------------------------------
+                         slack                                  0.084    
+
+Slack (MET) :             0.088ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Destination:            u_fast/u_lanes/csum_lane[0].impl.u/p_reg[17]/D
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            6.400ns  (clk_fast rise@6.400ns - clk_fast rise@0.000ns)
+  Data Path Delay:        6.290ns  (logic 2.862ns (45.498%)  route 3.428ns (54.502%))
+  Logic Levels:           8  (CARRY4=5 LUT3=1 LUT6=2)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 7.324 - 6.400 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.973     0.973    u_fast/u_lanes/csum_lane[1].impl.u/clk_fast
+    SLICE_X22Y35         FDRE                                         r  u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X22Y35         FDRE (Prop_fdre_C_Q)         0.518     1.491 r  u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[2]/Q
+                         net (fo=133, routed)         1.302     2.793    u_fast/u_lanes/csum_lane[0].impl.u/a_r[2]
+    SLICE_X22Y35         LUT6 (Prop_lut6_I0_O)        0.124     2.917 r  u_fast/u_lanes/csum_lane[0].impl.u/p[11]_i_20/O
+                         net (fo=2, routed)           0.933     3.850    u_fast/u_lanes/csum_lane[1].impl.u/DI[2]
+    SLICE_X23Y38         LUT6 (Prop_lut6_I0_O)        0.124     3.974 r  u_fast/u_lanes/csum_lane[1].impl.u/p[11]_i_24__7/O
+                         net (fo=1, routed)           0.000     3.974    u_fast/u_lanes/csum_lane[0].impl.u/p[7]_i_9__7_0[2]
+    SLICE_X23Y38         CARRY4 (Prop_carry4_S[2]_CO[3])
+                                                      0.398     4.372 r  u_fast/u_lanes/csum_lane[0].impl.u/p_reg[11]_i_11/CO[3]
+                         net (fo=1, routed)           0.000     4.372    u_fast/u_lanes/csum_lane[0].impl.u/p_reg[11]_i_11_n_0
+    SLICE_X23Y39         CARRY4 (Prop_carry4_CI_O[0])
+                                                      0.222     4.594 r  u_fast/u_lanes/csum_lane[0].impl.u/p_reg[15]_i_12/O[0]
+                         net (fo=3, routed)           0.707     5.300    u_fast/u_lanes/csum_lane[0].impl.u/p_reg[15]_i_12_n_7
+    SLICE_X19Y38         LUT3 (Prop_lut3_I2_O)        0.294     5.594 r  u_fast/u_lanes/csum_lane[0].impl.u/p[11]_i_5/O
+                         net (fo=1, routed)           0.487     6.081    u_fast/u_lanes/csum_lane[0].impl.u/p[11]_i_5_n_0
+    SLICE_X19Y40         CARRY4 (Prop_carry4_DI[0]_CO[3])
+                                                      0.734     6.815 r  u_fast/u_lanes/csum_lane[0].impl.u/p_reg[11]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     6.815    u_fast/u_lanes/csum_lane[0].impl.u/p_reg[11]_i_1_n_0
+    SLICE_X19Y41         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     6.929 r  u_fast/u_lanes/csum_lane[0].impl.u/p_reg[15]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     6.929    u_fast/u_lanes/csum_lane[0].impl.u/p_reg[15]_i_1_n_0
+    SLICE_X19Y42         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.334     7.263 r  u_fast/u_lanes/csum_lane[0].impl.u/p_reg[19]_i_1/O[1]
+                         net (fo=1, routed)           0.000     7.263    u_fast/u_lanes/csum_lane[0].impl.u/p_0_in[17]
+    SLICE_X19Y42         FDRE                                         r  u_fast/u_lanes/csum_lane[0].impl.u/p_reg[17]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      6.400     6.400 r  
+                                                      0.000     6.400 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.924     7.324    u_fast/u_lanes/csum_lane[0].impl.u/clk_fast
+    SLICE_X19Y42         FDRE                                         r  u_fast/u_lanes/csum_lane[0].impl.u/p_reg[17]/C
+                         clock pessimism              0.000     7.324    
+                         clock uncertainty           -0.035     7.289    
+    SLICE_X19Y42         FDRE (Setup_fdre_C_D)        0.062     7.351    u_fast/u_lanes/csum_lane[0].impl.u/p_reg[17]
+  -------------------------------------------------------------------
+                         required time                          7.351    
+                         arrival time                          -7.263    
+  -------------------------------------------------------------------
+                         slack                                  0.088    
+
+Slack (MET) :             0.105ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[2]_rep/C
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Destination:            u_fast/u_lanes/data_lane[0].impl.u/p_reg[15]/D
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            6.400ns  (clk_fast rise@6.400ns - clk_fast rise@0.000ns)
+  Data Path Delay:        6.273ns  (logic 2.937ns (46.819%)  route 3.336ns (53.181%))
+  Logic Levels:           7  (CARRY4=4 LUT2=1 LUT3=1 LUT6=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 7.324 - 6.400 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.973     0.973    u_fast/u_lanes/csum_lane[1].impl.u/clk_fast
+    SLICE_X7Y39          FDRE                                         r  u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[2]_rep/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X7Y39          FDRE (Prop_fdre_C_Q)         0.456     1.429 f  u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[2]_rep/Q
+                         net (fo=85, routed)          1.037     2.466    u_fast/u_lanes/data_lane[0].impl.u/p_reg[2]_3
+    SLICE_X6Y41          LUT2 (Prop_lut2_I0_O)        0.150     2.616 r  u_fast/u_lanes/data_lane[0].impl.u/p[11]_i_43/O
+                         net (fo=1, routed)           0.647     3.262    u_fast/u_lanes/data_lane[0].impl.u/p[11]_i_43_n_0
+    SLICE_X7Y41          LUT6 (Prop_lut6_I3_O)        0.328     3.590 r  u_fast/u_lanes/data_lane[0].impl.u/p[11]_i_35/O
+                         net (fo=1, routed)           0.000     3.590    u_fast/u_lanes/data_lane[0].impl.u/p[11]_i_35_n_0
+    SLICE_X7Y41          CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532     4.122 r  u_fast/u_lanes/data_lane[0].impl.u/p_reg[11]_i_12/CO[3]
+                         net (fo=1, routed)           0.000     4.122    u_fast/u_lanes/data_lane[0].impl.u/p_reg[11]_i_12_n_0
+    SLICE_X7Y42          CARRY4 (Prop_carry4_CI_O[2])
+                                                      0.239     4.361 r  u_fast/u_lanes/data_lane[0].impl.u/p_reg[15]_i_10/O[2]
+                         net (fo=2, routed)           0.780     5.142    u_fast/u_lanes/data_lane[0].impl.u/p_reg[15]_i_10_n_5
+    SLICE_X4Y42          LUT3 (Prop_lut3_I2_O)        0.331     5.473 r  u_fast/u_lanes/data_lane[0].impl.u/p[11]_i_2/O
+                         net (fo=2, routed)           0.872     6.345    u_fast/u_lanes/data_lane[0].impl.u/p[11]_i_2_n_0
+    SLICE_X4Y42          CARRY4 (Prop_carry4_DI[3]_CO[3])
+                                                      0.588     6.933 r  u_fast/u_lanes/data_lane[0].impl.u/p_reg[11]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     6.933    u_fast/u_lanes/data_lane[0].impl.u/p_reg[11]_i_1_n_0
+    SLICE_X4Y43          CARRY4 (Prop_carry4_CI_O[3])
+                                                      0.313     7.246 r  u_fast/u_lanes/data_lane[0].impl.u/p_reg[15]_i_1/O[3]
+                         net (fo=1, routed)           0.000     7.246    u_fast/u_lanes/data_lane[0].impl.u/p_0_in[15]
+    SLICE_X4Y43          FDRE                                         r  u_fast/u_lanes/data_lane[0].impl.u/p_reg[15]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      6.400     6.400 r  
+                                                      0.000     6.400 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.924     7.324    u_fast/u_lanes/data_lane[0].impl.u/clk_fast
+    SLICE_X4Y43          FDRE                                         r  u_fast/u_lanes/data_lane[0].impl.u/p_reg[15]/C
+                         clock pessimism              0.000     7.324    
+                         clock uncertainty           -0.035     7.289    
+    SLICE_X4Y43          FDRE (Setup_fdre_C_D)        0.062     7.351    u_fast/u_lanes/data_lane[0].impl.u/p_reg[15]
+  -------------------------------------------------------------------
+                         required time                          7.351    
+                         arrival time                          -7.246    
+  -------------------------------------------------------------------
+                         slack                                  0.105    
+
+Slack (MET) :             0.106ns  (required time - arrival time)
+  Source:                 u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[3]/C
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Destination:            u_fast/u_lanes/data_lane[6].impl.u/p_reg[14]/D
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            6.400ns  (clk_fast rise@6.400ns - clk_fast rise@0.000ns)
+  Data Path Delay:        6.319ns  (logic 2.974ns (47.064%)  route 3.345ns (52.936%))
+  Logic Levels:           9  (CARRY4=5 LUT2=1 LUT4=2 LUT6=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 7.324 - 6.400 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.973     0.973    u_fast/u_lanes/csum_lane[1].impl.u/clk_fast
+    SLICE_X21Y35         FDRE                                         r  u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[3]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X21Y35         FDRE (Prop_fdre_C_Q)         0.456     1.429 f  u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[3]/Q
+                         net (fo=139, routed)         1.345     2.774    u_fast/u_lanes/data_lane[6].impl.u/a_r[3]
+    SLICE_X15Y37         LUT2 (Prop_lut2_I0_O)        0.152     2.926 r  u_fast/u_lanes/data_lane[6].impl.u/p[2]_i_9/O
+                         net (fo=1, routed)           0.434     3.360    u_fast/u_lanes/csum_lane[1].impl.u/p_reg[2]_6
+    SLICE_X13Y37         LUT6 (Prop_lut6_I1_O)        0.332     3.692 r  u_fast/u_lanes/csum_lane[1].impl.u/p[2]_i_5__5/O
+                         net (fo=1, routed)           0.000     3.692    u_fast/u_lanes/data_lane[6].impl.u/p_reg[2]_0[2]
+    SLICE_X13Y37         CARRY4 (Prop_carry4_S[3]_CO[3])
+                                                      0.401     4.093 r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[2]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     4.093    u_fast/u_lanes/data_lane[6].impl.u/p_reg[2]_i_1_n_0
+    SLICE_X13Y38         CARRY4 (Prop_carry4_CI_O[2])
+                                                      0.239     4.332 r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[11]_i_12/O[2]
+                         net (fo=2, routed)           0.886     5.219    u_fast/u_lanes/data_lane[6].impl.u/p_reg[11]_i_12_n_5
+    SLICE_X10Y39         LUT4 (Prop_lut4_I3_O)        0.331     5.550 r  u_fast/u_lanes/data_lane[6].impl.u/p[7]_i_2/O
+                         net (fo=2, routed)           0.679     6.229    u_fast/u_lanes/data_lane[6].impl.u/p[7]_i_2_n_0
+    SLICE_X10Y39         LUT4 (Prop_lut4_I3_O)        0.331     6.560 r  u_fast/u_lanes/data_lane[6].impl.u/p[7]_i_6/O
+                         net (fo=1, routed)           0.000     6.560    u_fast/u_lanes/data_lane[6].impl.u/p[7]_i_6_n_0
+    SLICE_X10Y39         CARRY4 (Prop_carry4_S[3]_CO[3])
+                                                      0.376     6.936 r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[7]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     6.936    u_fast/u_lanes/data_lane[6].impl.u/p_reg[7]_i_1_n_0
+    SLICE_X10Y40         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.117     7.053 r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[11]_i_1/CO[3]
+                         net (fo=1, routed)           0.000     7.053    u_fast/u_lanes/data_lane[6].impl.u/p_reg[11]_i_1_n_0
+    SLICE_X10Y41         CARRY4 (Prop_carry4_CI_O[2])
+                                                      0.239     7.292 r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[15]_i_1/O[2]
+                         net (fo=1, routed)           0.000     7.292    u_fast/u_lanes/data_lane[6].impl.u/p_0_in[14]
+    SLICE_X10Y41         FDRE                                         r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[14]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_fast rise edge)
+                                                      6.400     6.400 r  
+                                                      0.000     6.400 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.924     7.324    u_fast/u_lanes/data_lane[6].impl.u/clk_fast
+    SLICE_X10Y41         FDRE                                         r  u_fast/u_lanes/data_lane[6].impl.u/p_reg[14]/C
+                         clock pessimism              0.000     7.324    
+                         clock uncertainty           -0.035     7.289    
+    SLICE_X10Y41         FDRE (Setup_fdre_C_D)        0.109     7.398    u_fast/u_lanes/data_lane[6].impl.u/p_reg[14]
+  -------------------------------------------------------------------
+                         required time                          7.398    
+                         arrival time                          -7.292    
+  -------------------------------------------------------------------
+                         slack                                  0.106    
+
+Slack (MET) :             0.106ns  (required time - arrival time)
+  Source:                 u_opfifo/slice[3].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_fwft.empty_fwft_i_reg/C
+                            (rising edge-triggered cell FDSE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Destination:            u_opfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][18]/CE
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            4.480ns  (MaxDelay Path 4.480ns)
+  Data Path Delay:        3.883ns  (logic 0.698ns (17.976%)  route 3.185ns (82.024%))
+  Logic Levels:           2  (LUT3=1 LUT6=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+  Timing Exception:       MaxDelay Path 4.480ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.973     0.973    u_opfifo/slice[3].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rd_clk
+    SLICE_X17Y19         FDSE                                         r  u_opfifo/slice[3].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_fwft.empty_fwft_i_reg/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X17Y19         FDSE (Prop_fdse_C_Q)         0.456     1.429 f  u_opfifo/slice[3].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_fwft.empty_fwft_i_reg/Q
+                         net (fo=3, routed)           1.020     2.449    u_opfifo/slice[2].u_fifo/empty_i[2]
+    SLICE_X21Y22         LUT6 (Prop_lut6_I4_O)        0.124     2.573 r  u_opfifo/slice[2].u_fifo/u_xpm_i_1__0/O
+                         net (fo=45, routed)          0.881     3.454    u_opfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rd_en
+    SLICE_X25Y22         LUT3 (Prop_lut3_I2_O)        0.118     3.572 r  u_opfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst_i_3/O
+                         net (fo=46, routed)          1.284     4.856    u_opfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/regceb
+    SLICE_X37Y32         FDRE                                         r  u_opfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][18]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         max delay                    4.480     4.480    
+                                                      0.000     4.480 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.924     5.404    u_opfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/clkb
+    SLICE_X37Y32         FDRE                                         r  u_opfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][18]/C
+                         clock pessimism              0.000     5.404    
+                         clock uncertainty           -0.035     5.369    
+    SLICE_X37Y32         FDRE (Setup_fdre_C_CE)      -0.407     4.962    u_opfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][18]
+  -------------------------------------------------------------------
+                         required time                          4.962    
+                         arrival time                          -4.856    
+  -------------------------------------------------------------------
+                         slack                                  0.106    
+
+Slack (MET) :             0.106ns  (required time - arrival time)
+  Source:                 u_opfifo/slice[3].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_fwft.empty_fwft_i_reg/C
+                            (rising edge-triggered cell FDSE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Destination:            u_opfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][7]/CE
+                            (rising edge-triggered cell FDRE clocked by clk_fast  {rise@0.000ns fall@3.200ns period=6.400ns})
+  Path Group:             clk_fast
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            4.480ns  (MaxDelay Path 4.480ns)
+  Data Path Delay:        3.883ns  (logic 0.698ns (17.976%)  route 3.185ns (82.024%))
+  Logic Levels:           2  (LUT3=1 LUT6=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+  Timing Exception:       MaxDelay Path 4.480ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_fast rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.973     0.973    u_opfifo/slice[3].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rd_clk
+    SLICE_X17Y19         FDSE                                         r  u_opfifo/slice[3].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_fwft.empty_fwft_i_reg/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X17Y19         FDSE (Prop_fdse_C_Q)         0.456     1.429 f  u_opfifo/slice[3].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_fwft.empty_fwft_i_reg/Q
+                         net (fo=3, routed)           1.020     2.449    u_opfifo/slice[2].u_fifo/empty_i[2]
+    SLICE_X21Y22         LUT6 (Prop_lut6_I4_O)        0.124     2.573 r  u_opfifo/slice[2].u_fifo/u_xpm_i_1__0/O
+                         net (fo=45, routed)          0.881     3.454    u_opfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/rd_en
+    SLICE_X25Y22         LUT3 (Prop_lut3_I2_O)        0.118     3.572 r  u_opfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst_i_3/O
+                         net (fo=46, routed)          1.284     4.856    u_opfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/regceb
+    SLICE_X37Y32         FDRE                                         r  u_opfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][7]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         max delay                    4.480     4.480    
+                                                      0.000     4.480 r  clk_fast (IN)
+                         net (fo=2565, unset)         0.924     5.404    u_opfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/clkb
+    SLICE_X37Y32         FDRE                                         r  u_opfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][7]/C
+                         clock pessimism              0.000     5.404    
+                         clock uncertainty           -0.035     5.369    
+    SLICE_X37Y32         FDRE (Setup_fdre_C_CE)      -0.407     4.962    u_opfifo/slice[2].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][7]
+  -------------------------------------------------------------------
+                         required time                          4.962    
+                         arrival time                          -4.856    
+  -------------------------------------------------------------------
+                         slack                                  0.106    
+
+
+
+

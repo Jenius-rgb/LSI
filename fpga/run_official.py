@@ -194,6 +194,19 @@ def by_severity(counts: dict) -> str:
     return ", ".join(f"{name} {count}" for name, count in counts.items()) or "none"
 
 
+def turbo_note(clocks: list[dict]) -> str:
+    """How clk_fast_turbo was analysed: at turbo level 0 (the official run) or at a side-run frequency (--turbo-mhz)."""
+    period = {clk["name"]: float(clk["period_ns"]) for clk in clocks}
+    turbo, safe = period.get("clk_fast_turbo"), period.get("clk_fast_safe")
+    if turbo is None or safe is None or abs(turbo - safe) < 1e-6:
+        return ("`clk_fast_turbo` is analysed at turbo level 0, which equals the safe frequency. Running the lanes above that "
+                "frequency is the experiment of the project and is outside what static timing covers.")
+    return (f"`clk_fast_turbo` is analysed at {1000.0 / turbo:g} MHz (period {turbo:.3f} ns), above turbo level 0 "
+            f"({1000.0 / safe:g} MHz): this side run checks whether the lane domain closes static timing at that frequency. "
+            "Running the lanes above the frequency that closes is the experiment of the project and is outside what static "
+            "timing covers.")
+
+
 def write_markdown(summary: dict, out: Path) -> None:
     util = summary["utilization_post_route"]
     names = {"lut": "Slice LUTs", "ff": "Slice registers", "bram_tile": "Block RAM tiles", "dsp": "DSP48E1", "iob": "Bonded IOB",
@@ -230,8 +243,7 @@ def write_markdown(summary: dict, out: Path) -> None:
         lines.append("| none | | | | |")
     lines += ["", f"Design worst setup slack {summary['design_wns_ns']} ns, worst hold slack {summary['design_whs_ns']} ns, "
                   f"unrouted nets {summary['unrouted_nets']}.",
-              "`clk_fast_turbo` is analysed at turbo level 0, which equals the safe frequency. Running the lanes above that "
-              "frequency is the experiment of the project and is outside what static timing covers.", "",
+              turbo_note(summary["clocks"]), "",
               "## Checks [VIVADO-STA]", "",
               f"- DRC violations by severity: {by_severity(summary['drc'])}.",
               f"- Methodology violations by severity: {by_severity(summary['methodology'])}.", ""]

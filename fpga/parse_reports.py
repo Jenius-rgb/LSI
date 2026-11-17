@@ -96,6 +96,26 @@ def collect(report_dir: Path = REPORTS, tag: str = "") -> list[dict]:
     return rows
 
 
+def read_csv(path: Path) -> list[dict]:
+    with open(path, newline="", encoding="utf-8") as fh:
+        return list(csv.DictReader(fh))
+
+
+def write_csv(rows: list[dict], out: Path, tag: str = "") -> list[dict]:
+    """Write summary.csv. A tagged run only collects its own report folders, so it replaces rows of the same variant
+    and keeps every other row already in the file; an untagged run rebuilds the whole table from fpga/reports/."""
+    if tag and out.exists():
+        new = {row["variant"]: row for row in rows}
+        kept = [row for row in read_csv(out) if row["variant"] not in new]
+        rows = sorted(kept + list(new.values()), key=lambda row: row["variant"])
+    with open(out, "w", newline="", encoding="utf-8") as fh:
+        fields = list(dict.fromkeys(k for row in rows for k in row))
+        writer = csv.DictWriter(fh, fieldnames=fields, restval="")
+        writer.writeheader()
+        writer.writerows(rows)
+    return rows
+
+
 def main() -> int:
     tag = sys.argv[1] if len(sys.argv) > 1 else ""
     rows = collect(tag=tag)
@@ -103,12 +123,8 @@ def main() -> int:
         print("no reports under fpga/reports/")
         return 1
     out = REPORTS / "summary.csv"
-    with open(out, "w", newline="", encoding="utf-8") as fh:
-        fields = list(dict.fromkeys(k for row in rows for k in row))
-        writer = csv.DictWriter(fh, fieldnames=fields, restval="")
-        writer.writeheader()
-        writer.writerows(rows)
-    print(f"wrote {out.relative_to(ROOT)}: {len(rows)} variants [VIVADO-STA]")
+    written = write_csv(rows, out, tag)
+    print(f"wrote {out.relative_to(ROOT)}: {len(rows)} variants collected, {len(written)} rows in the table [VIVADO-STA]")
     return 0
 
 
