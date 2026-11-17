@@ -476,3 +476,40 @@ def write_hex(path, values: list[int], width_bits: int) -> None:
     digits = (width_bits + 3) // 4
     with open(path, "w", newline="\n", encoding="ascii") as fh:
         fh.writelines(f"{v:0{digits}x}\n" for v in values)
+
+
+def wc_gen_vectors(k: int, c3: int, widths: tuple[int, int, int], n_random: int, models: tuple[str, ...] = ("s", "xs"),
+                   seed: int = 2027) -> tuple[list[int], list[int], dict]:
+    """Weight words and expected {wc3, wc2, wc1} for tb_wc_gen (ADR-029): corner words, seeded random words over the
+    full int8 range, then every weight word of the given models in the export layout (lane k in byte k)."""
+    from model.export import memory_image
+
+    rng = np.random.default_rng(seed)
+    corners = [np.full(k, v, dtype=np.int64) for v in (0, 1, -1, 127, -127, -128)]
+    alt = np.array([127 if i % 2 == 0 else -127 for i in range(k)], dtype=np.int64)
+    corners += [alt, -alt, np.array([127 if i % 2 == 0 else -128 for i in range(k)], dtype=np.int64),
+                np.array([-128 if i % 2 == 0 else 127 for i in range(k)], dtype=np.int64)]
+    for lane in range(k):
+        for v in (127, -128, 1, -1):
+            word = np.zeros(k, dtype=np.int64)
+            word[lane] = v
+            corners.append(word)
+    corners += [np.arange(k, dtype=np.int64) - k // 2, (np.arange(k, dtype=np.int64)[::-1] * 15 - 60).clip(-128, 127)]
+    parts = [np.array(corners, dtype=np.int64), rng.integers(-128, 128, size=(n_random, k), dtype=np.int64)]
+    sources = {}
+    for name in models:
+        qm, src = load_or_random_qmodel(name, seed)
+        words = memory_image(qm, {"K": k}).weights.astype(np.int64)
+        parts.append(words)
+        sources[name] = {"weights": src, "words": int(len(words))}
+    allw = np.concatenate(parts)
+    lane = np.arange(1, k + 1, dtype=np.int64)
+    wc = [allw.sum(axis=1), allw @ lane, allw @ (lane * lane)]
+    if not c3:
+        wc[2] = np.zeros_like(wc[2])
+    w1, w2, w3 = widths
+    packed_words = [sum((int(v) & 0xFF) << (8 * i) for i, v in enumerate(row)) for row in allw.tolist()]
+    expected = [((int(c) & ((1 << w3) - 1)) << (w1 + w2)) | ((int(b) & ((1 << w2) - 1)) << w1) | (int(a) & ((1 << w1) - 1))
+                for a, b, c in zip(*(x.tolist() for x in wc))]
+    meta = {"seed": seed, "corner_words": len(corners), "random_words": n_random, "models": sources, "total": len(packed_words)}
+    return packed_words, expected, meta

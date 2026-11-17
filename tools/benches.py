@@ -63,6 +63,37 @@ def checker_benches() -> dict[str, Bench]:
     return out
 
 
+def _wc_gen_vectors(n_random: int):
+    def gen(workdir: Path, params: dict) -> list[str]:
+        import json
+
+        from model.vectors import wc_gen_vectors, write_hex
+
+        widths = (params["WC1_W"], params["WC2_W"], params["WC3_W"])
+        words, exp, meta = wc_gen_vectors(params["K"], params["C3_EN"], widths, n_random)
+        write_hex(workdir / "in.mem", words, params["K"] * 8)
+        write_hex(workdir / "exp.mem", exp, sum(widths))
+        (workdir / "meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
+        return [f"+in={(workdir / 'in.mem').as_posix()}", f"+exp={(workdir / 'exp.mem').as_posix()}", f"+n={len(words)}"]
+
+    return gen
+
+
+def wc_gen_benches() -> dict[str, Bench]:
+    """ADR-029 condition 1: wc_gen against the formula (corners, seeded random words, all real weight words of s and xs)."""
+    out = {}
+    sources = ["rtl/sum_tree.v", "rtl/wc_gen.v", "tb/tb_wc_gen.v"]
+    for k in (8, 16):
+        for c3 in (0, 1):
+            wc1, wc2, wc3 = wc_widths(k)
+            params = {"K": k, "C3_EN": c3, "WC1_W": wc1, "WC2_W": wc2, "WC3_W": wc3}
+            out[f"wc_gen_k{k}_c{c3}"] = Bench(f"wc_gen_k{k}_c{c3}", "tb_wc_gen", sources, params, _wc_gen_vectors(20000))
+    wc1, wc2, wc3 = wc_widths(8)
+    params = {"K": 8, "C3_EN": 1, "WC1_W": wc1, "WC2_W": wc2, "WC3_W": wc3, "MAX_CASES": 1100000}
+    out["wc_gen_k8_c1_1m"] = Bench("wc_gen_k8_c1_1m", "tb_wc_gen", sources, params, _wc_gen_vectors(1000000), slow=True)
+    return out
+
+
 ENGINE_SOURCES = [
     *LANES, "rtl/lane_checker.v", "rtl/ram_tdp.v", "rtl/sum_tree.v", "rtl/wc_gen.v", "rtl/operand_gen.v",
     "rtl/postproc.v", "rtl/pool.v", "rtl/counter_bank.v", "rtl/cdc_fifo.v", "rtl/platform/sim/cdc_fifo_sim.v",
@@ -348,7 +379,7 @@ def misc_benches() -> dict[str, Bench]:
 SYSTEM_SOURCES = [*TOP_SOURCES, "tb/tb_system.v"]
 
 BENCHES: dict[str, Bench] = {
-    **lane_array_benches(), **checker_benches(), **engine_benches(), **misc_benches(), **system_benches(),
+    **lane_array_benches(), **checker_benches(), **wc_gen_benches(), **engine_benches(), **misc_benches(), **system_benches(),
 }
 
 _W = {f"WC{i+1}_W": v for i, v in enumerate(wc_widths(8))}

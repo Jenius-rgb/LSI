@@ -257,6 +257,13 @@ Sudah tidak terblokir sejak dokumen resmi 10 Nov 2026: part number dan speed gra
 
 ## Catatan untuk sesi berikutnya
 
+**Pembaruan 18 Nov 2026 (sesi terpotong batas pemakaian):**
+- ADR-030: premis juri dicek (run `dsp250`: lane DSP lolos 250 MHz, Fmax 265,5 MHz [VIVADO-STA]). Jawaban juri ditulis di ADR-030 dan dinilai **lemah untuk klaim kecepatan**. Implementasi (d) DITAHAN sampai user memilih R1/R2 (lihat ADR-030).
+- ADR-029: baseline OOC `pre029` = 5.710 LUT, 5.076 FF, Fmax clk_safe 141,7 MHz, jalur terburuk clk_safe di pohon wc (`u_wc1/u_sum2`) [VIVADO-STA]. Bench baru `wc_gen_k{8,16}_c{0,1}` (dan `wc_gen_k8_c1_1m`, slow): `wc_gen_k8_c0` PASS 23821/23821 di wc_gen LAMA; tiga bench lain belum dicek hasilnya, jalankan ulang dulu.
+- Langkah ADR-029 berikutnya: (1) pastikan keempat bench `wc_gen_*` hijau di RTL lama; (2) tulis ulang `rtl/wc_gen.v` sebagai pohon datar suku biner (K=8: wc2 13 suku, wc3 14 suku → `sum_tree` N=16, PIPE_LEVEL=2; K=16: 33/39 suku → N=64, PIPE_LEVEL=3), port dan latensi 2 tetap; (3) bench `wc_gen_*`, checker, engine, lint; (4) `fpga/run_matrix.py ... --tag post029` dan laporan resmi ulang; bandingkan dengan `pre029`; pertahankan hanya bila Fmax clk_safe naik, jalur terburuk keluar dari pohon wc, LUT naik ≤ 2 %. Batas 5 hari (sampai 22 Nov 2026).
+- Suite penuh `python tools/run.py test` BELUM dijalankan setelah perubahan sesi ini (hanya `tests/test_fpga_scripts.py`: 23 passed).
+
+
 Ditulis 17 Nov 2026 (lanjutan PROMPT_PARHI_KAMERA_TANPA_PI).
 
 **Untuk melanjutkan:** Tugas A, B dan C sudah selesai. Yang menunggu adalah keputusan user atas ADR-028 sampai ADR-031 (status Diusulkan) dan fase board.
@@ -361,3 +368,7 @@ Ditulis 17 Nov 2026 (lanjutan PROMPT_PARHI_KAMERA_TANPA_PI).
 | 2026-11-17 | Tugas C | `docs/research/PARHI_DEVELOPMENT_LIST.md`; `docs/DECISIONS.md` | butir D1–D11; ADR-028 sampai ADR-031 berstatus Diusulkan |
 | 2026-11-17 | ADR-030 | `python tools/run.py synth-official --lane-impl dsp_min --tag dspmin` (disetujui user) | 5.550/14.600 LUT, 5.307 FF, 2.011 slice, 14 BRAM tile, 14 DSP, WNS +0,395 ns, WHS +0,049 ns [VIVADO-STA], `results/vivado/official_dspmin/` |
 | 2026-11-17 | akhir sesi lanjutan | `python tools/run.py test` | 243 passed in 281.33s, exit 0 (`build/test_session2_end.log`) |
+| 2026-11-18 | ADR-030 | `python tools/run.py synth-official --lane-impl dsp_min --turbo-mhz 250 --tag dsp250` | lane +0,233 ns di 250 MHz (265,5 MHz), clk_safe +0,262 ns, 5.542 LUT, 5.494 FF, 14 DSP [VIVADO-STA]; jawaban juri dinilai lemah untuk klaim kecepatan, implementasi (d) ditahan |
+| 2026-11-18 | ADR-029 | `fpga/run_matrix.py --k 8 --impl 0 --c3 1 --parts xc7s25csga225-1 --t-safe 7.0 --t-fast 6.4 --nonmac-factor 0.7 --tag pre029` | 5.710 LUT, 5.076 FF, Fmax clk_safe 141,7 MHz, clk_fast 155,4 MHz [VIVADO-STA] |
+| 2026-11-18 | ADR-029 | `python tools/run.py sim wc_gen_k8_c0` (wc_gen lama) | PASS 23821/23821 |
+| 2026-11-18 | skrip | `.venv/Scripts/python -m pytest -q tests/test_fpga_scripts.py` | 23 passed (CSV OOC ber-tag digabung, kalimat turbo benar) |
