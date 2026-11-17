@@ -266,7 +266,7 @@ Ditulis di akhir sesi 17 Nov 2026 (PROMPT_PARHI_KAMERA_TANPA_PI).
 - ADR-027: pin select BUFGCTRL tidak di-timing (dasar DS189 Tabel 32 catatan 1). Laporan resmi sesudahnya: 6.851/14.600 LUT, WNS +0,473 ns [VIVADO-STA].
 - Tugas C berjalan (lihat baris "Progres membaca Parhi"): buku adalah scan 791 halaman tanpa lapisan teks; OCR lokal per halaman ada di `build/parhi/ocr/page-NNN.txt` (tidak di-commit; bila hilang, ulangi dengan `tools/parhi/ocr_pdf.ps1`, perintahnya di `docs/research/parhi/README.md`). Halaman buku = halaman PDF − 17 untuk Bab 1–3, − 16 mulai Bab 4. Halaman awal bab (PDF): Bab 1: 18, Bab 2: 60, Bab 3: 80, Bab 4: 107, Bab 5: 135, Bab 6: 165, Bab 7: 204, Bab 8: 242, Bab 9: 269, Bab 10: 326, Bab 11: 389, Bab 12: 432, Bab 13: 488, Bab 14: 540, Bab 15: 569, Bab 16: 601, Bab 17: 655, Bab 18: 705, Lampiran A–G: 726–784, indeks: 785.
 
-**Progres membaca Parhi:** bab terakhir yang selesai: Bab 5 (PDF hlm. 135–164, `docs/research/parhi/CH05.md`). Halaman terakhir yang dibaca: PDF hlm. 164. Mulai berikutnya: Bab 6, PDF hlm. 165. Setiap bab: baca semua halaman OCR, cek rumus dan gambar secara visual, tulis `docs/research/parhi/CHxx.md`, perbarui tabel di `docs/research/parhi/README.md` dan baris ini.
+**Progres membaca Parhi:** bab terakhir yang selesai: Bab 6 (PDF hlm. 165–203, `docs/research/parhi/CH06.md`). Halaman terakhir yang dibaca: PDF hlm. 203. Mulai berikutnya: Bab 7, PDF hlm. 204. Setiap bab: baca semua halaman OCR, cek rumus dan gambar secara visual, tulis `docs/research/parhi/CHxx.md`, perbarui tabel di `docs/research/parhi/README.md` dan baris ini.
 
 **Langkah berikutnya, berurutan:**
 1. Tugas C: Bab 1 sampai 18 dan lampiran A–G, lalu `docs/research/PARHI_DEVELOPMENT_LIST.md` dan 3–5 usulan ADR (status "Diusulkan").

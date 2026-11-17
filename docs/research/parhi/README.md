@@ -37,7 +37,7 @@ Statements about SENTINEL are [INFERENCE] unless they point to a file or result 
 | 3 | Pipelining and Parallel Processing | 80–106 | read 17 Nov 2026 | [CH03.md](CH03.md); no failed pages |
 | 4 | Retiming | 107–134 | read 17 Nov 2026 | [CH04.md](CH04.md); book p. 90 not in the scan (book page = PDF − 16 from here) |
 | 5 | Unfolding | 135–164 | read 17 Nov 2026 | [CH05.md](CH05.md); no failed pages |
-| 6 | Folding | 165–203 | not read | |
+| 6 | Folding | 165–203 | read 17 Nov 2026 | [CH06.md](CH06.md); no failed pages |
 | 7 | Systolic Architecture Design | 204–241 | not read | |
 | 8 | Fast Convolution | 242–268 | not read | |
 | 9 | Algorithmic Strength Reduction in Filters and Transforms | 269–325 | not read | |
