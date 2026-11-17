@@ -23,7 +23,7 @@ Statements about SENTINEL are [INFERENCE] unless they point to a file or result 
 | --- | --- | --- | --- | --- |
 | Front matter | Contents, Preface | 1–17 | contents read (OCR) | chapter titles below |
 | 1 | Introduction to Digital Signal Processing Systems | 18–59 | read 17 Nov 2026 | [CH01.md](CH01.md); no failed pages |
-| 2 | Iteration Bound | 60–79 | not read | |
+| 2 | Iteration Bound | 60–79 | read 17 Nov 2026 | [CH02.md](CH02.md); PDF 79 repeats book p. 60, book p. 62 missing from the scan |
 | 3 | Pipelining and Parallel Processing | 80–106 | not read | |
 | 4 | Retiming | 107–134 | not read | |
 | 5 | Unfolding | 135–164 | not read | |
@@ -43,5 +43,5 @@ Statements about SENTINEL are [INFERENCE] unless they point to a file or result 
 | A–G | Appendices: shortest paths, scheduling and allocation, Euclidean GCD, Schur polynomials, fast adders and multipliers, bit-serial scheduling, FIR coefficient quantization | 726–784 | not read | |
 
 Chapter titles 3–18 and the appendices are taken from the OCR of the contents pages (PDF pages 5–10);
-titles 2, 7, 8, 9, 10 and 13 are to be confirmed (title 1 confirmed from its running header) from their first pages (the OCR of those contents lines
+titles 7, 8, 9, 10 and 13 are to be confirmed (titles 1 and 2 confirmed from their first pages) from their first pages (the OCR of those contents lines
 was incomplete). PDF page ranges come from the first section heading of each chapter ("N.1 INTRODUCTION") in the OCR text; the index is on PDF pages 785–791. Appendix A starts on 726, B 732, C 752, D 756, E 761, F 771, G 778.
