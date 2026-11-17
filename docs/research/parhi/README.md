@@ -36,7 +36,7 @@ Statements about SENTINEL are [INFERENCE] unless they point to a file or result 
 | 2 | Iteration Bound | 60–79 | read 17 Nov 2026 | [CH02.md](CH02.md); PDF 79 repeats book p. 60, book p. 62 missing from the scan |
 | 3 | Pipelining and Parallel Processing | 80–106 | read 17 Nov 2026 | [CH03.md](CH03.md); no failed pages |
 | 4 | Retiming | 107–134 | read 17 Nov 2026 | [CH04.md](CH04.md); book p. 90 not in the scan (book page = PDF − 16 from here) |
-| 5 | Unfolding | 135–164 | not read | |
+| 5 | Unfolding | 135–164 | read 17 Nov 2026 | [CH05.md](CH05.md); no failed pages |
 | 6 | Folding | 165–203 | not read | |
 | 7 | Systolic Architecture Design | 204–241 | not read | |
 | 8 | Fast Convolution | 242–268 | not read | |
