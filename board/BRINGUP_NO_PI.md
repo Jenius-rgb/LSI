@@ -28,6 +28,7 @@ References: **TK-n** = `docs/official/ZERO7FPGA_Connection-table_261109_001.pdf`
 | Labels of J1 (PMOD1), J2 (PMOD2), J7 and the JTAG pins | pin positions for steps 2 and 5 |
 | LED3 and LED4: present or not | "Pin LED1–LED4" |
 | Position of DIP SW7 (MODE0–MODE2) | "Cara konfigurasi FPGA" (do not change it) |
+| Room for the Pi's CSI camera ribbon when ZERO7 is mounted (slot or gap above the Pi's camera connector) | note in `docs/CAMERA.md` section 3; decides whether a CSI module is usable |
 
 ## 2. Wire the JTAG-HS3 (no power)
 

@@ -46,6 +46,22 @@ on the laptop with the same code, and it moves to the Pi 4 unchanged (`--source 
 look for the demo, the OV5647 module is the cheapest and Camera Module 3 the best supported. Check that the
 webcam works without a driver on Linux (UVC) before buying.
 
+### Cheapest workable choice (added 17 Nov 2026, same sources)
+
+1. **A USB webcam the team already owns costs nothing** and is enough: the network sees 32 × 32 pixels, so 640 × 480
+   or 720p is plenty. Check that it works on Linux without a driver (UVC) before relying on it.
+2. If one must be bought: the **cheapest price seen** is the OV5647 CSI module ($15.99, waveshare.com). Two risks:
+   it only works with the Raspberry Pi (not testable on the laptop now), and its ribbon cable must reach the Pi 4's CSI
+   connector while ZERO7 sits on the GPIO header. Whether ZERO7 leaves room for that ribbon is [UNKNOWN] (no board
+   drawing in `docs/official/`); check it during board inspection (`board/BRINGUP_NO_PI.md` step 1) before buying.
+3. Otherwise a **generic UVC USB webcam** is the safe economical buy: the same code runs on the laptop and the Pi 4,
+   and no ribbon has to pass the HAT. Local prices in Indonesia were not checked; any UVC model with 640 × 480 or more
+   will do, so the cheapest UVC listing is acceptable.
+4. **Not recommended now: a bare camera sensor wired straight to the FPGA's PMOD pins** (e.g. an OV7670-class module).
+   It would remove the Pi from the camera path, but needs new RTL (sensor configuration over SCCB/I²C, pixel capture,
+   down-scaling to 32 × 32), about 14 FPGA pins (both PMOD headers), and the PMOD bank voltage is still [INFERENCE]
+   (ADR-024). Not worth the risk before the freeze (17 Jan 2027); no price was checked for it.
+
 Sources:
 - https://www.raspberrypi.com/products/camera-module-3/
 - https://www.raspberrypi.com/products/camera-module-v2/

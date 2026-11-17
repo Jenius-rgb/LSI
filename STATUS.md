@@ -230,11 +230,13 @@ PROMPT_UPDATE_ZERO7 dari sesi sebelumnya sudah selesai (T0–T10 `[x]`); tidak a
 
 ## Pertanyaan untuk panitia (17 Nov 2026)
 
+Status jawaban (disampaikan user, 17 Nov 2026): Q1 belum diberi tahu; Q2 belum diketahui; Q3 pihak LSI masih mencari tahu; Q4 menunggu jawaban LSI; **Q5 terjawab: tim 4 orang sudah dikonfirmasi** [USER]; Q6 menunggu informasi lanjutan.
+
 1. **Q1 Daya:** bagaimana cara memberi daya ZERO7 tanpa Raspberry Pi? Dokumen hanya menyebut daya dari header Pi (IN-41). Rekomendasi: tanyakan; sampai ada jawaban, pakai Raspberry Pi mana pun hanya sebagai sumber daya.
 2. **Q2 Kamera di Class 2:** apakah input kamera real-time wajib juga untuk Class 2 bila tugasnya klasifikasi gambar? Rekomendasi: anggap wajib (`docs/CAMERA.md`).
 3. **Q3 Raspberry Pi 4:** apakah ZERO7 resmi kompatibel dengan Pi 4? Rekomendasi: minta konfirmasi tertulis.
 4. **Q4 Dokumen:** kapan `Zero7.xdc`, ZERO7 User Manual, dan skematik terbit? Rekomendasi: minta bersama board.
-5. **Q5 Ukuran tim:** halaman Inggris 1–3 orang, halaman Jepang paling banyak 4; tim berjumlah 4. Rekomendasi: konfirmasi tertulis.
+5. **Q5 Ukuran tim:** halaman Inggris 1–3 orang, halaman Jepang paling banyak 4; tim berjumlah 4. **Terjawab (user, 17 Nov 2026): 4 orang sudah dikonfirmasi.** Sisa tindakan: simpan bukti konfirmasi tertulis (email/pesan panitia) untuk lampiran bila diminta.
 6. **Q6 Kategori dan format laporan:** konfirmasi Class 2 Level 3 dan format laporan sintesis. Rekomendasi: tanyakan sekaligus.
 
 ## Terblokir
