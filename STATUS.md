@@ -257,46 +257,34 @@ Sudah tidak terblokir sejak dokumen resmi 10 Nov 2026: part number dan speed gra
 
 ## Catatan untuk sesi berikutnya
 
-Ditulis di akhir sesi lanjutan 17 Nov 2026 (PROMPT_PARHI_KAMERA_TANPA_PI), saat konteks mendekati batas 70 %.
+Ditulis 17 Nov 2026 (lanjutan PROMPT_PARHI_KAMERA_TANPA_PI).
 
-**Untuk melanjutkan:** "lanjutkan PROMPT_PARHI_KAMERA_TANPA_PI dari catatan di STATUS.md" berarti lanjut Tugas C dari bab yang tertulis di baris "Progres membaca Parhi" di bawah.
+**Untuk melanjutkan:** Tugas A, B dan C sudah selesai. Yang menunggu adalah keputusan user atas ADR-028 sampai ADR-031 (status Diusulkan) dan fase board.
 
 **Posisi:**
-- Tahap 0 selesai: info tim 17 Nov 2026 tercatat.
-- Tugas A selesai (M22): `board/BRINGUP_NO_PI.md`, desain bring-up, host lewat JTAG (ADR-025, ADR-026), dry-run lulus. Daya tanpa Pi tetap [UNKNOWN] (Q1); tanpa daya, langkah di board tidak bisa dimulai.
-- Tugas B selesai: `docs/CAMERA.md` (kamera wajib di Class 1 [OFFICIAL]; Class 2 [UNKNOWN], Q2; rekomendasi webcam USB).
-- ADR-027: pin select BUFGCTRL tidak di-timing (dasar DS189 Tabel 32 catatan 1). Laporan resmi sesudahnya: 6.851/14.600 LUT, WNS +0,473 ns [VIVADO-STA].
-- Tugas C: pembacaan buku selesai (Bab 1–18 dan lampiran A–G, PDF hlm. 18–781), catatan di `docs/research/parhi/`. Sisa: `docs/research/PARHI_DEVELOPMENT_LIST.md`, 3–5 usulan ADR, dan eksperimen Vivado murah (disetujui user 17 Nov 2026).
-- OCR lokal per halaman ada di `build/parhi/ocr/page-NNN.txt` (tidak di-commit; bila hilang, ulangi dengan `tools/parhi/ocr_pdf.ps1`; render halaman untuk cek rumus dengan `tools/parhi/render_pages.ps1`; perintahnya di `docs/research/parhi/README.md`). Halaman buku = halaman PDF − 17 untuk Bab 1–3, − 16 untuk Bab 4–6, − 15 untuk Bab 7–8, − 14 untuk Bab 9, − 13 untuk Bab 10, − 12 untuk Bab 11, − 11 untuk Bab 12–14, − 10 mulai Bab 15 (halaman kosong antar bab tidak ikut di-scan; cek lagi di awal tiap bab). Halaman awal bab (PDF): Bab 15: 569, Bab 16: 601, Bab 17: 655, Bab 18: 705, Lampiran A 726, B 732, C 752, D 756, E 761, F 771, G 778, indeks 785.
+- Tahap 0, Tugas A (bring-up tanpa Pi, M22) dan Tugas B (`docs/CAMERA.md`, ditambah pilihan kamera termurah) selesai. Daya tanpa Pi tetap [UNKNOWN] (Q1).
+- Jawaban panitia (dari user, 17 Nov 2026): Q5 terjawab, tim 4 orang dikonfirmasi; Q1, Q2, Q3, Q4 dan Q6 masih menunggu. `CLAUDE.md` §7 belum diubah (perlu persetujuan user).
+- Tugas C selesai: buku Parhi dibaca penuh (Bab 1–18 dan lampiran A–G, PDF hlm. 18–781); catatan di `docs/research/parhi/CH01.md`–`CH18.md` dan `APPENDICES.md`; daftar pengembangan `docs/research/PARHI_DEVELOPMENT_LIST.md` (D1–D11); usulan ADR-028 (lewati aktivasi nol), ADR-029 (pohon CSD bobot checksum), ADR-030 (lane LUT vs DSP dan batas suplai operand), ADR-031 (fine-grain pipelining, bersyarat).
+- Data baru: operand set beraktivasi nol 35,9 % (model s) dan 25,4 % (xs) [SIM, `results/model/zero_taps_*`]; data OOC lane DSP sudah ada di `fpga/reports/summary.csv` [VIVADO-STA].
+- Eksperimen yang disetujui user (17 Nov 2026): run samping resmi dengan lane DSP (`--lane-impl dsp_min --tag dspmin`), hasil di `results/vivado/official_dspmin/` (lihat Log bukti).
+- OCR lokal buku ada di `build/parhi/ocr/` (tidak di-commit; ulangi dengan `tools/parhi/ocr_pdf.ps1` bila perlu).
 
-**Progres membaca Parhi:** SELESAI. Bab 1–18 dan lampiran A–G dibaca penuh (PDF hlm. 18–781; catatan `docs/research/parhi/CH01.md`–`CH18.md` dan `APPENDICES.md`). Indeks (PDF 782–791) bukan bagian teks, hanya dilihat sekilas. Berikutnya: `docs/research/PARHI_DEVELOPMENT_LIST.md` dan usulan ADR. Setiap bab: baca semua halaman OCR, cek rumus dan gambar secara visual, tulis `docs/research/parhi/CHxx.md`, perbarui tabel di `docs/research/parhi/README.md` dan baris ini.
-
-**Kandidat sementara untuk `PARHI_DEVELOPMENT_LIST.md`** (dari Bab 1–14; prioritas awal, belum final; jangan ubah SPEC/RTL sebelum disetujui user):
-1. Pohon multi-operand CSD untuk wc2/wc3 (14 suku bergeser untuk wc3, berbagi jumlah parsial dengan wc2; carry-save atau adder 3-input) — sasaran jalur terburuk `clk_safe_raw` (10 level logika) [VIVADO-STA]; bit-exact secara konstruksi. Should. (CH09, CH13, CH14)
-2. Fine-grain pipelining pengali LUT dan pohon C3, dengan aturan cutset: flag `v/l/f`, semua lane data dan lane checksum ikut satu tahap; latensi berubah sehingga butuh ADR. Should. (CH03, CH06 persamaan folding, CH10 peringatan)
-3. Retiming/penyeimbangan tahap pohon C3 tanpa ubah latensi, setelah `report_timing -from/-to` membuktikan tahapnya timpang. Should. (CH04)
-4. Register operand per lane atau satu tingkat register broadcast (`KEEP`/`MAX_FANOUT`); jalur terburuk lane 55 % routing [VIVADO-STA]. Should, murah. (CH07)
-5. Run resmi dengan varian lane DSP (sudah lulus bench [SIM]; DSP terpakai 3/80). Should, murah. (CH03, CH13)
-6. K = 16 dengan lane DSP untuk model s (utilisasi lane 99,86 %; model xs hanya 74,9 % karena channel 8) [SIM]. Should/Could, perlu run implementasi. (CH03, CH06)
-7. Tile Winograd 2 × 2 untuk layer 3 × 3: 16 vs 36 perkalian per jendela pool per channel input, tetapi operand 11–12 bit; cocok sebagai opsi yang dievaluasi di laporan, bukan sebelum freeze. Could. (CH08, CH12)
-8. Cadangan bila loop akumulator jadi kritis: dua jumlah parsial, 2-slow, look-ahead, akumulator carry-save. Could, tidak diperlukan sekarang. (CH02, CH04, CH10, CH14)
-9. Butir laporan: argumen iteration bound, pisahkan siklus on-chip dan waktu end-to-end, model galat requant (1/12 LSB²). Must/Should, dokumentasi. (CH02, CH03, CH11)
-- Tidak diusulkan (dengan alasan di CHxx): relaxed look-ahead (melanggar bit-exact), penurunan tegangan (CLAUDE.md §8), distributed arithmetic, lane bit-serial/digit-serial, tile FFA, aliran data systolic penuh, akumulator lebih sempit.
+**Progres membaca Parhi:** SELESAI (Bab 1–18 dan lampiran A–G). Indeks (PDF 782–791) bukan bagian teks.
 
 **Langkah berikutnya, berurutan:**
-1. Tugas C: Bab 15 (PDF 569) sampai 18 dan lampiran A–G, lalu `docs/research/PARHI_DEVELOPMENT_LIST.md` (format per butir sesuai prompt) dan 3–5 usulan ADR berstatus "Diusulkan" dengan rencana test.
-2. 20 Nov 2026 dan sesudahnya: begitu daya tersedia dan user menulis "board siap", ikuti `board/BRINGUP_NO_PI.md` langkah 1–9; isi `board/BOARD_INFO.md` dengan hasil inspeksi dan pengukuran.
+1. Keputusan user atas ADR-030 dulu (menentukan apakah ADR-031 relevan), lalu ADR-029 dan ADR-028. Setelah disetujui: ADR → SPEC → golden model dan test → RTL, sesuai CLAUDE.md §4.
+2. 20 Nov 2026 dan sesudahnya: begitu daya tersedia dan user menulis "board siap", ikuti `board/BRINGUP_NO_PI.md` langkah 1–9 (termasuk cek celah kabel kamera CSI); isi `board/BOARD_INFO.md`.
 3. Begitu tegangan bank terukur: hapus tanda TODO di XDC, bangun bitstream SENTINEL penuh, dan jalankan E7 lewat `bringup.py --host jtag`.
-4. Jawaban panitia (Q1–Q6) dicatat di `board/BOARD_INFO.md` dan `CLAUDE.md` §7 (dengan persetujuan user).
+4. Jawaban panitia berikutnya dicatat di `board/BOARD_INFO.md` dan, dengan persetujuan user, di `CLAUDE.md` §7.
+5. Butir laporan D6 (iteration bound, error setup-only saat overclock, dll.) bisa ditulis kapan saja sebelum 31 Jan 2027.
 
 **Jebakan yang ditemukan:**
-- `Resolve-Path` di PowerShell menganggap `[` dan `]` sebagai wildcard; nama file buku berisi kurung siku, jadi berikan path langsung (skrip di `tools/parhi/` sudah begitu).
-- OCR buku sering menghilangkan atau salah membaca angka hitungan operasi (contoh: "3 penjumlahan" terbaca "9", "13 perkalian" terbaca "19"). Angka yang dikutip di CHxx harus dicek di halaman hasil render.
-- Offset halaman buku-PDF bergeser di awal bab karena halaman kosong tidak di-scan; cek nomor halaman di header halaman pertama dan kedua tiap bab.
+- Python sistem tidak punya torchvision; jalankan skrip model dengan `.venv/Scripts/python` (atau lewat `tools/run.py`).
+- `Resolve-Path` di PowerShell menganggap `[` dan `]` sebagai wildcard; nama file buku berisi kurung siku (skrip di `tools/parhi/` sudah menangani).
+- OCR buku sering salah membaca angka; angka yang dikutip harus dicek di halaman hasil render.
 - `vivado.bat` memecah argumen yang berisi koma (dan `=`); daftar file bring-up memakai pemisah `+`.
-- Bus host kedua di `top_core`: alamat harus tetap dipilih untuk host terakhir selama pipeline baca (bug ditemukan oleh `jtag_session_xs`, sudah diperbaiki).
-- Browser bawaan kadang tidak bisa membaca halaman (policy check); halaman Jepang panitia diambil dengan `curl` lalu di-decode Shift_JIS secara lokal.
-- Margin timing di 125 MHz tipis; jalur yang dulu lolos bisa meleset karena penempatan. Setiap perubahan RTL: ulangi `synth-official`; guard test menolak laporan yang tidak bersih.
+- `run_official.py --lane-impl` hanya boleh bersama `--tag` (folder resmi tidak tertimpa varian lain).
+- Margin timing di 125 MHz tipis; setiap perubahan RTL: ulangi `synth-official`; guard test menolak laporan yang tidak bersih.
 
 ## Log bukti
 
@@ -366,3 +354,10 @@ Ditulis di akhir sesi lanjutan 17 Nov 2026 (PROMPT_PARHI_KAMERA_TANPA_PI), saat 
 | 2026-11-17 | Tugas C | skrip cek salinan: n-gram 10 kata dari OCR tiap bab dibandingkan dengan CH01–CH14 | 0 urutan 10 kata yang sama di 14 catatan |
 | 2026-11-17 | akhir sesi lanjutan | `python tools/run.py check` | semua alat ok, termasuk Vivado v2025.2, Icarus 12.0, Verilator 5.053 |
 | 2026-11-17 | akhir sesi lanjutan | `python tools/run.py test` | 237 passed in 284.87s, exit 0 (`build/test_session_end.log`) |
+| 2026-11-17 | Tahap 0 | jawaban panitia dari user | Q5 terjawab (tim 4 orang dikonfirmasi); Q1, Q2, Q3, Q4, Q6 menunggu; dicatat di bagian Pertanyaan untuk panitia |
+| 2026-11-17 | Tugas B | `docs/CAMERA.md` bagian 3, pilihan termurah; `board/BRINGUP_NO_PI.md` langkah 1 | webcam USB yang sudah ada (gratis), lalu webcam UVC generik; OV5647 CSI $15,99 tetapi celah kabel di bawah ZERO7 [UNKNOWN] |
+| 2026-11-17 | Tugas C | baca OCR `build/parhi/ocr/page-569.txt` … `page-781.txt`; cek visual PDF 612, 613, 619 | Bab 15–18 dan lampiran A–G selesai (`CH15.md`–`CH18.md`, `APPENDICES.md`); buku selesai dibaca; PDF 759/760 tertukar, buku hlm. 558, 752, 770 tidak ada di scan; indeks mulai PDF 782 |
+| 2026-11-17 | Tugas C | `.venv/Scripts/python -m model.zero_taps --model s --images 1000` dan `--model xs` (test `tests/test_zero_taps.py`) | [SIM] operand set beraktivasi nol: s 35,9 % dari 277.504 siklus ideal (cocok dengan `arch_s.json`), xs 25,4 % dari 83.456 |
+| 2026-11-17 | Tugas C | `docs/research/PARHI_DEVELOPMENT_LIST.md`; `docs/DECISIONS.md` | butir D1–D11; ADR-028 sampai ADR-031 berstatus Diusulkan |
+| 2026-11-17 | ADR-030 | `python tools/run.py synth-official --lane-impl dsp_min --tag dspmin` (disetujui user) | 5.550/14.600 LUT, 5.307 FF, 2.011 slice, 14 BRAM tile, 14 DSP, WNS +0,395 ns, WHS +0,049 ns [VIVADO-STA], `results/vivado/official_dspmin/` |
+| 2026-11-17 | akhir sesi lanjutan | `python tools/run.py test` | 243 passed in 281.33s, exit 0 (`build/test_session2_end.log`) |
