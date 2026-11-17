@@ -26,6 +26,17 @@ Rujukan singkat:
 | Pin LED1–LED4 | LED1 = WS2812B di N1 (net S7_LED0, juga ke J7); LED2 = WS2812B di D7 (net RP_GPIO18, juga ke J6, J15, J11) [OFFICIAL]. LED3 dan LED4: UNKNOWN (tidak ada di tabel koneksi FPGA). LED biasa: D5 = R3 (GPIO_LED1), D6 = R2 (GPIO_LED2), D3 biru = A10 (RP_GPIO6), D9 hijau = B10 (RP_GPIO13), D8 merah = B11 (RP_GPIO19), D1 = DONE [OFFICIAL] | TK-1, TK-2, TK-3, TK-5, TK-6; G-3 |
 | File XDC atau skematik resmi (lokasi file) | `Zero7.xdc` disebut dan terlihat sebagian di panduan, tetapi filenya belum diterbitkan: UNKNOWN. Skematik: UNKNOWN. Sementara dipakai `board/zero7.xdc`, disusun dari tabel koneksi | IN-19, IN-31 |
 
+## Info tim, 17 Nov 2026
+
+Informasi dari tim, belum dari dokumen resmi. Diberi label [TEAM] dan tidak dipakai sebagai sumber field wajib.
+
+| Hal | Isi | Sumber |
+| --- | --- | --- |
+| Kabel JTAG | JTAG-HS3 diberikan satu set dengan board ZERO7 [TEAM] | info tim, 17 Nov 2026 |
+| Raspberry Pi | Setiap kelompok memakai Raspberry Pi 4 milik sendiri [TEAM]. Kompatibilitas Pi 4 dengan ZERO7: [UNKNOWN] sampai panitia menjawab | info tim, 17 Nov 2026 |
+| Jadwal | ZERO7 dan JTAG-HS3 tersedia mulai 20 Nov 2026; Raspberry Pi 4 mungkin datang lebih lambat [TEAM] | info tim, 17 Nov 2026 |
+| Daya tanpa Pi | Dokumen resmi hanya menyebut daya dari header GPIO Raspberry Pi (IN-41: "When Raspberry Pi is powered on, the LED on ZERO7 lights up"). Cara lain: [UNKNOWN], tanyakan ke panitia | IN-41; OCR semua halaman TK dan IN, 17 Nov 2026 |
+
 ## Field opsional
 
 | Field | Nilai | Sumber |
@@ -37,7 +48,7 @@ Rujukan singkat:
 | Jumlah CMT/MMCM di chip | 3 MMCM menurut basis data part [VIVADO]. DS180 belum dicek | part_check |
 | Kecepatan SPI stabil yang terukur | UNKNOWN | ukur saat bring-up |
 | Cara mengukur daya (USB power meter, dll.) | UNKNOWN | |
-| Model Raspberry Pi yang dipakai dan versi OS | Raspberry Pi 4 Model B [USER, 2026-11-16: tim hanya punya Pi 4] (ADR-022). Panitia hanya menyebut Raspberry Pi 5 [OFFICIAL: board pinjaman "can be connected to a Raspberry Pi 5"]. Kecocokan header 40-pin dan nomor GPIO Pi 4 dengan Pi 5: [INFERENCE], dicek fisik saat board datang. Versi OS: UNKNOWN; contoh resmi berjalan dengan Python 3.13.5 dan `gpiozero` | G-6; IN-9; user |
+| Model Raspberry Pi yang dipakai dan versi OS | Raspberry Pi 4 Model B milik kelompok [USER, 2026-11-16; info tim, 17 Nov 2026] (ADR-022). Kompatibilitas dengan ZERO7: [UNKNOWN], menunggu konfirmasi panitia. Panitia hanya menyebut Raspberry Pi 5 [OFFICIAL: board pinjaman "can be connected to a Raspberry Pi 5"]. Kecocokan header 40-pin dan nomor GPIO Pi 4 dengan Pi 5: [INFERENCE], dicek fisik saat board datang. Versi OS: UNKNOWN; contoh resmi berjalan dengan Python 3.13.5 dan `gpiozero` | G-6; IN-9; user |
 | Modul kamera yang dipakai | UNKNOWN | |
 | Clock eksternal | EXT_CLK = H1 (`IO_L12P_T1_MRCC_34`) ke J16 [OFFICIAL; VIVADO] | TK-3; pin_check |
 | I2C | FPGA_SDA = H3, FPGA_SCL = H4 ke U11; RP_GPIO2 = B1 dan RP_GPIO3 = B2 ke J6 dan U11 [OFFICIAL]. Fungsi U11: UNKNOWN | TK-1, TK-3 |

@@ -194,6 +194,15 @@ Panitia menerbitkan fakta resmi baru pada 2 dan 10 Nov 2026 (ringkasan dan rujuk
   - [B] rekonfigurasi sungguhan diukur di board (B4)
 - [B] Boot dari flash QSPI (ADR-019): menunggu jenis flash dan posisi DIP SW7.
 
+## Info tim, 17 Nov 2026
+
+Belum dari dokumen resmi:
+1. Kabel JTAG-HS3 diberikan satu set dengan board ZERO7 (menggantikan butir terblokir "apakah kabel termasuk paket pinjaman").
+2. Setiap kelompok memakai Raspberry Pi 4 milik sendiri; kompatibilitas Pi 4 dengan ZERO7 [UNKNOWN] sampai panitia menjawab.
+3. ZERO7 dan JTAG-HS3 tersedia mulai 20 Nov 2026; Raspberry Pi 4 mungkin datang lebih lambat.
+
+PROMPT_UPDATE_ZERO7 dari sesi sebelumnya sudah selesai (T0–T10 `[x]`); tidak ada tahap yang tersisa. Sesi 17 Nov 2026 mengerjakan PROMPT_PARHI_KAMERA_TANPA_PI.
+
 ## Terblokir
 
 Diperbarui 2026-11-16.
@@ -201,7 +210,8 @@ Diperbarui 2026-11-16.
 - [B] Board fisik ZERO7 dan Raspberry Pi 4 — dipakai mulai Desember 2026 atau Januari 2027 [USER]. Semua eksperimen `[HW]` (E1–E4, E6, E7 di board) menunggu.
 - [B] `Zero7.xdc` resmi, tegangan VCCO, dan IOSTANDARD bank 14/15/34 — belum diterbitkan; `board/zero7.xdc` memakai LVCMOS33 bertanda TODO. Bitstream untuk board tidak boleh dibuat sebelum ini pasti.
 - [B] ZERO7 User Manual dan skematik — disebut panitia, belum tertaut di situs.
-- [B] Kabel JTAG-HS3 — belum jelas apakah termasuk paket pinjaman.
+- [B] Kompatibilitas Pi 4 dengan ZERO7 menunggu konfirmasi panitia. (info tim, 17 Nov 2026: setiap kelompok memakai Pi 4 sendiri; panitia belum memastikan.)
+- [B] Daya ZERO7 tanpa Raspberry Pi — dokumen resmi hanya menyebut daya dari header GPIO Pi (IN-41); cara lain [UNKNOWN], tanyakan ke panitia. Tanpa daya, langkah tanpa Pi tidak bisa dimulai.
 - [B] Kecepatan SPI nyata, polaritas tombol, rantai WS2812B, boot dari flash QSPI — butuh board atau user manual.
 - [B] Kelas target — belum diumumkan panitia (pakai CIFAR-10 sementara).
 - [B] Format laporan sintesis resmi — belum dijelaskan panitia; sementara berupa file `.rpt` Vivado dan `summary.md` di `results/vivado/official/`.
