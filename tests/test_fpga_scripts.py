@@ -259,3 +259,15 @@ def test_official_cdc_endpoint_parser():
     text = ("  1  CDC-13  Critical  1-bit CDC path on a non-FD primitive      0  False Path  a/clk_sel_turbo_reg/C  u_core/u_clk/u_clk/u_mux/S1\n"
             "  2  CDC-3   Info      1-bit synchronized with ASYNC_REG property      2  Asynch Clock Groups  x/C  y/D\n")
     assert ro.parse_cdc_endpoints(text, "CDC-13") == ["u_core/u_clk/u_clk/u_mux/S1"]
+
+
+def test_official_lane_override_needs_a_tag():
+    """A different lane implementation may only go to a side folder, never to results/vivado/official/."""
+    import pytest
+    import run_official as ro
+
+    with pytest.raises(SystemExit):
+        ro.parse_args(["--lane-impl", "dsp_min"])
+    args = ro.parse_args(["--lane-impl", "dsp_min", "--tag", "dspmin"])
+    assert args.lane_impl == "dsp_min" and args.tag == "dspmin"
+    assert ro.parse_args([]).lane_impl is None

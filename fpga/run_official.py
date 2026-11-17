@@ -262,19 +262,30 @@ def write_markdown(summary: dict, out: Path) -> None:
     (out / "summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
 
 
-def main() -> int:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--safe-div", type=float, default=None, help="clk_safe divider of the 1000 MHz VCO; default from config/hw_zero7.yaml")
     parser.add_argument("--summary-only", action="store_true", help="rebuild summary.json and summary.md from existing reports")
     parser.add_argument("--note", default="", help="one sentence of provenance kept in summary.json and summary.md")
     parser.add_argument("--tag", default="", help="side run: reports in results/vivado/official_TAG/, log in build/official_synth_TAG.log")
-    args = parser.parse_args()
+    parser.add_argument("--lane-impl", choices=sorted(LANE_IMPL), default=None,
+                        help="side run only (needs --tag): lane implementation instead of the one in config/hw_zero7.yaml")
+    args = parser.parse_args(argv)
     if args.tag and not re.fullmatch(r"[a-z0-9]+", args.tag):
         parser.error("--tag takes lower-case letters and digits only")
+    if args.lane_impl and not args.tag:
+        parser.error("--lane-impl is for side runs only: add --tag so results/vivado/official/ stays the official variant")
+    return args
+
+
+def main() -> int:
+    args = parse_args()
     cfg = yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
+    lane = args.lane_impl or cfg["LANE_IMPL"]
     safe_div = args.safe_div or cfg["clock"]["vco_mhz"] / cfg["clock"]["f_safe_mhz"]
     out = OUT.with_name(f"{OUT.name}_{args.tag}") if args.tag else OUT
-    command = "python tools/run.py synth-official" + (f" --safe-div {safe_div:g}" if args.safe_div else "") + (f" --tag {args.tag}" if args.tag else "")
+    command = ("python tools/run.py synth-official" + (f" --safe-div {safe_div:g}" if args.safe_div else "")
+               + (f" --lane-impl {args.lane_impl}" if args.lane_impl else "") + (f" --tag {args.tag}" if args.tag else ""))
     out.mkdir(parents=True, exist_ok=True)
     if not args.summary_only:
         vivado = find_vivado()
@@ -286,10 +297,10 @@ def main() -> int:
         (out / "summary.txt").unlink(missing_ok=True)
         log = ROOT / "build" / (f"official_synth_{args.tag}.log" if args.tag else "official_synth.log")
         log.parent.mkdir(parents=True, exist_ok=True)
-        print(f"[VIVADO-STA] official run on {cfg['part']}: K={cfg['K']} lane={cfg['LANE_IMPL']} C3={cfg['C3_EN']} safe_div={safe_div:g}", flush=True)
+        print(f"[VIVADO-STA] official run on {cfg['part']}: K={cfg['K']} lane={lane} C3={cfg['C3_EN']} safe_div={safe_div:g}", flush=True)
         res = subprocess.run(
             [vivado, "-mode", "batch", "-nojournal", "-log", str(log), "-source", str(ROOT / "fpga" / "synth_official.tcl"), "-tclargs",
-             str(out), str(cfg["K"]), str(LANE_IMPL[cfg["LANE_IMPL"]]), str(cfg["C3_EN"]),
+             str(out), str(cfg["K"]), str(LANE_IMPL[lane]), str(cfg["C3_EN"]),
              str(cfg["WEIGHT_AW"]), str(cfg["ACT0_AW"]), str(cfg["ACT1_AW"]), f"{safe_div:g}"],
             cwd=ROOT, capture_output=True, text=True, errors="replace",
         )
