@@ -313,6 +313,9 @@ def misc_benches() -> dict[str, Bench]:
         "clkwiz_seq": Bench("clkwiz_seq", "tb_clkwiz_seq", ["rtl/clkwiz_seq.v", "tb/tb_clkwiz_seq.v"], {}, _clkwiz_vectors),
         "regfile_guard": Bench("regfile_guard", "tb_regfile_guard", ["rtl/regfile.v", "tb/tb_regfile_guard.v"]),
         "ws2812_tx": Bench("ws2812_tx", "tb_ws2812_tx", ["rtl/ws2812_tx.v", "tb/tb_ws2812_tx.v"]),
+        "bringup": Bench("bringup", "tb_bringup", ["rtl/ws2812_tx.v", "fpga/bringup/blink/blink_top.v",
+                                                   "fpga/bringup/vcco_probe/vcco_probe_top.v", "fpga/bringup/io_test/io_test_top.v",
+                                                   "tb/tb_bringup.v"]),
         "status_led": Bench("status_led", "tb_status_led", ["rtl/ws2812_tx.v", "rtl/status_led.v", "tb/tb_status_led.v"]),
         "xadc_temp": Bench("xadc_temp", "tb_xadc_temp", ["rtl/xadc_temp.v", "rtl/platform/sim/xadc_prim_sim.v", "tb/tb_xadc_temp.v"]),
         "spi_session_xs": Bench(

@@ -72,6 +72,10 @@ def cmd_synth_official(rest: list[str]) -> int:
     return call("fpga/run_official.py", *rest)
 
 
+def cmd_bringup(rest: list[str]) -> int:
+    return call("fpga/bringup/build.py", *rest)
+
+
 def cmd_plots(rest: list[str]) -> int:
     return call("-m", "sentinel.plots.all", *rest)
 
@@ -86,6 +90,7 @@ COMMANDS = {
     "campaign": (cmd_campaign, "run the fault-injection campaigns"),
     "ooc": (cmd_ooc, "Vivado out-of-context runs (when Vivado has the parts)"),
     "synth-official": (cmd_synth_official, "official synthesis report for xc7s25csga225-1"),
+    "bringup": (cmd_bringup, "bring-up bitstreams without the Raspberry Pi (ADR-026)"),
     "plots": (cmd_plots, "regenerate all plots"),
 }
 
