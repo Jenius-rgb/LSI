@@ -1,0 +1,44 @@
+# Reading notes: K. K. Parhi, *VLSI Digital Signal Processing Systems: Design and Implementation* (Wiley, 1999)
+
+Purpose: find techniques that can speed up or harden SENTINEL (task C of PROMPT_PARHI_KAMERA_TANPA_PI).
+
+Rules kept here:
+- The book PDF is never committed (`.gitignore`); these notes summarise in our own words with chapter and
+  page references, and quote no long passages.
+- A chapter is marked read only after every one of its pages has been read. Pages that could not be read
+  are listed in the chapter note.
+- In the report, cite the book as: K. K. Parhi, *VLSI Digital Signal Processing Systems: Design and
+  Implementation*, Wiley, 1999. (Year to confirm against the title page of a licensed copy.)
+
+How the pages are read: the copy is a 791-page scan without a text layer (tiff2pdf). Text comes from the
+Windows OCR engine run locally on each rendered page (`build/parhi/ocr/page-NNN.txt`, not committed);
+equations, figures and tables are checked visually on the rendered page, because OCR loses them.
+
+## Progress
+
+| Chapter | Title (from the table of contents) | PDF pages | Status | Note |
+| --- | --- | --- | --- | --- |
+| Front matter | Contents, Preface | 1–17 | contents read (OCR) | chapter titles below |
+| 1 | Introduction to Digital Signal Processing Systems | 18–59 | not read | |
+| 2 | Iteration Bound | 60–79 | not read | |
+| 3 | Pipelining and Parallel Processing | 80–106 | not read | |
+| 4 | Retiming | 107–134 | not read | |
+| 5 | Unfolding | 135–164 | not read | |
+| 6 | Folding | 165–203 | not read | |
+| 7 | Systolic Architecture Design | 204–241 | not read | |
+| 8 | Fast Convolution | 242–268 | not read | |
+| 9 | Algorithmic Strength Reduction in Filters and Transforms | 269–325 | not read | |
+| 10 | Pipelined and Parallel Recursive and Adaptive Filters | 326–388 | not read | |
+| 11 | Scaling and Roundoff Noise | 389–431 | not read | |
+| 12 | Digital Lattice Filter Structures | 432–487 | not read | |
+| 13 | Bit-Level Arithmetic Architectures | 488–539 | not read | |
+| 14 | Redundant Arithmetic | 540–568 | not read | |
+| 15 | Numerical Strength Reduction | 569–600 | not read | |
+| 16 | Synchronous, Wave, and Asynchronous Pipelines | 601–654 | not read | |
+| 17 | Low-Power Design | 655–704 | not read | |
+| 18 | Programmable Digital Signal Processors | 705–725 | not read | |
+| A–G | Appendices: shortest paths, scheduling and allocation, Euclidean GCD, Schur polynomials, fast adders and multipliers, bit-serial scheduling, FIR coefficient quantization | 726–784 | not read | |
+
+Chapter titles 3–18 and the appendices are taken from the OCR of the contents pages (PDF pages 5–10);
+titles 1, 2, 7, 8, 9, 10 and 13 are to be confirmed from their first pages (the OCR of those contents lines
+was incomplete). PDF page ranges come from the first section heading of each chapter ("N.1 INTRODUCTION") in the OCR text; the index is on PDF pages 785–791. Appendix A starts on 726, B 732, C 752, D 756, E 761, F 771, G 778.

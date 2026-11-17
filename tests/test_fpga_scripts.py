@@ -121,6 +121,9 @@ def test_reset_and_cdc_rules_of_the_complete_design():
 
     tcl = (ROOT / "fpga" / "constraints" / "top_board_timing.tcl").read_text(encoding="utf-8")
     assert "set_false_path -from [get_clocks clk_in]" in tcl and "por_meta_reg[0]" in tcl
+    # ADR-027: the BUFGCTRL select pins carry a false path (DS189 Table 32 note 1: only CE timing is needed
+    # for glitch-free switching; CE is tied high, and the select changes only while clk_fast is idle).
+    assert "REF_PIN_NAME =~ S*" in tcl and "set_false_path -to $mux_sel" in tcl and "DS189" in tcl
     flow = (ROOT / "fpga" / "synth_official.tcl").read_text(encoding="utf-8")
     assert "report_cdc" in flow and "report_bus_skew" in flow
     marked = {
@@ -241,4 +244,18 @@ def test_committed_official_report_is_clean():
     assert float(summary["design_wns_ns"]) >= 0 and float(summary["design_whs_ns"]) >= 0
     assert int(summary["unrouted_nets"]) == 0
     assert not {"CDC-2", "CDC-10", "CDC-11"} & set(summary["cdc"])
-    assert all(row["unsafe"] == 0 and row["no_async_reg"] == 0 for row in summary["cdc_pairs"])
+    assert all(row["no_async_reg"] == 0 for row in summary["cdc_pairs"])
+    # ADR-027 (written after this test): the clk_fast BUFGCTRL select is an intended crossing into a non-flop
+    # primitive (DS189 Table 32 note 1), so report_cdc lists it as CDC-13 / unsafe. That endpoint, and only that
+    # endpoint, is allowed; any other unsafe crossing still fails.
+    allowed = [pin for pin in summary.get("cdc13_endpoints", []) if pin.endswith(("u_mux/S0", "u_mux/S1"))]
+    assert allowed == summary.get("cdc13_endpoints", [])
+    assert sum(row["unsafe"] for row in summary["cdc_pairs"]) == len(allowed)
+
+
+def test_official_cdc_endpoint_parser():
+    import run_official as ro
+
+    text = ("  1  CDC-13  Critical  1-bit CDC path on a non-FD primitive      0  False Path  a/clk_sel_turbo_reg/C  u_core/u_clk/u_clk/u_mux/S1\n"
+            "  2  CDC-3   Info      1-bit synchronized with ASYNC_REG property      2  Asynch Clock Groups  x/C  y/D\n")
+    assert ro.parse_cdc_endpoints(text, "CDC-13") == ["u_core/u_clk/u_clk/u_mux/S1"]

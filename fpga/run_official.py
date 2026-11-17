@@ -102,6 +102,7 @@ CDC_MEANING = {
     "CDC-4": "multi-bit crossing without a synchronizer: quasi-static injection masks (SPEC 7.8)",
     "CDC-10": "logic in front of a synchronizer; SPEC 7.8 does not allow it",
     "CDC-11": "one launch flop feeding several synchronizers in one clock; SPEC 7.8 does not allow it",
+    "CDC-13": "crossing into a non-flop primitive: the select pin of the clk_fast BUFGCTRL, allowed by ADR-027 only",
     "CDC-15": "crossing captured under a clock enable: the memories of the asynchronous FIFOs and the quasi-static STARVE_CYCLES word",
 }
 
@@ -119,6 +120,16 @@ def parse_cdc_pairs(text: str) -> list[dict]:
 
 
 POWER_ROWS = {"Total On-Chip Power (W)": "total_w", "Dynamic (W)": "dynamic_w", "Device Static (W)": "static_w", "Confidence Level": "confidence"}
+
+
+def parse_cdc_endpoints(text: str, rule: str) -> list[str]:
+    """Destination pins of every detail row of one report_cdc rule."""
+    pins = []
+    for line in text.splitlines():
+        cells = line.split()
+        if len(cells) >= 4 and cells[0].isdigit() and cells[1] == rule:
+            pins.append(cells[-1])
+    return pins
 
 
 def parse_power(text: str) -> dict:
@@ -165,6 +176,7 @@ def build_summary(out: Path) -> dict:
     if (out / "impl_cdc_details.rpt").exists():
         summary["cdc"] = parse_cdc(read("impl_cdc_details.rpt"))
         summary["cdc_pairs"] = parse_cdc_pairs(read("impl_cdc.rpt"))
+        summary["cdc13_endpoints"] = parse_cdc_endpoints(read("impl_cdc_details.rpt"), "CDC-13")
         summary["bus_skew"] = parse_bus_skew(read("impl_bus_skew.rpt"))
     else:
         summary["cdc"] = None

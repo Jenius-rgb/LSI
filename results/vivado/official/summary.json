@@ -19,12 +19,12 @@
   {
    "name": "clk_safe_raw",
    "period_ns": 8.0,
-   "wns_ns": 0.711,
-   "whs_ns": 0.062,
-   "intra_wns_ns": 0.711,
-   "intra_whs_ns": 0.062,
-   "intra_endpoints": 12240,
-   "fmax_mhz": 137.19303059404584
+   "wns_ns": 0.473,
+   "whs_ns": 0.033,
+   "intra_wns_ns": 0.473,
+   "intra_whs_ns": 0.033,
+   "intra_endpoints": 12234,
+   "fmax_mhz": 132.85505513484787
   },
   {
    "name": "clkfbout_clk_wiz_turbo",
@@ -35,28 +35,28 @@
   {
    "name": "clk_out1_clk_wiz_turbo",
    "period_ns": 8.0,
-   "wns_ns": 0.648,
-   "whs_ns": 4.142
+   "wns_ns": null,
+   "whs_ns": null
   },
   {
    "name": "clk_fast_safe",
    "period_ns": 8.0,
-   "wns_ns": 0.849,
-   "whs_ns": 0.04,
-   "intra_wns_ns": 0.849,
-   "intra_whs_ns": 0.04,
+   "wns_ns": 0.7,
+   "whs_ns": 0.027,
+   "intra_wns_ns": 0.7,
+   "intra_whs_ns": 0.027,
    "intra_endpoints": 5599,
-   "fmax_mhz": 139.84058173682004
+   "fmax_mhz": 136.986301369863
   },
   {
    "name": "clk_fast_turbo",
    "period_ns": 8.0,
-   "wns_ns": 0.849,
-   "whs_ns": 0.04,
-   "intra_wns_ns": 0.849,
-   "intra_whs_ns": 0.04,
+   "wns_ns": 0.7,
+   "whs_ns": 0.027,
+   "intra_wns_ns": 0.7,
+   "intra_whs_ns": 0.027,
    "intra_endpoints": 5599,
-   "fmax_mhz": 139.84058173682004
+   "fmax_mhz": 136.986301369863
   }
  ],
  "label": "[VIVADO-STA]",
@@ -67,10 +67,10 @@
  "LANE_IMPL": "0",
  "C3_EN": "1",
  "SAFE_DIV": "8",
- "design_wns_ns": "0.648",
- "design_whs_ns": "0.040",
- "lut": "7797",
- "ff": "6154",
+ "design_wns_ns": "0.473",
+ "design_whs_ns": "0.027",
+ "lut": "7789",
+ "ff": "6149",
  "ramb36": "13",
  "ramb18": "2",
  "dsp48": "3",
@@ -79,19 +79,19 @@
  "unrouted_nets": "0",
  "utilization_post_route": {
   "lut": {
-   "used": 6862.0,
+   "used": 6851.0,
    "available": 14600.0,
-   "util_pct": 47.0
+   "util_pct": 46.92
   },
   "ff": {
-   "used": 6154.0,
+   "used": 6149.0,
    "available": 29200.0,
-   "util_pct": 21.08
+   "util_pct": 21.06
   },
   "slice": {
-   "used": 2562.0,
+   "used": 2488.0,
    "available": 3650.0,
-   "util_pct": 70.19
+   "util_pct": 68.16
   },
   "bram_tile": {
    "used": 14.0,
@@ -158,15 +158,15 @@
   "Warning": 69
  },
  "power": {
-  "total_w": 0.51,
-  "dynamic_w": 0.448,
+  "total_w": 0.512,
+  "dynamic_w": 0.449,
   "static_w": 0.062,
   "confidence": "Medium"
  },
  "cdc": {
   "CDC-1": {
    "severity": "Critical",
-   "count": 760,
+   "count": 824,
    "description": "1-bit unknown CDC circuitry"
   },
   "CDC-3": {
@@ -174,10 +174,10 @@
    "count": 40,
    "description": "1-bit synchronized with ASYNC_REG property"
   },
-  "CDC-4": {
+  "CDC-13": {
    "severity": "Critical",
-   "count": 2,
-   "description": "Multi-bit unknown CDC circuitry"
+   "count": 1,
+   "description": "1-bit CDC path on a non-FD primitive"
   },
   "CDC-15": {
    "severity": "Warning",
@@ -211,6 +211,18 @@
    "no_async_reg": 0
   },
   {
+   "severity": "Critical",
+   "from": "clk_safe_raw",
+   "to": "clk_out1_clk_wiz_turbo",
+   "type": "User Ignored",
+   "exception": "False Path",
+   "endpoints": 1,
+   "safe": 0,
+   "unsafe": 1,
+   "unknown": 0,
+   "no_async_reg": 0
+  },
+  {
    "severity": "Warning",
    "from": "clk_fast_safe",
    "to": "clk_safe_raw",
@@ -230,18 +242,6 @@
    "exception": "Asynch Clock Groups",
    "endpoints": 136,
    "safe": 136,
-   "unsafe": 0,
-   "unknown": 0,
-   "no_async_reg": 0
-  },
-  {
-   "severity": "Info",
-   "from": "clk_safe_raw",
-   "to": "clk_out1_clk_wiz_turbo",
-   "type": "Safely Timed",
-   "exception": "None",
-   "endpoints": 1,
-   "safe": 1,
    "unsafe": 0,
    "unknown": 0,
    "no_async_reg": 0
@@ -271,19 +271,14 @@
    "no_async_reg": 0
   }
  ],
+ "cdc13_endpoints": [
+  "u_core/u_clk/u_clk/u_mux/S1"
+ ],
  "bus_skew": {
   "constraints": 16,
-  "worst_slack_ns": 6.822,
-  "worst_actual_ns": 1.178
+  "worst_slack_ns": 6.918,
+  "worst_actual_ns": 1.082
  },
- "inter_clock": [
-  {
-   "from": "clk_safe_raw",
-   "to": "clk_out1_clk_wiz_turbo",
-   "wns_ns": 0.648,
-   "whs_ns": 4.142,
-   "endpoints": 1
-  }
- ],
+ "inter_clock": [],
  "command": "python tools/run.py synth-official"
 }

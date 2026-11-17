@@ -255,40 +255,31 @@ Sudah tidak terblokir sejak dokumen resmi 10 Nov 2026: part number dan speed gra
 
 ## Catatan untuk sesi berikutnya
 
-Ditulis 2026-11-16 malam, sesudah jawaban user atas pertanyaan sesi.
+Ditulis di akhir sesi 17 Nov 2026 (PROMPT_PARHI_KAMERA_TANPA_PI).
 
-**Posisi:** PROMPT_UPDATE_ZERO7 Tahap 0 sampai 10 selesai. Semua pekerjaan yang bisa dilakukan tanpa board sudah dikerjakan dan diuji di simulasi; yang tersisa butuh board, data panitia, atau keputusan user (lihat "Belum dikerjakan" di bawah). Desain lengkap, termasuk Clocking Wizard, XADC, dan WS2812B, muat dan lolos timing di xc7s25csga225-1 pada clk_safe 125 MHz [VIVADO-STA]. Belum ada hasil `[HW]`. Fase tetap PRA-BOARD.
+**Untuk melanjutkan:** "lanjutkan PROMPT_PARHI_KAMERA_TANPA_PI dari catatan di STATUS.md" berarti lanjut Tugas C dari Bab 1.
 
-**Untuk melanjutkan:** perintah "lanjutkan PROMPT_UPDATE_ZERO7 dari tahap terakhir di STATUS.md" berarti: tidak ada tahap prompt yang tersisa; kerjakan butir terbuka di bawah sesuai urutan, lalu fase board sesudah user menulis "board siap".
+**Posisi:**
+- Tahap 0 selesai: info tim 17 Nov 2026 tercatat; `test` 224 passed sebelum perubahan sesi ini.
+- Tugas A selesai (M22): `board/BRINGUP_NO_PI.md`, desain bring-up, host lewat JTAG (ADR-025, ADR-026), dry-run lulus. Daya tanpa Pi tetap [UNKNOWN] (Q1); tanpa daya, langkah di board tidak bisa dimulai.
+- Tugas B selesai: `docs/CAMERA.md` (kamera wajib di Class 1 [OFFICIAL]; Class 2 [UNKNOWN], Q2; rekomendasi webcam USB).
+- ADR-027: pin select BUFGCTRL tidak di-timing (dasar DS189 Tabel 32 catatan 1). Laporan resmi sesudahnya: 6.851/14.600 LUT, WNS +0,473 ns [VIVADO-STA].
+- Tugas C dimulai, belum ada bab yang dibaca: buku adalah scan 791 halaman tanpa lapisan teks; OCR lokal per halaman sudah dibuat di `build/parhi/ocr/page-NNN.txt` (tidak di-commit; ulangi dengan skrip di catatan `docs/research/parhi/README.md` bila hilang). Halaman awal bab (PDF): Bab 1: 18, Bab 2: 60, Bab 3: 80, Bab 4: 107, Bab 5: 135, Bab 6: 165, Bab 7: 204, Bab 8: 242, Bab 9: 269, Bab 10: 326, Bab 11: 389, Bab 12: 432, Bab 13: 488, Bab 14: 540, Bab 15: 569, Bab 16: 601, Bab 17: 655, Bab 18: 705, Lampiran A–G: 726–784, indeks: 785.
 
-**Belum dikerjakan dan alasannya:**
-1. Bitstream untuk board: standar I/O masih [INFERENCE] (ADR-024); tegangan VCCO diukur dulu di langkah bring-up 1. Pemeriksaan bitstream kering sudah lolos (lihat Log bukti).
-2. Rekonfigurasi MMCM2, suhu XADC, WS2812B, tombol, done line: RTL dan perangkat lunak selesai dan diuji dengan model; perilaku perangkat AMD dan board hanya bisa dibuktikan di board.
-3. Waktu pulsa WS2812B: jenis LED dan datasheet di ZERO7 belum diketahui.
-4. Kelas target dan format laporan sintesis: menunggu panitia (user akan mengirim).
-5. Li dkk. (ITC-Asia 2019): teks lengkap tidak ditemukan.
-6. Draf laporan akhir dan slide (`docs/REPORT_DRAFT.md`, `docs/SLIDES_OUTLINE.md`): butuh angka `[HW]`; struktur sudah ada.
+**Progres membaca Parhi:** bab terakhir yang selesai: belum ada. Halaman terakhir yang dibaca: daftar isi (PDF hlm. 5–10) dan sebagian kata pengantar (hlm. 11–12). Mulai berikutnya: Bab 1, PDF hlm. 18. Setiap bab: baca semua halaman OCR, cek rumus dan gambar secara visual, tulis `docs/research/parhi/CHxx.md`, perbarui tabel di `docs/research/parhi/README.md` dan baris ini.
 
-**Tahapan yang butuh board (fase BOARD, `board/BRINGUP.md`):**
-1. B1: pasang ZERO7 di Pi 4, ukur arus 5 V dan tegangan VCCO bank 14, 15, 34; `board/pi_check.py`; isi field `UNKNOWN` di `board/BOARD_INFO.md`.
-2. Hapus tanda TODO di `board/zero7.xdc` bila tegangan cocok, lalu `board/build_bitstream.py`; program lewat JTAG.
-3. B2: SPI loopback, `ID`, unggah bobot; ukur kecepatan SPI tertinggi yang stabil (mulai 1 MHz, batas desain 15,6 MHz).
-4. B3 (E7): bit-exact di clock aman untuk seluruh set validasi.
-5. Cek rekonfigurasi MMCM2 per level, warna WS2812B, polaritas tombol, pembacaan suhu.
-6. B4 (E1–E3): sapuan frekuensi, uji H1; B5 (E4, E6): tiga mode, governor otomatis, suhu; B6: hasil final, laporan, video demo.
+**Langkah berikutnya, berurutan:**
+1. Tugas C: Bab 1 sampai 18 dan lampiran A–G, lalu `docs/research/PARHI_DEVELOPMENT_LIST.md` dan 3–5 usulan ADR (status "Diusulkan").
+2. 20 Nov 2026 dan sesudahnya: begitu daya tersedia dan user menulis "board siap", ikuti `board/BRINGUP_NO_PI.md` langkah 1–9; isi `board/BOARD_INFO.md` dengan hasil inspeksi dan pengukuran.
+3. Begitu tegangan bank terukur: hapus tanda TODO di XDC, bangun bitstream SENTINEL penuh, dan jalankan E7 lewat `bringup.py --host jtag`.
+4. Jawaban panitia (Q1–Q6) dicatat di `board/BOARD_INFO.md` dan `CLAUDE.md` §7 (dengan persetujuan user).
 
-**Langkah berikutnya tanpa board (bila ada waktu):**
-1. Draf laporan akhir dan 10 slide dengan angka `[SIM]` dan `[VIVADO-STA]` yang sudah ada, bertanda jelas.
-2. Latih ulang begitu kelas target diumumkan; ulangi regresi, laporan resmi, dan materi belajar.
-3. Setiap kali RTL berubah: `python tools/run.py synth-official`, `vivado -mode batch -source fpga/bitstream_dryrun.tcl`, `python tools/gen_results_doc.py`.
-
-**Jebakan yang ditemukan (tambahan):**
-- Di heredoc Git Bash, `\n` di dalam string Python menjadi baris baru sungguhan; perbaiki dengan `chr(92)` atau tulis file lewat alat tulis.
-- `before` adalah kata kunci SystemVerilog (iverilog -g2012); `always @*` tanpa perubahan input tidak dievaluasi Icarus di waktu 0, jadi pakai `assign` untuk logika kombinasional sederhana.
-- Nama register synchronizer dipakai constraint (`*por_meta_reg[0]`, `*axi_rst_meta_reg[0]`); ganti nama berarti ganti constraint dan test.
-- `report_cdc` menolak dua bentuk reset: logika di depan synchronizer (CDC-10) dan satu flop ke dua synchronizer di clock yang sama (CDC-11). `tests/test_fpga_scripts.py::test_committed_official_report_is_clean` sekarang menjaga laporan resmi yang di-commit.
-- Clocking Wizard dibangkitkan ulang setiap run resmi di `build/ip_official/`; tidak ada sumber IP yang di-commit.
-- PDF AMD di `docs/vendor/` tidak di-commit (syarat redistribusi); checksum ada di `docs/vendor/README.md`.
+**Jebakan yang ditemukan (tambahan sesi ini):**
+- `Resolve-Path` di PowerShell menganggap `[` dan `]` sebagai wildcard; nama file buku berisi kurung siku, jadi berikan path langsung.
+- `vivado.bat` memecah argumen yang berisi koma (dan `=`); daftar file bring-up memakai pemisah `+`.
+- Bus host kedua di `top_core`: alamat harus tetap dipilih untuk host terakhir selama pipeline baca (bug ditemukan oleh `jtag_session_xs`, sudah diperbaiki).
+- Browser bawaan kadang tidak bisa membaca halaman (policy check); halaman Jepang panitia diambil dengan `curl` lalu di-decode Shift_JIS secara lokal.
+- Margin timing di 125 MHz tipis; jalur yang dulu lolos bisa meleset karena penempatan. Setiap perubahan RTL: ulangi `synth-official`; guard test menolak laporan yang tidak bersih.
 
 ## Log bukti
 
@@ -351,3 +342,5 @@ Ditulis 2026-11-16 malam, sesudah jawaban user atas pertanyaan sesi.
 | 2026-11-17 | M22 | `python tools/run.py bringup blink/vcco_probe/io_test/jtag_host --accept-inferred-io` | [VIVADO] empat bitstream bring-up di `build/bringup/` (tidak di-commit); `top_jtag`: 8.048 LUT (55,12%), 16,5 block RAM, WNS +0,147 ns di 125 MHz [VIVADO-STA] |
 | 2026-11-17 | M22 | `python board/bringup.py id/validate --dry-run --host jtag` | [SIM] ID OK, 3/3 gambar sama dengan golden model lewat jalur JTAG (model perangkat) |
 | 2026-11-17 | Tugas B | kutipan dari `GUIDE_LSI_2027_FINALE.pdf` (OCR) dan `shiyou_1.html` (Shift_JIS, decode lokal); harga dari raspberrypi.com, waveshare.com, logitech.com (akses 17 Nov 2026); `python -m sentinel.camera_mode --source ../build/camera_dryrun.avi` | `docs/CAMERA.md`: kamera wajib di Class 1 [OFFICIAL], Class 2 [UNKNOWN] (Q2); rekomendasi webcam USB; uji tanpa Pi lulus [SYNTHETIC] |
+| 2026-11-17 | ADR-027 | `python tools/run.py synth-official` sesudah ADR-025 | run pertama WNS −0,044 ns di jalur `clk_sel_turbo` ke BUFGCTRL S1 (tidak di-commit); sesudah ADR-027: 6.851/14.600 LUT, WNS +0,473 ns, WHS +0,027 ns [VIVADO-STA] |
+| 2026-11-17 | Tugas C | cek PDF buku (791 halaman scan, tanpa teks); OCR lokal semua halaman ke `build/parhi/ocr/` | belum ada bab yang dibaca; peta halaman awal bab di catatan sesi |

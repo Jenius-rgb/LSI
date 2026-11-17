@@ -227,3 +227,12 @@ ADR-001 sampai ADR-007 adalah usulan awal dari starter kit (2026-11-09). Boleh d
   5. Fase BOARD tetap dimulai sesuai CLAUDE.md §8. Semua yang dibuat sebelum itu adalah persiapan.
 - **Dampak:** `board/BRINGUP_NO_PI.md`; peta eksperimen tanpa Pi di STATUS.
 - **Status:** Diterima.
+
+## ADR-027 — Pin select BUFGCTRL tidak di-timing
+
+- **Konteks:** run resmi 17 Nov 2026 sesudah ADR-025 meleset tipis: WNS −0,044 ns pada jalur `clk_sel_turbo` (domain `clk_safe`) ke pin S1 BUFGCTRL, dengan requirement setengah periode clock turbo [VIVADO-STA]. Run sebelumnya lolos di jalur yang sama dengan slack +0,27 sampai +0,65 ns; bedanya hanya penempatan. Frekuensi turbo berubah saat berjalan, jadi jalur ini sebenarnya asinkron; Vivado hanya menganggapnya sinkron karena turbo level 0 sama dengan clk_safe dan keduanya berasal dari CLK20M.
+- **Dasar:** DS189 Tabel 32, catatan 1: TBCCCK_CE/TBCCKC_CE wajib dipenuhi untuk perpindahan clock tanpa glitch; setup/hold global clock lainnya opsional, hanya perlu bila perpindahan harus cocok siklus-per-siklus dengan simulasi. Di SENTINEL pin CE diikat 1 (konstan), pemilih hanya berubah saat domain cepat diam (SPEC §7.7), dan `clk_gen_xilinx` melaporkan status mux sesudah jeda tetap.
+- **Alternatif:** (a) mengandalkan penempatan yang kebetulan lolos; (b) menurunkan f_safe; (c) false path ke pin S0/S1 BUFGCTRL dengan dasar DS189.
+- **Keputusan:** (c). `fpga/constraints/top_board_timing.tcl` memberi `set_false_path` ke pin select BUFGCTRL. Pengecualian lain tetap tidak ada (ADR-021). Pin CE tidak dikecualikan.
+- **Dampak:** laporan resmi diulang; test memastikan pengecualian ini ada beserta rujukannya. Dengan false path, `report_cdc` mencatat jalur ini sebagai CDC-13 (penyeberangan ke primitif bukan flip-flop) berstatus unsafe; guard test laporan resmi hanya mengizinkan CDC-13 di pin S0/S1 BUFGCTRL itu dan menolak yang lain.
+- **Status:** Diterima.

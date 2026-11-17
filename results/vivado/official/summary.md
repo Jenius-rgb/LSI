@@ -11,8 +11,8 @@ The I/O standards in `board/zero7.xdc` are unconfirmed (LVCMOS33 assumed), so no
 
 | Resource | Used | Available | Utilisation |
 | --- | --- | --- | --- |
-| Slice LUTs | 6862 | 14600 | 47.00% |
-| Slice registers | 6154 | 29200 | 21.08% |
+| Slice LUTs | 6851 | 14600 | 46.92% |
+| Slice registers | 6149 | 29200 | 21.06% |
 | Block RAM tiles | 14 | 45 | 31.11% |
 | DSP48E1 | 3 | 80 | 3.75% |
 | Bonded IOB | 9 | 150 | 6.00% |
@@ -26,17 +26,17 @@ Paths inside one clock. Clocks without such paths (the MMCM feedback clocks and 
 | Clock | Period (ns) | Endpoints | WNS setup (ns) | WHS hold (ns) | Fmax = 1000 / (period - WNS) (MHz) |
 | --- | --- | --- | --- | --- | --- |
 | clk_in | 50.000 | 1 | 48.466 | 0.357 | 651.9 |
-| clk_safe_raw | 8.000 | 12240 | 0.711 | 0.062 | 137.2 |
-| clk_fast_safe | 8.000 | 5599 | 0.849 | 0.040 | 139.8 |
-| clk_fast_turbo | 8.000 | 5599 | 0.849 | 0.040 | 139.8 |
+| clk_safe_raw | 8.000 | 12234 | 0.473 | 0.033 | 132.9 |
+| clk_fast_safe | 8.000 | 5599 | 0.700 | 0.027 | 137.0 |
+| clk_fast_turbo | 8.000 | 5599 | 0.700 | 0.027 | 137.0 |
 
 Timed paths between two clocks. The crossings between `clk_safe` and `clk_fast` are asynchronous by design (SPEC 7.8) and appear in the clock-domain crossing section instead.
 
 | From | To | Endpoints | WNS setup (ns) | WHS hold (ns) |
 | --- | --- | --- | --- | --- |
-| clk_safe_raw | clk_out1_clk_wiz_turbo | 1 | 0.648 | 4.142 |
+| none | | | | |
 
-Design worst setup slack 0.648 ns, worst hold slack 0.040 ns, unrouted nets 0.
+Design worst setup slack 0.473 ns, worst hold slack 0.027 ns, unrouted nets 0.
 `clk_fast_turbo` is analysed at turbo level 0, which equals the safe frequency. Running the lanes above that frequency is the experiment of the project and is outside what static timing covers.
 
 ## Checks [VIVADO-STA]
@@ -50,27 +50,27 @@ From `report_cdc` (`impl_cdc.rpt`, endpoints in `impl_cdc_details.rpt`). The cro
 
 | Rule | Severity | Endpoints | Vivado description | What it is in this design |
 | --- | --- | --- | --- | --- |
-| CDC-1 | Critical | 760 | 1-bit unknown CDC circuitry | single-bit crossing without a synchronizer: the quasi-static injection configuration and layer index (SPEC 7.8) |
+| CDC-1 | Critical | 824 | 1-bit unknown CDC circuitry | single-bit crossing without a synchronizer: the quasi-static injection configuration and layer index (SPEC 7.8) |
 | CDC-3 | Info | 40 | 1-bit synchronized with ASYNC_REG property | two-flop synchronizer with ASYNC_REG |
-| CDC-4 | Critical | 2 | Multi-bit unknown CDC circuitry | multi-bit crossing without a synchronizer: quasi-static injection masks (SPEC 7.8) |
+| CDC-13 | Critical | 1 | 1-bit CDC path on a non-FD primitive | crossing into a non-flop primitive: the select pin of the clk_fast BUFGCTRL, allowed by ADR-027 only |
 | CDC-15 | Warning | 784 | Clock enable controlled CDC structure detected | crossing captured under a clock enable: the memories of the asynchronous FIFOs and the quasi-static STARVE_CYCLES word |
 
 | From | To | Exception | Endpoints | Safe | Unsafe | Unknown | Without ASYNC_REG |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | clk_safe_raw | clk_fast_safe | Asynch Clock Groups | 686 | 274 | 0 | 412 | 0 |
 | clk_safe_raw | clk_fast_turbo | Asynch Clock Groups | 686 | 274 | 0 | 412 | 0 |
+| clk_safe_raw | clk_out1_clk_wiz_turbo | False Path | 1 | 0 | 1 | 0 | 0 |
 | clk_fast_safe | clk_safe_raw | Asynch Clock Groups | 136 | 136 | 0 | 0 | 0 |
 | clk_fast_turbo | clk_safe_raw | Asynch Clock Groups | 136 | 136 | 0 | 0 | 0 |
-| clk_safe_raw | clk_out1_clk_wiz_turbo | None | 1 | 1 | 0 | 0 | 0 |
 | clk_in | clk_safe_raw | False Path | 1 | 1 | 0 | 0 | 0 |
 | input port clock | clk_safe_raw | False Path | 3 | 3 | 0 | 0 | 0 |
 
 "Unknown" endpoints are the quasi-static signals: `report_cdc` cannot see the rule that they only change while the fast domain is idle.
-Bus skew of the FIFO pointer crossings (`impl_bus_skew.rpt`): 16 constraints, worst slack 6.822 ns, largest skew 1.178 ns.
+Bus skew of the FIFO pointer crossings (`impl_bus_skew.rpt`): 16 constraints, worst slack 6.918 ns, largest skew 1.082 ns.
 
 ## Power estimate [VIVADO-STA]
 
-`report_power` without switching-activity data (`impl_power.rpt`): total 0.51 W, of which dynamic 0.448 W and device static 0.062 W; Vivado rates its own confidence as "Medium". An estimate, not a measurement.
+`report_power` without switching-activity data (`impl_power.rpt`): total 0.512 W, of which dynamic 0.449 W and device static 0.062 W; Vivado rates its own confidence as "Medium". An estimate, not a measurement.
 
 ## Report files
 

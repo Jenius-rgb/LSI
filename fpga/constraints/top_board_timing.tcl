@@ -22,6 +22,13 @@ if {[llength $safe_clk] != 1 || [llength $turbo_clk] != 1} {
 create_generated_clock -name clk_fast_safe  -source $mux_i0 -divide_by 1 $mux_o
 create_generated_clock -name clk_fast_turbo -source $mux_i1 -divide_by 1 -master_clock $turbo_clk -add $mux_o
 set_clock_groups -physically_exclusive -group clk_fast_safe -group clk_fast_turbo
+
+# ADR-027: the select pins S0/S1 of the BUFGCTRL are not timed. DS189 Table 32 note 1: only the CE
+# setup/hold (TBCCCK_CE/TBCCKC_CE) is needed for glitch-free switching; the other global-clock
+# setup and hold times matter only for cycle-exact switching. CE is tied high, the select changes
+# only while clk_fast is idle (SPEC 7.7), and the turbo frequency changes at run time anyway.
+set mux_sel [get_pins -of_objects $mux -filter {REF_PIN_NAME =~ S*}]
+set_false_path -to $mux_sel
 set_clock_groups -asynchronous -group $safe_clk -group {clk_fast_safe clk_fast_turbo}
 
 # The power-on reset is launched by the board clock and enters the clk_safe domain through its
