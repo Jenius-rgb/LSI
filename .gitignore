@@ -38,3 +38,7 @@ tight_setup_hold_pins.txt
 
 # AMD documents: downloaded with the user's permission, kept locally only (docs/vendor/README.md)
 docs/vendor/**/*.pdf
+
+# K. K. Parhi, VLSI Digital Signal Processing Systems (Wiley): copyrighted book, never commit
+*Parhi*.pdf
+*VLSI_Digital_Signal_Processing*
