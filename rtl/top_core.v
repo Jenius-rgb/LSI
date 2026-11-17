@@ -27,7 +27,18 @@ module top_core #(
     input  wire spi_mosi,
     output wire spi_miso,
     output wire [3:0] led,
-    output wire       ws2812     // status colour for the WS2812B LED1 (ADR-017)
+    output wire       ws2812,    // status colour for the WS2812B LED1 (ADR-017)
+    // Second host on the same byte bus (ADR-025): the JTAG-to-AXI bridge of board/top_jtag.v.
+    // Tie to zero when only SPI is used; one host is active at a time.
+    input  wire        ext_wr,
+    input  wire        ext_rd,
+    input  wire [23:0] ext_addr,
+    input  wire [7:0]  ext_wdata,
+    output wire [7:0]  host_rdata,
+    output wire        host_rvalid,
+    output wire        clk_safe_o,
+    output wire        rst_safe_o,
+    output wire [63:0] id_word_o
 );
     wire clk_safe, clk_fast, clocks_locked, sel_turbo, is_turbo;
     wire reconfig_start, reconfig_busy, turbo_locked;
@@ -73,9 +84,22 @@ module top_core #(
     xadc_temp u_temp (.clk(clk_safe), .rst(rst_safe), .code(temp_code), .valid(temp_valid));
 
     // ---- host bus ------------------------------------------------------------------------
-    wire        bus_wr, bus_rd;
-    wire [23:0] bus_addr;
-    wire [7:0]  bus_wdata;
+    wire        spi_wr, spi_rd;
+    wire [23:0] spi_addr;
+    wire [7:0]  spi_wdata;
+    wire        bus_wr    = spi_wr | ext_wr;
+    wire        bus_rd    = spi_rd | ext_rd;
+    // The address must stay valid for the read pipeline after the one-cycle request, so the host
+    // that made the last request keeps the address mux (both hosts hold their address meanwhile).
+    reg         ext_owner;
+    wire        ext_sel   = ext_wr | ext_rd | (ext_owner & ~(spi_wr | spi_rd));
+    wire [23:0] bus_addr  = ext_sel ? ext_addr : spi_addr;
+    wire [7:0]  bus_wdata = ext_wr ? ext_wdata : spi_wdata;
+    always @(posedge clk_safe) begin
+        if (rst_safe) ext_owner <= 1'b0;
+        else if (ext_wr | ext_rd) ext_owner <= 1'b1;
+        else if (spi_wr | spi_rd) ext_owner <= 1'b0;
+    end
     wire [7:0]  reg_rdata, eng_rdata;
 
     wire is_reg = (bus_addr[23:12] == 12'd0);
@@ -96,10 +120,15 @@ module top_core #(
     localparam [0:0] INJ_BIT   = (INJ_EN != 0);
     localparam [0:0] C3_BIT    = (C3_EN != 0);
     wire [63:0] id_word = {32'h534E544C, VER_MAJOR, VER_MINOR, K_BYTE, 4'd0, IMPL_BITS, INJ_BIT, C3_BIT};
+    assign host_rdata  = bus_rdata;
+    assign host_rvalid = bus_rvalid;
+    assign clk_safe_o  = clk_safe;
+    assign rst_safe_o  = rst_safe;
+    assign id_word_o   = id_word;
 
     spi_slave u_spi (
         .clk(clk_safe), .rst(rst_safe), .sclk(spi_sclk), .cs_n(spi_cs_n), .mosi(spi_mosi), .miso(spi_miso),
-        .id_word(id_word), .bus_wr(bus_wr), .bus_rd(bus_rd), .bus_addr(bus_addr), .bus_wdata(bus_wdata),
+        .id_word(id_word), .bus_wr(spi_wr), .bus_rd(spi_rd), .bus_addr(spi_addr), .bus_wdata(spi_wdata),
         .bus_rdata(bus_rdata), .bus_rvalid(bus_rvalid));
 
     // ---- registers -----------------------------------------------------------------------

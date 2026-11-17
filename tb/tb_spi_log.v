@@ -22,7 +22,7 @@ module tb_spi_log;
 
     top_core #(.K(K), .C3_EN(C3_EN), .WC1_W(WC1_W), .WC2_W(WC2_W), .WC3_W(WC3_W),
                .WEIGHT_AW(WEIGHT_AW), .ACT0_AW(ACT0_AW), .ACT1_AW(ACT1_AW)) dut (
-        .clk_in(1'b0), .rst(rst), .spi_sclk(sclk), .spi_cs_n(cs_n), .spi_mosi(mosi), .spi_miso(miso), .led(led));
+        .clk_in(1'b0), .rst(rst), .spi_sclk(sclk), .spi_cs_n(cs_n), .spi_mosi(mosi), .spi_miso(miso), .led(led), .ext_wr(1'b0), .ext_rd(1'b0), .ext_addr(24'd0), .ext_wdata(8'd0));
 
     reg [31:0] log [0:MAX_LOG-1];
     reg [8*200-1:0] path;

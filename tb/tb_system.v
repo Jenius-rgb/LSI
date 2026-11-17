@@ -35,7 +35,7 @@ module tb_system;
 
     top_core #(.K(K), .R(R), .C3_EN(C3_EN), .LANE_IMPL(LANE_IMPL), .WC1_W(WC1_W), .WC2_W(WC2_W), .WC3_W(WC3_W),
                .WEIGHT_AW(WEIGHT_AW), .ACT0_AW(ACT0_AW), .ACT1_AW(ACT1_AW), .LOG_AW(LOG_AW)) dut (
-        .clk_in(1'b0), .rst(rst), .spi_sclk(sclk), .spi_cs_n(cs_n), .spi_mosi(mosi), .spi_miso(miso), .led(led));
+        .clk_in(1'b0), .rst(rst), .spi_sclk(sclk), .spi_cs_n(cs_n), .spi_mosi(mosi), .spi_miso(miso), .led(led), .ext_wr(1'b0), .ext_rd(1'b0), .ext_addr(24'd0), .ext_wdata(8'd0));
 
     defparam dut.u_clk.u_clk.TURBO_BASE = TURBO_NS;
     defparam dut.u_clk.u_clk.TURBO_STEP = TURBO_STEP_NS;

@@ -43,10 +43,24 @@ def need_board_facts() -> bool:
     return True
 
 
+HOST = {"name": "spi", "bitstream": None}   # set from the command line (ADR-025: --host jtag without the Pi)
+
+
 def open_driver(dry_run: bool, model: str = "xs") -> tuple[SentinelDriver, object, str]:
     from model.vectors import load_or_random_qmodel
 
     qm, source = load_or_random_qmodel(model)
+    if HOST["name"] == "jtag":
+        from sentinel.transport_jtag import JtagAxiTransport, SimulatedAxi, VivadoTclAxi
+
+        if dry_run:
+            return SentinelDriver(JtagAxiTransport(SimulatedAxi(ModelDevice(qm)))), qm, f"dry-run over JTAG ({source})"
+        sys.path.insert(0, str(ROOT / "tools"))
+        from check_env import find_vivado
+
+        port = VivadoTclAxi(find_vivado(), HOST["bitstream"])
+        port.self_test()
+        return SentinelDriver(JtagAxiTransport(port)), qm, f"board over JTAG ({source})"
     if dry_run:
         return SentinelDriver(LogTransport(ModelDevice(qm))), qm, f"dry-run ({source})"
     from sentinel.transport import GpioDoneLine
@@ -159,7 +173,11 @@ def main() -> int:
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--model", default="xs", choices=["s", "xs"])
     parser.add_argument("--images", type=int, default=200)
+    parser.add_argument("--host", choices=["spi", "jtag"], default="spi",
+                        help="spi: Raspberry Pi; jtag: PC over the JTAG cable with board/top_jtag.v (ADR-025)")
+    parser.add_argument("--bitstream", default=None, help="with --host jtag: program this .bit first")
     args = parser.parse_args()
+    HOST["name"], HOST["bitstream"] = args.host, args.bitstream
     return STEPS[args.step](args)
 
 

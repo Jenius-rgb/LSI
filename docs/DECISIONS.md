@@ -186,3 +186,44 @@ ADR-001 sampai ADR-007 adalah usulan awal dari starter kit (2026-11-09). Boleh d
 - **Keputusan:** LVCMOS33 untuk semua pin SENTINEL di bank 15 dan 34 sebagai [INFERENCE] dengan bukti di atas. Tanda TODO di `board/zero7.xdc` tetap sampai tegangan VCCO diukur dengan multimeter saat board datang (langkah bring-up 1) atau user manual terbit. `board/build_bitstream.py` tetap menolak membuat bitstream untuk board sebelum itu. Pemeriksaan "bitstream kering" boleh dijalankan sekarang: `write_bitstream` dari checkpoint resmi ke `build/`, hanya untuk membuktikan bahwa DRC pembuatan bitstream lolos. File itu tidak dipakai di board dan tidak di-commit.
 - **Dampak:** fase board tidak bisa dimulai lebih awal; satu risiko (DRC bitstream) bisa ditutup sebelum board datang.
 - **Status:** Diterima.
+
+## ADR-025 — Host lewat JTAG selama Raspberry Pi belum ada
+
+- **Konteks:** ZERO7 dan JTAG-HS3 tersedia mulai 20 Nov 2026; Raspberry Pi 4 mungkin datang lebih lambat dan kompatibilitasnya dengan ZERO7 [UNKNOWN] (info tim, 17 Nov 2026). Semua eksperimen SENTINEL memakai host yang mengunggah bobot, mengirim gambar, dan membaca register. JTAG-HS3 sudah tersambung ke PC untuk memprogram FPGA; pin JTAG ada di bank 0 yang VCCO-nya VCC3V3 [OFFICIAL, TK].
+- **Alternatif:**
+  - (a) Host lewat JTAG: IP JTAG-to-AXI Master milik AMD di FPGA, jembatan AXI4-Lite ke bus host SENTINEL, dan skrip Tcl Vivado yang dikendalikan Python (`JtagBackend`, antarmuka sama dengan `HwBackend` dan `MockBackend`). VIO juga dipertimbangkan, tetapi VIO hanya cocok untuk beberapa sinyal kontrol; mengunggah ribuan byte bobot lewat properti VIO terlalu lambat dan rumit.
+  - (b) Bobot dan beberapa gambar uji disimpan di BRAM, dengan mode self-test yang dijalankan tombol START; hasil PASS/FAIL dari CRC logit dibandingkan nilai golden dan ditampilkan di LED atau WS2812B.
+  - (c) UART lewat PMOD dengan adaptor USB-UART.
+- **Perbandingan:**
+
+  | Kriteria | (a) JTAG-to-AXI | (b) self-test BRAM | (c) UART PMOD |
+  | --- | --- | --- | --- |
+  | Perangkat tambahan | tidak ada (kabel JTAG yang sama) | tidak ada | adaptor USB-UART |
+  | Tegangan bank harus pasti | tidak (bank 0 = 3,3 V [OFFICIAL]) | tidak | ya (bank 15 belum pasti) |
+  | Ganti bobot tanpa sintesis ulang | ya | tidak | ya |
+  | E1–E4, E7 dengan log lengkap | ya | tidak (hanya PASS/FAIL) | ya |
+  | Memakai ulang driver dan harness | ya (frame SPI diterjemahkan ke transaksi AXI) | tidak | sebagian (protokol baru) |
+  | Kecepatan unggah | lambat (transaksi Vivado), cukup untuk eksperimen | tidak perlu unggah | sedang |
+  | Risiko | perintah Tcl Hardware Manager belum dicoba di board | paling kecil | butuh RTL UART baru |
+
+- **Keputusan:** (a). Rinciannya:
+  1. `top_core` mendapat port bus host eksternal (byte), di-OR dengan bus dari `spi_slave`; satu host saja yang aktif pada satu waktu. `top_board` mengikat port ini ke nol, jadi bitstream SPI tidak berubah fungsinya.
+  2. `rtl/axil_bus_bridge.v`: slave AXI4-Lite 32 bit yang memecah tiap transaksi menjadi akses byte pada bus host (little-endian, byte dengan `WSTRB` saja), plus jendela ID di alamat 0xFFFFF8–0xFFFFFF yang mengembalikan kata ID yang sama dengan perintah SPI 0x9F.
+  3. IP JTAG-to-AXI Master hanya di `rtl/platform/xilinx/`; model simulasinya `rtl/platform/sim/` memutar ulang log transaksi dan memeriksa data baca, supaya jalur JTAG lulus ko-simulasi bit-exact seperti `spi_session`.
+  4. `board/top_jtag.v` untuk ZERO7 tanpa Pi: clock B13, LED R3/R2, WS2812B N1; pin SPI tidak dipakai.
+  5. Python: `JtagAxiTransport` menerjemahkan frame SPI dari `SentinelDriver` ke transaksi word; tulis sebagian word hanya dilakukan dengan baca-ubah-tulis di area memori, tidak pernah di register. `JtagBackend` = `HwBackend` di atas transport itu. Sisi Vivado dijalankan sebagai sesi Tcl yang tetap terbuka (perintah `create_hw_axi_txn` dan `run_hw_axi`, UG908); urutan data dan perilaku perintah dicek dengan uji pola saat pertama kali tersambung ke board.
+  6. (b) tetap layak sebagai uji asap tambahan dan demo tanpa host, tetapi tidak dikerjakan sekarang.
+- **Dampak:** SPEC §12.7 baru. Ko-simulasi baru `jtag_session` dan test Python dry-run. Laporan resmi (`top_board`) tidak berubah. Hasil dari jalur ini tetap [HW] hanya bila dijalankan di board, dan latensi ujung ke ujungnya tidak mewakili SPI.
+- **Status:** Diterima.
+
+## ADR-026 — Bring-up ZERO7 tanpa Raspberry Pi
+
+- **Konteks:** board datang 20 Nov 2026, Pi mungkin belakangan. Dokumen resmi hanya menyebut daya ZERO7 dari header GPIO Raspberry Pi (IN-41); cara lain [UNKNOWN]. Tegangan VCCO bank 15 dan 34 belum tertulis, dan bola VCCO BGA tidak bisa disentuh probe.
+- **Keputusan:**
+  1. Tiga desain bring-up di `fpga/bringup/`: `blink_top` (LED berkedip; frekuensi clock dari stopwatch), `vcco_probe_top` (PMOD1 dan N1/J7 pada level tetap, supaya tegangan bank 15 dan 34 terbaca dengan multimeter di header), `io_test_top` (tombol dan switch ke LED dan warna WS2812B).
+  2. Bitstream bring-up boleh dibuat sebelum VCCO pasti, karena desain ini hanya menggerakkan pin milik FPGA (dicek test); `fpga/bringup/build.py` tetap menolak tanpa `--accept-inferred-io`. Bitstream SENTINEL penuh untuk board tetap menunggu VCCO terukur (ADR-024).
+  3. Daya tanpa Pi tidak disarankan dari pin header tanpa dasar dokumen. Jalur yang tertulis adalah daya dari Raspberry Pi; Pi apa pun yang dipinjam hanya untuk daya tetap mengikuti jalur itu, dengan catatan kompatibilitas Pi 4 [UNKNOWN] dan Pi 5 yang disebut panitia.
+  4. Milestone M22 (bring-up tanpa Pi dan host JTAG) di STATUS.
+  5. Fase BOARD tetap dimulai sesuai CLAUDE.md §8. Semua yang dibuat sebelum itu adalah persiapan.
+- **Dampak:** `board/BRINGUP_NO_PI.md`; peta eksperimen tanpa Pi di STATUS.
+- **Status:** Diterima.

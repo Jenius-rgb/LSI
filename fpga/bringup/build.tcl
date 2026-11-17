@@ -5,7 +5,7 @@ lassign $argv top rtl_files xdc outdir bitname ila
 set part xc7s25csga225-1
 file mkdir $outdir
 set_part $part
-foreach f [split $rtl_files ","] { read_verilog $f }
+foreach f [split $rtl_files "+"] { read_verilog $f }
 read_xdc $xdc
 synth_design -top $top -part $part
 if { $ila } {

@@ -193,6 +193,31 @@ Panitia menerbitkan fakta resmi baru pada 2 dan 10 Nov 2026 (ringkasan dan rujuk
   - [x] `clk_wiz_turbo` dibangkitkan di `fpga/synth_official.tcl`; `clk_gen_xilinx` memakainya
   - [B] rekonfigurasi sungguhan diukur di board (B4)
 - [B] Boot dari flash QSPI (ADR-019): menunggu jenis flash dan posisi DIP SW7.
+- **M22 — Bring-up tanpa Raspberry Pi dan host lewat JTAG (ADR-025, ADR-026)**
+  - [x] `board/BRINGUP_NO_PI.md`: daya (hanya lewat Pi menurut IN-41; cara lain [UNKNOWN]), kabel JTAG-HS3, Hardware Manager, blink, tegangan bank, I/O, XADC, ILA, host JTAG
+  - [x] desain `fpga/bringup/` (blink, vcco_probe, io_test) dengan `tb_bringup`; `python tools/run.py bringup <desain> --accept-inferred-io`
+  - [x] `top_core` dengan port host kedua; `rtl/axil_bus_bridge.v`; `board/top_jtag.v`; model pemutar log JTAG; bench `jtag_session_xs`
+  - [x] `sentinel.transport_jtag` (`JtagAxiTransport`, `SimulatedAxi`, `RecordingAxi`, `VivadoTclAxi`, `JtagBackend`); `bringup.py --host jtag` lulus dry-run
+  - [B] semua langkah di board: menunggu daya, board, dan "board siap" (CLAUDE.md §8)
+
+### Peta eksperimen tanpa Raspberry Pi (ADR-025, ADR-026)
+
+| Eksperimen | Tanpa Pi (JTAG-HS3 + PC) | Catatan |
+| --- | --- | --- |
+| Bring-up: clock, LED, tegangan bank, tombol, XADC | ya | `board/BRINGUP_NO_PI.md` langkah 3–8 (butuh daya) |
+| E7 bit-exact di clock aman | ya | `bringup.py validate --host jtag` |
+| E1 atlas error (sapuan frekuensi) | ya | frekuensi lewat register; unggah gambar lebih lambat dari SPI |
+| E2 determinisme | ya | gambar dan setelan yang sama diulang |
+| E3 onset per layer | ya | `TURBO_MASK` per layer |
+| E4 tiga mode | ya, untuk throughput akselerator | waktu ujung ke ujung lewat JTAG tidak mewakili SPI |
+| E5 fault injection | sudah [SIM]; di board ya | register `INJ*` |
+| E6 governor dan suhu | ya | `TEMP` dan dasbor XADC |
+| E8 biaya resource dan daya | tidak butuh board | [VIVADO-STA] |
+| SPI asli dan kecepatannya | tidak, butuh Pi | |
+| Sinyal `irq_done` | tidak, butuh Pi | |
+| Mode kamera real-time | tidak, butuh Pi (atau laptop dengan MockBackend, tanpa FPGA) | `docs/CAMERA.md` |
+| Latensi ujung ke ujung dan demo akhir | tidak, butuh Pi | |
+
 
 ## Info tim, 17 Nov 2026
 
@@ -311,3 +336,8 @@ Ditulis 2026-11-16 malam, sesudah jawaban user atas pertanyaan sesi.
 | 2026-11-16 | ADR-024 | `vivado -mode batch -source fpga/bitstream_dryrun.tcl` | [VIVADO] `write_bitstream` lolos (Bitgen Completed Successfully); DRC bitstream: 0 error, 1 warning (RTSTAT-10); file `build/bitstream_dryrun/top_board_DRYRUN_NOT_FOR_BOARD.bit`, tidak dipakai di board dan tidak di-commit |
 | 2026-11-16 | semua | `python tools/run.py sim <semua bench> --record ...`; `python tools/run.py test` | [SIM] 45 bench, semuanya lulus; 224 passed in 303.17s (0:05:03); log `build/test_full_partb.log` |
 | 2026-11-16 | T9 | `python tools/study_guide/figures.py`; `build_docx.py`; `finalize_word.ps1` | materi belajar 1.1 dibangun ulang dengan Pi 4, ADR-022 sampai ADR-024, dan laporan resmi terbaru; 46 halaman (`build/`, tidak di-commit) |
+| 2026-11-17 | Tahap 0 | `python tools/run.py check`; `python tools/run.py test` | semua alat ok; 224 passed in 434.38s (`build/test_tahap0.log`) |
+| 2026-11-17 | M22 | OCR lokal (Windows OCR) semua halaman TK dan IN; pencarian kata daya | daya ZERO7 hanya tertulis lewat header Raspberry Pi (IN-41); cara lain [UNKNOWN] |
+| 2026-11-17 | M22 | `python tools/run.py sim bringup jtag_session_xs spi_session_xs system_s_k8_c1 system_micro ... --record` | [SIM] `bringup` PASS 10/10, `jtag_session_xs` PASS 25/25, `spi_session_xs` PASS 224/224, sistem lulus semua |
+| 2026-11-17 | M22 | `python tools/run.py bringup blink/vcco_probe/io_test/jtag_host --accept-inferred-io` | [VIVADO] empat bitstream bring-up di `build/bringup/` (tidak di-commit); `top_jtag`: 8.048 LUT (55,12%), 16,5 block RAM, WNS +0,147 ns di 125 MHz [VIVADO-STA] |
+| 2026-11-17 | M22 | `python board/bringup.py id/validate --dry-run --host jtag` | [SIM] ID OK, 3/3 gambar sama dengan golden model lewat jalur JTAG (model perangkat) |

@@ -25,6 +25,9 @@ DESIGNS = {
                    "xdc": "fpga/bringup/vcco_probe/vcco_probe_top.xdc", "outputs": ["led1", "led2", "pmod1_hi", "pmod1_lo", "ws2812_dout"]},
     "io_test": {"top": "io_test_top", "rtl": ["rtl/ws2812_tx.v", "fpga/bringup/io_test/io_test_top.v"],
                 "xdc": "fpga/bringup/io_test/io_test_top.xdc", "outputs": ["led1", "led2", "ws2812_dout"]},
+    # The full SENTINEL core with the PC as host over JTAG (ADR-025); its own Tcl generates the IP cores.
+    "jtag_host": {"top": "top_jtag", "tcl": "fpga/bringup/jtag_host/build.tcl", "xdc": "fpga/bringup/jtag_host/top_jtag.xdc",
+                  "outputs": ["led_busy", "led_fatal", "ws2812_dout"]},
 }
 
 
@@ -34,7 +37,10 @@ def bitstream_name(design: str) -> str:
 
 def vivado_command(vivado: str, design: str, outdir: Path, ila: bool = False) -> list[str]:
     d = DESIGNS[design]
-    rtl = ",".join(str(ROOT / f) for f in d["rtl"])
+    log = ["-log", str(outdir / "vivado.log")]
+    if "tcl" in d:
+        return [vivado, "-mode", "batch", "-nojournal", *log, "-source", str(ROOT / d["tcl"]), "-tclargs", str(outdir), bitstream_name(design), "8"]
+    rtl = "+".join(str(ROOT / f) for f in d["rtl"])   # "+": cmd.exe splits commas in the vivado.bat arguments
     return [vivado, "-mode", "batch", "-nojournal", "-log", str(outdir / "vivado.log"), "-source", str(ROOT / "fpga" / "bringup" / "build.tcl"),
             "-tclargs", d["top"], rtl, str(ROOT / d["xdc"]), str(outdir), bitstream_name(design), "1" if ila else "0"]
 

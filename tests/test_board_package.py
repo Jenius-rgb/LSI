@@ -93,3 +93,15 @@ def test_zero7_xdc_matches_the_connection_table():
     assert {k: pins.get(k) for k in expected} == expected
     assert len(set(pins.values())) == len(pins)
     assert "create_clock -name clk_in -period 50.000" in text
+
+
+def test_bringup_dry_run_over_jtag():
+    """ADR-025/026: the bring-up steps run over the JTAG host path against the device model before 20 Nov 2026."""
+    import subprocess
+    import sys
+
+    for step in (["id"], ["validate", "--images", "2"]):
+        res = subprocess.run([sys.executable, str(ROOT / "board" / "bringup.py"), *step, "--dry-run", "--host", "jtag"],
+                             capture_output=True, text=True, cwd=ROOT)
+        assert res.returncode == 0, res.stdout + res.stderr
+        assert "dry-run over JTAG" in res.stdout

@@ -325,6 +325,44 @@ def system_scenarios(model: str, k: int, c3_hw: int, scenarios: list[dict], work
     return {"scenarios": len(scenarios), "injections_fired": fired, "weights": qsource, "images": isource}
 
 
+def jtag_session_log(model: str, k: int, workdir, seed: int = 2027) -> tuple[int, dict]:
+    """The driver session of spi_session_log over the JTAG-to-AXI path (ADR-025), as a replayable AXI log."""
+    from sentinel.device_model import ModelDevice
+    from sentinel.driver import SentinelDriver
+    from sentinel.transport_jtag import JtagAxiTransport, RecordingAxi, SimulatedAxi
+
+    from model.config import load_hw_config
+    from model.data import verification_images
+    from model.export import write_artifacts
+    from model.golden import forward
+
+    qm, qsource = load_or_random_qmodel(model, seed)
+    manifest = write_artifacts(qm, {**load_hw_config(), "K": k}, workdir)
+    images, _, isource = verification_images(2)
+    rec = RecordingAxi(SimulatedAxi(ModelDevice(qm, k=k, flags=(1 << 1))))
+    drv = SentinelDriver(JtagAxiTransport(rec))
+    assert drv.read_id().magic == b"SNTL"
+    stem = workdir / f"{qm.name}_k{k}"
+    drv.load_model(stem.with_suffix(".bin"), stem.with_suffix(".manifest.json"))
+    drv.write_image(images[0].tobytes(), slot=0)
+    drv.configure(mode=2, img_sel=0)
+    drv.start()
+    drv.write_image(images[1].tobytes(), slot=1)
+    drv.wait_done()
+    gold = forward(qm, images[0])
+    assert drv.result_class() == gold.pred
+    assert drv.logits(int(manifest["n_classes"])) == [int(v) for v in gold.logits]
+    drv.configure(mode=2, img_sel=1)
+    drv.start()
+    drv.wait_done()
+    gold1 = forward(qm, images[1])
+    assert drv.result_class() == gold1.pred
+    assert drv.logits(int(manifest["n_classes"])) == [int(v) for v in gold1.logits]
+    assert drv.read_reg(0x000) == 0x534E544C
+    n_words = rec.write_log(workdir / "jtag_session.mem")
+    return n_words, {"weights": qsource, "images": isource, "transactions": len(rec.entries)}
+
+
 def governor_vectors(n_scenarios: int = 60, n_images: int = 40, seed: int = 2027) -> tuple[list[int], dict]:
     """Closed-loop governor scenarios driven by the synthetic fault model. [SYNTHETIC]"""
     from model.fault_model import FaultParams, TimingFaultModel

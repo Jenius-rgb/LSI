@@ -306,6 +306,20 @@ def _clkwiz_vectors(workdir: Path, params: dict) -> list[str]:
     return [f"+exp={path.as_posix()}"]
 
 
+def _jtag_log_vectors(model: str):
+    def gen(workdir: Path, params: dict) -> list[str]:
+        from model.vectors import jtag_session_log
+
+        jtag_session_log(model, params["K"], workdir)
+        return [f"+log={(workdir / 'jtag_session.mem').as_posix()}"]
+
+    return gen
+
+
+JTAG_SOURCES = [*TOP_SOURCES, "rtl/axil_bus_bridge.v", "rtl/jtag_axi_master.v", "rtl/platform/sim/jtag_axi_master_sim.v",
+                "board/top_jtag.v", "tb/tb_jtag_log.v"]
+
+
 def misc_benches() -> dict[str, Bench]:
     return {
         "governor": Bench("governor", "tb_governor", ["rtl/governor.v", "tb/tb_governor.v"], {}, _governor_vectors),
@@ -318,6 +332,11 @@ def misc_benches() -> dict[str, Bench]:
                                                    "tb/tb_bringup.v"]),
         "status_led": Bench("status_led", "tb_status_led", ["rtl/ws2812_tx.v", "rtl/status_led.v", "tb/tb_status_led.v"]),
         "xadc_temp": Bench("xadc_temp", "tb_xadc_temp", ["rtl/xadc_temp.v", "rtl/platform/sim/xadc_prim_sim.v", "tb/tb_xadc_temp.v"]),
+        "jtag_session_xs": Bench(
+            "jtag_session_xs", "tb_jtag_log", JTAG_SOURCES,
+            {k: v for k, v in _engine_params("xs", 8).items() if k in ("K", "C3_EN", "WEIGHT_AW", "ACT0_AW", "ACT1_AW")},
+            _jtag_log_vectors("xs"), slow=True, prefer_xsim=True,
+        ),
         "spi_session_xs": Bench(
             "spi_session_xs", "tb_spi_log", [*TOP_SOURCES, "tb/tb_spi_log.v"],
             {k: v for k, v in _engine_params("xs", 8).items() if k != "LANE_IMPL"},
@@ -337,6 +356,8 @@ LINT_TARGETS = [
     {"id": "regfile", "top": "regfile", "sources": ["rtl/regfile.v"]},
     {"id": "top_core", "top": "top_core", "sources": TOP_SOURCES, "params": _W},
     {"id": "top_board", "top": "top_board", "sources": TOP_SOURCES + ["board/top_board.v"]},
+    {"id": "top_jtag", "top": "top_jtag", "sources": TOP_SOURCES + ["rtl/axil_bus_bridge.v", "rtl/jtag_axi_master.v", "rtl/platform/sim/jtag_axi_master_sim.v", "board/top_jtag.v"]},
+    {"id": "axil_bus_bridge", "top": "axil_bus_bridge", "sources": ["rtl/axil_bus_bridge.v"]},
     {"id": "spi_slave", "top": "spi_slave", "sources": ["rtl/spi_slave.v"]},
     {"id": "governor", "top": "governor", "sources": ["rtl/governor.v"]},
     {"id": "clk_seq", "top": "clk_seq", "sources": ["rtl/clk_seq.v"]},

@@ -303,3 +303,55 @@ def test_pi_check_reports_what_it_finds(tmp_path):
     assert rows["import json"][0] == "ok" and rows["import no_such_module_xyz"][0] == "missing"
     rows = pc.check(model_path=tmp_path / "none", spidev_path=tmp_path / "none", modules=())
     assert rows["model"][0] == "missing" and rows["spidev0.0"][0] == "missing"
+
+
+def test_jtag_transport_runs_a_driver_session_against_the_device_model():
+    """ADR-025 dry run: the unchanged SentinelDriver over JTAG-to-AXI word transactions classifies like the golden model."""
+    from sentinel.transport_jtag import JtagAxiTransport, SimulatedAxi
+
+    qm = micro_qm()
+    axi = SimulatedAxi(ModelDevice(qm, k=8))
+    drv = SentinelDriver(JtagAxiTransport(axi))
+    identity = drv.read_id()
+    assert identity.magic == b"SNTL" and identity.k == 8
+    drv.write_image(images(1)[0].tobytes(), slot=0)
+    drv.configure(mode=2)
+    drv.start()
+    drv.wait_done()
+    gold = golden.forward(qm, images(1)[0])
+    assert drv.result_class() == gold.pred and drv.logits(10) == [int(v) for v in gold.logits]
+    assert axi.writes > 0 and axi.reads > 0
+
+
+def test_jtag_transport_never_does_partial_register_writes():
+    from sentinel.transport_jtag import JtagAxiTransport, SimulatedAxi
+
+    t = JtagAxiTransport(SimulatedAxi(ModelDevice(micro_qm(), k=8)))
+    with pytest.raises(ValueError):
+        t.xfer(bytes([0x02, 0x00, 0x00, 0x05, 0xAA]))      # one byte into a register: refused
+    t.xfer(bytes([0x02, 0x03, 0x00, 0x01, 0x11, 0x22]))     # two bytes into image memory: read-modify-write
+    rx = t.xfer(bytes([0x03, 0x03, 0x00, 0x00, 0x00, 0, 0, 0, 0]))
+    assert rx[6:8] == bytes([0x11, 0x22])
+
+
+def test_jtag_recording_writes_a_replayable_log(tmp_path):
+    from sentinel.transport_jtag import OP_END, OP_POLL, JtagAxiTransport, RecordingAxi, SimulatedAxi
+
+    rec = RecordingAxi(SimulatedAxi(ModelDevice(micro_qm(), k=8)))
+    drv = SentinelDriver(JtagAxiTransport(rec))
+    drv.read_id()
+    drv.configure(mode=2)
+    drv.start()
+    drv.wait_done()
+    n = rec.write_log(tmp_path / "jtag.mem")
+    words = [int(w, 16) for w in (tmp_path / "jtag.mem").read_text().split()]
+    assert len(words) == n and words[-4] >> 24 == OP_END and any(w >> 24 == OP_POLL for w in words[::4])
+
+
+def test_vivado_tcl_commands_for_axi_transactions():
+    from sentinel.transport_jtag import VivadoTclAxi
+
+    w = VivadoTclAxi.write_command(0x030000, 0x11223344)
+    assert "create_hw_axi_txn" in w and "-type write" in w and "-address 00030000" in w and "-data 11223344" in w and "run_hw_axi" in w
+    r = VivadoTclAxi.read_command(0x000004)
+    assert "-type read" in r and "-address 00000004" in r and "get_property DATA" in r

@@ -27,6 +27,9 @@ module top_board #(
     always @(posedge clk_in) por <= {por[6:0], 1'b0};
 
     wire [3:0] status;   // {fatal, is_turbo, done, busy}
+    wire [7:0]  unused_rdata;    // second-host bus (ADR-025) is not used on the SPI board top
+    wire [63:0] unused_id;
+    wire        unused_rvalid, unused_clk, unused_rst;
 
     top_core #(
         .K(K), .C3_EN(C3_EN), .LANE_IMPL(LANE_IMPL),
@@ -34,13 +37,15 @@ module top_board #(
     ) u_core (
         .clk_in(clk_in), .rst(por[7]),
         .spi_sclk(spi_sclk), .spi_cs_n(spi_cs_n), .spi_mosi(spi_mosi), .spi_miso(spi_miso),
-        .led(status), .ws2812(ws2812_dout));
+        .led(status), .ws2812(ws2812_dout), .ext_wr(1'b0), .ext_rd(1'b0), .ext_addr(24'd0), .ext_wdata(8'd0),
+        .host_rdata(unused_rdata), .host_rvalid(unused_rvalid), .clk_safe_o(unused_clk), .rst_safe_o(unused_rst), .id_word_o(unused_id));
 
     assign led_busy  = status[0];
     assign irq_done  = status[1];
     assign led_fatal = status[3];
 
     wire unused_turbo = status[2];   // shown as a colour on the WS2812B indicator (ADR-017)
+    wire unused_host  = &{1'b0, unused_rdata, unused_rvalid, unused_clk, unused_rst, unused_id};
 endmodule
 
 `default_nettype wire
