@@ -32,6 +32,7 @@ Statements about SENTINEL are [INFERENCE] unless they point to a file or result 
 | Chapter | Title (from the table of contents) | PDF pages | Status | Note |
 | --- | --- | --- | --- | --- |
 | Front matter | Contents, Preface | 1–17 | contents read (OCR) | chapter titles below |
+| Index | | 782–791 | skimmed (782–785) | not part of the text |
 | 1 | Introduction to Digital Signal Processing Systems | 18–59 | read 17 Nov 2026 | [CH01.md](CH01.md); no failed pages |
 | 2 | Iteration Bound | 60–79 | read 17 Nov 2026 | [CH02.md](CH02.md); PDF 79 repeats book p. 60, book p. 62 missing from the scan |
 | 3 | Pipelining and Parallel Processing | 80–106 | read 17 Nov 2026 | [CH03.md](CH03.md); no failed pages |
@@ -50,8 +51,8 @@ Statements about SENTINEL are [INFERENCE] unless they point to a file or result 
 | 16 | Synchronous, Wave, and Asynchronous Pipelines | 601–654 | read 17 Nov 2026 | [CH16.md](CH16.md); no failed pages |
 | 17 | Low-Power Design | 655–704 | read 17 Nov 2026 | [CH17.md](CH17.md); no failed pages |
 | 18 | Programmable Digital Signal Processors | 705–725 | read 17 Nov 2026 | [CH18.md](CH18.md); no failed pages |
-| A–G | Appendices: shortest paths, scheduling and allocation, Euclidean GCD, Schur polynomials, fast adders and multipliers, bit-serial scheduling, FIR coefficient quantization | 726–784 | not read | |
+| A–G | Appendices: shortest paths, scheduling and allocation, Euclidean GCD, Schur polynomials, fast adders and multipliers, bit-serial scheduling, FIR coefficient quantization | 726–781 | read 17 Nov 2026 | [APPENDICES.md](APPENDICES.md); PDF 759/760 swapped; book pp. 752, 770 not in the scan |
 
 Chapter titles 3–18 and the appendices are taken from the OCR of the contents pages (PDF pages 5–10);
 titles 1, 2 and 7–10 and 13 confirmed from their first pages from their first pages (the OCR of those contents lines
-was incomplete). PDF page ranges come from the first section heading of each chapter ("N.1 INTRODUCTION") in the OCR text; the index is on PDF pages 785–791. Appendix A starts on 726, B 732, C 752, D 756, E 761, F 771, G 778.
+was incomplete). PDF page ranges come from the first section heading of each chapter ("N.1 INTRODUCTION") in the OCR text; the index is on PDF pages 782–791 (corrected after reading; first mapped as 785). Appendix A starts on 726, B 732, C 752, D 756, E 761, F 771, G 778.
