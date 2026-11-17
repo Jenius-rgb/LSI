@@ -46,7 +46,7 @@ Statements about SENTINEL are [INFERENCE] unless they point to a file or result 
 | 12 | Digital Lattice Filter Structures | 432–487 | read 17 Nov 2026 | [CH12.md](CH12.md); book p. 420 not in the scan (book page = PDF − 11 from here) |
 | 13 | Bit-Level Arithmetic Architectures | 488–539 | read 17 Nov 2026 | [CH13.md](CH13.md); no failed pages |
 | 14 | Redundant Arithmetic | 540–568 | read 17 Nov 2026 | [CH14.md](CH14.md); no failed pages |
-| 15 | Numerical Strength Reduction | 569–600 | not read | |
+| 15 | Numerical Strength Reduction | 569–600 | read 17 Nov 2026 | [CH15.md](CH15.md); book p. 558 not in the scan (book page = PDF − 10 from here) |
 | 16 | Synchronous, Wave, and Asynchronous Pipelines | 601–654 | not read | |
 | 17 | Low-Power Design | 655–704 | not read | |
 | 18 | Programmable Digital Signal Processors | 705–725 | not read | |
