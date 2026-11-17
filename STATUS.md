@@ -257,14 +257,14 @@ Sudah tidak terblokir sejak dokumen resmi 10 Nov 2026: part number dan speed gra
 
 Ditulis di akhir sesi 17 Nov 2026 (PROMPT_PARHI_KAMERA_TANPA_PI).
 
-**Untuk melanjutkan:** "lanjutkan PROMPT_PARHI_KAMERA_TANPA_PI dari catatan di STATUS.md" berarti lanjut Tugas C dari Bab 1.
+**Untuk melanjutkan:** "lanjutkan PROMPT_PARHI_KAMERA_TANPA_PI dari catatan di STATUS.md" berarti lanjut Tugas C dari bab yang tertulis di baris "Progres membaca Parhi" di bawah.
 
 **Posisi:**
 - Tahap 0 selesai: info tim 17 Nov 2026 tercatat; `test` 224 passed sebelum perubahan sesi ini.
 - Tugas A selesai (M22): `board/BRINGUP_NO_PI.md`, desain bring-up, host lewat JTAG (ADR-025, ADR-026), dry-run lulus. Daya tanpa Pi tetap [UNKNOWN] (Q1); tanpa daya, langkah di board tidak bisa dimulai.
 - Tugas B selesai: `docs/CAMERA.md` (kamera wajib di Class 1 [OFFICIAL]; Class 2 [UNKNOWN], Q2; rekomendasi webcam USB).
 - ADR-027: pin select BUFGCTRL tidak di-timing (dasar DS189 Tabel 32 catatan 1). Laporan resmi sesudahnya: 6.851/14.600 LUT, WNS +0,473 ns [VIVADO-STA].
-- Tugas C dimulai, belum ada bab yang dibaca: buku adalah scan 791 halaman tanpa lapisan teks; OCR lokal per halaman sudah dibuat di `build/parhi/ocr/page-NNN.txt` (tidak di-commit; ulangi dengan skrip di catatan `docs/research/parhi/README.md` bila hilang). Halaman awal bab (PDF): Bab 1: 18, Bab 2: 60, Bab 3: 80, Bab 4: 107, Bab 5: 135, Bab 6: 165, Bab 7: 204, Bab 8: 242, Bab 9: 269, Bab 10: 326, Bab 11: 389, Bab 12: 432, Bab 13: 488, Bab 14: 540, Bab 15: 569, Bab 16: 601, Bab 17: 655, Bab 18: 705, Lampiran A–G: 726–784, indeks: 785.
+- Tugas C berjalan (lihat baris "Progres membaca Parhi"): buku adalah scan 791 halaman tanpa lapisan teks; OCR lokal per halaman ada di `build/parhi/ocr/page-NNN.txt` (tidak di-commit; bila hilang, ulangi dengan `tools/parhi/ocr_pdf.ps1`, perintahnya di `docs/research/parhi/README.md`). Halaman buku = halaman PDF − 17 untuk Bab 1–3, − 16 mulai Bab 4. Halaman awal bab (PDF): Bab 1: 18, Bab 2: 60, Bab 3: 80, Bab 4: 107, Bab 5: 135, Bab 6: 165, Bab 7: 204, Bab 8: 242, Bab 9: 269, Bab 10: 326, Bab 11: 389, Bab 12: 432, Bab 13: 488, Bab 14: 540, Bab 15: 569, Bab 16: 601, Bab 17: 655, Bab 18: 705, Lampiran A–G: 726–784, indeks: 785.
 
 **Progres membaca Parhi:** bab terakhir yang selesai: Bab 4 (PDF hlm. 107–134, `docs/research/parhi/CH04.md`). Halaman terakhir yang dibaca: PDF hlm. 134. Mulai berikutnya: Bab 5, PDF hlm. 135. Setiap bab: baca semua halaman OCR, cek rumus dan gambar secara visual, tulis `docs/research/parhi/CHxx.md`, perbarui tabel di `docs/research/parhi/README.md` dan baris ini.
 

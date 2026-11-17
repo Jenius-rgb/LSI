@@ -14,6 +14,16 @@ How the pages are read: the copy is a 791-page scan without a text layer (tiff2p
 Windows OCR engine run locally on each rendered page (`build/parhi/ocr/page-NNN.txt`, not committed);
 equations, figures and tables are checked visually on the rendered page, because OCR loses them.
 
+Scripts (Windows PowerShell 5.1, built-in Windows APIs only, nothing downloaded):
+
+```
+powershell -File tools/parhi/ocr_pdf.ps1 -Pdf "<path to the book PDF>" -OutDir build/parhi/ocr
+powershell -File tools/parhi/render_pages.ps1 -Pdf "<path to the book PDF>" -OutDir build/parhi/pages -Pages 65,66
+```
+
+The file name of the copy used contains square brackets, so the scripts take the path literally (no
+`Resolve-Path`). OCR of all 791 pages takes several minutes; existing page files are skipped.
+
 Labels: book facts carry a page reference ("p. N" = printed page; the PDF page is given per chapter).
 Statements about SENTINEL are [INFERENCE] unless they point to a file or result in this repository.
 
