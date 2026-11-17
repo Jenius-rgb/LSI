@@ -47,7 +47,7 @@ Statements about SENTINEL are [INFERENCE] unless they point to a file or result 
 | 13 | Bit-Level Arithmetic Architectures | 488–539 | read 17 Nov 2026 | [CH13.md](CH13.md); no failed pages |
 | 14 | Redundant Arithmetic | 540–568 | read 17 Nov 2026 | [CH14.md](CH14.md); no failed pages |
 | 15 | Numerical Strength Reduction | 569–600 | read 17 Nov 2026 | [CH15.md](CH15.md); book p. 558 not in the scan (book page = PDF − 10 from here) |
-| 16 | Synchronous, Wave, and Asynchronous Pipelines | 601–654 | not read | |
+| 16 | Synchronous, Wave, and Asynchronous Pipelines | 601–654 | read 17 Nov 2026 | [CH16.md](CH16.md); no failed pages |
 | 17 | Low-Power Design | 655–704 | not read | |
 | 18 | Programmable Digital Signal Processors | 705–725 | not read | |
 | A–G | Appendices: shortest paths, scheduling and allocation, Euclidean GCD, Schur polynomials, fast adders and multipliers, bit-serial scheduling, FIR coefficient quantization | 726–784 | not read | |
