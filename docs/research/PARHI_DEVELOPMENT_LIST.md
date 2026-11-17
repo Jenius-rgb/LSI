@@ -76,8 +76,8 @@ and on the checksum mathematics · contest fit · priority · effort against the
 - **Module:** `lane_array` (`LANE_IMPL`), already parameterised; DSP variants pass their benches
   (`lane_array_k8_c{0,1}_dsp_{min,full}`, [SIM]).
 - **Benefit:** out-of-context, the lane clock's Fmax rises from 148.1 to 272.9 MHz (dsp_min) and LUTs fall by 1,248
-  [VIVADO-STA]; DSP use 14 of 80. A full official side run (`--lane-impl dsp_min --tag dspmin`) was started on 17 Nov 2026;
-  its result is recorded in section 4.
+  [VIVADO-STA]; DSP use 14 of 80. In the full official flow (side run of 17 Nov 2026) the design drops from 6,851 to 5,550 LUT
+  with WNS +0.395 ns at 125 MHz [VIVADO-STA]; details in section 4.
 - **Trade-off for the research:** with DSP lanes the lane domain reaches the operand-supply limit (250 MHz) inside its static
   timing, so overclocking up to that limit would produce few or no timing errors. The overclock-with-checksum story then
   needs a higher supply (more operand slots R) or targets the LUT lanes on purpose. This is the user's decision.
@@ -179,7 +179,7 @@ and on the checksum mathematics · contest fit · priority · effort against the
 
 | Experiment | Command | Result |
 | --- | --- | --- |
-| Official flow with DSP-min lanes (side run, official folder untouched) | `python tools/run.py synth-official --lane-impl dsp_min --tag dspmin` | pending at the time of writing; see `results/vivado/official_dspmin/summary.md` |
+| Official flow with DSP-min lanes (side run, official folder untouched) | `python tools/run.py synth-official --lane-impl dsp_min --tag dspmin` | 5,550 LUT (official LUT lanes: 6,851), 5,307 FF (6,149), 2,011 slices (2,488), 14 BRAM tiles (14), 14 DSP (3); WNS +0.395 ns (+0.473), WHS +0.049 ns (+0.027) at 125 MHz [VIVADO-STA], `results/vivado/official_dspmin/`. The multiplier is no longer among the worst paths: the lane clocks are now limited by the `acc_last` flag fanning out to the hold registers (1 logic level, 89 % routing, slack +0.697 ns) and `clk_safe_raw` by the safe reset fanning out to the injection registers (0 levels, 94 % routing, +0.395 ns). Both are high-fan-out nets that register replication (D5-type) would address. |
 
 ## 5. Not proposed (with the reason)
 
