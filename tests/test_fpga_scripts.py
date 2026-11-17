@@ -271,3 +271,16 @@ def test_official_lane_override_needs_a_tag():
     args = ro.parse_args(["--lane-impl", "dsp_min", "--tag", "dspmin"])
     assert args.lane_impl == "dsp_min" and args.tag == "dspmin"
     assert ro.parse_args([]).lane_impl is None
+
+
+def test_official_turbo_override_needs_a_tag():
+    """Analysing the lane domain at another turbo frequency is a side run only."""
+    import pytest
+    import run_official as ro
+
+    with pytest.raises(SystemExit):
+        ro.parse_args(["--turbo-mhz", "250"])
+    args = ro.parse_args(["--turbo-mhz", "250", "--lane-impl", "dsp_min", "--tag", "dsp250"])
+    assert args.turbo_mhz == 250.0
+    tcl = (ROOT / "fpga" / "synth_official.tcl").read_text(encoding="utf-8")
+    assert "turbo_arg" in tcl and "ip_[file tail $outdir]" in tcl  # parallel side runs keep separate IP folders

@@ -6,13 +6,15 @@
 #
 # Run through fpga/run_official.py (python tools/run.py synth-official), which passes:
 #   vivado -mode batch -source fpga/synth_official.tcl -tclargs <outdir> <K> <lane_impl> <c3>
-#          <weight_aw> <act0_aw> <act1_aw> <safe_div>
+#          <weight_aw> <act0_aw> <act1_aw> <safe_div> [<turbo_mhz>]
+# The optional turbo_mhz (side runs only) analyses clk_fast_turbo at that frequency instead of
+# turbo level 0 (= clk_safe), to check how far the lane domain meets static timing.
 
-if { $argc != 8 } {
-    puts "usage: synth_official.tcl outdir K lane_impl c3 weight_aw act0_aw act1_aw safe_div"
+if { $argc != 8 && $argc != 9 } {
+    puts "usage: synth_official.tcl outdir K lane_impl c3 weight_aw act0_aw act1_aw safe_div ?turbo_mhz?"
     exit 2
 }
-lassign $argv outdir k impl c3 weight_aw act0_aw act1_aw safe_div
+lassign $argv outdir k impl c3 weight_aw act0_aw act1_aw safe_div turbo_arg
 set part xc7s25csga225-1
 set top top_board
 file mkdir $outdir
@@ -32,11 +34,11 @@ read_xdc [file join $root board/zero7.xdc]
 
 # MMCM2 inside a Clocking Wizard v6.0 with AXI4-Lite dynamic reconfiguration (ADR-023, PG065).
 # Level 0 of the turbo table equals clk_safe; the IP is regenerated on every run.
-set ipdir [file join $root build ip_official]
+set ipdir [file join $root build ip_[file tail $outdir]]
 file delete -force $ipdir
 file mkdir $ipdir
 create_ip -name clk_wiz -vendor xilinx.com -library ip -module_name clk_wiz_turbo -dir $ipdir
-set turbo_mhz [format %.3f [expr {1000.0 / $safe_div}]]
+if { $turbo_arg ne "" } { set turbo_mhz [format %.3f $turbo_arg] } else { set turbo_mhz [format %.3f [expr {1000.0 / $safe_div}]] }
 set_property -dict [list CONFIG.PRIM_IN_FREQ {20.000} CONFIG.PRIM_SOURCE {No_buffer} CONFIG.USE_DYN_RECONFIG {true} CONFIG.INTERFACE_SELECTION {Enable_AXI} CONFIG.CLKOUT1_REQUESTED_OUT_FREQ $turbo_mhz CONFIG.USE_LOCKED {true}] [get_ips clk_wiz_turbo]
 set_property GENERATE_SYNTH_CHECKPOINT false [get_files clk_wiz_turbo.xci]
 generate_target {synthesis} [get_ips clk_wiz_turbo]
