@@ -236,3 +236,43 @@ ADR-001 sampai ADR-007 adalah usulan awal dari starter kit (2026-11-09). Boleh d
 - **Keputusan:** (c). `fpga/constraints/top_board_timing.tcl` memberi `set_false_path` ke pin select BUFGCTRL. Pengecualian lain tetap tidak ada (ADR-021). Pin CE tidak dikecualikan.
 - **Dampak:** laporan resmi diulang; test memastikan pengecualian ini ada beserta rujukannya. Dengan false path, `report_cdc` mencatat jalur ini sebagai CDC-13 (penyeberangan ke primitif bukan flip-flop) berstatus unsafe; guard test laporan resmi hanya mengizinkan CDC-13 di pin S0/S1 BUFGCTRL itu dan menolak yang lain.
 - **Status:** Diterima.
+
+## ADR-028 — Melewati operand set beraktivasi nol
+
+- **Konteks:** 35,9 % operand set model s (25,4 % model xs) membawa aktivasi nol, termasuk tap padding [SIM, golden model, 1000 gambar uji CIFAR-10 pertama, `results/model/zero_taps_{s,xs}_k8.json`]. Karena satu aktivasi di-broadcast ke semua lane (SPEC §5.2), pada siklus itu semua lane data dan semua lane checksum menerima produk 0.
+- **Dasar:** Parhi bab 17 (aktivitas switching) dan bab 9 (strength reduction), digabung dengan bentuk data-broadcast SENTINEL; `docs/research/PARHI_DEVELOPMENT_LIST.md` butir D1. Klaim orisinalitas baru boleh ditulis setelah dicek di `docs/PRIOR_ART.md`.
+- **Alternatif:** (a) tetap seperti sekarang; (b) `operand_gen` melewati setiap operand set dengan a = 0 (padding maupun hasil ReLU) sebelum FIFO operand; (c) hanya melewati tap padding, yang posisinya diketahui statis.
+- **Keputusan (usulan):** (b). Flag awal/akhir unit pindah ke operand pertama/terakhir yang dikirim; unit yang seluruh operandnya nol tetap menghasilkan 0 (satu operand nol dikirim atau akumulator di-reset).
+- **Dampak:** SPEC §5.2 dan §5.4 (model siklus jadi bergantung data), `rtl/operand_gen.v`, `model/engine_model.py`, bench engine dan test yang mengunci `CYCLES_TOTAL`. Hasil tetap bit-exact; identitas checksum (SPEC §6) tidak berubah karena setiap suku yang dilewati bernilai 0 di semua lane.
+- **Rencana test:** (1) model siklus baru = siklus ideal − operand nol, dihitung `model/zero_taps.py` per gambar, dibandingkan dengan `CYCLES_TOTAL` bench; (2) `engine_s_k8_n200` dan `engine_xs_k8_n200`: logits dan kelas identik dengan golden (PASS n/n); (3) bench unit sudut: unit seluruhnya nol, satu operand non-nol di awal atau di akhir unit, jendela penuh padding; (4) kampanye injeksi [SYNTHETIC] memberi hasil deteksi/koreksi yang sama; (5) laporan resmi diulang, WNS tidak memburuk.
+- **Status:** Diusulkan (17 Nov 2026), menunggu persetujuan user.
+
+## ADR-029 — Pembangkit bobot checksum sebagai pohon CSD multi-operand
+
+- **Konteks:** jalur terburuk `clk_safe_raw` berjalan dari register bobot ke pohon bobot C3 (`u_wc0/with_c3.u_sum3`): 10 level logika, 7,408 ns, slack +0,473 ns di 125 MHz [VIVADO-STA, laporan resmi 17 Nov 2026]. Kedua pembangkit wc memakai 407 LUT [VIVADO-STA].
+- **Dasar:** Parhi bab 13 (CSD dan tree-height reduction), bab 15 (multiple constant multiplication untuk transformasi linear konstan), bab 14 dan lampiran E (penjumlahan multi-operand carry-save, pohon Wallace/Dadda). wc3 = jumlah bertanda 14 salinan bobot yang digeser (CSD dari k², k = 1…8); identitas berbagi suku (k²·w = k·(k·w); wc2 = Σ S_j; wc3 = Σ (2j−1)·S_j dengan S_j = Σ_{k≥j} w_k) dicek pada 1000 vektor bobot acak (`docs/research/parhi/CH15.md`).
+- **Alternatif:** (a) tetap; (b) pohon datar seimbang dari suku-suku CSD (sekitar 4 level adder, sekitar 3 dengan adder 3-input), dengan satu tahap register di tengah bila perlu; (c) luas minimum dengan berbagi suku antara wc2 dan wc3.
+- **Keputusan (usulan):** (b); berbagi suku (c) hanya dipakai bila tidak menambah kedalaman.
+- **Dampak:** `rtl/wc_gen.v` dan instansiasinya. Nilai wc identik, jadi SPEC §6 tidak berubah; bila ada register tambahan, latensi generator bertambah satu tahap dan dicatat.
+- **Rencana test:** (1) bench `wc_gen` baru melawan rumus: 10^6 vektor acak (seed tetap) dan vektor sudut (semua −127, semua +127, berselang-seling, satu lane non-nol); (2) semua bench engine dan lane lulus tanpa mengubah vektor; (3) laporan resmi diulang: jalur terburuk `clk_safe_raw` tidak lagi di pohon C3 dan WNS naik; guard test laporan resmi tetap hijau.
+- **Status:** Diusulkan (17 Nov 2026), menunggu persetujuan user.
+
+## ADR-030 — Implementasi lane: LUT atau DSP, dan batas suplai operand
+
+- **Konteks:** ADR-013 memilih `LANE_IMPL = lut` tanpa membandingkan varian DSP. Data out-of-context xc7s25csga225-1, model s, K = 8, C3 = 1 [VIVADO-STA, `fpga/reports/summary.csv`]: lane LUT 5.717 LUT, Fmax lane 148,1 MHz; `dsp_min` 4.469 LUT, 14 DSP, 272,9 MHz; `dsp_full` 4.471 LUT, 25 DSP, 265,0 MHz; Fmax clk_safe sama (139–143 MHz). Lane hanya bisa menerima operand set sampai R·f_safe = 2 × 125 = 250 MHz (ADR-013). Varian DSP lulus bench [SIM].
+- **Dasar:** Parhi bab 13 (struktur pengali), bab 17 (glitch pengali sampai sekitar 40 % daya), bab 3 (paralelisme dengan pengali keras yang menganggur); `PARHI_DEVELOPMENT_LIST.md` butir D3.
+- **Alternatif:** (a) tetap LUT: lane melewati batas timing statisnya jauh di bawah 250 MHz, sehingga error timing bisa diamati dalam rentang yang terjangkau; (b) `dsp_min` untuk varian resmi: lebih cepat dan lebih hemat LUT, tetapi lane aman sampai batas suplai, sehingga eksperimen overclock hampir tanpa error kecuali suplai dinaikkan; (c) `dsp_min` dan R dinaikkan agar suplai melewati Fmax lane (perubahan RTL `operand_gen`/FIFO); (d) dua varian: LUT untuk eksperimen E-series, DSP untuk demo kecepatan, keduanya dari parameter yang sama.
+- **Keputusan (usulan):** menunggu user. Rekomendasi: (d), karena menjaga cerita riset overclock + checksum dan sekaligus memberi angka kecepatan terbaik; perbedaannya hanya parameter dan bitstream.
+- **Dampak:** `config/hw_zero7.yaml` atau varian kedua, laporan resmi diulang. (c) mengubah SPEC §5 (jumlah slot operand) dan RTL.
+- **Rencana test:** (1) run samping resmi `python tools/run.py synth-official --lane-impl dsp_min --tag dspmin`: LUT, DSP dan WNS dibandingkan dengan laporan resmi; (2) `lane_array_k8_c1_dsp_min` dan bench engine dengan `LANE_IMPL = 1` lulus; (3) untuk (d): kedua bitstream lulus E7 di clock aman pada fase board.
+- **Status:** Diusulkan (17 Nov 2026), menunggu keputusan user.
+
+## ADR-031 — Fine-grain pipelining pengali lane dan pohon C3
+
+- **Konteks:** hanya relevan bila lane LUT dipertahankan (ADR-030 (a) atau (d)). Jalur terburuk lane: register operand → register produk pengali LUT, 9 level, 7,202 ns, 55 % routing; sumbernya register operand yang dibagi tool antar-lane [VIVADO-STA].
+- **Dasar:** Parhi bab 3 (register hanya pada cutset feed-forward, fine-grain pipelining), bab 6 (persamaan folding untuk menghitung ulang semua delay), bab 10 (register di dalam loop mengubah algoritma), bab 7 dan 4 (register lokal per lane vs berbagi register).
+- **Alternatif:** (a) tidak; (b) satu tahap register di tengah pengali LUT (produk parsial | penjumlahan akhir) untuk semua lane data dan lane checksum serta flag `v/l/f`; (c) (b) ditambah register operand per lane (`KEEP` atau `MAX_FANOUT`).
+- **Keputusan (usulan):** (c) bila lane LUT dipertahankan.
+- **Dampak:** `rtl/lane_lut.v`, `rtl/lane_array.v` (flag), penyelarasan checker; latensi pipeline bertambah satu siklus per aliran operand, sehingga test yang mengunci jumlah siklus berubah. Hasil tetap bit-exact bila semua lane dan flag mendapat tahap yang sama.
+- **Rencana test:** (1) semua bench `lane_array_*` dan `engine_*` lulus dengan vektor yang sama; (2) bench checker dengan injeksi di lane data dan lane checksum memberi deteksi yang sama; (3) laporan resmi diulang: jalur terburuk lane memendek; (4) kampanye [SYNTHETIC] tidak berubah.
+- **Status:** Diusulkan (17 Nov 2026), bersyarat pada ADR-030.
