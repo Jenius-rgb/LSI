@@ -42,7 +42,7 @@ Statements about SENTINEL are [INFERENCE] unless they point to a file or result 
 | 8 | Fast Convolution | 242–268 | read 17 Nov 2026 | [CH08.md](CH08.md); no failed pages |
 | 9 | Algorithmic Strength Reduction in Filters and Transforms | 269–325 | read 17 Nov 2026 | [CH09.md](CH09.md); book p. 254 not in the scan (book page = PDF − 14 from here) |
 | 10 | Pipelined and Parallel Recursive and Adaptive Filters | 326–388 | read 17 Nov 2026 | [CH10.md](CH10.md); book p. 312 not in the scan (book page = PDF − 13 from here) |
-| 11 | Scaling and Roundoff Noise | 389–431 | not read | |
+| 11 | Scaling and Roundoff Noise | 389–431 | read 17 Nov 2026 | [CH11.md](CH11.md); book p. 376 not in the scan (book page = PDF − 12 from here) |
 | 12 | Digital Lattice Filter Structures | 432–487 | not read | |
 | 13 | Bit-Level Arithmetic Architectures | 488–539 | not read | |
 | 14 | Redundant Arithmetic | 540–568 | not read | |
