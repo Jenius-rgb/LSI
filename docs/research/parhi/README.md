@@ -14,12 +14,15 @@ How the pages are read: the copy is a 791-page scan without a text layer (tiff2p
 Windows OCR engine run locally on each rendered page (`build/parhi/ocr/page-NNN.txt`, not committed);
 equations, figures and tables are checked visually on the rendered page, because OCR loses them.
 
+Labels: book facts carry a page reference ("p. N" = printed page; the PDF page is given per chapter).
+Statements about SENTINEL are [INFERENCE] unless they point to a file or result in this repository.
+
 ## Progress
 
 | Chapter | Title (from the table of contents) | PDF pages | Status | Note |
 | --- | --- | --- | --- | --- |
 | Front matter | Contents, Preface | 1–17 | contents read (OCR) | chapter titles below |
-| 1 | Introduction to Digital Signal Processing Systems | 18–59 | not read | |
+| 1 | Introduction to Digital Signal Processing Systems | 18–59 | read 17 Nov 2026 | [CH01.md](CH01.md); no failed pages |
 | 2 | Iteration Bound | 60–79 | not read | |
 | 3 | Pipelining and Parallel Processing | 80–106 | not read | |
 | 4 | Retiming | 107–134 | not read | |
@@ -40,5 +43,5 @@ equations, figures and tables are checked visually on the rendered page, because
 | A–G | Appendices: shortest paths, scheduling and allocation, Euclidean GCD, Schur polynomials, fast adders and multipliers, bit-serial scheduling, FIR coefficient quantization | 726–784 | not read | |
 
 Chapter titles 3–18 and the appendices are taken from the OCR of the contents pages (PDF pages 5–10);
-titles 1, 2, 7, 8, 9, 10 and 13 are to be confirmed from their first pages (the OCR of those contents lines
+titles 2, 7, 8, 9, 10 and 13 are to be confirmed (title 1 confirmed from its running header) from their first pages (the OCR of those contents lines
 was incomplete). PDF page ranges come from the first section heading of each chapter ("N.1 INTRODUCTION") in the OCR text; the index is on PDF pages 785–791. Appendix A starts on 726, B 732, C 752, D 756, E 761, F 771, G 778.
