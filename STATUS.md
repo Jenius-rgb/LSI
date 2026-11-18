@@ -238,6 +238,7 @@ Status jawaban (disampaikan user, 17 Nov 2026): Q1 belum diberi tahu; Q2 belum d
 4. **Q4 Dokumen:** kapan `Zero7.xdc`, ZERO7 User Manual, dan skematik terbit? Rekomendasi: minta bersama board.
 5. **Q5 Ukuran tim:** halaman Inggris 1–3 orang, halaman Jepang paling banyak 4; tim berjumlah 4. **Terjawab (user, 17 Nov 2026): 4 orang sudah dikonfirmasi.** Sisa tindakan: simpan bukti konfirmasi tertulis (email/pesan panitia) untuk lampiran bila diminta.
 6. **Q6 Kategori dan format laporan:** konfirmasi Class 2 Level 3 dan format laporan sintesis. Rekomendasi: tanyakan sekaligus.
+7. **Q7 Board di laporan akhir (ditambahkan 18 Nov 2026):** untuk Class 2, apakah laporan akhir 31 Jan 2027 harus sudah memuat hasil yang berjalan di ZERO7, dan apakah pengenalan gambar validasi pada 5 Mar 2027 didemokan langsung (di tempat atau lewat Zoom)? Situs resmi (dicek 18 Nov 2026, berita terakhir 10 Nov 2026) hanya mewajibkan laporan akhir dan laporan sintesis XC7S25CSGA225-1 sampai 31 Jan; Class 2 didefinisikan sebagai memakai ZERO7, dan gambar validasi diberikan pada hari lomba [OFFICIAL]. Rekomendasi: tanyakan bersama Q6; sampai ada jawaban, rencanakan hasil [HW] sebelum 31 Jan.
 
 ## Terblokir
 
