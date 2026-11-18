@@ -202,7 +202,7 @@ Panitia menerbitkan fakta resmi baru pada 2 dan 10 Nov 2026 (ringkasan dan rujuk
 
 ### Peta eksperimen tanpa Raspberry Pi (ADR-025, ADR-026)
 
-| Eksperimen | Tanpa Pi (JTAG-HS3 + PC) | Catatan |
+| Eksperimen | Tanpa Pi (JTAG-HS2 + PC) | Catatan |
 | --- | --- | --- |
 | Bring-up: clock, LED, tegangan bank, tombol, XADC | ya | `board/BRINGUP_NO_PI.md` langkah 3–8 (butuh daya) |
 | E7 bit-exact di clock aman | ya | `bringup.py validate --host jtag` |

@@ -30,21 +30,25 @@ References: **TK-n** = `docs/official/ZERO7FPGA_Connection-table_261109_001.pdf`
 | Position of DIP SW7 (MODE0–MODE2) | "Cara konfigurasi FPGA" (do not change it) |
 | Room for the Pi's CSI camera ribbon when ZERO7 is mounted (slot or gap above the Pi's camera connector) | note in `docs/CAMERA.md` section 3; decides whether a CSI module is usable |
 
-## 2. Wire the JTAG-HS3 (no power)
+## 2. Wire the JTAG-HS2 (no power)
 
-[OFFICIAL] Six jumper wires from the JTAG-HS3 to the JTAG pins of ZERO7, colours as in IN-42. Tick every row
-before power is applied; connect GND first.
+[USER, photo, 18 Nov 2026] The team's cable is a Digilent JTAG-HS2 Rev. A. The official guide shows a JTAG-HS3 with six
+jumper wires (IN-42); the HS2 needs the same six signals. Match signals by label, not by header position: the HS2 header
+order from the photo (TMS, TDI, TDO, TCK, GND, VDD) differs from the colour list of IN-42. Tick every row before power is
+applied; connect GND first.
 
-| Signal | Wire colour in IN-42 | HS3 pin label | ZERO7 pin label | Checked |
+| Signal | Wire colour in IN-42 | HS2 pin label (photo) | ZERO7 pin label | Checked |
 | --- | --- | --- | --- | --- |
-| VREF | red | VREF | Vref | [ ] |
+| VREF | red | VDD [INFERENCE: the HS2 reference input; confirm in the Digilent manual] | Vref | [ ] |
 | TMS | orange | TMS | TMS | [ ] |
 | TCK | yellow | TCK | TCK | [ ] |
 | TDO | green | TDO | TDO | [ ] |
 | TDI | blue | TDI | TDI | [ ] |
 | GND | black | GND | GND | [ ] |
 
-Then connect the JTAG-HS3 to the PC with its USB cable (IN-42).
+Before power: confirm in the Digilent JTAG-HS2 reference manual that VDD is an input that senses the target voltage
+and not a supply output. Then connect the JTAG-HS2 to the PC with its USB cable. The JTAG clock of 3,000,000 Hz in IN-46
+was shown with the HS3; use the same value with the HS2 first.
 
 ## 3. Vivado Hardware Manager (power on)
 

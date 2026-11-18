@@ -47,7 +47,10 @@ Sources: `docs/official/Initialize_20260618_EN.pdf` (IN-n = slide n), `docs/offi
   TCK yellow, TDO green, TDI blue, GND black (IN-42; the slide text misspells it "JTAG-H53").
 - [OFFICIAL] In "Open New Target" set the JTAG clock to 3,000,000 Hz (IN-46). The device shows as
   `xc7s25_0`, ID code `037C4093` (IN-46). Program with the `.bit` file (IN-49).
-- Not known: whether the cable comes with the loaned board. Ask when arranging the loan.
+- [USER, photo, 18 Nov 2026] The team's cable is a Digilent JTAG-HS2 Rev. A, not the HS3 of the guide. Its 6-pin header is
+  labelled TMS, TDI, TDO, TCK, GND, VDD. The HS2 VDD pin takes the role of the HS3 VREF pin [INFERENCE]; check this in the
+  Digilent JTAG-HS2 reference manual before power is applied. The wiring and Hardware Manager steps are in
+  `board/BRINGUP_NO_PI.md` section 2.
 - Cheaper cable options [INFERENCE, not in the official guide and not tried on ZERO7; checked on 2026-11-17
   against the project pages linked below]. The JTAG pins of ZERO7 sit on configuration bank 0, whose
   VCCO is VCC3V3 [OFFICIAL, TK-2 to TK-6], so 3.3 V logic matches; 100 ohm series resistors on TMS, TCK

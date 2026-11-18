@@ -32,9 +32,9 @@ Informasi dari tim, belum dari dokumen resmi. Diberi label [TEAM] dan tidak dipa
 
 | Hal | Isi | Sumber |
 | --- | --- | --- |
-| Kabel JTAG | JTAG-HS3 diberikan satu set dengan board ZERO7 [TEAM] | info tim, 17 Nov 2026 |
+| Kabel JTAG | Kabel yang dipakai tim: Digilent JTAG-HS2 Rev. A [USER, foto]. Label header 6 pin di casing, dari atas ke bawah: TMS, TDI, TDO, TCK, GND, VDD; PCB bertanda "JTAG 14PA DIGILENT Inc.". Panduan resmi memakai JTAG-HS3 (IN-42). Info 17 Nov 2026 bahwa HS3 diberikan satu set dengan board diganti oleh info ini | user, foto, 18 Nov 2026 |
 | Raspberry Pi | Setiap kelompok memakai Raspberry Pi 4 milik sendiri [TEAM]. Kompatibilitas Pi 4 dengan ZERO7: [UNKNOWN] sampai panitia menjawab | info tim, 17 Nov 2026 |
-| Jadwal | ZERO7 dan JTAG-HS3 tersedia mulai 20 Nov 2026; Raspberry Pi 4 mungkin datang lebih lambat [TEAM] | info tim, 17 Nov 2026 |
+| Jadwal | ZERO7 dan kabel JTAG tersedia mulai 20 Nov 2026; Raspberry Pi 4 mungkin datang lebih lambat [TEAM] | info tim, 17 Nov 2026 |
 | Daya tanpa Pi | Dokumen resmi hanya menyebut daya dari header GPIO Raspberry Pi (IN-41: "When Raspberry Pi is powered on, the LED on ZERO7 lights up"). Cara lain: [UNKNOWN], tanyakan ke panitia | IN-41; OCR semua halaman TK dan IN, 17 Nov 2026 |
 
 ## Field opsional
@@ -106,7 +106,7 @@ Informasi dari tim, belum dari dokumen resmi. Diberi label [TEAM] dan tidak dipa
 
 1. File `Zero7.xdc` resmi, terutama IOSTANDARD dan tegangan VCCO bank 14, 15, dan 34.
 2. ZERO7 User Manual dan, jika ada, skematik.
-3. Apakah kabel JTAG-HS3 termasuk dalam paket pinjaman.
+3. Fungsi pin VDD JTAG-HS2 (masukan tegangan referensi target, padanan VREF HS3 [INFERENCE]) dan rentang tegangannya, dari manual resmi Digilent; halaman Digilent menolak akses otomatis (HTTP 403), jadi belum dicek.
 4. Polaritas tombol, jumlah LED WS2812B per rantai, dan arti jumper "(CUT)".
 5. Posisi DIP SW7 untuk boot dari JTAG dan dari flash QSPI.
 

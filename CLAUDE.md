@@ -97,7 +97,7 @@ Diperbarui 2026-11-16 dengan persetujuan user, dari `docs/official/README.md`.
 - [OFFICIAL] ZERO7 buatan Gigafirm adalah HAT Raspberry Pi; panitia menyebut board pinjaman bisa dipasang di Raspberry Pi 5. Vivado yang direkomendasikan: 2025.2.
 - [USER] Tim memakai Raspberry Pi 4 Model B (ADR-022). Board dan Pi dipakai fisik mulai Desember 2026 atau Januari 2027.
 - [OFFICIAL] Dataset latih bebas, tetapi kelas target ditentukan panitia dan belum diumumkan. Karena itu model harus bisa dilatih ulang, dan bobot harus bisa dimuat ulang lewat SPI **tanpa sintesis ulang**.
-- [OFFICIAL, berbeda antar halaman] Ukuran tim: halaman Inggris 1–3 orang, halaman Jepang paling banyak 4 orang. [USER] Tim berjumlah 4 orang, jadi bergantung pada aturan halaman Jepang; tulis ini apa adanya bila ditanya.
+- [OFFICIAL, berbeda antar halaman] Ukuran tim: halaman Inggris 1–3 orang, halaman Jepang paling banyak 4 orang. [USER] Tim berjumlah 4 orang, jadi bergantung pada aturan halaman Jepang. [USER, 17 Nov 2026] Panitia sudah mengonfirmasi tim 4 orang (Q5 di STATUS.md); perubahan baris ini disetujui user 18 Nov 2026.
 - [OFFICIAL] Dokumen resmi tidak memuat aturan penggunaan AI. [USER] Keputusan user: AI boleh dipakai selama sesuai ketentuan lomba.
 - [UNKNOWN] Bobot penilaian, format laporan dan laporan sintesis, kelas target, dan apakah demo hardware langsung diizinkan.
 - **Target kategori [PROPOSAL, menunggu konfirmasi panitia]: Class 2 (ZERO7 Class), Level 3.** Tetap pertahankan klasifikasi gambar, mode data validasi, dan mode kamera real-time, supaya proyek juga memenuhi syarat Class 1 Level 3 jika ternyata harus pindah kelas. Jangan menulis kategori ini sebagai fakta di laporan sebelum dikonfirmasi.
