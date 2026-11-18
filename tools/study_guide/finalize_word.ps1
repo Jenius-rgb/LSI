@@ -13,8 +13,15 @@ try {
     foreach ($toc in $doc.TablesOfContents) { $toc.Update() }
     $null = $doc.Fields.Update()
     foreach ($toc in $doc.TablesOfContents) { $toc.UpdatePageNumbers() }
+    # The .docx carries its fonts (complete, not subset) so it also renders on devices without them.
+    $doc.EmbedTrueTypeFonts = $true
+    $doc.SaveSubsetFonts = $false
+    $doc.DoNotEmbedSystemFonts = $false
     $doc.Save()
-    $doc.ExportAsFixedFormat($pdf, 17)
+    # PDF/A-1b (UseISO19005_1): every font embedded; glyphs that cannot be embedded are drawn as bitmaps.
+    # Arguments: file, format 17 = PDF, open after, optimize for print, whole document, from, to, content,
+    # doc properties, keep IRM, heading bookmarks, structure tags, bitmap missing fonts, PDF/A.
+    $doc.ExportAsFixedFormat($pdf, 17, $false, 0, 0, 1, 1, 0, $true, $true, 1, $true, $true, $true)
     $pages = $doc.ComputeStatistics(2)
     $doc.Close()
     Write-Output "pages=$pages"

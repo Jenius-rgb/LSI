@@ -119,11 +119,12 @@ class Paper(Doc):
         self.add(para([], after=120, before=0, line=120))
         return self.n_tab
 
-    def equation(self, omml: str) -> int:
+    def equation(self, latex: str) -> int:
+        """Display equation drawn as an image (STIX, Times-like), so the PDF needs no math font."""
         self.n_eq += 1
         width = COL_W if self.cur_cols == 2 else TEXT_W
-        mid = (f'<w:p><w:pPr><w:spacing w:before="60" w:after="60"/><w:jc w:val="center"/></w:pPr>'
-               f'<m:oMathPara><m:oMathParaPr><m:jc m:val="center"/></m:oMathParaPr><m:oMath>{omml}</m:oMath></m:oMathPara></w:p>')
+        png, w_cm = math_png(latex, self.n_eq, max_cm=(width - 620) / 567.0)
+        mid = para([self.picture(png, w_cm, latex)], align="center", before=60, after=60)
         right = para([run(f"({self.n_eq})")], align="right", after=0, before=0)
         widths = [width - 560, 560]
         tc = "".join(f'<w:tc><w:tcPr><w:tcW w:w="{w}" w:type="dxa"/><w:vAlign w:val="center"/></w:tcPr>{c}</w:tc>' for w, c in zip(widths, (mid, right)))
@@ -235,6 +236,25 @@ STYLES = (
     + "</w:styles>"
 )
 
+
+
+def math_png(latex: str, n: int, max_cm: float) -> tuple[Path, float]:
+    """Render one equation at 10 pt with matplotlib mathtext (STIX) at 600 dpi; width in cm at true size."""
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from PIL import Image
+
+    PFIG.mkdir(parents=True, exist_ok=True)
+    path = PFIG / f"eq_{n:02d}.png"
+    with matplotlib.rc_context({"mathtext.fontset": "stix", "font.family": "STIXGeneral"}):
+        fig = plt.figure(figsize=(0.01, 0.01))
+        fig.text(0, 0, f"${latex}$", fontsize=10.5)
+        fig.savefig(path, dpi=600, bbox_inches="tight", pad_inches=0.02, facecolor="white")
+        plt.close(fig)
+    w_px = Image.open(path).width
+    return path, min(w_px / 600 * 2.54, max_cm)
 
 # ============================================================================ context and figures
 
@@ -464,12 +484,11 @@ def sec_arch(d: Paper, ctx) -> None:
     rows.append(["total", "", nf(arch["total_weights"]), nf(arch["total_macs"])])
     d.table(["Layer", "Operasi", "Bobot", "MAC"], rows, [900, 1700, 950, 1100], "Struktur model CNN", align=["left", "left", "right", "right"])
     d.txt("Aktivasi disimpan sebagai uint8, bobot sebagai int8 dalam rentang −127 sampai 127, dan bias sebagai int32. Satu keluaran konvolusi adalah")
-    d.equation(mt("acc") + delim(mi("o,y,x"), "[", "]") + mi("=") + nary(mi("c,i,j"), "", sub(mi("w"), mi("o,c,i,j")) + mi("·") +
-               sub(mi("a"), mi("c,y+i−1,x+j−1"))))
+    d.equation(r"\mathrm{acc}[o,y,x]=\sum_{c,i,j} w_{o,c,i,j}\, a_{c,\,y+i-1,\,x+j-1}")
     d.txt("dengan nilai di luar batas gambar bernilai nol. Hasilnya ditambah bias lalu dikembalikan ke uint8 dengan satu perkalian bilangan "
            "bulat M 16 bit dan satu geser kanan n, sedangkan pemotongan ke 0..255 sekaligus menjadi ReLU:", indent=False)
-    d.equation(mi("q=") + delim(delim(mt("acc") + mi("+b")) + mi("·M+") + sup(mi("2"), mi("n−1"))) + mi("≫n"))
-    d.equation(mi("y=") + mt("min") + delim(mt("max") + delim(mi("q,0")) + mi(",255")))
+    d.equation(r"q=\left(\,(\mathrm{acc}+b)\,M+2^{n-1}\right)\gg n")
+    d.equation(r"y=\min\,(\max\,(q,0),\,255)")
     d.txt("Layer terakhir tidak dikuantisasi ulang: kelas adalah indeks terkecil dengan logit int32 terbesar. Model dilatih dalam floating point, "
            f"lalu dikuantisasi setelah training dengan skala dari persentil 99,99 aktivasi pada {nf(qs['calib_images'])} gambar kalibrasi; "
            "BatchNorm dilebur ke bobot sebelum kuantisasi. Bobot dimuat lewat SPI, sehingga model untuk kelas lain dapat dipakai tanpa sintesis "
@@ -480,21 +499,18 @@ def sec_arch(d: Paper, ctx) -> None:
            "satu unit hitung, yaitu satu posisi keluaran untuk satu grup, setiap lane mengakumulasi T = C_{in}·9 suku untuk konvolusi atau "
            "T = N_{in} untuk fully connected. Setiap siklus, semua lane menerima satu operand set berisi satu aktivasi yang disiarkan ke semua "
            "lane, K bobot, dan tiga bobot checksum. Jumlah siklus ideal satu gambar adalah", indent=False)
-    d.equation(sub(mi("N"), mt("ideal")) + mi("=") + nary(mt("conv"), "", sub(mi("H"), mt("out")) + sub(mi("W"), mt("out")) + mi("G") +
-               sub(mi("C"), mt("in")) + mi("·9")) + mi("+") + nary(mt("fc"), "", mi("G") + sub(mi("N"), mt("in"))))
+    d.equation(r"N_{\mathrm{ideal}}=\sum_{\mathrm{conv}} H_{\mathrm{out}}\,W_{\mathrm{out}}\,G\,C_{\mathrm{in}}\cdot 9+\sum_{\mathrm{fc}} G\,N_{\mathrm{in}}")
     d.txt(f"yang bernilai {nf(ideal)} siklus untuk model pada Tabel I. Pembangkit operand menghasilkan R = 2 operand set per siklus clock aman, "
            "sehingga lane dapat diberi operand hingga 2 × 125 = 250 MHz.", indent=False)
     d.subsection("Lane Data dan Lane Checksum")
     d.txt("Untuk setiap siklus t, pembangkit di domain aman menghitung tiga bobot checksum dari K bobot yang sama yang dikirim ke lane data:", indent=False)
     k1 = mi("k=1")
-    d.equation(sub(mi("wc"), mi("1")) + mi("=") + nary(k1, mi("K"), sub(mi("w"), mi("k"))) + gap() + sub(mi("wc"), mi("2")) + mi("=") +
-               nary(k1, mi("K"), mi("k") + sub(mi("w"), mi("k"))))
-    d.equation(sub(mi("wc"), mi("3")) + mi("=") + nary(k1, mi("K"), sup(mi("k"), mi("2")) + sub(mi("w"), mi("k"))))
+    d.equation(r"wc_1=\sum_{k=1}^{K} w_k \qquad wc_2=\sum_{k=1}^{K} k\,w_k")
+    d.equation(r"wc_3=\sum_{k=1}^{K} k^2 w_k")
     d.txt("Lane checksum c mengakumulasi S_{c} = Σ_{t} wc_{c}(t)·a(t) dengan aktivasi a(t) yang sama dengan lane data (Gbr. 3). Karena "
            "perkalian dan penjumlahan bilangan bulat bersifat distributif, akumulator lane data Y_{k} memenuhi", indent=False)
-    d.equation(sub(mi("S"), mi("1")) + mi("=") + nary(k1, mi("K"), sub(mi("Y"), mi("k"))) + gap() + sub(mi("S"), mi("2")) + mi("=") +
-               nary(k1, mi("K"), mi("k") + sub(mi("Y"), mi("k"))))
-    d.equation(sub(mi("S"), mi("3")) + mi("=") + nary(k1, mi("K"), sup(mi("k"), mi("2")) + sub(mi("Y"), mi("k"))))
+    d.equation(r"S_1=\sum_{k=1}^{K} Y_k \qquad S_2=\sum_{k=1}^{K} k\,Y_k")
+    d.equation(r"S_3=\sum_{k=1}^{K} k^2\, Y_k")
     d.txt("jika tidak ada error. Identitas ini berlaku eksak karena seluruh aritmetika berupa bilangan bulat dan akumulator lane checksum "
            "selebar 48 bit tidak pernah overflow. Bobot checksum dihitung ulang setiap siklus, sehingga tidak memerlukan memori tambahan, dan bobot "
            "lane data yang rusak setelah keluar dari domain aman tetap terdeteksi.", indent=False)
@@ -523,8 +539,7 @@ def sec_checksum(d: Paper, ctx) -> None:
     d.subsection("Selisih Checksum")
     d.txt("Setelah satu unit selesai, komparator menghitung d_{1} = ΣY_{k} − S_{1}, d_{2} = Σk·Y_{k} − S_{2}, dan d_{3} = Σk²·Y_{k} − S_{3}. "
            "Jika lane j salah sebesar e sehingga terbaca Y_{j} + e, maka", indent=False)
-    d.equation(sub(mi("d"), mi("1")) + mi("=e") + gap() + sub(mi("d"), mi("2")) + mi("=j·e") + gap() + sub(mi("d"), mi("3")) + mi("=") +
-               sup(mi("j"), mi("2")) + mi("·e"))
+    d.equation(r"d_1=e \qquad d_2=j\,e \qquad d_3=j^2 e")
     d.txt("Lane yang salah adalah j = d_{2}/d_{1}, dan koreksinya Y_{j} ← Y_{j} − d_{1}. Hardware tidak memakai pembagi: komparator mencoba "
            "j = 1, …, K dan memeriksa d_{2} = j·d_{1} serta d_{3} = j²·d_{1}. Bobot lane dimulai dari 1 agar error pada lane C1 tidak tampak "
            "seperti error pada lane data pertama.", indent=False)
@@ -540,8 +555,7 @@ def sec_checksum(d: Paper, ctx) -> None:
     d.txt("Dua lane yang salah bersamaan dapat kebetulan memenuhi d_{2} = j·d_{1} untuk j yang keliru. Misalkan lane a dan b dengan a ≠ b salah "
            "sebesar e_{a} dan e_{b}, dan p = e_{a}/(e_{a} + e_{b}). Koreksi palsu memerlukan j = ap + b(1 − p) dan sekaligus j² = a²p + b²(1 − p). "
            "Selisih kedua syarat adalah", indent=False)
-    d.equation(sup(mi("a"), mi("2")) + mi("p+") + sup(mi("b"), mi("2")) + delim(mi("1−p")) + mi("−") +
-               sup(delim(mi("ap+b") + delim(mi("1−p"))), mi("2")) + mi("=p") + delim(mi("1−p")) + sup(delim(mi("a−b")), mi("2")))
+    d.equation(r"a^2p+b^2(1-p)-\left(ap+b(1-p)\right)^2=p\,(1-p)\,(a-b)^2")
     d.txt("yang hanya bernilai nol jika salah satu error bernilai nol. Dengan C3, error dua lane karenanya selalu berakhir pada hitung ulang dan "
            "tidak pernah salah dikoreksi. Jika e_{a} + e_{b} = 0, maka d_{1} = 0 dan koreksi tidak dicoba.", indent=False)
     d.subsection("Contoh Numerik")
