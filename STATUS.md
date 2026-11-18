@@ -260,7 +260,7 @@ Sudah tidak terblokir sejak dokumen resmi 10 Nov 2026: part number dan speed gra
 
 - [x] ADR-029 pohon datar bobot checksum (`rtl/wc_gen.v`): bench `wc_gen_*` bit-exact di RTL lama dan baru, 10⁶ vektor PASS; OOC Fmax clk_safe 141,7 → 144,3 MHz; laporan resmi LUT 132,9 → 133,7 MHz [VIVADO-STA]; diterima (lihat Log bukti)
 - [x] ADR-030 opsi (d) dengan cerita R1: blok `variant_dsp` di `config/hw_zero7.yaml`, `synth-official --variant dsp` → `results/vivado/official_dsp/`, guard test kedua laporan, bench `engine_s_k8_c1_dsp*` dan `system_s_k8_c1_dsp`, label varian di metadata [HW], slide dan draf laporan disesuaikan
-- [ ] Perbaikan fan-out reset `rst_safe_r` (jalur terburuk clk_safe di kedua laporan resmi; clk_safe varian DSP turun 129,2 → 126,7 MHz setelah ADR-029) — rekomendasi, menunggu keputusan user
+- [x] Perbaikan fan-out reset `rst_safe_r` (`max_fanout = 64`, disetujui user 18 Nov 2026): clk_safe LUT 133,7 → 136,6 MHz, DSP 126,7 → 132,4 MHz; lane DSP di 250 MHz 262,0 → 256,5 MHz (tetap lulus) [VIVADO-STA]
 - [ ] ADR-028 zero-skip — hanya setelah G1 (13 Des 2026) tepat waktu
 - [ ] ADR-032 (R2) menaikkan suplai operand — hanya setelah G1 tepat waktu
 - [ ] ADR-031 fine-grain pipelining lane LUT — tetap Diusulkan; relevan untuk varian riset LUT
@@ -269,7 +269,7 @@ Sudah tidak terblokir sejak dokumen resmi 10 Nov 2026: part number dan speed gra
 
 Ditulis 18 Nov 2026.
 
-**Untuk melanjutkan:** keputusan ADR-028 sampai ADR-032 ada di bagian di atas dan di `docs/DECISIONS.md`. Satu keputusan menunggu user: perbaikan fan-out reset. Fase board belum dimulai (CLAUDE.md §8).
+**Untuk melanjutkan:** keputusan ADR-028 sampai ADR-032 ada di bagian di atas dan di `docs/DECISIONS.md`. Perbaikan fan-out reset sudah dikerjakan. Fase board belum dimulai (CLAUDE.md §8).
 
 **Posisi:**
 - ADR-030: user menyerahkan pilihan R1/R2. Claude memilih R1 sekarang dan R2 setelah G1 (ADR-032), karena R2 mengubah SPEC §5 dan mengancam G1. Varian DSP = varian kecepatan dan demo; varian LUT = varian riset overclock. Angka antarvarian tidak boleh dicampur.
@@ -279,7 +279,7 @@ Ditulis 18 Nov 2026.
 - Pesan user 18 Nov 2026 memuat butir "2." yang kosong; tanyakan isinya.
 
 **Langkah berikutnya, berurutan:**
-1. Bila user setuju: perbaikan fan-out reset di `rtl/top_core.v` (duplikasi register reset atau `max_fanout`), lalu `synth-official` dan `synth-official --variant dsp` diulang.
+1. Jawaban panitia atas Q6 dan Q7 (kategori, format laporan, apakah hasil ZERO7 wajib di laporan akhir).
 2. 20 Nov 2026 dan sesudahnya: begitu daya tersedia dan user menulis "board siap", ikuti `board/BRINGUP_NO_PI.md` (cek pin VDD HS2 dulu).
 3. Setelah G1: ADR-028, lalu studi ADR-032 (`--safe-div 7` dulu).
 4. Butir laporan D6 kapan saja sebelum 31 Jan 2027.
@@ -381,3 +381,6 @@ Ditulis 18 Nov 2026.
 | 2026-11-18 | ADR-030 | `python tools/run.py sim engine_s_k8_c1_dsp` (wc_gen lama, sebelum ADR-029) | PASS 1/1 dan `engine_s_k8_c1_dsp_n200` PASS 200/200 [SIM] |
 | 2026-11-18 | akhir sesi | `python tools/run.py test` | 257 passed in 205.30s (`build/test_session3.log`) |
 | 2026-11-18 | regresi lambat | `python tools/sim.py --record results/sim/rtl_regression.jsonl --jobs 2 engine_s_k8_c1_n200 engine_s_k8_c1_dsp_n200 system_s_k8_c1 wc_gen_k8_c1_1m` | PASS: wc_gen_k8_c1_1m 1003821/1003821, engine_s_k8_c1_n200 200/200, engine_s_k8_c1_dsp_n200 200/200, system_s_k8_c1 10/10, system_s_k8_c1_dsp 10/10 [SIM] |
+| 2026-11-18 | reset fan-out | `python tools/run.py synth-official` setelah `max_fanout = 64` pada `rst_safe_r` | 6.832 LUT, 6.209 FF, clk_safe 136,6 MHz (WNS +0,678 ns), lane 140,8 MHz [VIVADO-STA] |
+| 2026-11-18 | reset fan-out | `python tools/run.py synth-official --variant dsp` | 5.472 LUT, 5.429 FF, 14 DSP, clk_safe 132,4 MHz (WNS +0,445 ns), lane 256,5 MHz di analisis 250 MHz (WNS +0,102 ns) [VIVADO-STA] |
+| 2026-11-18 | reset fan-out | `python tools/run.py test` | 257 passed in 215.99s (`build/test_session3b.log`) |

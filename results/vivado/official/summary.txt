@@ -8,15 +8,15 @@ C3_EN 1
 SAFE_DIV 8
 clock clk_in period_ns 50.000 wns_ns 48.466 whs_ns 0.357
 clock safe_fb period_ns 50.000 wns_ns NA whs_ns NA
-clock clk_safe_raw period_ns 8.000 wns_ns 0.518 whs_ns 0.049
+clock clk_safe_raw period_ns 8.000 wns_ns 0.678 whs_ns 0.037
 clock clkfbout_clk_wiz_turbo period_ns 50.000 wns_ns NA whs_ns NA
 clock clk_out1_clk_wiz_turbo period_ns 8.000 wns_ns NA whs_ns NA
-clock clk_fast_safe period_ns 8.000 wns_ns 0.953 whs_ns 0.077
-clock clk_fast_turbo period_ns 8.000 wns_ns 0.953 whs_ns 0.077
-design_wns_ns 0.518
-design_whs_ns 0.049
+clock clk_fast_safe period_ns 8.000 wns_ns 0.898 whs_ns 0.057
+clock clk_fast_turbo period_ns 8.000 wns_ns 0.898 whs_ns 0.057
+design_wns_ns 0.678
+design_whs_ns 0.037
 lut 7741
-ff 6191
+ff 6209
 ramb36 13
 ramb18 2
 dsp48 3

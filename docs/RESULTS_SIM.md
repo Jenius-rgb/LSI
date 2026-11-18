@@ -189,8 +189,8 @@ Top `top_board` with `board/zero7.xdc`: model s, K = 8, lut lanes, C3_EN = 1, cl
 
 | Resource | Used | Available | Utilisation |
 | --- | --- | --- | --- |
-| Slice LUTs | 6824 | 14600 | 46.74% |
-| Slice registers | 6191 | 29200 | 21.20% |
+| Slice LUTs | 6832 | 14600 | 46.79% |
+| Slice registers | 6209 | 29200 | 21.26% |
 | Block RAM tiles | 14 | 45 | 31.11% |
 | DSP48E1 | 3 | 80 | 3.75% |
 | Global clock buffers | 6 | 32 | 18.75% |
@@ -199,21 +199,21 @@ Top `top_board` with `board/zero7.xdc`: model s, K = 8, lut lanes, C3_EN = 1, cl
 | Clock | Period (ns) | Endpoints | WNS setup (ns) | WHS hold (ns) | Fmax (MHz) |
 | --- | --- | --- | --- | --- | --- |
 | clk_in | 50.000 | 1 | 48.466 | 0.357 | 651.9 |
-| clk_safe_raw | 8.000 | 12276 | 0.518 | 0.049 | 133.7 |
-| clk_fast_safe | 8.000 | 5599 | 0.953 | 0.077 | 141.9 |
-| clk_fast_turbo | 8.000 | 5599 | 0.953 | 0.077 | 141.9 |
+| clk_safe_raw | 8.000 | 12294 | 0.678 | 0.037 | 136.6 |
+| clk_fast_safe | 8.000 | 5599 | 0.898 | 0.057 | 140.8 |
+| clk_fast_turbo | 8.000 | 5599 | 0.898 | 0.057 | 140.8 |
 
-Paths inside one clock; Fmax = 1000 / (period - WNS). Design worst setup slack 0.518 ns, worst hold slack 0.049 ns, unrouted nets 0.
+Paths inside one clock; Fmax = 1000 / (period - WNS). Design worst setup slack 0.678 ns, worst hold slack 0.037 ns, unrouted nets 0.
 `clk_fast_turbo` is analysed at turbo level 0, the safe frequency. Running the lanes faster than that is the experiment of the project; static timing says nothing about it.
 
-Clock-domain crossings by `report_cdc` rule: CDC-1 698 (critical), CDC-3 40 (info), CDC-4 4 (critical), CDC-13 1 (critical), CDC-15 784 (warning). Their meaning in this design is in `results/vivado/official/summary.md` and SPEC 7.8.
+Clock-domain crossings by `report_cdc` rule: CDC-1 816 (critical), CDC-3 40 (info), CDC-4 4 (critical), CDC-13 1 (critical), CDC-15 784 (warning). Their meaning in this design is in `results/vivado/official/summary.md` and SPEC 7.8.
 
-Power by `report_power` without switching-activity data: total 0.506 W (dynamic 0.444 W, device static 0.062 W), Vivado confidence "Medium". An estimate, not a measurement.
+Power by `report_power` without switching-activity data: total 0.484 W (dynamic 0.422 W, device static 0.062 W), Vivado confidence "Medium". An estimate, not a measurement.
 
 Side runs:
 
 - `results/vivado/official_adr021a/`: clk_safe = 125 MHz, design worst setup slack 0.326 ns. Intermediate run of 2026-11-16: synchronizers marked and the reset crossing excepted, but the three reset sources were still ORed in front of one synchronizer (CDC-10). Superseded by results/vivado/official/, where each asynchronous source has its own synchronizer.
-- `results/vivado/official_dsp/`: clk_safe = 125 MHz, design worst setup slack 0.109 ns. ADR-030 (d) DSP variant, lanes analysed at 250 MHz; includes ADR-029 wc_gen
+- `results/vivado/official_dsp/`: clk_safe = 125 MHz, design worst setup slack 0.102 ns. ADR-030 (d) DSP variant, lanes analysed at 250 MHz; ADR-029 wc_gen plus replicated reset register (max_fanout 64)
 - `results/vivado/official_dsp250/`: clk_safe = 125 MHz, design worst setup slack 0.233 ns. ADR-030 premise check: DSP lanes with clk_fast_turbo analysed at 250 MHz (operand supply limit)
 - `results/vivado/official_dspmin/`: clk_safe = 125 MHz, design worst setup slack 0.395 ns. Side run for the DSP-lane candidate of docs/research/PARHI_DEVELOPMENT_LIST.md (approved experiment, 17 Nov 2026)
 - `results/vivado/official_preadr021/`: clk_safe = 125 MHz, design worst setup slack -0.499 ns. Run of 2026-11-16 at commit 7a2d369, before ADR-021: the reset crossing from the board clock was still timed and the synchronizers were not marked. Kept as the evidence for ADR-021; a later commit cannot reproduce it.

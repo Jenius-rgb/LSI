@@ -61,7 +61,8 @@ module top_core #(
     (* ASYNC_REG = "TRUE" *) reg [1:0] por_meta;
     (* ASYNC_REG = "TRUE" *) reg [1:0] lock_meta;
     reg [1:0] soft_d;
-    reg       rst_req, rst_safe_r;
+    reg       rst_req;
+    (* max_fanout = 64 *) reg rst_safe_r;  // replicated by synthesis: its net was the worst clk_safe path (ADR-029 result)
     initial begin
         por_meta   = 2'b11;
         lock_meta  = 2'b00;

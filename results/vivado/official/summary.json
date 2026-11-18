@@ -19,12 +19,12 @@
   {
    "name": "clk_safe_raw",
    "period_ns": 8.0,
-   "wns_ns": 0.518,
-   "whs_ns": 0.049,
-   "intra_wns_ns": 0.518,
-   "intra_whs_ns": 0.049,
-   "intra_endpoints": 12276,
-   "fmax_mhz": 133.65410318096764
+   "wns_ns": 0.678,
+   "whs_ns": 0.037,
+   "intra_wns_ns": 0.678,
+   "intra_whs_ns": 0.037,
+   "intra_endpoints": 12294,
+   "fmax_mhz": 136.5747063643813
   },
   {
    "name": "clkfbout_clk_wiz_turbo",
@@ -41,22 +41,22 @@
   {
    "name": "clk_fast_safe",
    "period_ns": 8.0,
-   "wns_ns": 0.953,
-   "whs_ns": 0.077,
-   "intra_wns_ns": 0.953,
-   "intra_whs_ns": 0.077,
+   "wns_ns": 0.898,
+   "whs_ns": 0.057,
+   "intra_wns_ns": 0.898,
+   "intra_whs_ns": 0.057,
    "intra_endpoints": 5599,
-   "fmax_mhz": 141.90435646374345
+   "fmax_mhz": 140.80540692762602
   },
   {
    "name": "clk_fast_turbo",
    "period_ns": 8.0,
-   "wns_ns": 0.953,
-   "whs_ns": 0.077,
-   "intra_wns_ns": 0.953,
-   "intra_whs_ns": 0.077,
+   "wns_ns": 0.898,
+   "whs_ns": 0.057,
+   "intra_wns_ns": 0.898,
+   "intra_whs_ns": 0.057,
    "intra_endpoints": 5599,
-   "fmax_mhz": 141.90435646374345
+   "fmax_mhz": 140.80540692762602
   }
  ],
  "label": "[VIVADO-STA]",
@@ -67,10 +67,10 @@
  "LANE_IMPL": "0",
  "C3_EN": "1",
  "SAFE_DIV": "8",
- "design_wns_ns": "0.518",
- "design_whs_ns": "0.049",
+ "design_wns_ns": "0.678",
+ "design_whs_ns": "0.037",
  "lut": "7741",
- "ff": "6191",
+ "ff": "6209",
  "ramb36": "13",
  "ramb18": "2",
  "dsp48": "3",
@@ -79,19 +79,19 @@
  "unrouted_nets": "0",
  "utilization_post_route": {
   "lut": {
-   "used": 6824.0,
+   "used": 6832.0,
    "available": 14600.0,
-   "util_pct": 46.74
+   "util_pct": 46.79
   },
   "ff": {
-   "used": 6191.0,
+   "used": 6209.0,
    "available": 29200.0,
-   "util_pct": 21.2
+   "util_pct": 21.26
   },
   "slice": {
-   "used": 2350.0,
+   "used": 2342.0,
    "available": 3650.0,
-   "util_pct": 64.38
+   "util_pct": 64.16
   },
   "bram_tile": {
    "used": 14.0,
@@ -121,9 +121,9 @@
  },
  "utilization_post_synth": {
   "ff": {
-   "used": 6614.0,
+   "used": 6633.0,
    "available": 29200.0,
-   "util_pct": 22.65
+   "util_pct": 22.72
   },
   "bram_tile": {
    "used": 14.0,
@@ -158,15 +158,15 @@
   "Warning": 68
  },
  "power": {
-  "total_w": 0.506,
-  "dynamic_w": 0.444,
+  "total_w": 0.484,
+  "dynamic_w": 0.422,
   "static_w": 0.062,
   "confidence": "Medium"
  },
  "cdc": {
   "CDC-1": {
    "severity": "Critical",
-   "count": 698,
+   "count": 816,
    "description": "1-bit unknown CDC circuitry"
   },
   "CDC-3": {
@@ -281,10 +281,10 @@
  ],
  "bus_skew": {
   "constraints": 16,
-  "worst_slack_ns": 6.873,
-  "worst_actual_ns": 1.127
+  "worst_slack_ns": 6.988,
+  "worst_actual_ns": 1.012
  },
  "inter_clock": [],
  "command": "python tools/run.py synth-official",
- "note": "ADR-029 flat checksum-weight tree (rtl/wc_gen.v), LUT variant"
+ "note": "ADR-029 wc_gen plus replicated reset register (max_fanout 64), LUT variant"
 }

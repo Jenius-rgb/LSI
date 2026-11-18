@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.2 (win64) Build 6299465 Fri Nov 14 19:35:11 GMT 2025
-| Date         : Wed Nov 18 12:11:42 2026
+| Date         : Wed Nov 18 12:48:00 2026
 | Host         : LAPTOP-ER7J7A89 running 64-bit major release  (build 9200)
 | Command      : report_utilization -hierarchical -file {C:\AF\SENTINEL-LSI-2027\results\vivado\official/synth_utilization_hier.rpt}
 | Design       : top_board
@@ -22,9 +22,9 @@ Table of Contents
 +--------------------------------------------------+-----------------------------------------+------------+------------+---------+------+------+--------+--------+------------+
 |                     Instance                     |                  Module                 | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs | RAMB36 | RAMB18 | DSP Blocks |
 +--------------------------------------------------+-----------------------------------------+------------+------------+---------+------+------+--------+--------+------------+
-| top_board                                        |                                   (top) |       7142 |       6532 |     584 |   26 | 6614 |     13 |      2 |          3 |
+| top_board                                        |                                   (top) |       7144 |       6534 |     584 |   26 | 6633 |     13 |      2 |          3 |
 |   (top_board)                                    |                                   (top) |        216 |        215 |       0 |    1 |    1 |      0 |      0 |          0 |
-|   u_core                                         |                                top_core |       6927 |       6318 |     584 |   25 | 6613 |     13 |      2 |          3 |
+|   u_core                                         |                                top_core |       6929 |       6320 |     584 |   25 | 6632 |     13 |      2 |          3 |
 |     u_status_led                                 |                              status_led |         66 |         66 |       0 |    0 |   77 |      0 |      0 |          0 |
 |       u_tx                                       |                               ws2812_tx |         52 |         52 |       0 |    0 |   51 |      0 |      0 |          0 |
 |     u_clk                                        |                                 clk_gen |        558 |        558 |       0 |    0 |  329 |      0 |      0 |          0 |
@@ -35,8 +35,8 @@ Table of Contents
 |               (CLK_CORE_DRP_I)                   |               clk_wiz_turbo_clk_wiz_drp |         10 |         10 |       0 |    0 |   54 |      0 |      0 |          0 |
 |               mmcm_drp_inst                      |                  clk_wiz_turbo_mmcm_drp |        425 |        425 |       0 |    0 |  171 |      0 |      0 |          0 |
 |             AXI_LITE_IPIF_I                      |             clk_wiz_turbo_axi_lite_ipif |         60 |         60 |       0 |    0 |   29 |      0 |      0 |          0 |
-|     u_engine                                     |                                  engine |       5733 |       5124 |     584 |   25 | 5541 |     13 |      2 |          3 |
-|       (u_engine)                                 |                                  engine |        326 |        266 |      60 |    0 |  453 |      0 |      0 |          0 |
+|     u_engine                                     |                                  engine |       5734 |       5125 |     584 |   25 | 5541 |     13 |      2 |          3 |
+|       (u_engine)                                 |                                  engine |        327 |        267 |      60 |    0 |  453 |      0 |      0 |          0 |
 |       u_checker                                  |                            lane_checker |        890 |        842 |      48 |    0 |  652 |      0 |      0 |          0 |
 |       u_counters                                 |                            counter_bank |        273 |         97 |     176 |    0 |    8 |      0 |      0 |          0 |
 |       u_fast                                     |                               fast_path |       1808 |       1808 |       0 |    0 | 1582 |      0 |      0 |          0 |
