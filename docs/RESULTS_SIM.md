@@ -63,7 +63,8 @@ Source: `results/sim/rtl_regression.jsonl` (script `tools/sim.py --record`; late
 | engine_s_k16_n20 | xsim | 2026-11-16 | PASS: PASS 20/20 (5/5 cycles_mean=152498 ideal=138752) |
 | engine_s_k8 | icarus | 2026-11-16 | PASS: PASS 1/1 cycles_mean=277887 ideal=277504 |
 | engine_s_k8_c1 | icarus | 2026-11-16 | PASS: PASS 1/1 cycles_mean=277895 ideal=277504 |
-| engine_s_k8_c1_n200 | xsim | 2026-11-16 | PASS: PASS 200/200 (34/34 cycles_mean=277895 ideal=277504) |
+| engine_s_k8_c1_dsp_n200 | xsim | 2026-11-18 | PASS: PASS 200/200 (34/34 cycles_mean=277891 ideal=277504) |
+| engine_s_k8_c1_n200 | xsim | 2026-11-18 | PASS: PASS 200/200 (34/34 cycles_mean=277895 ideal=277504) |
 | engine_s_k8_n200 | xsim | 2026-11-16 | PASS: PASS 200/200 (34/34 cycles_mean=277887 ideal=277504) |
 | engine_xs_k8 | icarus | 2026-11-16 | PASS: PASS 2/2 cycles_mean=83839 ideal=83456 |
 | engine_xs_k8_n200 | xsim | 2026-11-16 | PASS: PASS 200/200 (34/34 cycles_mean=83839 ideal=83456) |
@@ -90,11 +91,13 @@ Source: `results/sim/rtl_regression.jsonl` (script `tools/sim.py --record`; late
 | system_micro_campaign_k8_c0 | xsim | 2026-11-17 | PASS: PASS 2400/2400 reconfigs=0 |
 | system_micro_campaign_k8_c1 | xsim | 2026-11-17 | PASS: PASS 2400/2400 reconfigs=0 |
 | system_micro_corners | xsim | 2026-11-17 | PASS: PASS 5/5 reconfigs=0 |
-| system_s_k8_c1 | xsim | 2026-11-17 | PASS: PASS 10/10 reconfigs=0 |
+| system_s_k8_c1 | xsim | 2026-11-18 | PASS: PASS 10/10 reconfigs=0 |
+| system_s_k8_c1_dsp | xsim | 2026-11-18 | PASS: PASS 10/10 reconfigs=0 |
 | system_xs_r100 | xsim | 2026-11-16 | PASS: PASS 8/8 reconfigs=0 |
 | system_xs_r130 | xsim | 2026-11-16 | PASS: PASS 8/8 reconfigs=0 |
 | system_xs_r170 | xsim | 2026-11-16 | PASS: PASS 8/8 reconfigs=0 |
 | system_xs_r200 | xsim | 2026-11-16 | PASS: PASS 8/8 reconfigs=0 |
+| wc_gen_k8_c1_1m | icarus | 2026-11-18 | PASS: PASS 1003821/1003821 |
 | ws2812_tx | icarus | 2026-11-17 | PASS: PASS 49/49 |
 | xadc_temp | icarus | 2026-11-17 | PASS: PASS 4/4 reads=6 |
 
@@ -122,56 +125,60 @@ Fmax = 1000 / (target period - WNS). Where the target is met, Fmax is a lower bo
 For lut, every non-MAC endpoint of clk_fast is held to 70% of the period (SPEC 7.4, ADR-012): its WNS is measured against that tighter limit.
 Static timing is conservative; the frequency at which a real device fails can only be measured on the board.
 
-| Part | K | Lane | C3 | LUT | FF | BRAM36 | DSP | Fmax clk_safe (MHz) | Fmax clk_fast (MHz) | WNS MAC (ns) | WNS non-MAC (ns) |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| xc7s25csga225-1 | 8 | lut | 0 | 4774 | 4364 | 14.0 | 3 | 147.8 | 156.3 | 0.003 | 0.226 |
-| xc7s25csga225-1 | 8 | lut | 1 | 5717 | 5103 | 14.0 | 3 | 139.1 | 148.1 | -0.352 | -0.008 |
-| xc7s25csga225-1 | 8 | dsp_min | 0 | 3694 | 3767 | 14.0 | 13 | 144.2 | 295.3 | -0.035 | -0.386 |
-| xc7s25csga225-1 | 8 | dsp_min | 1 | 4469 | 4428 | 14.0 | 14 | 139.2 | 272.9 | -0.108 | -0.665 |
-| xc7s25csga225-1 | 8 | dsp_full | 0 | 3704 | 3792 | 14.0 | 23 | 143.3 | 276.9 | -0.612 | -0.343 |
-| xc7s25csga225-1 | 8 | dsp_full | 1 | 4471 | 4430 | 14.0 | 25 | 142.5 | 265.0 | -0.684 | -0.773 |
-| xc7s25csga225-1 | 16 | lut | 0 | 7080 | 6396 | 22.0 | 3 | 118.8 | 155.4 | -0.036 | 0.101 |
-| xc7s25csga225-1 | 16 | lut | 1 | 8622 | 7175 | 22.0 | 3 | 108.6 | 152.9 | -0.141 | -0.03 |
-| xc7s25csga225-1 | 16 | dsp_min | 0 | 5261 | 5057 | 22.0 | 37 | 110.3 | 141.1 | -4.085 | -2.722 |
-| xc7s25csga225-1 | 16 | dsp_min | 1 | 6560 | 5733 | 22.0 | 38 | 103.2 | 139.2 | -4.182 | -3.351 |
-| xc7s25csga225-1 | 16 | dsp_full | 0 | 5242 | 5250 | 22.0 | 39 | 114.6 | 259.6 | -0.852 | -0.599 |
-| xc7s25csga225-1 | 16 | dsp_full | 1 | 6547 | 5828 | 22.0 | 41 | 104.8 | 219.2 | -0.995 | -1.563 |
-| xc7s25csga225-2 | 8 | lut | 0 | 4730 | 4348 | 14.0 | 3 | 156.2 | 161.1 | 0.604 | 0.193 |
-| xc7s25csga225-2 | 8 | lut | 1 | 5660 | 5079 | 14.0 | 3 | 158.2 | 161.6 | 0.578 | 0.212 |
-| xc7s25csga225-2 | 8 | dsp_min | 0 | 3662 | 3709 | 14.0 | 13 | 150.6 | 328.0 | 0.018 | -0.049 |
-| xc7s25csga225-2 | 8 | dsp_min | 1 | 4404 | 4324 | 14.0 | 14 | 160.1 | 299.6 | 0.212 | -0.338 |
-| xc7s25csga225-2 | 8 | dsp_full | 0 | 3663 | 3744 | 14.0 | 23 | 150.3 | 324.6 | -0.081 | 0.045 |
-| xc7s25csga225-2 | 8 | dsp_full | 1 | 4411 | 4342 | 14.0 | 25 | 154.2 | 324.5 | -0.082 | -0.079 |
-| xc7s25csga225-2 | 16 | lut | 0 | 7011 | 6356 | 22.0 | 3 | 141.3 | 160.3 | 0.365 | 0.16 |
-| xc7s25csga225-2 | 16 | lut | 1 | 8516 | 7135 | 22.0 | 3 | 131.5 | 158.0 | 0.224 | 0.069 |
-| xc7s25csga225-2 | 16 | dsp_min | 0 | 5170 | 5014 | 22.0 | 37 | 130.9 | 170.0 | -2.884 | -2.677 |
-| xc7s25csga225-2 | 16 | dsp_min | 1 | 6480 | 5711 | 22.0 | 38 | 130.4 | 166.2 | -3.018 | -2.618 |
-| xc7s25csga225-2 | 16 | dsp_full | 0 | 5150 | 5304 | 22.0 | 39 | 139.9 | 319.1 | -0.134 | -0.12 |
-| xc7s25csga225-2 | 16 | dsp_full | 1 | 6456 | 6041 | 22.0 | 41 | 131.7 | 285.1 | -0.364 | -0.508 |
-| xc7s50ftgb196-1 | 8 | lut | 0 | 4759 | 4364 | 14.0 | 3 | 140.8 | 153.9 | -0.098 | 0.273 |
-| xc7s50ftgb196-1 | 8 | lut | 1 | 5702 | 5089 | 14.0 | 3 | 143.1 | 155.2 | -0.045 | -0.017 |
-| xc7s50ftgb196-1 | 8 | dsp_min | 0 | 3693 | 3741 | 14.0 | 13 | 146.6 | 296.5 | -0.074 | -0.373 |
-| xc7s50ftgb196-1 | 8 | dsp_min | 1 | 4441 | 4436 | 14.0 | 14 | 138.7 | 300.1 | 0.21 | -0.332 |
-| xc7s50ftgb196-1 | 8 | dsp_full | 0 | 3713 | 3792 | 14.0 | 23 | 144.5 | 278.9 | -0.586 | -0.336 |
-| xc7s50ftgb196-1 | 8 | dsp_full | 1 | 4481 | 4438 | 14.0 | 25 | 143.2 | 273.1 | -0.662 | -0.484 |
-| xc7s50ftgb196-1 | 16 | lut | 0 | 7058 | 6396 | 22.0 | 3 | 121.7 | 157.0 | 0.032 | 0.069 |
-| xc7s50ftgb196-1 | 16 | lut | 1 | 8611 | 7143 | 22.0 | 3 | 112.8 | 154.0 | -0.092 | -0.009 |
-| xc7s50ftgb196-1 | 16 | dsp_min | 0 | 5260 | 5063 | 22.0 | 37 | 111.5 | 138.9 | -4.198 | -3.521 |
-| xc7s50ftgb196-1 | 16 | dsp_min | 1 | 6578 | 5738 | 22.0 | 38 | 109.9 | 138.9 | -4.197 | -3.816 |
-| xc7s50ftgb196-1 | 16 | dsp_full | 0 | 5237 | 5343 | 22.0 | 39 | 117.1 | 255.0 | -0.922 | -0.834 |
-| xc7s50ftgb196-1 | 16 | dsp_full | 1 | 6546 | 5853 | 22.0 | 41 | 110.8 | 219.8 | -0.92 | -1.549 |
-| xc7s50ftgb196-2 | 8 | lut | 0 | 4733 | 4348 | 14.0 | 3 | 152.9 | 166.7 | 0.815 | 0.402 |
-| xc7s50ftgb196-2 | 8 | lut | 1 | 5661 | 5071 | 14.0 | 3 | 159.1 | 160.9 | 0.568 | 0.186 |
-| xc7s50ftgb196-2 | 8 | dsp_min | 0 | 3661 | 3716 | 14.0 | 13 | 153.8 | 335.6 | 0.244 | 0.02 |
-| xc7s50ftgb196-2 | 8 | dsp_min | 1 | 4402 | 4331 | 14.0 | 14 | 154.9 | 336.4 | 0.107 | 0.027 |
-| xc7s50ftgb196-2 | 8 | dsp_full | 0 | 3675 | 3760 | 14.0 | 23 | 151.4 | 325.7 | -0.035 | -0.07 |
-| xc7s50ftgb196-2 | 8 | dsp_full | 1 | 4404 | 4373 | 14.0 | 25 | 150.9 | 314.4 | -0.181 | -0.174 |
-| xc7s50ftgb196-2 | 16 | lut | 0 | 7010 | 6372 | 22.0 | 3 | 140.6 | 155.6 | 0.734 | -0.028 |
-| xc7s50ftgb196-2 | 16 | lut | 1 | 8507 | 7135 | 22.0 | 3 | 137.2 | 157.6 | 0.375 | 0.054 |
-| xc7s50ftgb196-2 | 16 | dsp_min | 0 | 5170 | 5022 | 22.0 | 37 | 136.1 | 165.5 | -3.044 | -2.777 |
-| xc7s50ftgb196-2 | 16 | dsp_min | 1 | 6467 | 5691 | 22.0 | 38 | 129.2 | 169.3 | -2.906 | -2.464 |
-| xc7s50ftgb196-2 | 16 | dsp_full | 0 | 5157 | 5343 | 22.0 | 39 | 138.6 | 310.8 | -0.217 | -0.044 |
-| xc7s50ftgb196-2 | 16 | dsp_full | 1 | 6444 | 5996 | 22.0 | 41 | 136.4 | 295.7 | -0.382 | -0.222 |
+Run: `final` is the M11 matrix; `pre029` and `post029` are the same variant before and after ADR-029.
+
+| Part | K | Lane | C3 | Run | LUT | FF | BRAM36 | DSP | Fmax clk_safe (MHz) | Fmax clk_fast (MHz) | WNS MAC (ns) | WNS non-MAC (ns) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| xc7s25csga225-1 | 8 | lut | 0 | final | 4774 | 4364 | 14.0 | 3 | 147.8 | 156.3 | 0.003 | 0.226 |
+| xc7s25csga225-1 | 8 | lut | 1 | final | 5717 | 5103 | 14.0 | 3 | 139.1 | 148.1 | -0.352 | -0.008 |
+| xc7s25csga225-1 | 8 | lut | 1 | post029 | 5668 | 5118 | 14.0 | 3 | 144.3 | 156.3 | 0.001 | 0.185 |
+| xc7s25csga225-1 | 8 | lut | 1 | pre029 | 5710 | 5076 | 14.0 | 3 | 141.7 | 155.4 | -0.035 | 0.057 |
+| xc7s25csga225-1 | 8 | dsp_min | 0 | final | 3694 | 3767 | 14.0 | 13 | 144.2 | 295.3 | -0.035 | -0.386 |
+| xc7s25csga225-1 | 8 | dsp_min | 1 | final | 4469 | 4428 | 14.0 | 14 | 139.2 | 272.9 | -0.108 | -0.665 |
+| xc7s25csga225-1 | 8 | dsp_full | 0 | final | 3704 | 3792 | 14.0 | 23 | 143.3 | 276.9 | -0.612 | -0.343 |
+| xc7s25csga225-1 | 8 | dsp_full | 1 | final | 4471 | 4430 | 14.0 | 25 | 142.5 | 265.0 | -0.684 | -0.773 |
+| xc7s25csga225-1 | 16 | lut | 0 | final | 7080 | 6396 | 22.0 | 3 | 118.8 | 155.4 | -0.036 | 0.101 |
+| xc7s25csga225-1 | 16 | lut | 1 | final | 8622 | 7175 | 22.0 | 3 | 108.6 | 152.9 | -0.141 | -0.03 |
+| xc7s25csga225-1 | 16 | dsp_min | 0 | final | 5261 | 5057 | 22.0 | 37 | 110.3 | 141.1 | -4.085 | -2.722 |
+| xc7s25csga225-1 | 16 | dsp_min | 1 | final | 6560 | 5733 | 22.0 | 38 | 103.2 | 139.2 | -4.182 | -3.351 |
+| xc7s25csga225-1 | 16 | dsp_full | 0 | final | 5242 | 5250 | 22.0 | 39 | 114.6 | 259.6 | -0.852 | -0.599 |
+| xc7s25csga225-1 | 16 | dsp_full | 1 | final | 6547 | 5828 | 22.0 | 41 | 104.8 | 219.2 | -0.995 | -1.563 |
+| xc7s25csga225-2 | 8 | lut | 0 | final | 4730 | 4348 | 14.0 | 3 | 156.2 | 161.1 | 0.604 | 0.193 |
+| xc7s25csga225-2 | 8 | lut | 1 | final | 5660 | 5079 | 14.0 | 3 | 158.2 | 161.6 | 0.578 | 0.212 |
+| xc7s25csga225-2 | 8 | dsp_min | 0 | final | 3662 | 3709 | 14.0 | 13 | 150.6 | 328.0 | 0.018 | -0.049 |
+| xc7s25csga225-2 | 8 | dsp_min | 1 | final | 4404 | 4324 | 14.0 | 14 | 160.1 | 299.6 | 0.212 | -0.338 |
+| xc7s25csga225-2 | 8 | dsp_full | 0 | final | 3663 | 3744 | 14.0 | 23 | 150.3 | 324.6 | -0.081 | 0.045 |
+| xc7s25csga225-2 | 8 | dsp_full | 1 | final | 4411 | 4342 | 14.0 | 25 | 154.2 | 324.5 | -0.082 | -0.079 |
+| xc7s25csga225-2 | 16 | lut | 0 | final | 7011 | 6356 | 22.0 | 3 | 141.3 | 160.3 | 0.365 | 0.16 |
+| xc7s25csga225-2 | 16 | lut | 1 | final | 8516 | 7135 | 22.0 | 3 | 131.5 | 158.0 | 0.224 | 0.069 |
+| xc7s25csga225-2 | 16 | dsp_min | 0 | final | 5170 | 5014 | 22.0 | 37 | 130.9 | 170.0 | -2.884 | -2.677 |
+| xc7s25csga225-2 | 16 | dsp_min | 1 | final | 6480 | 5711 | 22.0 | 38 | 130.4 | 166.2 | -3.018 | -2.618 |
+| xc7s25csga225-2 | 16 | dsp_full | 0 | final | 5150 | 5304 | 22.0 | 39 | 139.9 | 319.1 | -0.134 | -0.12 |
+| xc7s25csga225-2 | 16 | dsp_full | 1 | final | 6456 | 6041 | 22.0 | 41 | 131.7 | 285.1 | -0.364 | -0.508 |
+| xc7s50ftgb196-1 | 8 | lut | 0 | final | 4759 | 4364 | 14.0 | 3 | 140.8 | 153.9 | -0.098 | 0.273 |
+| xc7s50ftgb196-1 | 8 | lut | 1 | final | 5702 | 5089 | 14.0 | 3 | 143.1 | 155.2 | -0.045 | -0.017 |
+| xc7s50ftgb196-1 | 8 | dsp_min | 0 | final | 3693 | 3741 | 14.0 | 13 | 146.6 | 296.5 | -0.074 | -0.373 |
+| xc7s50ftgb196-1 | 8 | dsp_min | 1 | final | 4441 | 4436 | 14.0 | 14 | 138.7 | 300.1 | 0.21 | -0.332 |
+| xc7s50ftgb196-1 | 8 | dsp_full | 0 | final | 3713 | 3792 | 14.0 | 23 | 144.5 | 278.9 | -0.586 | -0.336 |
+| xc7s50ftgb196-1 | 8 | dsp_full | 1 | final | 4481 | 4438 | 14.0 | 25 | 143.2 | 273.1 | -0.662 | -0.484 |
+| xc7s50ftgb196-1 | 16 | lut | 0 | final | 7058 | 6396 | 22.0 | 3 | 121.7 | 157.0 | 0.032 | 0.069 |
+| xc7s50ftgb196-1 | 16 | lut | 1 | final | 8611 | 7143 | 22.0 | 3 | 112.8 | 154.0 | -0.092 | -0.009 |
+| xc7s50ftgb196-1 | 16 | dsp_min | 0 | final | 5260 | 5063 | 22.0 | 37 | 111.5 | 138.9 | -4.198 | -3.521 |
+| xc7s50ftgb196-1 | 16 | dsp_min | 1 | final | 6578 | 5738 | 22.0 | 38 | 109.9 | 138.9 | -4.197 | -3.816 |
+| xc7s50ftgb196-1 | 16 | dsp_full | 0 | final | 5237 | 5343 | 22.0 | 39 | 117.1 | 255.0 | -0.922 | -0.834 |
+| xc7s50ftgb196-1 | 16 | dsp_full | 1 | final | 6546 | 5853 | 22.0 | 41 | 110.8 | 219.8 | -0.92 | -1.549 |
+| xc7s50ftgb196-2 | 8 | lut | 0 | final | 4733 | 4348 | 14.0 | 3 | 152.9 | 166.7 | 0.815 | 0.402 |
+| xc7s50ftgb196-2 | 8 | lut | 1 | final | 5661 | 5071 | 14.0 | 3 | 159.1 | 160.9 | 0.568 | 0.186 |
+| xc7s50ftgb196-2 | 8 | dsp_min | 0 | final | 3661 | 3716 | 14.0 | 13 | 153.8 | 335.6 | 0.244 | 0.02 |
+| xc7s50ftgb196-2 | 8 | dsp_min | 1 | final | 4402 | 4331 | 14.0 | 14 | 154.9 | 336.4 | 0.107 | 0.027 |
+| xc7s50ftgb196-2 | 8 | dsp_full | 0 | final | 3675 | 3760 | 14.0 | 23 | 151.4 | 325.7 | -0.035 | -0.07 |
+| xc7s50ftgb196-2 | 8 | dsp_full | 1 | final | 4404 | 4373 | 14.0 | 25 | 150.9 | 314.4 | -0.181 | -0.174 |
+| xc7s50ftgb196-2 | 16 | lut | 0 | final | 7010 | 6372 | 22.0 | 3 | 140.6 | 155.6 | 0.734 | -0.028 |
+| xc7s50ftgb196-2 | 16 | lut | 1 | final | 8507 | 7135 | 22.0 | 3 | 137.2 | 157.6 | 0.375 | 0.054 |
+| xc7s50ftgb196-2 | 16 | dsp_min | 0 | final | 5170 | 5022 | 22.0 | 37 | 136.1 | 165.5 | -3.044 | -2.777 |
+| xc7s50ftgb196-2 | 16 | dsp_min | 1 | final | 6467 | 5691 | 22.0 | 38 | 129.2 | 169.3 | -2.906 | -2.464 |
+| xc7s50ftgb196-2 | 16 | dsp_full | 0 | final | 5157 | 5343 | 22.0 | 39 | 138.6 | 310.8 | -0.217 | -0.044 |
+| xc7s50ftgb196-2 | 16 | dsp_full | 1 | final | 6444 | 5996 | 22.0 | 41 | 136.4 | 295.7 | -0.382 | -0.222 |
 
 Did not fit (48 runs, parts xc7s15csga225-1, xc7s15csga225-2, xc7s6csga225-1, xc7s6csga225-2): the memories need more block RAM than these parts have (model s uses 14 BRAM36 tiles on xc7s25), so Vivado moved them to LUT RAM, which then overflowed (DRC UTLZ-1 in the local `*_final.log` files).
 
@@ -182,8 +189,8 @@ Top `top_board` with `board/zero7.xdc`: model s, K = 8, lut lanes, C3_EN = 1, cl
 
 | Resource | Used | Available | Utilisation |
 | --- | --- | --- | --- |
-| Slice LUTs | 6851 | 14600 | 46.92% |
-| Slice registers | 6149 | 29200 | 21.06% |
+| Slice LUTs | 6824 | 14600 | 46.74% |
+| Slice registers | 6191 | 29200 | 21.20% |
 | Block RAM tiles | 14 | 45 | 31.11% |
 | DSP48E1 | 3 | 80 | 3.75% |
 | Global clock buffers | 6 | 32 | 18.75% |
@@ -192,20 +199,23 @@ Top `top_board` with `board/zero7.xdc`: model s, K = 8, lut lanes, C3_EN = 1, cl
 | Clock | Period (ns) | Endpoints | WNS setup (ns) | WHS hold (ns) | Fmax (MHz) |
 | --- | --- | --- | --- | --- | --- |
 | clk_in | 50.000 | 1 | 48.466 | 0.357 | 651.9 |
-| clk_safe_raw | 8.000 | 12234 | 0.473 | 0.033 | 132.9 |
-| clk_fast_safe | 8.000 | 5599 | 0.700 | 0.027 | 137.0 |
-| clk_fast_turbo | 8.000 | 5599 | 0.700 | 0.027 | 137.0 |
+| clk_safe_raw | 8.000 | 12276 | 0.518 | 0.049 | 133.7 |
+| clk_fast_safe | 8.000 | 5599 | 0.953 | 0.077 | 141.9 |
+| clk_fast_turbo | 8.000 | 5599 | 0.953 | 0.077 | 141.9 |
 
-Paths inside one clock; Fmax = 1000 / (period - WNS). Design worst setup slack 0.473 ns, worst hold slack 0.027 ns, unrouted nets 0.
+Paths inside one clock; Fmax = 1000 / (period - WNS). Design worst setup slack 0.518 ns, worst hold slack 0.049 ns, unrouted nets 0.
 `clk_fast_turbo` is analysed at turbo level 0, the safe frequency. Running the lanes faster than that is the experiment of the project; static timing says nothing about it.
 
-Clock-domain crossings by `report_cdc` rule: CDC-1 824 (critical), CDC-3 40 (info), CDC-13 1 (critical), CDC-15 784 (warning). Their meaning in this design is in `results/vivado/official/summary.md` and SPEC 7.8.
+Clock-domain crossings by `report_cdc` rule: CDC-1 698 (critical), CDC-3 40 (info), CDC-4 4 (critical), CDC-13 1 (critical), CDC-15 784 (warning). Their meaning in this design is in `results/vivado/official/summary.md` and SPEC 7.8.
 
-Power by `report_power` without switching-activity data: total 0.512 W (dynamic 0.449 W, device static 0.062 W), Vivado confidence "Medium". An estimate, not a measurement.
+Power by `report_power` without switching-activity data: total 0.506 W (dynamic 0.444 W, device static 0.062 W), Vivado confidence "Medium". An estimate, not a measurement.
 
 Side runs:
 
 - `results/vivado/official_adr021a/`: clk_safe = 125 MHz, design worst setup slack 0.326 ns. Intermediate run of 2026-11-16: synchronizers marked and the reset crossing excepted, but the three reset sources were still ORed in front of one synchronizer (CDC-10). Superseded by results/vivado/official/, where each asynchronous source has its own synchronizer.
+- `results/vivado/official_dsp/`: clk_safe = 125 MHz, design worst setup slack 0.109 ns. ADR-030 (d) DSP variant, lanes analysed at 250 MHz; includes ADR-029 wc_gen
+- `results/vivado/official_dsp250/`: clk_safe = 125 MHz, design worst setup slack 0.233 ns. ADR-030 premise check: DSP lanes with clk_fast_turbo analysed at 250 MHz (operand supply limit)
+- `results/vivado/official_dspmin/`: clk_safe = 125 MHz, design worst setup slack 0.395 ns. Side run for the DSP-lane candidate of docs/research/PARHI_DEVELOPMENT_LIST.md (approved experiment, 17 Nov 2026)
 - `results/vivado/official_preadr021/`: clk_safe = 125 MHz, design worst setup slack -0.499 ns. Run of 2026-11-16 at commit 7a2d369, before ADR-021: the reset crossing from the board clock was still timed and the synchronizers were not marked. Kept as the evidence for ADR-021; a later commit cannot reproduce it.
 
 ## Latency budget per image, official variant [SIM] x [VIVADO-STA]

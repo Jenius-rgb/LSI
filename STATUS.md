@@ -250,48 +250,48 @@ Diperbarui 2026-11-16.
 - [B] Daya ZERO7 tanpa Raspberry Pi — dokumen resmi hanya menyebut daya dari header GPIO Pi (IN-41); cara lain [UNKNOWN], tanyakan ke panitia. Tanpa daya, langkah tanpa Pi tidak bisa dimulai.
 - [B] Kecepatan SPI nyata, polaritas tombol, rantai WS2812B, boot dari flash QSPI — butuh board atau user manual.
 - [B] Kelas target — belum diumumkan panitia (pakai CIFAR-10 sementara).
-- [B] Format laporan sintesis resmi — belum dijelaskan panitia; sementara berupa file `.rpt` Vivado dan `summary.md` di `results/vivado/official/`.
+- [B] Format laporan sintesis resmi — belum dijelaskan panitia; sementara berupa file `.rpt` Vivado dan `summary.md` di `results/vivado/official/` (varian LUT) dan `results/vivado/official_dsp/` (varian DSP).
 - [B] Teks lengkap Li dkk. (ITC-Asia 2019): user tidak menemukannya; klaim tentang pemulihan memakai kata "sejauh penelusuran kami".
 
 Sudah tidak terblokir sejak dokumen resmi 10 Nov 2026: part number dan speed grade (xc7s25csga225-1), pin (tabel koneksi), F_IN, cara programming. Yang sekarang bisa dikerjakan tanpa board: XDC, tabel MMCM untuk 20 MHz, top-level board, sintesis dan implementasi di part resmi, dan laporan sintesis resmi.
 
+## Keputusan ADR-028 sampai ADR-032 (18 Nov 2026)
+
+- [x] ADR-029 pohon datar bobot checksum (`rtl/wc_gen.v`): bench `wc_gen_*` bit-exact di RTL lama dan baru, 10⁶ vektor PASS; OOC Fmax clk_safe 141,7 → 144,3 MHz; laporan resmi LUT 132,9 → 133,7 MHz [VIVADO-STA]; diterima (lihat Log bukti)
+- [x] ADR-030 opsi (d) dengan cerita R1: blok `variant_dsp` di `config/hw_zero7.yaml`, `synth-official --variant dsp` → `results/vivado/official_dsp/`, guard test kedua laporan, bench `engine_s_k8_c1_dsp*` dan `system_s_k8_c1_dsp`, label varian di metadata [HW], slide dan draf laporan disesuaikan
+- [ ] Perbaikan fan-out reset `rst_safe_r` (jalur terburuk clk_safe di kedua laporan resmi; clk_safe varian DSP turun 129,2 → 126,7 MHz setelah ADR-029) — rekomendasi, menunggu keputusan user
+- [ ] ADR-028 zero-skip — hanya setelah G1 (13 Des 2026) tepat waktu
+- [ ] ADR-032 (R2) menaikkan suplai operand — hanya setelah G1 tepat waktu
+- [ ] ADR-031 fine-grain pipelining lane LUT — tetap Diusulkan; relevan untuk varian riset LUT
+
 ## Catatan untuk sesi berikutnya
 
-**Pembaruan 18 Nov 2026 (sesi terpotong batas pemakaian):**
-- ADR-030: premis juri dicek (run `dsp250`: lane DSP lolos 250 MHz, Fmax 265,5 MHz [VIVADO-STA]). Jawaban juri ditulis di ADR-030 dan dinilai **lemah untuk klaim kecepatan**. Implementasi (d) DITAHAN sampai user memilih R1/R2 (lihat ADR-030).
-- ADR-029: baseline OOC `pre029` = 5.710 LUT, 5.076 FF, Fmax clk_safe 141,7 MHz, jalur terburuk clk_safe di pohon wc (`u_wc1/u_sum2`) [VIVADO-STA]. Bench baru `wc_gen_k{8,16}_c{0,1}` (dan `wc_gen_k8_c1_1m`, slow): `wc_gen_k8_c0` PASS 23821/23821 di wc_gen LAMA; tiga bench lain belum dicek hasilnya, jalankan ulang dulu.
-- Langkah ADR-029 berikutnya: (1) pastikan keempat bench `wc_gen_*` hijau di RTL lama; (2) tulis ulang `rtl/wc_gen.v` sebagai pohon datar suku biner (K=8: wc2 13 suku, wc3 14 suku → `sum_tree` N=16, PIPE_LEVEL=2; K=16: 33/39 suku → N=64, PIPE_LEVEL=3), port dan latensi 2 tetap; (3) bench `wc_gen_*`, checker, engine, lint; (4) `fpga/run_matrix.py ... --tag post029` dan laporan resmi ulang; bandingkan dengan `pre029`; pertahankan hanya bila Fmax clk_safe naik, jalur terburuk keluar dari pohon wc, LUT naik ≤ 2 %. Batas 5 hari (sampai 22 Nov 2026).
-- Suite penuh `python tools/run.py test` BELUM dijalankan setelah perubahan sesi ini (hanya `tests/test_fpga_scripts.py`: 23 passed).
+Ditulis 18 Nov 2026.
 
-
-Ditulis 17 Nov 2026 (lanjutan PROMPT_PARHI_KAMERA_TANPA_PI).
-
-**Untuk melanjutkan:** Tugas A, B dan C sudah selesai. Yang menunggu adalah keputusan user atas ADR-028 sampai ADR-031 (status Diusulkan) dan fase board.
+**Untuk melanjutkan:** keputusan ADR-028 sampai ADR-032 ada di bagian di atas dan di `docs/DECISIONS.md`. Satu keputusan menunggu user: perbaikan fan-out reset. Fase board belum dimulai (CLAUDE.md §8).
 
 **Posisi:**
-- Tahap 0, Tugas A (bring-up tanpa Pi, M22) dan Tugas B (`docs/CAMERA.md`, ditambah pilihan kamera termurah) selesai. Daya tanpa Pi tetap [UNKNOWN] (Q1).
-- Jawaban panitia (dari user, 17 Nov 2026): Q5 terjawab, tim 4 orang dikonfirmasi; Q1, Q2, Q3, Q4 dan Q6 masih menunggu. `CLAUDE.md` §7 belum diubah (perlu persetujuan user).
-- Tugas C selesai: buku Parhi dibaca penuh (Bab 1–18 dan lampiran A–G, PDF hlm. 18–781); catatan di `docs/research/parhi/CH01.md`–`CH18.md` dan `APPENDICES.md`; daftar pengembangan `docs/research/PARHI_DEVELOPMENT_LIST.md` (D1–D11); usulan ADR-028 (lewati aktivasi nol), ADR-029 (pohon CSD bobot checksum), ADR-030 (lane LUT vs DSP dan batas suplai operand), ADR-031 (fine-grain pipelining, bersyarat).
-- Data baru: operand set beraktivasi nol 35,9 % (model s) dan 25,4 % (xs) [SIM, `results/model/zero_taps_*`]; data OOC lane DSP sudah ada di `fpga/reports/summary.csv` [VIVADO-STA].
-- Eksperimen yang disetujui user (17 Nov 2026): run samping resmi dengan lane DSP (`--lane-impl dsp_min --tag dspmin`), hasil di `results/vivado/official_dspmin/` (lihat Log bukti).
-- OCR lokal buku ada di `build/parhi/ocr/` (tidak di-commit; ulangi dengan `tools/parhi/ocr_pdf.ps1` bila perlu).
-
-**Progres membaca Parhi:** SELESAI (Bab 1–18 dan lampiran A–G). Indeks (PDF 782–791) bukan bagian teks.
+- ADR-030: user menyerahkan pilihan R1/R2. Claude memilih R1 sekarang dan R2 setelah G1 (ADR-032), karena R2 mengubah SPEC §5 dan mengancam G1. Varian DSP = varian kecepatan dan demo; varian LUT = varian riset overclock. Angka antarvarian tidak boleh dicampur.
+- ADR-029 diterima; satu-satunya efek buruk adalah clk_safe varian DSP (126,7 MHz, masih lulus 125 MHz), disebabkan routing net reset, bukan `wc_gen`.
+- `CLAUDE.md` §7 diperbarui: tim 4 orang dikonfirmasi (disetujui user 18 Nov 2026).
+- Kabel JTAG tim: Digilent JTAG-HS2 Rev. A [USER, foto]; `board/BRINGUP_NO_PI.md` langkah 2 sudah memakai label HS2. Fungsi pin VDD (padanan VREF) belum dicek di manual Digilent (situs menolak akses otomatis).
+- Pesan user 18 Nov 2026 memuat butir "2." yang kosong; tanyakan isinya.
 
 **Langkah berikutnya, berurutan:**
-1. Keputusan user atas ADR-030 dulu (menentukan apakah ADR-031 relevan), lalu ADR-029 dan ADR-028. Setelah disetujui: ADR → SPEC → golden model dan test → RTL, sesuai CLAUDE.md §4.
-2. 20 Nov 2026 dan sesudahnya: begitu daya tersedia dan user menulis "board siap", ikuti `board/BRINGUP_NO_PI.md` langkah 1–9 (termasuk cek celah kabel kamera CSI); isi `board/BOARD_INFO.md`.
-3. Begitu tegangan bank terukur: hapus tanda TODO di XDC, bangun bitstream SENTINEL penuh, dan jalankan E7 lewat `bringup.py --host jtag`.
-4. Jawaban panitia berikutnya dicatat di `board/BOARD_INFO.md` dan, dengan persetujuan user, di `CLAUDE.md` §7.
-5. Butir laporan D6 (iteration bound, error setup-only saat overclock, dll.) bisa ditulis kapan saja sebelum 31 Jan 2027.
+1. Bila user setuju: perbaikan fan-out reset di `rtl/top_core.v` (duplikasi register reset atau `max_fanout`), lalu `synth-official` dan `synth-official --variant dsp` diulang.
+2. 20 Nov 2026 dan sesudahnya: begitu daya tersedia dan user menulis "board siap", ikuti `board/BRINGUP_NO_PI.md` (cek pin VDD HS2 dulu).
+3. Setelah G1: ADR-028, lalu studi ADR-032 (`--safe-div 7` dulu).
+4. Butir laporan D6 kapan saja sebelum 31 Jan 2027.
 
 **Jebakan yang ditemukan:**
-- Python sistem tidak punya torchvision; jalankan skrip model dengan `.venv/Scripts/python` (atau lewat `tools/run.py`).
-- `Resolve-Path` di PowerShell menganggap `[` dan `]` sebagai wildcard; nama file buku berisi kurung siku (skrip di `tools/parhi/` sudah menangani).
-- OCR buku sering salah membaca angka; angka yang dikutip harus dicek di halaman hasil render.
-- `vivado.bat` memecah argumen yang berisi koma (dan `=`); daftar file bring-up memakai pemisah `+`.
-- `run_official.py --lane-impl` hanya boleh bersama `--tag` (folder resmi tidak tertimpa varian lain).
-- Margin timing di 125 MHz tipis; setiap perubahan RTL: ulangi `synth-official`; guard test menolak laporan yang tidak bersih.
+- Python sistem tidak punya torchvision; pakai `.venv/Scripts/python` atau `tools/run.py`.
+- `run.py sim <nama>` mencocokkan prefiks: `wc_gen_k8_c1` ikut menjalankan `wc_gen_k8_c1_1m`, `engine_s_k8_c1` ikut menjalankan semua varian n200 dan DSP.
+- Jangan menjalankan bench yang sama dari dua proses (misalnya `run.py sim` saat `run.py test` berjalan): keduanya memakai folder `build/` yang sama dan hasilnya rusak.
+- Banyak `assign` ke potongan satu vektor membuat Icarus sangat lambat; pakai satu fungsi pengemas (lihat `rtl/wc_gen.v`).
+- `always @*` tidak dievaluasi di waktu nol di Icarus bila input tidak berubah; hasilnya X di siklus awal.
+- Memori PC sekitar 12 GB dengan sekitar 2 GB bebas: jalankan run Vivado berurutan, bukan paralel.
+- `fpga/parse_reports.py` dengan tag sekarang menggabungkan baris ke `summary.csv` (sebelumnya menimpa seluruh tabel).
+- Margin timing di 125 MHz tipis; setiap perubahan RTL: ulangi kedua `synth-official`; guard test menolak laporan yang tidak bersih.
 
 ## Log bukti
 
@@ -372,3 +372,11 @@ Ditulis 17 Nov 2026 (lanjutan PROMPT_PARHI_KAMERA_TANPA_PI).
 | 2026-11-18 | ADR-029 | `fpga/run_matrix.py --k 8 --impl 0 --c3 1 --parts xc7s25csga225-1 --t-safe 7.0 --t-fast 6.4 --nonmac-factor 0.7 --tag pre029` | 5.710 LUT, 5.076 FF, Fmax clk_safe 141,7 MHz, clk_fast 155,4 MHz [VIVADO-STA] |
 | 2026-11-18 | ADR-029 | `python tools/run.py sim wc_gen_k8_c0` (wc_gen lama) | PASS 23821/23821 |
 | 2026-11-18 | skrip | `.venv/Scripts/python -m pytest -q tests/test_fpga_scripts.py` | 23 passed (CSV OOC ber-tag digabung, kalimat turbo benar) |
+| 2026-11-18 | ADR-029 | `python tools/run.py sim wc_gen_k8_c1`, `wc_gen_k16_c0`, `wc_gen_k16_c1` (wc_gen lama) | PASS 23821/23821, 21978/21978, 21978/21978 |
+| 2026-11-18 | ADR-029 | bench yang sama di `rtl/wc_gen.v` baru, plus `wc_gen_k8_c1_1m` | PASS 23821/23821 (K=8, C3 0 dan 1), 21978/21978 (K=16, C3 0 dan 1), 1003821/1003821; lint 25 target bersih |
+| 2026-11-18 | ADR-029 | `fpga/run_matrix.py ... --tag post029` (pengaturan sama dengan pre029) | 5.668 LUT, 5.118 FF, Fmax clk_safe 144,34 MHz, clk_fast 156,27 MHz [VIVADO-STA]; jalur terburuk clk_safe di `u_post` |
+| 2026-11-18 | ADR-029 | `python tools/run.py synth-official` | 6.824 LUT, 6.191 FF, 3 DSP, 14 BRAM, clk_safe 133,7 MHz (WNS +0,518 ns), lane 141,9 MHz [VIVADO-STA] |
+| 2026-11-18 | ADR-030 | `python tools/run.py synth-official --variant dsp` | 5.468 LUT, 5.451 FF, 14 DSP, 14 BRAM, lane 262,0 MHz dianalisis di 250 MHz (WNS +0,183 ns), clk_safe 126,7 MHz (WNS +0,109 ns) [VIVADO-STA] |
+| 2026-11-18 | ADR-030 | `python tools/run.py sim engine_s_k8_c1_dsp` (wc_gen lama, sebelum ADR-029) | PASS 1/1 dan `engine_s_k8_c1_dsp_n200` PASS 200/200 [SIM] |
+| 2026-11-18 | akhir sesi | `python tools/run.py test` | 257 passed in 205.30s (`build/test_session3.log`) |
+| 2026-11-18 | regresi lambat | `python tools/sim.py --record results/sim/rtl_regression.jsonl --jobs 2 engine_s_k8_c1_n200 engine_s_k8_c1_dsp_n200 system_s_k8_c1 wc_gen_k8_c1_1m` | PASS: wc_gen_k8_c1_1m 1003821/1003821, engine_s_k8_c1_n200 200/200, engine_s_k8_c1_dsp_n200 200/200, system_s_k8_c1 10/10, system_s_k8_c1_dsp 10/10 [SIM] |

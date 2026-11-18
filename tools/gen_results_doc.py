@@ -106,12 +106,15 @@ def vivado_section() -> list[str]:
         "For lut, every non-MAC endpoint of clk_fast is held to 70% of the period (SPEC 7.4, ADR-012): its WNS is measured against that tighter limit.",
         "Static timing is conservative; the frequency at which a real device fails can only be measured on the board.",
         "",
-        "| Part | K | Lane | C3 | LUT | FF | BRAM36 | DSP | Fmax clk_safe (MHz) | Fmax clk_fast (MHz) | WNS MAC (ns) | WNS non-MAC (ns) |",
-        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+        "Run: `final` is the M11 matrix; `pre029` and `post029` are the same variant before and after ADR-029.",
+        "",
+        "| Part | K | Lane | C3 | Run | LUT | FF | BRAM36 | DSP | Fmax clk_safe (MHz) | Fmax clk_fast (MHz) | WNS MAC (ns) | WNS non-MAC (ns) |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
-    for r in sorted(rows, key=lambda r: (r["part"], int(r["K"]), r["LANE_IMPL"], r["C3_EN"])):
+    for r in sorted(rows, key=lambda r: (r["part"], int(r["K"]), r["LANE_IMPL"], r["C3_EN"], r["variant"])):
         lines.append(
-            f"| {r['part']} | {r['K']} | {names.get(r['LANE_IMPL'], r['LANE_IMPL'])} | {r['C3_EN']} | {float(r['lut']):.0f} | {float(r['ff']):.0f} | "
+            f"| {r['part']} | {r['K']} | {names.get(r['LANE_IMPL'], r['LANE_IMPL'])} | {r['C3_EN']} | {r['variant'].rsplit('_', 1)[-1]} | "
+            f"{float(r['lut']):.0f} | {float(r['ff']):.0f} | "
             f"{float(r['bram36_equiv']):.1f} | {float(r['dsp']):.0f} | {float(r['fmax_safe_mhz']):.1f} | {float(r['fmax_fast_mhz']):.1f} | "
             f"{r.get('wns_mac_ns', '')} | {r.get('wns_nonmac_ns', '')} |"
         )
