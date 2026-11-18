@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.2 (win64) Build 6299465 Fri Nov 14 19:35:11 GMT 2025
-| Date         : Tue Nov 17 21:47:42 2026
+| Date         : Wed Nov 18 12:14:42 2026
 | Host         : LAPTOP-ER7J7A89 running 64-bit major release  (build 9200)
 | Command      : report_methodology -file {C:\AF\SENTINEL-LSI-2027\results\vivado\official/impl_methodology.rpt}
 | Design       : top_board
@@ -23,7 +23,7 @@ Table of Contents
           Floorplan: design_1
       Design limits: <entire design considered>
              Max checks: <unlimited>
-             Checks found: 69
+             Checks found: 68
 +-----------+----------+-------------------------------------------------------------------------------------------------------+--------+
 | Rule      | Severity | Description                                                                                           | Checks |
 +-----------+----------+-------------------------------------------------------------------------------------------------------+--------+
@@ -31,7 +31,6 @@ Table of Contents
 | TIMING-9  | Warning  | Unknown CDC Logic                                                                                     | 1      |
 | TIMING-24 | Warning  | Overridden Max delay datapath only                                                                    | 48     |
 | TIMING-47 | Warning  | False path, asynchronous clock group or max delay datapath only constraint between synchronous clocks | 4      |
-| ULMTCS-1  | Warning  | Control Sets use limits recommend reduction                                                           | 1      |
 +-----------+----------+-------------------------------------------------------------------------------------------------------+--------+
 
 2. REPORT DETAILS
@@ -374,11 +373,6 @@ Related violations: <none>
 TIMING-47#4 Warning
 False path, asynchronous clock group or max delay datapath only constraint between synchronous clocks  
 A Clock Group timing constraint is set between synchronous clocks clk_safe_raw and clk_fast_turbo (see constraint position 97 in the Timing Constraint window in Vivado IDE). Masking entire synchronous clock domains via  set_false_path, set_clock_groups or set_max_delay -datapath_only may result in failure in hardware.
-Related violations: <none>
-
-ULMTCS-1#1 Warning
-Control Sets use limits recommend reduction  
-This design uses 290 control sets (vs. available limit of 3650, determined by 1 control set per CLB). This exceeds the control set use guideline of 7.5 percent. This is at a level where reduction is RECOMMENDED (see UG949). Use report_control_sets to get more details.
 Related violations: <none>
 
 

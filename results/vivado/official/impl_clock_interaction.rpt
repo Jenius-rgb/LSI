@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.2 (win64) Build 6299465 Fri Nov 14 19:35:11 GMT 2025
-| Date         : Tue Nov 17 21:47:32 2026
+| Date         : Wed Nov 18 12:14:28 2026
 | Host         : LAPTOP-ER7J7A89 running 64-bit major release  (build 9200)
 | Command      : report_clock_interaction -file {C:\AF\SENTINEL-LSI-2027\results\vivado\official/impl_clock_interaction.rpt}
 | Design       : top_board
@@ -18,17 +18,17 @@ Clock Interaction Table
                                                 WNS                            TNS Failing  TNS Total    WNS Path         Clock-Pair           Inter-Clock          
 From Clock              To Clock                Clock Edges  WNS(ns)  TNS(ns)    Endpoints    Endpoints  Requirement(ns)  Classification       Constraints          
 ----------------------  ----------------------  -----------  -------  -------  -----------  -----------  ---------------  -------------------  -------------------  
-clk_fast_safe           clk_fast_safe           rise - rise     0.70     0.00            0         5599             8.00  Clean                Timed                
+clk_fast_safe           clk_fast_safe           rise - rise     0.95     0.00            0         5599             8.00  Clean                Timed                
 clk_fast_safe           clk_fast_turbo                                                   0         5599                   Ignored              Exclusive Groups     
 clk_fast_safe           clk_safe_raw                                                     0          177                   Ignored              Asynchronous Groups  
 clk_fast_turbo          clk_fast_safe                                                    0         5599                   Ignored              Exclusive Groups     
-clk_fast_turbo          clk_fast_turbo          rise - rise     0.70     0.00            0         5599             8.00  Clean                Timed                
+clk_fast_turbo          clk_fast_turbo          rise - rise     0.95     0.00            0         5599             8.00  Clean                Timed                
 clk_fast_turbo          clk_safe_raw                                                     0          177                   Ignored              Asynchronous Groups  
 clk_in                  clk_in                  rise - rise    48.47     0.00            0            1            50.00  Clean                Timed                
 clk_in                  clk_safe_raw                                                     0            1                   Ignored              False Path           
 clk_safe_raw            clk_fast_safe                                                    0          727                   Ignored              Asynchronous Groups  
 clk_safe_raw            clk_fast_turbo                                                   0          727                   Ignored              Asynchronous Groups  
 clk_safe_raw            clk_out1_clk_wiz_turbo                                           0            1                   Ignored              False Path           
-clk_safe_raw            clk_safe_raw            rise - rise     0.47     0.00            0        12330             8.00  Clean                Partial False Path   
+clk_safe_raw            clk_safe_raw            rise - rise     0.52     0.00            0        12372             8.00  Clean                Partial False Path   
 
 
