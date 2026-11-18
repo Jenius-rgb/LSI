@@ -179,7 +179,10 @@ class HwBackend:
         )
 
     def metadata(self) -> dict:
-        return {"backend": "hw", "k": self.k, "f_safe_mhz": self.f_safe, "label": "[HW]"}
+        from sentinel.driver import lane_variant
+
+        # ADR-030 condition 3: the lane variant comes from the bitstream itself, never from a setting.
+        return {"backend": "hw", "k": self.k, "f_safe_mhz": self.f_safe, "label": "[HW]", **lane_variant(self.driver.read_id().flags)}
 
 
 def layer_names(qm: QModel) -> list[str]:

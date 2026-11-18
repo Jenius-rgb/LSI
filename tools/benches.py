@@ -158,6 +158,11 @@ def engine_benches() -> dict[str, Bench]:
             name, "tb_engine", [*ENGINE_SOURCES, "tb/tb_engine.v"], _engine_params(model, k, c3),
             _engine_vectors(model, count), slow=slow, shards=shards, prefer_xsim=slow,
         )
+    # ADR-030 (d): the DSP lane variant (variant_dsp in config/hw_zero7.yaml) must be bit-exact in the same benches.
+    for count, slow, shards in [(1, False, 1), (200, True, 6)]:
+        name = "engine_s_k8_c1_dsp" + (f"_n{count}" if count >= 20 else "")
+        out[name] = Bench(name, "tb_engine", [*ENGINE_SOURCES, "tb/tb_engine.v"], _engine_params("s", 8, 1, impl=1),
+                          _engine_vectors("s", count), slow=slow, shards=shards, prefer_xsim=slow)
     # SPEC 13.4 corner cases on padded lanes, extreme values, ties, saturation, zero image.
     for kind in ("zero_lanes", "extreme", "ties", "saturate"):
         name = f"engine_corner_{kind}"
@@ -302,6 +307,10 @@ def system_benches() -> dict[str, Bench]:
     bench = "system_s_k8_c1"
     out[bench] = Bench(bench, "tb_system", SYSTEM_SOURCES, _system_params("s", 8, 1, 10.0 / 1.3),
                        _system_vectors("s", _official_scenarios), slow=True, prefer_xsim=True)
+    # DSP lane variant (ADR-030 (d)): lanes at the operand supply limit, R = 2 times the safe clock.
+    bench = "system_s_k8_c1_dsp"
+    out[bench] = Bench(bench, "tb_system", SYSTEM_SOURCES, {**_system_params("s", 8, 1, 10.0 / 2.0), "LANE_IMPL": 1},
+                       _system_vectors("s", _official_scenarios), slow=True, prefer_xsim=True)
     # Governor in automatic mode: the level climbs every image, so MMCM2 reconfigures between images.
     bench = "system_micro_autogov"
     out[bench] = Bench(bench, "tb_system", SYSTEM_SOURCES,
@@ -396,6 +405,11 @@ LINT_TARGETS = [
     *[
         {"id": f"engine_c{c3}", "top": "engine", "sources": ENGINE_SOURCES, "params": {"C3_EN": c3, **_W}}
         for c3 in (0, 1)
+    ],
+    *[
+        {"id": f"wc_gen_k{k}_c1", "top": "wc_gen", "sources": ["rtl/sum_tree.v", "rtl/wc_gen.v"],
+         "params": {"K": k, "C3_EN": 1, **{f"WC{i+1}_W": v for i, v in enumerate(wc_widths(k))}}}
+        for k in (8, 16)
     ],
     {"id": "lane_lut", "top": "lane_lut", "sources": ["rtl/lane_lut.v"]},
     {"id": "lane_dsp_min", "top": "lane_dsp_min", "sources": ["rtl/lane_dsp_min.v"]},

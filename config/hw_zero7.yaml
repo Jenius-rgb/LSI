@@ -12,6 +12,11 @@ INJ_EN: 1
 WEIGHT_AW: 12       # same address widths as fpga/run_matrix.py uses for model s
 ACT0_AW: 13
 ACT1_AW: 11
+# ADR-030 (d), choice R1: second lane variant, everything else as above. It is the speed and demo variant;
+# the LUT variant above stays the overclocking research variant (E1-E3). Numbers never mix the two.
+variant_dsp:
+  LANE_IMPL: dsp_min
+  lane_mhz: 250.0   # lane clock analysed by the official flow = operand supply limit R x f_safe (ADR-013)
 clock:
   f_in_mhz: 20.0    # CLK20M on pin B13 [OFFICIAL: board/BOARD_INFO.md]
   vco_mhz: 1000.0   # M = 50, D = 1

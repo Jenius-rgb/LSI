@@ -16,6 +16,12 @@ timing limit. Prior work and the limits of any claim are in `docs/PRIOR_ART.md`.
 See `docs/ARCHITECTURE.md`. K data lanes and 2 or 3 checksum lanes share a fast clock domain;
 memory, control and checking stay in a safe domain. A hardware governor selects a clock per layer.
 
+Two lane variants come from the same RTL and the same golden model (ADR-030). The DSP variant maps the
+lane multipliers to DSP48E1 slices; its lanes close static timing at 250 MHz, the operand supply limit
+R x f_safe, so it is the speed and demo variant. The LUT variant builds the multipliers from fabric; its
+lanes are the critical path well below the supply limit, so it is the variant for the overclocking
+experiments E1 to E3. Each variant has its own synthesis report, and no result mixes numbers from the two.
+
 ## 3. Model and training
 
 Accuracy of the float and integer models: `docs/RESULTS_SIM.md`, section "Model accuracy" [SIM].

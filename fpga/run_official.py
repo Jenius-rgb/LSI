@@ -282,24 +282,37 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--tag", default="", help="side run: reports in results/vivado/official_TAG/, log in build/official_synth_TAG.log")
     parser.add_argument("--lane-impl", choices=sorted(LANE_IMPL), default=None,
                         help="side run only (needs --tag): lane implementation instead of the one in config/hw_zero7.yaml")
+    parser.add_argument("--variant", choices=("lut", "dsp"), default="lut",
+                        help="dsp: the DSP lane variant of ADR-030 (variant_dsp in config/hw_zero7.yaml), reports in results/vivado/official_dsp/")
     parser.add_argument("--turbo-mhz", type=float, default=None,
                         help="side run only (needs --tag): analyse clk_fast_turbo at this frequency instead of turbo level 0")
     args = parser.parse_args(argv)
     if args.tag and not re.fullmatch(r"[a-z0-9]+", args.tag):
         parser.error("--tag takes lower-case letters and digits only")
+    if args.variant == "dsp" and (args.lane_impl or args.turbo_mhz or args.tag):
+        parser.error("--variant dsp is a full official run: it takes its lane type and lane clock from config/hw_zero7.yaml")
     if (args.lane_impl or args.turbo_mhz) and not args.tag:
         parser.error("--lane-impl and --turbo-mhz are for side runs only: add --tag so results/vivado/official/ stays the official variant")
     return args
 
 
+def resolve_variant(args: argparse.Namespace, cfg: dict) -> tuple[str, float | None, Path]:
+    """Lane type, lane-clock frequency to analyse (None = turbo level 0) and report folder of this run."""
+    if args.variant == "dsp":
+        dsp = cfg["variant_dsp"]
+        return dsp["LANE_IMPL"], float(dsp["lane_mhz"]), OUT.with_name(f"{OUT.name}_dsp")
+    return args.lane_impl or cfg["LANE_IMPL"], args.turbo_mhz, OUT.with_name(f"{OUT.name}_{args.tag}") if args.tag else OUT
+
+
 def main() -> int:
     args = parse_args()
     cfg = yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
-    lane = args.lane_impl or cfg["LANE_IMPL"]
+    lane, turbo_mhz, out = resolve_variant(args, cfg)
+    args.turbo_mhz = turbo_mhz
     safe_div = args.safe_div or cfg["clock"]["vco_mhz"] / cfg["clock"]["f_safe_mhz"]
-    out = OUT.with_name(f"{OUT.name}_{args.tag}") if args.tag else OUT
-    command = ("python tools/run.py synth-official" + (f" --safe-div {safe_div:g}" if args.safe_div else "")
-               + (f" --lane-impl {args.lane_impl}" if args.lane_impl else "") + (f" --turbo-mhz {args.turbo_mhz:g}" if args.turbo_mhz else "")
+    command = ("python tools/run.py synth-official" + (" --variant dsp" if args.variant == "dsp" else "")
+               + (f" --safe-div {safe_div:g}" if args.safe_div else "")
+               + (f" --lane-impl {args.lane_impl}" if args.lane_impl else "") + (f" --turbo-mhz {args.turbo_mhz:g}" if args.turbo_mhz and args.variant != "dsp" else "")
                + (f" --tag {args.tag}" if args.tag else ""))
     out.mkdir(parents=True, exist_ok=True)
     if not args.summary_only:

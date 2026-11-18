@@ -375,3 +375,16 @@ def test_camera_mode_runs_on_a_video_file_without_a_pi(tmp_path):
     backend, _ = make_backend("xs")
     report = camera_mode.run(backend, str(path), max_frames=10)
     assert report["frames"] == 10 and report["last_pred"] is not None
+
+
+def test_hw_metadata_names_the_lane_variant():
+    """ADR-030 condition 3: every [HW] result file names its lane variant, read from the ID flags (SPEC 12.2)."""
+    from sentinel.backend import HwBackend
+    from sentinel.driver import lane_variant
+
+    assert lane_variant(0b0011) == {"lane_impl": "lut", "inj_hw": True, "c3_hw": True}
+    assert lane_variant(0b0111)["lane_impl"] == "dsp_min" and lane_variant(0b1000)["lane_impl"] == "dsp_full"
+    qm = micro_qm()
+    drv = SentinelDriver(LogTransport(ModelDevice(qm, k=8, flags=0b0111)))
+    meta = HwBackend(drv, qm, 8, 10, 125.0).metadata()
+    assert meta["lane_impl"] == "dsp_min" and meta["c3_hw"] and meta["label"] == "[HW]"

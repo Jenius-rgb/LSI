@@ -1,4 +1,5 @@
 """M11: report parsing, BRAM arithmetic and the guard against a missing device."""
+import pytest
 import sys
 from pathlib import Path
 
@@ -307,3 +308,31 @@ def test_official_summary_states_the_turbo_frequency():
     assert "turbo level 0, which equals the safe frequency" in ro.turbo_note(same)
     note = ro.turbo_note(faster)
     assert "250 MHz" in note and "equals the safe frequency" not in note
+
+
+def test_dsp_variant_is_an_official_run_of_its_own():
+    """ADR-030 (d), R1: the DSP variant has its own official report, lanes analysed at the supply limit."""
+    import pytest
+    import run_official as ro
+    import yaml
+
+    cfg = yaml.safe_load((ROOT / "config" / "hw_zero7.yaml").read_text(encoding="utf-8"))
+    lane, turbo, out = ro.resolve_variant(ro.parse_args(["--variant", "dsp"]), cfg)
+    assert (lane, turbo, out.name) == ("dsp_min", cfg["R"] * cfg["clock"]["f_safe_mhz"], "official_dsp")
+    assert ro.resolve_variant(ro.parse_args([]), cfg) == ("lut", None, ro.OUT)
+    with pytest.raises(SystemExit):
+        ro.parse_args(["--variant", "dsp", "--lane-impl", "lut", "--tag", "x"])
+
+
+@pytest.mark.parametrize("folder", ["official", "official_dsp"])
+def test_committed_variant_reports_are_clean(folder):
+    """Both lane variants fit XC7S25CSGA225-1 and meet static timing (ADR-030 condition 2)."""
+    import json
+
+    summary = json.loads((ROOT / "results" / "vivado" / folder / "summary.json").read_text(encoding="utf-8"))
+    assert summary["part"] == "xc7s25csga225-1"
+    assert float(summary["design_wns_ns"]) >= 0 and float(summary["design_whs_ns"]) >= 0 and int(summary["unrouted_nets"]) == 0
+    util = summary["utilization_post_route"]
+    assert all(util[r]["used"] <= util[r]["available"] for r in ("lut", "ff", "bram_tile", "dsp"))
+    turbo = next(c for c in summary["clocks"] if c["name"] == "clk_fast_turbo")
+    assert (int(summary["LANE_IMPL"]), turbo["period_ns"]) == ((0, 8.0) if folder == "official" else (1, 4.0))

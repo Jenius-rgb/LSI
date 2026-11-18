@@ -14,6 +14,11 @@ CMD_ID = 0x9F
 MAX_CHUNK = 256
 
 
+def lane_variant(flags: int) -> dict:
+    """Variant bits of the ID flags byte {4'd0, IMPL[1:0], INJ, C3} (rtl/top_core.v, SPEC 12.2)."""
+    return {"lane_impl": ("lut", "dsp_min", "dsp_full", "unknown")[(flags >> 2) & 3], "inj_hw": bool(flags & 2), "c3_hw": bool(flags & 1)}
+
+
 @dataclass
 class DeviceId:
     magic: bytes
