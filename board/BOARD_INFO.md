@@ -37,6 +37,45 @@ Informasi dari tim, belum dari dokumen resmi. Diberi label [TEAM] dan tidak dipa
 | Jadwal | ZERO7 dan kabel JTAG tersedia mulai 20 Nov 2026; Raspberry Pi 4 mungkin datang lebih lambat [TEAM] | info tim, 17 Nov 2026 |
 | Daya tanpa Pi | Dokumen resmi hanya menyebut daya dari header GPIO Raspberry Pi (IN-41: "When Raspberry Pi is powered on, the LED on ZERO7 lights up"). Cara lain: [UNKNOWN], tanyakan ke panitia | IN-41; OCR semua halaman TK dan IN, 17 Nov 2026 |
 
+## Status update, 23 Nov 2026
+
+Source: organizer responses as relayed by the user on 23 Nov 2026 and the organizer website checked the same day (`docs/official/CORRESPONDENCE_2026-11.md`). No mandatory field above changes: none of these items is verified board data.
+
+| Item | Status | Source |
+| --- | --- | --- |
+| Power without Raspberry Pi | PENDING ORGANIZER RESPONSE: the committee must first confirm supported power methods and specifications. Only documented method remains power from the Raspberry Pi header (IN-41). Do not attempt any other connection | organizer (relayed), IN-41 |
+| Official `Zero7.xdc` | PENDING ORGANIZER RESPONSE: whether it can be provided separately. Still UNKNOWN; `board/zero7.xdc` keeps its TODO markers | organizer (relayed) |
+| Bank voltages and IOSTANDARD (banks 14, 15, 34) | UNKNOWN. The committee recommends confirming I/O voltage settings and other constraints before programming | organizer (relayed) |
+| ZERO7 User Manual | Organizers state it is published on the specification page; on 2026-11-23 neither the English nor the Japanese page links it (only setup guide and connection table). UNKNOWN until the file is in hand | organizer (relayed); website 2026-11-23 |
+| JTAG cable | PENDING ORGANIZER RESPONSE: alternatives to the Digilent JTAG-HS2, additional HS2 cables, and how to obtain them. Whether the team currently holds a working cable: to be confirmed with the user (see team info above) | user, 2026-11-23 |
+| Raspberry Pi | USER-PROVIDED: a Raspberry Pi 5 from the user's lecturer is expected from about 3–4 Jan 2027. The organizers name the Raspberry Pi 5 as the host of the loaned board (G-6) | user, 2026-11-23; G-6 |
+
+## Team decisions, 25 Nov 2026 (keputusan tim)
+
+These replace conflicting older entries in this file (Raspberry Pi 4, Digilent JTAG-HS2/HS3, Pi 5 "from 3–4 Jan").
+
+| # | Decision | Status |
+| --- | --- | --- |
+| 1 | Raspberry Pi 5 is available and used as host now (photo: Raspberry Pi 5, 8 GB RAM) | [USER]. Compatibility of Pi 5 with ZERO7 not confirmed by the organizers in writing: [UNKNOWN] until shown on the board. The organizers name the Pi 5 as the host of the loaned board [OFFICIAL, G-6] |
+| 2 | The ZERO7 board is in the user's hands | [USER]; photos in `board/photos/` |
+| 3 | Debugger is a SEGGER J-Link (20-pin JTAG connector, photo), not a Digilent cable; the team has no Digilent cable | [USER]. Not a native Vivado cable; route is SEGGER J-Link XVCD Server (part of J-Link software from V7.92d, default TCP port 2542 [VERIFIED EXTERNAL: kb.segger.com/J-Link_XVCD_Server]). Programming and ILA through it: [UNKNOWN] until tested by the user. Details: `docs/JLINK_VIVADO.md` |
+| 4 | No camera module on the FPGA side; a camera, if used, is attached to the Raspberry Pi, which scales frames to 32×32 and sends them over SPI. Camera type (USB webcam or CSI module) not decided | [USER]. Video file is the stand-in during development |
+| 5 | Contest class awaits the user's decision; proposal in `docs/DECISIONS.md` | [USER]. Note: the record of 23 Nov 2026 (`docs/official/CORRESPONDENCE_2026-11.md` §1) says the organizers confirmed Class 2; to be reconciled by the user |
+
+## Photo observations, 25 Nov 2026
+
+Read from the user's photos in `board/photos/` [USER, photo]. Observations only: nothing here is a specification.
+
+| Item | Observation |
+| --- | --- |
+| Board markings | Top section silkscreen "Q-SPARC ZERO7"; lower (FPGA) section silkscreen "SMART NINJA"; back: "Gigafirm", "GF366", "S/N 24", "QC PASS" sticker. No revision marking found, so board revision stays UNKNOWN |
+| FPGA marking | "AMD SPARTAN7 XC7S25 … CSGA225…" on U1; speed grade not legible in the photo (official: -1) |
+| DC jack | A barrel-jack connector at the top-right of the upper section with a silkscreen label partly reading "POW". The official guide photo of a yellow ZERO7 variant (IN-42) shows the silkscreen "DC 5V" near a connector. Voltage, polarity and whether this jack is a supported power input for this board: **UNKNOWN, organizer answer pending. Do not use it.** |
+| Upper section | Three 5 mm LEDs labelled R/G/B (and X/Y/Z); push buttons STOP, START and a third (RUN); 4-position DIP switch SW7 (the connection table lists 3 signals MODE0–MODE2 for SW7); RGB LED near "COLOR"; 3-pin headers labelled LED, FPGA, COLOR; Grove connector "GROV"; slide switch SW3; RTC with battery BT1; "Acceleration" sensor area |
+| Lower section | 40-pin header CN1 (pin 1 at the top right, pins 39/40 at the left); two blue buttons (1) and (2); two 12-pin (2×6) right-angle headers at the left and right edges (front labels 1–11 odd; back silkscreen J3 and J4 with 2–12 even); female headers P1 and P2 along the top edge; U7 and U8 next to P2; coax connector J16 (connection table: EXT_CLK = H1 to J16) |
+| JTAG header on this board | **Not identified in the photos.** The official guide (IN-42) shows six jumper wires on a yellow board variant, overlay labels left to right: Vref, GND, TCK, TDO, TDI, TMS. Which header carries JTAG on this white board, and its pin order: UNKNOWN |
+| J-Link | Black case printed "J-link" and "SEGGER www.segger.com"; 20-pin (2×10) box header marked JTAG; USB cable. Hardware version, firmware and serial number: UNKNOWN until the J-Link software reports them |
+
 ## Field opsional
 
 | Field | Nilai | Sumber |
@@ -109,6 +148,10 @@ Informasi dari tim, belum dari dokumen resmi. Diberi label [TEAM] dan tidak dipa
 3. Fungsi pin VDD JTAG-HS2 (masukan tegangan referensi target, padanan VREF HS3 [INFERENCE]) dan rentang tegangannya, dari manual resmi Digilent; halaman Digilent menolak akses otomatis (HTTP 403), jadi belum dicek.
 4. Polaritas tombol, jumlah LED WS2812B per rantai, dan arti jumper "(CUT)".
 5. Posisi DIP SW7 untuk boot dari JTAG dan dari flash QSPI.
+6. (23 Nov 2026) Cara memberi daya ZERO7 yang didukung, dan ketersediaan kabel JTAG yang kompatibel dengan ZERO7 (pertanyaan ke panitia belum dijawab).
+7. (25 Nov 2026) Letak header JTAG di board putih ini dan urutan pinnya; tegangan VCC3V3 di header itu (ukur dengan multimeter sebelum VTref J-Link disambung).
+8. (25 Nov 2026) Apakah J-Link milik tim didukung J-Link Software V7.92d+ dan XVCD Server (versi hardware dan firmware dari keluaran software J-Link).
+9. (25 Nov 2026) Arti konektor DC "POW" dan apakah boleh dipakai (jangan dipakai sebelum ada jawaban resmi).
 
 ## Observasi lama (sudah terjawab)
 
