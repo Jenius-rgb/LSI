@@ -355,6 +355,13 @@ No longer blocked since official documents of 10 Nov 2026: part number and speed
 
 ## Notes for next session
 
+**Written 25 Nov 2026 (PROMPT_TAHAP3, stage 3 board preparation).** Read "Team decisions, 25 Nov 2026" and "Stage 3" above first; they supersede the Pi 4, Digilent cable and Pi-5-in-January notes further down.
+
+- Position: the PC-side preparation is done (3.1–3.5 `[x]`). The board phase (B1–B6) has not started: CLAUDE.md §8 still needs the mandatory BOARD_INFO fields without UNKNOWN (board revision, bank-15 voltage, LED3/LED4, official XDC or schematic, SW7 positions) and the user's "board siap".
+- Next, in order: (1) the user's hardware steps 1–7 in "Stage 3"; turn each pasted output into `results/hw/` evidence with label [HW]; (2) the user's decision on ADR-036 (class), then an evaluation-method ADR (for example retraining for cat/dog/deer/horse) through ADR → SPEC → golden model → RTL; (3) once I/O standards are verified from an official source, remove the TODO markers in the XDC files and build the SENTINEL bitstream for E7.
+- Open questions for the user: camera type (USB webcam or CSI); class decision and the conflict with the 23 Nov record of an organizer Class 2 confirmation; JTAG header location on the white board; whether the DC jack "POW" may be used (ask the organizers, do not use meanwhile).
+- Gotchas: Bash heredocs that write Python with `\\n` inside triple-quoted strings produce real newlines; use the Edit tool for such strings. `results/vivado/bringup/` holds reports only; bitstreams stay in `build/bringup/`. The working tree still holds uncommitted work of another agent (CLAUDE.md §10, AGENTS.md, `.agents/`, `graphify-out/`, translated docs, a deleted `docs/official/superseded/GUIDE_LSI_2027.pdf`); it was left untouched.
+
 **Update 23 Nov 2026:** read "Organizer clarifications and hardware dependencies (23 Nov 2026)" above first; it supersedes the category, camera and target-class assumptions in the notes below. The full handoff will be written separately when the user authorizes it.
 
 Written 18 Nov 2026.
@@ -479,3 +486,4 @@ Written 18 Nov 2026.
 | 2026-11-25 | 3.4 | `python tools/run.py bringup blink --accept-inferred-io` | 8 LUT, 33 FF, WNS +45.476 ns at 50 ns, WHS +0.260 ns, DRC 0 checks, 0.058 W [VIVADO-STA], `results/vivado/bringup/blink/` |
 | 2026-11-25 | 3.4 | `python tools/run.py bringup io_test --accept-inferred-io` | 52 LUT, 76 FF, WNS +42.493 ns, WHS +0.122 ns, DRC 0 checks, 0.062 W [VIVADO-STA], `results/vivado/bringup/io_test/` |
 | 2026-11-25 | 3.4 | `python tools/run.py bringup spi_loopback --accept-inferred-io` | 14 LUT, 29 FF, WNS +44.709 ns, WHS +0.131 ns, DRC 0 checks, 0.062 W [VIVADO-STA], `results/vivado/bringup/spi_loopback/` |
+| 2026-11-25 | end of stage 3 | `python tools/run.py test` | 264 passed in 208.84s (`build/test_tahap3_end.log`); new: lgpio factory, pi_check lgpio, spi_loopback bench/lint, bring-up report publishing |
