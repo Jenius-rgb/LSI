@@ -1,38 +1,38 @@
-# Catatan: panduan instalasi Vivado (kotoha sensorium)
+# Notes: Vivado installation guide (kotoha sensorium)
 
 - **URL:** https://kotohasensorium.com/vivado-install-windows/
-- **Judul:** 「Vivado インストール方法【Xilinx FPGA環境構築】Windows」
-- **Terbit / diperbarui:** 2024.02.23 / 2024.03.21 (menurut halaman)
-- **Diakses:** 2026-11-16
-- **Status:** blog pribadi pihak ketiga, bukan dokumen panitia. Panduan resmi `Initialize_20260618_EN.pdf` (slide 17) meminta langkahnya diikuti, dengan pengecualian di bawah. Isi halaman tidak disalin; ini ringkasan.
-- **Cara baca:** seluruh artikel lewat WebFetch (ringkasan oleh alat), lalu empat fakta dicek langsung di halaman lewat browser (versi 2022.2, edisi Vivado ML Standard, pilihan device, kebutuhan disk). Keempatnya cocok.
+- **Title:** 「Vivado インストール方法【Xilinx FPGA環境構築】Windows」
+- **Published / updated:** 2024.02.23 / 2024.03.21 (according to the page)
+- **Accessed:** 2026-11-16
+- **Status:** third-party personal blog, not an organizer document. The official guide `Initialize_20260618_EN.pdf` (slide 17) asks to follow its steps, with the exceptions below. Page content is not copied; this is a summary.
+- **How to read:** entire article via WebFetch (summary by tool), then four facts checked directly on the page via browser (version 2022.2, Vivado ML Standard edition, device selection, disk requirements). All four matched.
 
-## Ringkasan isi
+## Content summary
 
-Artikel menjelaskan instalasi **Vivado 2022.2** edisi gratis **Vivado ML Standard** di Windows.
+The article explains the installation of **Vivado 2022.2** free edition **Vivado ML Standard** on Windows.
 
-1. Prasyarat: Windows, akun Xilinx/AMD (untuk pemakaian pribadi, isi nama perusahaan dengan 「個人利用」), ruang disk kosong sekitar 50 GB. Hasil instalasi sekitar 20 GB, tetapi proses instalasi butuh ruang lebih. Waktu total sekitar 1 jam.
-2. Buka halaman unduh resmi, pilih bagian 2022.2, unduh installer Windows, lalu masuk dengan akun.
-3. Jalankan file EXE. Layar Welcome: Next. Masukkan email dan password akun (password peka huruf besar-kecil dan tidak bisa diisi otomatis).
-4. Pilih produk **Vivado**. Pilihan lain: Vitis (pengembangan software, perlu untuk MicroBlaze, ikut memasang Vivado) dan Lab Edition (hanya untuk memprogram FPGA dari bitstream).
-5. Pilih edisi **Vivado ML Standard**. Edisi Enterprise berbayar dan hanya perlu untuk sebagian part kelas atas.
-6. Pilih device. Artikel memilih Kria SOMs, Zynq, dan UltraScale+ (sekitar 18 GB) dan menyarankan memilih hanya device yang diperlukan supaya hemat disk.
-7. Setujui lisensi, periksa folder instalasi dan ruang disk, lihat ringkasan, lalu Install. Setelah selesai klik OK; penulis menyarankan restart.
-8. Verifikasi: jalankan Vivado sampai layar awal muncul.
-9. Catatan lain: di PC kantor, periksa dulu syarat lisensi. Driver kabel tidak dibahas.
+1. Prerequisites: Windows, Xilinx/AMD account (for personal use, fill company name with 「個人利用」), free disk space around 50 GB. Installed result around 20 GB, but the installation process needs more space. Total time around 1 hour.
+2. Open the official download page, select 2022.2 section, download Windows installer, then log in with account.
+3. Run the EXE file. Welcome screen: Next. Enter account email and password (password is case-sensitive and cannot be auto-filled).
+4. Select product **Vivado**. Other options: Vitis (software development, required for MicroBlaze, also installs Vivado) and Lab Edition (only for programming FPGA from bitstream).
+5. Select edition **Vivado ML Standard**. Enterprise edition is paid and only necessary for certain high-end parts.
+6. Select devices. The article selects Kria SOMs, Zynq, and UltraScale+ (around 18 GB) and suggests selecting only required devices to save disk space.
+7. Agree to license, verify installation directory and disk space, view summary, then Install. After completion click OK; author recommends a restart.
+8. Verification: launch Vivado until the home screen appears.
+9. Other notes: on office PCs, check license terms first. Cable drivers are not discussed.
 
-## Pengecualian dari panduan resmi ZERO7
+## Exceptions from the official ZERO7 guide
 
 [OFFICIAL] `Initialize_20260618_EN.pdf` slide 18, "Target Device Families (Minimum)":
 
 - **7 Series → Spartan-7**
 - **SoCs → Zynq-7000**
 
-Tangkapan layar di slide itu memakai installer 2023.1 dengan ukuran unduh 21,25 GB dan kebutuhan disk 70,6 GB untuk pilihan yang ditampilkan (pilihannya lebih banyak dari minimum). Slide 14 menyebut lingkungan Windows 11 dan Vivado 2025.2.
+The screenshot in that slide uses installer 2023.1 with a download size of 21.25 GB and disk space requirement of 70.6 GB for the displayed options (options shown are more than the minimum). Slide 14 mentions Windows 11 environment and Vivado 2025.2.
 
-## Relevansi untuk SENTINEL
+## Relevance to SENTINEL
 
-- Vivado 2025.2 sudah terpasang di PC ini dan part `xc7s25csga225-1` tersedia (lihat `docs/ENVIRONMENT.md` dan hasil `tools/vivado_check_part.tcl`). Artikel ini hanya rujukan bila perlu instalasi ulang.
-- Versi di artikel (2022.2) berbeda dari versi yang direkomendasikan panitia (2025.2); nama menu installer bisa berbeda.
-- Zynq-7000 tidak dipakai SENTINEL. Panduan resmi memintanya sebagai minimum tanpa menjelaskan alasannya, jadi saat ini belum dipasang. Bila Vivado Hardware Manager bermasalah saat fase board, memasangnya adalah langkah pertama yang dicoba.
-- Driver kabel: opsi "Install Cable Drivers" terlihat dicentang di tangkapan layar slide 18; diperlukan untuk kabel Digilent JTAG-HS3.
+- Vivado 2025.2 is already installed on this PC and part `xc7s25csga225-1` is available (see `docs/ENVIRONMENT.md` and results of `tools/vivado_check_part.tcl`). This article is only a reference if reinstallation is needed.
+- The version in the article (2022.2) differs from the version recommended by the committee (2025.2); installer menu names may differ.
+- Zynq-7000 is not used by SENTINEL. The official guide asks for it as a minimum without explaining the reason, so currently it is not installed. If Vivado Hardware Manager encounters issues during the board phase, installing it is the first step to try.
+- Cable drivers: the "Install Cable Drivers" option is visibly checked in the screenshot on slide 18; required for the Digilent JTAG-HS3 cable.

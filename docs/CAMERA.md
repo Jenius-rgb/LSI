@@ -8,14 +8,14 @@ from Shift_JIS locally on 17 Nov 2026). Translations are ours.
 
 | Where | Original | Translation |
 | --- | --- | --- |
-| Purpose, conditions (EN, G-5) | "Specified image validation data" / "Real-time camera input" | data validasi gambar yang ditentukan / input kamera real-time |
-| Purpose, conditions (JP) | 指定画像検証データ / カメラ実時間入力 | data validasi gambar yang ditentukan / input kamera waktu nyata |
-| Task (EN, G-5) | "Your system reads the images from a camera, an SD card, etc. and recognizes them." | sistem membaca gambar dari kamera, kartu SD, dan sebagainya, lalu mengenalinya |
-| Task (JP) | カメラやSDカードなどから画像を読みその画像を認識してもらいます | gambar dibaca dari kamera, kartu SD, dan sebagainya, lalu dikenali |
-| Presentation (EN, G-5) | "show how fast the recognition results are output" | tunjukkan seberapa cepat hasil pengenalan keluar |
-| Class 2 (EN, G-6) | "the task is free (not limited to image classification)" | tugasnya bebas (tidak terbatas klasifikasi gambar) |
-| Class 2 (JP) | 課題は自由です（画像分類に限りません） | tugasnya bebas (tidak terbatas klasifikasi gambar) |
-| Raspberry Pi role (EN, G-4) | "you can use the interfaces of the Raspberry Pi (camera input and monitor output)" | antarmuka Raspberry Pi (input kamera dan keluaran monitor) bisa dipakai |
+| Purpose, conditions (EN, G-5) | "Specified image validation data" / "Real-time camera input" | specified image validation data / real-time camera input |
+| Purpose, conditions (JP) | 指定画像検証データ / カメラ実時間入力 | specified image validation data / real-time camera input |
+| Task (EN, G-5) | "Your system reads the images from a camera, an SD card, etc. and recognizes them." | the system reads images from a camera, an SD card, etc., then recognizes them |
+| Task (JP) | カメラやSDカードなどから画像を読みその画像を認識してもらいます | images are read from a camera, an SD card, etc., then recognized |
+| Presentation (EN, G-5) | "show how fast the recognition results are output" | show how fast the recognition results are output |
+| Class 2 (EN, G-6) | "the task is free (not limited to image classification)" | the task is free (not limited to image classification) |
+| Class 2 (JP) | 課題は自由です（画像分類に限りません） | the task is free (not limited to image classification) |
+| Raspberry Pi role (EN, G-4) | "you can use the interfaces of the Raspberry Pi (camera input and monitor output)" | interfaces of the Raspberry Pi (camera input and monitor output) can be used |
 
 ## 2. Answer
 

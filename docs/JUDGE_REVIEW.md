@@ -1,135 +1,135 @@
-# Simulasi Juri — SENTINEL
+# Simulated Judges — SENTINEL
 
-Ditulis 2026-11-16 (PROMPT_UPDATE_ZERO7, Tahap 8). Dokumen ini penilaian diri untuk menentukan prioritas kerja. Ini bukan prediksi hasil lomba: bobot resmi belum diumumkan, juri sungguhan bisa menilai sangat berbeda, dan tidak ada janji lolos finalis atau menang.
+Written 2026-11-16 (PROMPT_UPDATE_ZERO7, Stage 8). This document is a self-assessment to determine work priorities. This is not a contest result prediction: official weightings have not been announced, real judges may evaluate very differently, and there is no guarantee of qualifying as finalists or winning.
 
-Angka di dokumen ini disalin dari file hasil di repo oleh skrip sekali pakai saat dokumen ditulis; setiap angka menyebut filenya. Kalau file hasil berubah, dokumen ini tidak ikut berubah.
+Numbers in this document were copied from result files in the repo by a one-off script when the document was written; every number cites its file. If result files change, this document does not automatically update.
 
-## 1. Dasar penilaian
+## 1. Basis of evaluation
 
-Kriteria [OFFICIAL] dari `docs/official/README.md` (panduan G-2, G-5, G-6):
+[OFFICIAL] criteria from `docs/official/README.md` (guidelines G-2, G-5, G-6):
 
-- Juri menilai bukan hanya kecepatan dan area, tetapi juga ide, orisinalitas, dan keunikan.
-- Presentasi yang baik dihargai: 10 menit, maksimal 10 slide, 5 menit tanya jawab.
-- Tingkat pendidikan peserta ikut dipertimbangkan.
+- Judges evaluate not only speed and area, but also ideas, originality, and uniqueness.
+- Good presentation is appreciated: 10 minutes, at most 10 slides, 5 minutes Q&A.
+- Participants' educational level is taken into account.
 - "We like fun ideas. Please do something different from others."
-- Wajib: laporan sintesis untuk XC7S25CSGA225-1; data validasi dari panitia dan input kamera real-time; presentasi menunjukkan seberapa cepat hasil pengenalan keluar.
-- Halaman Jepang menambah satu butir: perubahan sebagian spesifikasi diterima secara fleksibel.
+- Mandatory: synthesis report for XC7S25CSGA225-1; validation data from organizers and real-time camera input; presentation shows how fast recognition results are output.
+- Japanese page adds one item: partial specification changes flexibly accepted.
 
-Bobot resmi [UNKNOWN]. Rubrik di bawah ini rubrik internal [PROPOSAL]: tujuh butir, skor 0–5, bobot berjumlah 100. Nilai akhir = jumlah (bobot × skor) / 5.
+Official weightings [UNKNOWN]. The rubric below is an internal rubric [PROPOSAL]: seven items, score 0–5, weights summing to 100. Final score = sum(weight × score) / 5.
 
-## 2. Apakah ide ini sudah ada?
+## 2. Does this idea already exist?
 
-Rujukan: `docs/PRIOR_ART.md` dan `docs/research/RISET_WEB_2026-11.md`.
+References: `docs/PRIOR_ART.md` and `docs/research/RISET_WEB_2026-11.md`.
 
-| Komponen SENTINEL | Status di literatur | Sumber |
+| SENTINEL Component | Status in literature | Source |
 | --- | --- | --- |
-| Checksum (ABFT) untuk konvolusi | sudah ada | Huang & Abraham 1984; Zhao dkk. 2021; Hari dkk. 2020 |
-| Overclocking akselerator CNN di FPGA dengan deteksi checksum lalu hitung ulang | sudah ada | Marty dkk. FPT 2018 dan versi jurnal 2020 |
-| Overclocking otomatis dengan monitor delay | sudah ada | Jiang dkk. (AOS) 2023 |
-| Overclocking dengan alur deteksi sampai pemulihan | sudah ada; cara pemulihannya belum kami baca | Li dkk. ITC-Asia 2019 (baru abstrak) |
-| Koreksi keluaran berbasis kode pada array PE | disebut sudah bisa | Gao dkk. 2024 (abstrak) |
-| Karakterisasi error timing array MAC di FPGA | sudah ada, bukan CNN | Chamberlin dkk. 2024 |
-| Lokalisasi dan koreksi satu lane tanpa jeda, digabung dengan overclocking | belum kami temukan | sejauh penelusuran kami per November 2026 |
-| Clock per layer dengan governor seluruhnya di FPGA | belum kami temukan | sejauh penelusuran kami per November 2026 |
-| Atlas error timing CNN sungguhan di Spartan-7 | belum kami temukan | sejauh penelusuran kami per November 2026 |
+| Checksums (ABFT) for convolution | already exists | Huang & Abraham 1984; Zhao et al. 2021; Hari et al. 2020 |
+| CNN accelerator overclocking on FPGA with checksum detection then recalculation | already exists | Marty et al. FPT 2018 and journal version 2020 |
+| Automated overclocking with delay monitor | already exists | Jiang et al. (AOS) 2023 |
+| Overclocking with flow from detection to recovery | already exists; recovery method not yet read by us | Li et al. ITC-Asia 2019 (abstract only) |
+| Code-based output correction on PE array | stated as already possible | Gao et al. 2024 (abstract) |
+| Characterization of MAC array timing errors on FPGA | already exists, not CNN | Chamberlin et al. 2024 |
+| Zero-stall single-lane localization and correction, combined with overclocking | not yet found by us | to the best of our knowledge as of November 2026 |
+| Per-layer clock with governor entirely inside FPGA | not yet found by us | to the best of our knowledge as of November 2026 |
+| Timing error atlas of real CNN on Spartan-7 | not yet found by us | to the best of our knowledge as of November 2026 |
 
-Penilaian juri simulasi: gabungannya menarik dan berbeda dari proyek CNN kontes yang umum (akurasi dan FPS), tetapi konsep dasarnya bukan hal baru. Nilai orisinalitas bergantung pada dua hal yang belum ada: teks lengkap Marty dkk. dan Li dkk. (apakah koreksi atau clock per layer sudah mereka lakukan), dan data board yang menunjukkan koreksi memang lebih baik daripada hitung ulang. Kata "pertama" atau "baru" tidak boleh dipakai (ADR-020).
+Simulated judges' assessment: the combination is attractive and differs from typical contest CNN projects (accuracy and FPS), but the underlying concepts are not new. Originality value depends on two things not yet available: full texts of Marty et al. and Li et al. (whether correction or per-layer clock has already been done by them), and board data demonstrating that correction is indeed better than recalculation. The words "first" or "novel" must not be used (ADR-020).
 
-## 3. Tiga putaran
+## 3. Three rounds
 
-| Butir [PROPOSAL] | Bobot | Putaran 1 | Putaran 2 | Putaran 3 |
+| Item [PROPOSAL] | Weight | Round 1 | Round 2 | Round 3 |
 | --- | --- | --- | --- | --- |
-| Ide dan orisinalitas | 25 | 3,5 | 3,5 | 3,5 |
-| Keunikan dan daya tarik ("fun", berbeda dari tim lain) | 10 | 3,0 | 3,0 | 3,0 |
-| Bukti teknis dan kematangan | 20 | 2,5 | 3,0 | 3,5 |
-| Kecepatan dan area | 15 | 2,0 | 2,5 | 2,5 |
-| Pemenuhan tugas wajib (validasi, kamera real-time, laporan sintesis) | 15 | 1,5 | 2,5 | 3,0 |
-| Presentasi dan demo | 10 | 2,0 | 2,0 | 2,0 |
-| Kejujuran metodologi dan klaim | 5 | 4,5 | 4,5 | 4,5 |
-| **Nilai akhir (0–100)** | | **52,5** | **59,0** | **62,5** |
+| Ideas and originality | 25 | 3.5 | 3.5 | 3.5 |
+| Uniqueness and appeal ("fun", distinct from other teams) | 10 | 3.0 | 3.0 | 3.0 |
+| Technical proof and maturity | 20 | 2.5 | 3.0 | 3.5 |
+| Speed and area | 15 | 2.0 | 2.5 | 2.5 |
+| Fulfillment of mandatory tasks (validation, real-time camera, synthesis report) | 15 | 1.5 | 2.5 | 3.0 |
+| Presentation and demo | 10 | 2.0 | 2.0 | 2.0 |
+| Methodological honesty and claims | 5 | 4.5 | 4.5 | 4.5 |
+| **Final score (0–100)** | | **52.5** | **59.0** | **62.5** |
 
-### Putaran 1: keadaan sesudah ADR-013 sampai ADR-020 (commit 7919db7)
+### Round 1: state following ADR-013 through ADR-020 (commit 7919db7)
 
-Kelemahan terbesar menurut juri simulasi:
+Largest weaknesses according to simulated judges:
 
-1. Belum ada satu pun hasil [HW]. Inti proyek, yaitu bahwa error timing mengenai satu lane dan bisa dikoreksi (H1), baru diuji dengan error buatan. Kalau error nyata ternyata mengenai banyak lane sekaligus, koreksi tidak berguna dan desain jatuh ke hitung ulang seperti Marty dkk.
-2. Laporan sintesis resmi, yang wajib, belum ada. Desain lengkap belum pernah diimplementasikan di chip resmi.
-3. Sequencer rekonfigurasi MMCM2 belum ada (ADR-010), jadi clock turbo belum bisa dinaikkan walaupun board sudah ada.
-4. Waktu ujung ke ujung kemungkinan didominasi pengiriman gambar lewat SPI dan kamera, bukan komputasi. Keuntungan overclocking bisa tidak terlihat pada "seberapa cepat hasil keluar".
-5. Kelas target belum diumumkan; akurasi integer model `s` 80,22% di CIFAR-10 [SIM, `results/model/s/quant_result.json`] hanya pengganti sementara.
-6. Dua karya terdekat belum dibaca penuh, jadi klaim orisinalitas rapuh.
-7. Belum ada elemen demo yang terlihat mata dan belum ada slide. Proyek ini rumit untuk 10 menit.
-8. Kategori Class 2, ukuran tim, dan aturan pemakaian AI belum dikonfirmasi.
+1. No [HW] results yet. The core of the project, namely that timing errors affect a single lane and can be corrected (H1), has only been tested with artificial errors. If real errors turn out to affect many lanes simultaneously, correction is useless and design falls back to recalculation like Marty et al.
+2. Official synthesis report, which is mandatory, is not yet present. Full design has never been implemented on the official chip.
+3. MMCM2 reconfiguration sequencer does not exist yet (ADR-010), so turbo clock cannot yet be increased even if board were present.
+4. End-to-end time is likely dominated by image transmission over SPI and camera, not computation. Overclocking gains may not be visible in "how fast recognition results are output".
+5. Target classes not yet announced; integer accuracy of model `s` 80.22% on CIFAR-10 [SIM, `results/model/s/quant_result.json`] is only a temporary placeholder.
+6. Two closest works not yet read in full, making originality claims fragile.
+7. No visually apparent demo elements and no slides yet. This project is complex for 10 minutes.
+8. Class 2 category, team size, and AI usage rules not yet confirmed.
 
-### Perbaikan sebelum putaran 2
+### Improvements prior to round 2
 
-- Alur laporan resmi dibuat (`python tools/run.py synth-official`, ADR-014) dan desain lengkap `top_board` diimplementasikan di xc7s25csga225-1: 6.172 dari 14.600 LUT (42,27%), 14 dari 45 block RAM, semua net ter-route [VIVADO-STA, `results/vivado/official_preadr021/`].
-- Varian resmi (model `s`, K = 8, C3 aktif) lulus regresi: `PASS 200/200 (34/34 cycles_mean=277895 ideal=277504)` dan sistem dua clock `PASS 10/10 reconfigs=0` [SIM, `results/sim/rtl_regression.jsonl`].
+- Official report flow created (`python tools/run.py synth-official`, ADR-014) and full `top_board` design implemented on xc7s25csga225-1: 6,172 of 14,600 LUTs (42.27%), 14 of 45 block RAMs, all nets routed [VIVADO-STA, `results/vivado/official_preadr021/`].
+- Official variant (model `s`, K = 8, C3 active) passes regression: `PASS 200/200 (34/34 cycles_mean=277895 ideal=277504)` and dual-clock system `PASS 10/10 reconfigs=0` [SIM, `results/sim/rtl_regression.jsonl`].
 
-### Putaran 2: temuan baru
+### Round 2: new findings
 
-Run pertama itu membuka kelemahan yang sebelumnya tidak terlihat:
+That first run revealed weaknesses previously not visible:
 
-1. Satu jalur gagal timing di 125 MHz dengan slack −0,499 ns: reset power-on yang menyeberang dari clock board ke `clk_safe`. Jalur di dalam satu clock semuanya lolos (+0,286 ns di `clk_safe`, +0,204 ns di `clk_fast`) [VIVADO-STA, `results/vivado/official_preadr021/`].
-2. Synchronizer belum ditandai, dan Vivado memadatkan register reset menjadi SRL.
-3. Sinyal konfigurasi injeksi menyeberang ke domain cepat tanpa synchronizer, dan aturan yang membuatnya aman tidak tertulis di SPEC.
-4. LOCKED MMCM2 masuk ke FSM `clk_seq` tanpa synchronizer.
+1. One path failed timing at 125 MHz with slack −0.499 ns: power-on reset crossing from board clock to `clk_safe`. Intra-clock paths all passed (+0.286 ns in `clk_safe`, +0.204 ns in `clk_fast`) [VIVADO-STA, `results/vivado/official_preadr021/`].
+2. Synchronizers not yet marked, and Vivado packed reset registers into SRLs.
+3. Injection configuration signals cross to fast domain without synchronizers, and rules making this safe were unwritten in SPEC.
+4. LOCKED MMCM2 entered `clk_seq` FSM without synchronizer.
 
-### Perbaikan sebelum putaran 3
+### Improvements prior to round 3
 
-- ADR-021 dan SPEC §7.8: setiap sumber reset asinkron punya synchronizer sendiri, semua synchronizer bertanda `ASYNC_REG`, LOCKED MMCM2 disinkronkan, daftar penyeberangan yang diizinkan ditulis, dan register `INJ*` hanya boleh ditulis saat `STATUS.BUSY` = 0.
-- Alur resmi menambah `report_cdc` dan `report_bus_skew`.
-- Anggaran latensi ditambahkan ke `docs/RESULTS_SIM.md` supaya kelemahan nomor 4 putaran 1 bisa dibahas dengan angka.
+- ADR-021 and SPEC §7.8: each asynchronous reset source has its own synchronizer, all synchronizers marked `ASYNC_REG`, LOCKED MMCM2 synchronized, permitted crossing list written, and `INJ*` registers only writable when `STATUS.BUSY` = 0.
+- Official flow added `report_cdc` and `report_bus_skew`.
+- Latency budget added to `docs/RESULTS_SIM.md` so weakness 4 of round 1 can be discussed with numbers.
 
-### Putaran 3: keadaan akhir sesi ini
+### Round 3: final state of this session
 
-Hasil run resmi [VIVADO-STA, `results/vivado/official/summary.md`], clk_safe 125 MHz:
+Official run results [VIVADO-STA, `results/vivado/official/summary.md`], clk_safe 125 MHz:
 
-- 6.170 dari 14.600 LUT (42,26%), 5.704 flip-flop, 14 dari 45 block RAM, 3 DSP.
-- Slack setup terburuk desain +0,417 ns; di dalam `clk_safe` +0,417 ns (Fmax 131,9 MHz), di dalam `clk_fast` +0,481 ns (Fmax 133,0 MHz). Tidak ada net yang belum ter-route.
-- `report_cdc`: tidak ada penyeberangan berstatus unsafe dan tidak ada synchronizer tanpa `ASYNC_REG`. Yang tersisa 412 endpoint "unknown" per pasangan clock, yaitu sinyal quasi-statis (konfigurasi injeksi dan indeks layer) yang aturannya ada di SPEC §7.8. Bus skew pointer FIFO: 16 constraint, slack terburuk +6,962 ns.
-- Daya menurut `report_power` tanpa data aktivitas: 0,505 W. Ini estimasi, bukan pengukuran.
-- Anggaran latensi [SIM] × [VIVADO-STA] (`docs/RESULTS_SIM.md`): komputasi 277.895 siklus × 8,000 ns = 2,223 ms per gambar dengan clock aman. Mengirim 3.072 byte gambar lewat SPI butuh 2,458 ms pada 10 MHz dan 24,576 ms pada 1 MHz; kecepatan SPI board [UNKNOWN]. Jadi pengiriman bisa sama besar atau lebih besar dari komputasi.
+- 6,170 of 14,600 LUTs (42.26%), 5,704 flip-flops, 14 of 45 block RAMs, 3 DSPs.
+- Design worst setup slack +0.417 ns; within `clk_safe` +0.417 ns (Fmax 131.9 MHz), within `clk_fast` +0.481 ns (Fmax 133.0 MHz). Zero unrouted nets.
+- `report_cdc`: zero crossings with unsafe status and zero synchronizers without `ASYNC_REG`. Remaining are 412 "unknown" endpoints per clock pair, which are quasi-static signals (injection configuration and layer index) whose rules are in SPEC §7.8. FIFO pointer bus skew: 16 constraints, worst slack +6.962 ns.
+- Power according to `report_power` without activity data: 0.505 W. This is an estimate, not a measurement.
+- Latency budget [SIM] × [VIVADO-STA] (`docs/RESULTS_SIM.md`): computation 277,895 cycles × 8.000 ns = 2.223 ms per image with safe clock. Transmitting 3,072 image bytes over SPI requires 2.458 ms at 10 MHz and 24.576 ms at 1 MHz; board SPI speed [UNKNOWN]. Thus transmission can be equal to or larger than computation.
 
-Tidak ada perbaikan berarti lagi yang bisa dikerjakan tanpa board, dokumen AMD, atau teks lengkap karya terdekat, jadi simulasi berhenti di putaran 3.
+No further meaningful improvements can be carried out without board, AMD documents, or closest works full texts, so simulation stops at round 3.
 
-## 4. Kelemahan yang masih ada, diurutkan menurut dampak pada nilai
+## 4. Remaining weaknesses, ordered by impact on score
 
-| No | Kelemahan | Kenapa penting | Yang membukanya |
+| No | Weakness | Why important | What unlocks it |
 | --- | --- | --- | --- |
-| 1 | Belum ada hasil [HW]; H1 belum teruji | menentukan butir ide, bukti, dan kecepatan sekaligus | board ZERO7, lalu B1 sampai B5 |
-| 2 | Sequencer rekonfigurasi MMCM2 belum ada | tanpa itu tidak ada overclocking nyata | PG065 atau XAPP888 dan DS189 (perlu izin unduh) |
-| 3 | Dua karya terdekat belum dibaca penuh | klaim bisa gugur saat tanya jawab | akses kampus ke IEEE Xplore |
-| 4 | Latensi ujung ke ujung dibatasi SPI dan kamera | syarat resmi menilai seberapa cepat hasil keluar | ukur SPI di board; laporkan waktu komputasi dan ujung ke ujung terpisah |
-| 5 | Kelas target belum diumumkan | akurasi akhir belum bisa dilaporkan | pengumuman panitia; alur latih ulang sudah ada |
-| 6 | Belum ada demo yang terlihat mata | butir "fun" dan presentasi | indikator WS2812B (M17), mode kamera, tombol |
-| 7 | Margin timing tipis di 125 MHz | perubahan kecil bisa membuat laporan resmi gagal timing | ulangi `synth-official` setiap RTL berubah; cadangan 100 MHz (ADR-015) |
-| 8 | Aturan host untuk `INJ*` belum dijaga hardware | fitur uji bisa mengganggu engine kalau ditulis saat berjalan | penjagaan tulis di `regfile` (kecil, belum dikerjakan) |
-| 9 | Kategori, ukuran tim, dan aturan AI belum pasti | risiko administratif | tanya panitia |
+| 1 | No [HW] results yet; H1 untested | simultaneously determines ideas, proof, and speed items | ZERO7 board, then B1 through B5 |
+| 2 | MMCM2 reconfiguration sequencer does not exist yet | without it no real overclocking | PG065 or XAPP888 and DS189 (requires download permission) |
+| 3 | Two closest works not yet read in full | claims may fall during Q&A | campus access to IEEE Xplore |
+| 4 | End-to-end latency constrained by SPI and camera | official requirements assess how fast results emerge | measure SPI on board; report computation and end-to-end times separately |
+| 5 | Target classes not yet announced | final accuracy cannot yet be reported | organizer announcement; retraining flow already exists |
+| 6 | No visually apparent demo yet | "fun" and presentation items | WS2812B indicator (M17), camera mode, buttons |
+| 7 | Narrow timing margin at 125 MHz | small changes can make official report fail timing | repeat `synth-official` on every RTL change; 100 MHz fallback (ADR-015) |
+| 8 | Host rules for `INJ*` not yet guarded by hardware | test feature could disturb engine if written while running | write guard in `regfile` (small, not yet done) |
+| 9 | Category, team size, and AI rules uncertain | administrative risk | inquire with organizers |
 
-## 5. Pertanyaan yang mungkin ditanyakan juri
+## 5. Questions judges might ask
 
-1. **Kenapa tidak cukup deteksi lalu hitung ulang seperti Marty dkk.?** Jawaban jujur saat ini: belum terbukti lebih baik. Mode 1 SENTINEL adalah cara itu, mode 2 adalah koreksi, keduanya di bitstream yang sama; E4 membandingkannya di board yang sama. Kalau koreksi tidak menang, itu dilaporkan.
-2. **Dari mana tahu error hanya mengenai satu lane?** Belum tahu. Itu hipotesis H1 dan diukur di E1. Kampanye [SIM] hanya menunjukkan apa yang terjadi kalau memang begitu: 10.000 dari 10.000 error satu lane terkoreksi, dan dengan C3 tidak ada salah koreksi pada 10.000 error dua lane (`results/sim/campaign_s.json`).
-3. **Apakah pemeriksa sendiri bisa salah karena overclocking?** Pemeriksa, kontrol, memori, dan SPI berjalan di `clk_safe` yang lolos STA. Yang dipercepat hanya lane MAC. Lane checksum ikut dipercepat; error di sana dikenali sebagai kelas tersendiri.
-4. **Berapa percepatan ujung ke ujung?** Belum ada angka [HW]. Anggaran latensi menunjukkan pengiriman SPI bisa mendominasi, jadi yang akan diklaim adalah throughput akselerator yang tetap bit-exact, dengan waktu ujung ke ujung dilaporkan terpisah.
-5. **Apa yang orisinal?** Koreksi di tempat sebagai pengganti hitung ulang, clock per layer dengan governor di dalam FPGA, dan atlas error di Spartan-7, semuanya dengan kata "sejauh penelusuran kami".
-6. **Akurasinya hanya sekitar 80%?** CIFAR-10 hanya pengganti karena kelas target belum diumumkan. Yang dijamin desain ini adalah hasil bit-exact terhadap model integer, bukan akurasi tertinggi.
+1. **Why is detect-then-recalculate like Marty et al. not enough?** Honest answer at present: not yet proven better. SENTINEL mode 1 is that method, mode 2 is correction, both on the same bitstream; E4 compares them on the same board. If correction does not win, that is reported.
+2. **How do you know errors only affect one lane?** We do not know yet. That is hypothesis H1 and measured in E1. [SIM] campaign only shows what happens if that is indeed the case: 10,000 of 10,000 single-lane errors corrected, and with C3 zero miscorrections on 10,000 two-lane errors (`results/sim/campaign_s.json`).
+3. **Can checkers themselves err due to overclocking?** Checkers, control, memory, and SPI run on `clk_safe` passing STA. Only MAC lanes are accelerated. Checksum lanes are accelerated together; errors there are recognized as a separate class.
+4. **What is the end-to-end speedup?** No [HW] number yet. Latency budget shows SPI transmission can dominate, so what will be claimed is accelerator throughput remaining bit-exact, with end-to-end times reported separately.
+5. **What is original?** In-place correction instead of recalculation, per-layer clock with in-FPGA governor, and error atlas on Spartan-7, all with the phrase "to the best of our knowledge".
+6. **Accuracy is only around 80%?** CIFAR-10 is only a placeholder because target classes have not been announced. What this design guarantees is bit-exact results against the integer model, not highest accuracy.
 
-## 6. Kesimpulan juri simulasi
+## 6. Simulated judges' conclusion
 
-Nilai internal naik dari 52,5 ke 62,5 [PROPOSAL] karena syarat wajib (laporan sintesis) sekarang terpenuhi dengan bukti, dan desain lengkap terbukti muat dan lolos timing di chip resmi [VIVADO-STA]. Butir yang paling berat, yaitu ide dan bukti di hardware, tidak bergerak dan tidak bisa bergerak tanpa board. Urutan kerja yang paling menaikkan nilai: sequencer MMCM2, bring-up dan E7 di clock aman, E1 untuk menguji H1, lalu demo dengan WS2812B dan kamera.
+Internal score rose from 52.5 to 62.5 [PROPOSAL] because mandatory requirement (synthesis report) is now fulfilled with evidence, and complete design is proven to fit and pass timing on official chip [VIVADO-STA]. The most heavily weighted items, ideas and hardware proof, did not move and cannot move without the board. Order of work that most increases score: MMCM2 sequencer, bring-up and E7 on safe clock, E1 to test H1, then demo with WS2812B and camera.
 
-## 7. Pembaruan sesudah putaran 3 (2026-11-16, sesudah jawaban user)
+## 7. Update following round 3 (2026-11-16, after user response)
 
-Tidak ada putaran keempat; bagian ini hanya mencatat kelemahan bagian 4 yang berubah. Rubrik tidak dinilai ulang.
+There is no fourth round; this section only records section 4 weaknesses that changed. Rubric not re-evaluated.
 
-| No | Kelemahan | Perubahan |
+| No | Weakness | Change |
 | --- | --- | --- |
-| 2 | Sequencer rekonfigurasi MMCM2 belum ada | MMCM2 sekarang di dalam Clocking Wizard v6.0 dengan AXI4-Lite; `clkwiz_seq` lulus bench dengan model register yang mengikuti PG065 [SIM]. Perilaku IP yang sebenarnya baru terbukti di board. |
-| 3 | Dua karya terdekat belum dibaca penuh | Marty dkk. (TCAD 2020) sudah dibaca penuh; alasan mereka menolak koreksi dan jawaban SENTINEL ada di `docs/PRIOR_ART.md`. Li dkk. (ITC-Asia 2019) masih abstrak. |
-| 6 | Belum ada demo yang terlihat mata | Indikator WS2812B di LED1 menunjukkan status dengan warna; tombol START/STOP/RUN bisa mengendalikan mode kamera. |
-| 8 | Aturan host `INJ*` belum dijaga hardware | `regfile` membuang tulis `INJ*` selama BUSY [SIM]. |
-| 9 | Kategori, ukuran tim, aturan AI | Tim 4 orang (sesuai halaman Jepang, tidak sesuai halaman Inggris 1–3); dokumen resmi tidak memuat aturan AI. Kategori tetap perlu dikonfirmasi. |
+| 2 | MMCM2 reconfiguration sequencer does not exist yet | MMCM2 now inside Clocking Wizard v6.0 with AXI4-Lite; `clkwiz_seq` passes bench with register model following PG065 [SIM]. Actual IP behavior only proven on board. |
+| 3 | Two closest works not yet read in full | Marty et al. (TCAD 2020) read in full; their reasons for rejecting correction and SENTINEL's answer in `docs/PRIOR_ART.md`. Li et al. (ITC-Asia 2019) still abstract. |
+| 6 | No visually apparent demo yet | WS2812B indicator on LED1 shows status via color; START/STOP/RUN buttons can control camera mode. |
+| 8 | Host rules for `INJ*` not guarded by hardware | `regfile` discards `INJ*` writes during BUSY [SIM]. |
+| 9 | Category, team size, AI rules | 4-person team (matches Japanese page, differs from English page 1–3); official documents contain no AI rules. Category still needs confirmation. |
 
-Yang tetap paling berat: belum ada hasil [HW], dan H1 belum teruji. Board dan Raspberry Pi 4 baru dipakai Desember 2026 atau Januari 2027.
+What remains most heavy: no [HW] results yet, and H1 untested. Board and Raspberry Pi 4 only used starting December 2026 or January 2027.
