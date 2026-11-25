@@ -242,6 +242,24 @@ These supersede conflicting entries in this file and in earlier prompts (details
 
 Effect on the board phase: power through the Raspberry Pi header is the only documented method (IN-41) and is now available; a standalone supply stays unconfirmed. The remaining hardware blockers are the verified XDC (bank voltages, I/O standards), the JTAG header location on this board, and whether the J-Link works through XVC.
 
+## Stage 3: board preparation on the PC side (PROMPT_TAHAP3, 25 Nov 2026)
+
+- [x] 3.1 Pi 5 software: gpiozero on the lgpio factory chosen explicitly, `pi_check` checks lgpio, `board/BRINGUP.md` Pi 5 setup; camera mode takes picamera / USB index / video file and is tested on a video file without a Pi
+- [x] 3.2 `docs/JLINK_VIVADO.md`: J-Link XVCD Server route, openFPGALoader fallback, wiring table (ZERO7 header UNKNOWN), safety checklist, five-step test order
+- [x] 3.3 Bring-up: `blink` (CLK20M B13, LED R3/R2, f_clk = 2·HALF·n/t), `io_test` (buttons, WS2812B), new `spi_loopback` (SPI0 CE0 echo, `tb_spi_loopback` PASS 619/619 [SIM], `board/spi_loopback_check.py` for the Pi); `board/zero7.xdc` uses no QSPI, JTAG or configuration pin
+- [ ] 3.4 Vivado reports for the bring-up designs in `results/vivado/bringup/` (see Evidence log); SENTINEL already fits (LUT variant 6,832 LUT, DSP variant 5,472 LUT + 14 DSP of 14,600 LUT / 80 DSP [VIVADO-STA])
+- [x] 3.5 ADR-033 (Pi 5), ADR-034 (J-Link), ADR-035 (camera via Pi) accepted as team decisions; ADR-036 (class) Proposed; SPEC header, §14 and §15 updated
+
+**Waiting for the user (hardware), in this order** (details in `docs/JLINK_VIVADO.md` and `board/BRINGUP.md`):
+1. Identify the JTAG header on the white ZERO7 from an official source (ask the organizers with the user manual / XDC question).
+2. Board on the Pi 5, Pi on its USB-C supply: confirm a ZERO7 LED lights (IN-41); measure the header Vref voltage; optional USB power meter.
+3. Install J-Link software ≥ V7.92d; run `JLinkXVCDServer.exe`; paste the output (VTref, hardware version).
+4. Vivado Hardware Manager, Add XVC localhost:2542: paste the device list (expect `xc7s25_0`, IDCODE `037C4093`).
+5. Program `blink`; report LED behaviour and a stopwatch count.
+6. Try an ILA through XVC; if it fails, report and use VIO / LEDs / SPI.
+7. On the Pi 5: `python3 board/pi_check.py`, then program `spi_loopback` and run `python3 board/spi_loopback_check.py`; paste both outputs.
+Each pasted output becomes [HW] evidence in `results/hw/` and the Evidence log. The board phase itself (B1–B6) starts only per CLAUDE.md §8.
+
 ## Organizer clarifications and hardware dependencies (23 Nov 2026)
 
 Source: organizer responses as relayed by the user on 23 Nov 2026, and the organizer website checked the same day. Full record with status labels: `docs/official/CORRESPONDENCE_2026-11.md`. Nothing below changes the SPEC or any ADR; decisions still needed are listed at the end.
