@@ -1,0 +1,26 @@
+label [VIVADO-STA]
+vivado 2025.2
+part xc7s25csga225-1
+top top_board
+K 8
+LANE_IMPL 0
+ZERO_SKIP 0
+C3_EN 1
+SAFE_DIV 8
+clock clk_in period_ns 50.000 wns_ns 48.466 whs_ns 0.357
+clock safe_fb period_ns 50.000 wns_ns NA whs_ns NA
+clock clk_safe_raw period_ns 8.000 wns_ns 0.148 whs_ns 0.033
+clock clkfbout_clk_wiz_turbo period_ns 50.000 wns_ns NA whs_ns NA
+clock clk_out1_clk_wiz_turbo period_ns 8.000 wns_ns NA whs_ns NA
+clock clk_fast_safe period_ns 8.000 wns_ns 0.835 whs_ns 0.067
+clock clk_fast_turbo period_ns 8.000 wns_ns 0.835 whs_ns 0.067
+design_wns_ns 0.148
+design_whs_ns 0.033
+lut 7741
+ff 6281
+ramb36 13
+ramb18 2
+dsp48 3
+mmcm 2
+bufg 6
+unrouted_nets 0

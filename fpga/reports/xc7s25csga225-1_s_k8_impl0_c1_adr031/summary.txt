@@ -1,0 +1,13 @@
+part xc7s25csga225-1
+K 8
+LANE_IMPL 0
+C3_EN 1
+T_SAFE_NS 7.0
+T_FAST_NS 6.4
+NONMAC_FACTOR 0.7
+WNS_clk_safe 0.084
+WNS_clk_fast 0.121
+WNS_MAC 0.671
+WNS_NONMAC 0.121
+WORST_MAC_ENDPOINT u_fast/u_lanes/csum_lane[0].impl.u/p_hi_reg[15]/D
+WORST_NONMAC_ENDPOINT u_opfifo/slice[3].u_fifo/u_xpm/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/gen_rd_b.gen_doutb_pipe.gen_stage.doutb_pipe_reg[0][32]/CE

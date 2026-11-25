@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.2 (win64) Build 6299465 Fri Nov 14 19:35:11 GMT 2025
-| Date         : Wed Nov 18 12:48:02 2026
+| Date         : Thu Nov 26 04:10:39 2026
 | Host         : LAPTOP-ER7J7A89 running 64-bit major release  (build 9200)
 | Command      : report_timing_summary -file {C:\AF\SENTINEL-LSI-2027\results\vivado\official/synth_timing_summary.rpt}
 | Design       : top_board
@@ -138,7 +138,7 @@ Table of Contents
 
     WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
     -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
-      0.010        0.000                      0                18244        0.045        0.000                      0                18244        1.500        0.000                       0                  7543  
+      0.010        0.000                      0                18642        0.045        0.000                      0                18642        1.500        0.000                       0                  7938  
 
 
 All user specified timing constraints are met.
@@ -169,9 +169,9 @@ Clock                         WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS T
 -----                         -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
 clk_in                         48.288        0.000                      0                    1        0.233        0.000                      0                    1       15.000        0.000                       0                     5  
   clk_out1_clk_wiz_turbo                                                                                                                                                    5.845        0.000                       0                     3  
-    clk_fast_turbo              1.698        0.000                      0                 5781        0.045        0.000                      0                 5781        2.750        0.000                       0                  2782  
+    clk_fast_turbo              2.557        0.000                      0                 6179        0.045        0.000                      0                 6179        2.750        0.000                       0                  3177  
   clk_safe_raw                  0.010        0.000                      0                12462        0.045        0.000                      0                12462        1.500        0.000                       0                  4747  
-    clk_fast_safe               1.698        0.000                      0                 5781        0.045        0.000                      0                 5781        2.750        0.000                       0                  2782  
+    clk_fast_safe               2.557        0.000                      0                 6179        0.045        0.000                      0                 6179        2.750        0.000                       0                  3177  
   clkfbout_clk_wiz_turbo                                                                                                                                                   47.845        0.000                       0                     3  
   safe_fb                                                                                                                                                                  47.845        0.000                       0                     3  
 
@@ -366,7 +366,7 @@ Max Period  n/a     MMCME2_ADV/CLKOUT0  n/a            213.360       8.000      
 From Clock:  clk_fast_turbo
   To Clock:  clk_fast_turbo
 
-Setup :            0  Failing Endpoints,  Worst Slack        1.698ns,  Total Violation        0.000ns
+Setup :            0  Failing Endpoints,  Worst Slack        2.557ns,  Total Violation        0.000ns
 Hold  :            0  Failing Endpoints,  Worst Slack        0.045ns,  Total Violation        0.000ns
 PW    :            0  Failing Endpoints,  Worst Slack        2.750ns,  Total Violation        0.000ns
 ---------------------------------------------------------------------------------------------------
@@ -374,16 +374,16 @@ PW    :            0  Failing Endpoints,  Worst Slack        2.750ns,  Total Vio
 
 Max Delay Paths
 --------------------------------------------------------------------------------------
-Slack (MET) :             1.698ns  (required time - arrival time)
-  Source:                 u_core/u_engine/u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[5]_rep/C
+Slack (MET) :             2.557ns  (required time - arrival time)
+  Source:                 u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/a_r_reg[6]/C
                             (rising edge-triggered cell FDRE clocked by clk_fast_turbo  {rise@0.000ns fall@4.000ns period=8.000ns})
-  Destination:            u_core/u_engine/u_fast/u_lanes/csum_lane[1].impl.u/p_reg[21]/D
+  Destination:            u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi_reg[19]/D
                             (rising edge-triggered cell FDRE clocked by clk_fast_turbo  {rise@0.000ns fall@4.000ns period=8.000ns})
   Path Group:             clk_fast_turbo
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            8.000ns  (clk_fast_turbo rise@8.000ns - clk_fast_turbo rise@0.000ns)
-  Data Path Delay:        6.112ns  (logic 2.824ns (46.204%)  route 3.288ns (53.796%))
-  Logic Levels:           7  (CARRY4=5 LUT6=2)
+  Data Path Delay:        5.253ns  (logic 2.925ns (55.682%)  route 2.328ns (44.318%))
+  Logic Levels:           7  (CARRY4=5 LUT1=1 LUT6=1)
   Clock Path Skew:        -0.145ns (DCD - SCD + CPR)
     Destination Clock Delay (DCD):    3.214ns = ( 11.214 - 8.000 ) 
     Source Clock Delay      (SCD):    3.624ns
@@ -410,31 +410,31 @@ Slack (MET) :             1.698ns  (required time - arrival time)
                          net (fo=1, unplaced)         0.584     2.944    u_core/u_clk/u_clk/clk_turbo_buf
                          BUFGCTRL (Prop_bufgctrl_I1_O)
                                                       0.096     3.040 r  u_core/u_clk/u_clk/u_mux/O
-                         net (fo=2782, unplaced)      0.584     3.624    u_core/u_engine/u_fast/u_lanes/csum_lane[1].impl.u/clk_fast
-                         FDRE                                         r  u_core/u_engine/u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[5]_rep/C
+                         net (fo=3177, unplaced)      0.584     3.624    u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/clk_fast
+                         FDRE                                         r  u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/a_r_reg[6]/C
   -------------------------------------------------------------------    -------------------
-                         FDRE (Prop_fdre_C_Q)         0.478     4.102 r  u_core/u_engine/u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[5]_rep/Q
-                         net (fo=104, unplaced)       1.066     5.168    u_core/u_engine/u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[5]_rep_0
-                         LUT6 (Prop_lut6_I0_O)        0.295     5.463 r  u_core/u_engine/u_fast/u_lanes/csum_lane[1].impl.u/p[15]_i_35/O
-                         net (fo=2, unplaced)         0.650     6.113    u_core_n_539
+                         FDRE (Prop_fdre_C_Q)         0.478     4.102 r  u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/a_r_reg[6]/Q
+                         net (fo=32, unplaced)        1.036     5.138    u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/a_r[6]
+                         LUT6 (Prop_lut6_I0_O)        0.295     5.433 r  u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi[9]_i_9__9/O
+                         net (fo=2, unplaced)         0.650     6.083    u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi[9]_i_9__9_n_0
                          CARRY4 (Prop_carry4_DI[1]_CO[3])
-                                                      0.520     6.633 r  u_fast/u_lanes/csum_lane[1].impl.u/p_reg[15]_i_12/CO[3]
-                         net (fo=1, unplaced)         0.000     6.633    u_fast/u_lanes/csum_lane[1].impl.u/p_reg[15]_i_12_n_0
-                         CARRY4 (Prop_carry4_CI_O[2])
-                                                      0.256     6.889 r  u_fast/u_lanes/csum_lane[1].impl.u/p_reg[19]_i_12/O[2]
-                         net (fo=5, unplaced)         0.933     7.822    u_fast/u_lanes/csum_lane[1].impl.u/p_reg[19]_i_12_n_5
-                         LUT6 (Prop_lut6_I4_O)        0.301     8.123 r  u_fast/u_lanes/csum_lane[1].impl.u/p[15]_i_4/O
-                         net (fo=1, unplaced)         0.639     8.762    u_fast/u_lanes/csum_lane[1].impl.u/p[15]_i_4_n_0
-                         CARRY4 (Prop_carry4_DI[1]_CO[3])
-                                                      0.520     9.282 r  u_fast/u_lanes/csum_lane[1].impl.u/p_reg[15]_i_1/CO[3]
-                         net (fo=1, unplaced)         0.000     9.282    u_fast/u_lanes/csum_lane[1].impl.u/p_reg[15]_i_1_n_0
+                                                      0.520     6.603 r  u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi_reg[9]_i_2__1/CO[3]
+                         net (fo=1, unplaced)         0.000     6.603    u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi_reg[9]_i_2__1_n_0
                          CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117     9.399 r  u_fast/u_lanes/csum_lane[1].impl.u/p_reg[19]_i_1/CO[3]
-                         net (fo=1, unplaced)         0.000     9.399    u_core/u_engine/u_fast/u_lanes/csum_lane[1].impl.u/p_reg[22]_1[0]
+                                                      0.117     6.720 r  u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi_reg[13]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     6.720    u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi_reg[13]_i_2_n_0
+                         CARRY4 (Prop_carry4_CI_O[3])
+                                                      0.331     7.051 f  u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi_reg[17]_i_3/O[3]
+                         net (fo=4, unplaced)         0.642     7.693    u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi_reg[17]_i_3_n_4
+                         LUT1 (Prop_lut1_I0_O)        0.300     7.993 r  u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi[17]_i_4/O
+                         net (fo=1, unplaced)         0.000     7.993    u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi[17]_i_4_n_0
+                         CARRY4 (Prop_carry4_DI[1]_CO[3])
+                                                      0.547     8.540 r  u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi_reg[17]_i_1__0/CO[3]
+                         net (fo=1, unplaced)         0.000     8.540    u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi_reg[17]_i_1__0_n_0
                          CARRY4 (Prop_carry4_CI_O[1])
-                                                      0.337     9.736 r  u_core/u_engine/u_fast/u_lanes/csum_lane[1].impl.u/p_reg[22]_i_1/O[1]
-                         net (fo=1, unplaced)         0.000     9.736    u_core/u_engine/u_fast/u_lanes/csum_lane[1].impl.u/p_0_in[21]
-                         FDRE                                         r  u_core/u_engine/u_fast/u_lanes/csum_lane[1].impl.u/p_reg[21]/D
+                                                      0.337     8.877 r  u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi_reg[20]_i_1/O[1]
+                         net (fo=1, unplaced)         0.000     8.877    u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi_reg[20]_i_1_n_6
+                         FDRE                                         r  u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi_reg[19]/D
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_fast_turbo rise edge)
@@ -452,16 +452,16 @@ Slack (MET) :             1.698ns  (required time - arrival time)
                          net (fo=1, unplaced)         0.439    10.684    u_core/u_clk/u_clk/clk_turbo_buf
                          BUFGCTRL (Prop_bufgctrl_I1_O)
                                                       0.091    10.775 r  u_core/u_clk/u_clk/u_mux/O
-                         net (fo=2782, unplaced)      0.439    11.214    u_core/u_engine/u_fast/u_lanes/csum_lane[1].impl.u/clk_fast
-                         FDRE                                         r  u_core/u_engine/u_fast/u_lanes/csum_lane[1].impl.u/p_reg[21]/C
+                         net (fo=3177, unplaced)      0.439    11.214    u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/clk_fast
+                         FDRE                                         r  u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi_reg[19]/C
                          clock pessimism              0.265    11.479    
                          clock uncertainty           -0.121    11.359    
-                         FDRE (Setup_fdre_C_D)        0.076    11.435    u_core/u_engine/u_fast/u_lanes/csum_lane[1].impl.u/p_reg[21]
+                         FDRE (Setup_fdre_C_D)        0.076    11.435    u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi_reg[19]
   -------------------------------------------------------------------
                          required time                         11.435    
-                         arrival time                          -9.736    
+                         arrival time                          -8.877    
   -------------------------------------------------------------------
-                         slack                                  1.698    
+                         slack                                  2.557    
 
 
 
@@ -501,7 +501,7 @@ Slack (MET) :             0.045ns  (arrival time - required time)
                          net (fo=1, unplaced)         0.114     0.710    u_core/u_clk/u_clk/clk_turbo_buf
                          BUFGCTRL (Prop_bufgctrl_I1_O)
                                                       0.026     0.736 r  u_core/u_clk/u_clk/u_mux/O
-                         net (fo=2782, unplaced)      0.114     0.850    u_core/u_engine/clk_fast
+                         net (fo=3177, unplaced)      0.114     0.850    u_core/u_engine/clk_fast
                          FDRE                                         r  u_core/u_engine/rst_fast_meta_reg[0]/C
   -------------------------------------------------------------------    -------------------
                          FDRE (Prop_fdre_C_Q)         0.147     0.997 r  u_core/u_engine/rst_fast_meta_reg[0]/Q
@@ -524,7 +524,7 @@ Slack (MET) :             0.045ns  (arrival time - required time)
                          net (fo=1, unplaced)         0.259     1.063    u_core/u_clk/u_clk/clk_turbo_buf
                          BUFGCTRL (Prop_bufgctrl_I1_O)
                                                       0.029     1.092 r  u_core/u_clk/u_clk/u_mux/O
-                         net (fo=2782, unplaced)      0.259     1.351    u_core/u_engine/clk_fast
+                         net (fo=3177, unplaced)      0.259     1.351    u_core/u_engine/clk_fast
                          FDRE                                         r  u_core/u_engine/rst_fast_meta_reg[1]/C
                          clock pessimism             -0.356     0.995    
                          FDRE (Hold_fdre_C_D)         0.038     1.033    u_core/u_engine/rst_fast_meta_reg[1]
@@ -750,7 +750,7 @@ High Pulse Width  Slow    MMCME2_ADV/DCLK     n/a            2.499         4.000
 From Clock:  clk_fast_safe
   To Clock:  clk_fast_safe
 
-Setup :            0  Failing Endpoints,  Worst Slack        1.698ns,  Total Violation        0.000ns
+Setup :            0  Failing Endpoints,  Worst Slack        2.557ns,  Total Violation        0.000ns
 Hold  :            0  Failing Endpoints,  Worst Slack        0.045ns,  Total Violation        0.000ns
 PW    :            0  Failing Endpoints,  Worst Slack        2.750ns,  Total Violation        0.000ns
 ---------------------------------------------------------------------------------------------------
@@ -758,16 +758,16 @@ PW    :            0  Failing Endpoints,  Worst Slack        2.750ns,  Total Vio
 
 Max Delay Paths
 --------------------------------------------------------------------------------------
-Slack (MET) :             1.698ns  (required time - arrival time)
-  Source:                 u_core/u_engine/u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[5]_rep/C
+Slack (MET) :             2.557ns  (required time - arrival time)
+  Source:                 u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/a_r_reg[6]/C
                             (rising edge-triggered cell FDRE clocked by clk_fast_safe  {rise@0.000ns fall@4.000ns period=8.000ns})
-  Destination:            u_core/u_engine/u_fast/u_lanes/csum_lane[1].impl.u/p_reg[21]/D
+  Destination:            u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi_reg[19]/D
                             (rising edge-triggered cell FDRE clocked by clk_fast_safe  {rise@0.000ns fall@4.000ns period=8.000ns})
   Path Group:             clk_fast_safe
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            8.000ns  (clk_fast_safe rise@8.000ns - clk_fast_safe rise@0.000ns)
-  Data Path Delay:        6.112ns  (logic 2.824ns (46.204%)  route 3.288ns (53.796%))
-  Logic Levels:           7  (CARRY4=5 LUT6=2)
+  Data Path Delay:        5.253ns  (logic 2.925ns (55.682%)  route 2.328ns (44.318%))
+  Logic Levels:           7  (CARRY4=5 LUT1=1 LUT6=1)
   Clock Path Skew:        -0.145ns (DCD - SCD + CPR)
     Destination Clock Delay (DCD):    3.214ns = ( 11.214 - 8.000 ) 
     Source Clock Delay      (SCD):    3.624ns
@@ -794,31 +794,31 @@ Slack (MET) :             1.698ns  (required time - arrival time)
                          net (fo=4747, unplaced)      0.584     2.944    u_core/u_clk/u_clk/CLK
                          BUFGCTRL (Prop_bufgctrl_I0_O)
                                                       0.096     3.040 r  u_core/u_clk/u_clk/u_mux/O
-                         net (fo=2782, unplaced)      0.584     3.624    u_core/u_engine/u_fast/u_lanes/csum_lane[1].impl.u/clk_fast
-                         FDRE                                         r  u_core/u_engine/u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[5]_rep/C
+                         net (fo=3177, unplaced)      0.584     3.624    u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/clk_fast
+                         FDRE                                         r  u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/a_r_reg[6]/C
   -------------------------------------------------------------------    -------------------
-                         FDRE (Prop_fdre_C_Q)         0.478     4.102 r  u_core/u_engine/u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[5]_rep/Q
-                         net (fo=104, unplaced)       1.066     5.168    u_core/u_engine/u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[5]_rep_0
-                         LUT6 (Prop_lut6_I0_O)        0.295     5.463 r  u_core/u_engine/u_fast/u_lanes/csum_lane[1].impl.u/p[15]_i_35/O
-                         net (fo=2, unplaced)         0.650     6.113    u_core_n_539
+                         FDRE (Prop_fdre_C_Q)         0.478     4.102 r  u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/a_r_reg[6]/Q
+                         net (fo=32, unplaced)        1.036     5.138    u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/a_r[6]
+                         LUT6 (Prop_lut6_I0_O)        0.295     5.433 r  u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi[9]_i_9__9/O
+                         net (fo=2, unplaced)         0.650     6.083    u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi[9]_i_9__9_n_0
                          CARRY4 (Prop_carry4_DI[1]_CO[3])
-                                                      0.520     6.633 r  u_fast/u_lanes/csum_lane[1].impl.u/p_reg[15]_i_12/CO[3]
-                         net (fo=1, unplaced)         0.000     6.633    u_fast/u_lanes/csum_lane[1].impl.u/p_reg[15]_i_12_n_0
-                         CARRY4 (Prop_carry4_CI_O[2])
-                                                      0.256     6.889 r  u_fast/u_lanes/csum_lane[1].impl.u/p_reg[19]_i_12/O[2]
-                         net (fo=5, unplaced)         0.933     7.822    u_fast/u_lanes/csum_lane[1].impl.u/p_reg[19]_i_12_n_5
-                         LUT6 (Prop_lut6_I4_O)        0.301     8.123 r  u_fast/u_lanes/csum_lane[1].impl.u/p[15]_i_4/O
-                         net (fo=1, unplaced)         0.639     8.762    u_fast/u_lanes/csum_lane[1].impl.u/p[15]_i_4_n_0
-                         CARRY4 (Prop_carry4_DI[1]_CO[3])
-                                                      0.520     9.282 r  u_fast/u_lanes/csum_lane[1].impl.u/p_reg[15]_i_1/CO[3]
-                         net (fo=1, unplaced)         0.000     9.282    u_fast/u_lanes/csum_lane[1].impl.u/p_reg[15]_i_1_n_0
+                                                      0.520     6.603 r  u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi_reg[9]_i_2__1/CO[3]
+                         net (fo=1, unplaced)         0.000     6.603    u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi_reg[9]_i_2__1_n_0
                          CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117     9.399 r  u_fast/u_lanes/csum_lane[1].impl.u/p_reg[19]_i_1/CO[3]
-                         net (fo=1, unplaced)         0.000     9.399    u_core/u_engine/u_fast/u_lanes/csum_lane[1].impl.u/p_reg[22]_1[0]
+                                                      0.117     6.720 r  u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi_reg[13]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     6.720    u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi_reg[13]_i_2_n_0
+                         CARRY4 (Prop_carry4_CI_O[3])
+                                                      0.331     7.051 f  u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi_reg[17]_i_3/O[3]
+                         net (fo=4, unplaced)         0.642     7.693    u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi_reg[17]_i_3_n_4
+                         LUT1 (Prop_lut1_I0_O)        0.300     7.993 r  u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi[17]_i_4/O
+                         net (fo=1, unplaced)         0.000     7.993    u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi[17]_i_4_n_0
+                         CARRY4 (Prop_carry4_DI[1]_CO[3])
+                                                      0.547     8.540 r  u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi_reg[17]_i_1__0/CO[3]
+                         net (fo=1, unplaced)         0.000     8.540    u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi_reg[17]_i_1__0_n_0
                          CARRY4 (Prop_carry4_CI_O[1])
-                                                      0.337     9.736 r  u_core/u_engine/u_fast/u_lanes/csum_lane[1].impl.u/p_reg[22]_i_1/O[1]
-                         net (fo=1, unplaced)         0.000     9.736    u_core/u_engine/u_fast/u_lanes/csum_lane[1].impl.u/p_0_in[21]
-                         FDRE                                         r  u_core/u_engine/u_fast/u_lanes/csum_lane[1].impl.u/p_reg[21]/D
+                                                      0.337     8.877 r  u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi_reg[20]_i_1/O[1]
+                         net (fo=1, unplaced)         0.000     8.877    u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi_reg[20]_i_1_n_6
+                         FDRE                                         r  u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi_reg[19]/D
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_fast_safe rise edge)
@@ -836,16 +836,16 @@ Slack (MET) :             1.698ns  (required time - arrival time)
                          net (fo=4747, unplaced)      0.439    10.684    u_core/u_clk/u_clk/CLK
                          BUFGCTRL (Prop_bufgctrl_I0_O)
                                                       0.091    10.775 r  u_core/u_clk/u_clk/u_mux/O
-                         net (fo=2782, unplaced)      0.439    11.214    u_core/u_engine/u_fast/u_lanes/csum_lane[1].impl.u/clk_fast
-                         FDRE                                         r  u_core/u_engine/u_fast/u_lanes/csum_lane[1].impl.u/p_reg[21]/C
+                         net (fo=3177, unplaced)      0.439    11.214    u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/clk_fast
+                         FDRE                                         r  u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi_reg[19]/C
                          clock pessimism              0.265    11.479    
                          clock uncertainty           -0.121    11.359    
-                         FDRE (Setup_fdre_C_D)        0.076    11.435    u_core/u_engine/u_fast/u_lanes/csum_lane[1].impl.u/p_reg[21]
+                         FDRE (Setup_fdre_C_D)        0.076    11.435    u_core/u_engine/u_fast/u_lanes/csum_lane[2].impl.u/p_hi_reg[19]
   -------------------------------------------------------------------
                          required time                         11.435    
-                         arrival time                          -9.736    
+                         arrival time                          -8.877    
   -------------------------------------------------------------------
-                         slack                                  1.698    
+                         slack                                  2.557    
 
 
 
@@ -885,7 +885,7 @@ Slack (MET) :             0.045ns  (arrival time - required time)
                          net (fo=4747, unplaced)      0.114     0.710    u_core/u_clk/u_clk/CLK
                          BUFGCTRL (Prop_bufgctrl_I0_O)
                                                       0.026     0.736 r  u_core/u_clk/u_clk/u_mux/O
-                         net (fo=2782, unplaced)      0.114     0.850    u_core/u_engine/clk_fast
+                         net (fo=3177, unplaced)      0.114     0.850    u_core/u_engine/clk_fast
                          FDRE                                         r  u_core/u_engine/rst_fast_meta_reg[0]/C
   -------------------------------------------------------------------    -------------------
                          FDRE (Prop_fdre_C_Q)         0.147     0.997 r  u_core/u_engine/rst_fast_meta_reg[0]/Q
@@ -908,7 +908,7 @@ Slack (MET) :             0.045ns  (arrival time - required time)
                          net (fo=4747, unplaced)      0.259     1.063    u_core/u_clk/u_clk/CLK
                          BUFGCTRL (Prop_bufgctrl_I0_O)
                                                       0.029     1.092 r  u_core/u_clk/u_clk/u_mux/O
-                         net (fo=2782, unplaced)      0.259     1.351    u_core/u_engine/clk_fast
+                         net (fo=3177, unplaced)      0.259     1.351    u_core/u_engine/clk_fast
                          FDRE                                         r  u_core/u_engine/rst_fast_meta_reg[1]/C
                          clock pessimism             -0.356     0.995    
                          FDRE (Hold_fdre_C_D)         0.038     1.033    u_core/u_engine/rst_fast_meta_reg[1]

@@ -60,7 +60,7 @@ def parse_paths(text: str) -> list[dict]:
 
 def is_mac_path(path: dict) -> bool:
     """A path whose endpoints sit in the MAC and accumulator registers of a lane."""
-    pattern = r"(data_lane|csum_lane).*impl.*(/p_reg|/m_reg|/acc_reg|/a_r|/w_r|/p\[|/m\[|/acc\[)"
+    pattern = r"(data_lane|csum_lane).*impl.*(/p_reg|/p_lo_reg|/p_hi_reg|/m_reg|/acc_reg|/a_r|/w_r|/p\[|/m\[|/acc\[)"
     return bool(re.search(pattern, path["destination"]) and re.search(r"(data_lane|csum_lane)", path["source"]))
 
 

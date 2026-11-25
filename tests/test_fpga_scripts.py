@@ -372,3 +372,13 @@ def test_dsp_variant_side_run_with_zero_skip_gets_its_own_folder():
     assert (lane, turbo, out.name, args.zero_skip) == ("dsp_min", cfg["R"] * cfg["clock"]["f_safe_mhz"], "official_dsp_zs1", 1)
     with pytest.raises(SystemExit):
         ro.parse_args(["--variant", "dsp", "--turbo-mhz", "200", "--tag", "x"])
+
+
+def test_split_multiplier_registers_count_as_mac_endpoints():
+    """ADR-031 (b): p_lo/p_hi hold the nibble products of the LUT multiplier; they are MAC registers, not non-MAC ones
+    (the first OOC run held them to 0.7 of the period and reported them as the worst non-MAC endpoint)."""
+    src = "u_fast/u_lanes/csum_lane[1].impl.u/a_r_reg[3]/C"
+    for reg in ("p_hi_reg[18]", "p_lo_reg[2]"):
+        assert pr.is_mac_path({"source": src, "destination": f"u_fast/u_lanes/csum_lane[1].impl.u/{reg}/D"})
+    tcl = (ROOT / "fpga" / "ooc.tcl").read_text(encoding="utf-8")
+    assert tcl.count("p_lo_reg") >= 1 and "p_(lo|hi)_reg" in tcl

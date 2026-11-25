@@ -26,7 +26,7 @@ SENTINEL is an INT8 CNN accelerator on Spartan-7 with **K parallel MAC lanes**. 
 | `K` | 8 | number of data lanes (8 or 16) |
 | `R` | 2 | number of operand sets produced by safe domain per `clk_safe` cycle |
 | `C3_EN` | 0 | third checksum lane (synthesis parameter) |
-| `LANE_IMPL` | `lut` | `lut`, `dsp_min` (minimal DSP pipeline registers), or `dsp_full` |
+| `LANE_IMPL` | `lut` | `lut`, `dsp_min` (minimal DSP pipeline registers), or `dsp_full`. The `lut` lane registers the two activation-nibble products before their sum and keeps one activation register per lane (ADR-031 (c)): four stages (operands, nibble products, product, accumulator) |
 | `ACT_W` | 8 | activation width, unsigned |
 | `W_W` | 8 | weight width, signed, values −127..127 |
 | `ACC_W` | 32 | data lane accumulator width |
@@ -39,7 +39,7 @@ SENTINEL is an INT8 CNN accelerator on Spartan-7 with **K parallel MAC lanes**. 
 | `INJ_EN` | 1 | fault injection logic synthesized |
 | `ZERO_SKIP` | 0 | 0: off. 1: operand sets with activation 0 are not sent to the lanes, except a set that closes a unit or opens a pass, and every unit keeps at least K + 2 + C3 sets (§5.4). 2: the same skipping with unit ends spaced by a stall in `fast_path` instead (comparison variant). Synthesis parameter (ADR-028); flag bit 4 of the ID word is set for 1 and 2 |
 
-Official variant for ZERO7 and synthesis report is in `config/hw_zero7.yaml`: K = 8, R = 2, `C3_EN = 1`, `LANE_IMPL = lut`, model `s` (ADR-013).
+Official variant for ZERO7 and synthesis report is in `config/hw_zero7.yaml`: K = 8, R = 2, `C3_EN = 1`, `LANE_IMPL = lut`, model `s4` (ADR-013; model `s` until ADR-037). The bitstream does not depend on the model: weights are loaded over SPI.
 
 ---
 

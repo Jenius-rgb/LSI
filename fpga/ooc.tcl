@@ -34,7 +34,8 @@ set_clock_groups -asynchronous -group [get_clocks clk_safe] -group [get_clocks c
 # SPEC 7.4 check: hold every non-MAC endpoint of clk_fast to a fraction of the period.
 if {$nonmac_factor < 1.0} {
     set regs [all_registers -clock clk_fast -cells]
-    set non [filter $regs {NAME !~ "*_lane*impl*u/p_reg*" && NAME !~ "*_lane*impl*u/m_reg*" && NAME !~ "*_lane*impl*u/acc_reg*"}]
+    # p_lo_reg/p_hi_reg: nibble products of the split LUT multiplier (ADR-031 (b)), part of the MAC pipeline.
+    set non [filter $regs {NAME !~ "*_lane*impl*u/p_reg*" && NAME !~ "*_lane*impl*u/m_reg*" && NAME !~ "*_lane*impl*u/acc_reg*" && NAME !~ "*_lane*impl*u/p_lo_reg*" && NAME !~ "*_lane*impl*u/p_hi_reg*"}]
     set_max_delay [expr {$t_fast * $nonmac_factor}] -to $non
 }
 
@@ -69,7 +70,7 @@ set worst_mac ""
 foreach p [get_timing_paths -group clk_fast -setup -max_paths 3000 -nworst 1] {
     set slack [get_property SLACK $p]
     set ep [get_property ENDPOINT_PIN $p]
-    if {[regexp {_lane\[[0-9]+\]\.impl\.u/(p_reg|m_reg|acc_reg)} $ep]} {
+    if {[regexp {_lane\[[0-9]+\]\.impl\.u/(p_reg|m_reg|acc_reg|p_(lo|hi)_reg)} $ep]} {
         if {$slack < $wns_mac} { set wns_mac $slack; set worst_mac $ep }
     } else {
         if {$slack < $wns_nonmac} { set wns_nonmac $slack; set worst_nonmac $ep }
