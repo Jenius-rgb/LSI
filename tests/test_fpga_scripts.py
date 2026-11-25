@@ -358,3 +358,17 @@ def test_zero_skip_side_run_takes_the_mode():
         run_official.parse_args(["--zero-skip", "2"])          # no --tag: would overwrite the official reports
     with pytest.raises(SystemExit):
         run_official.parse_args(["--zero-skip", "3", "--tag", "x"])
+
+
+def test_dsp_variant_side_run_with_zero_skip_gets_its_own_folder():
+    """ADR-028 on the DSP variant: a tagged side run must not overwrite results/vivado/official_dsp/."""
+    sys.path.insert(0, str(ROOT / "fpga"))
+    import run_official as ro
+    import yaml
+
+    cfg = yaml.safe_load((ROOT / "config" / "hw_zero7.yaml").read_text(encoding="utf-8"))
+    args = ro.parse_args(["--variant", "dsp", "--zero-skip", "1", "--tag", "zs1"])
+    lane, turbo, out = ro.resolve_variant(args, cfg)
+    assert (lane, turbo, out.name, args.zero_skip) == ("dsp_min", cfg["R"] * cfg["clock"]["f_safe_mhz"], "official_dsp_zs1", 1)
+    with pytest.raises(SystemExit):
+        ro.parse_args(["--variant", "dsp", "--turbo-mhz", "200", "--tag", "x"])

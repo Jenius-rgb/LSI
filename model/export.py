@@ -238,6 +238,7 @@ def write_artifacts(qm: QModel, hw: dict, out_dir: Path) -> dict:
 
     manifest = {
         "model": qm.name,
+        "classes": class_names(qm.name),
         "K": img.k,
         "n_layers": len(img.records),
         "n_classes": int(qm.layers[-1].w.shape[0]),
@@ -252,6 +253,14 @@ def write_artifacts(qm: QModel, hw: dict, out_dir: Path) -> dict:
     }
     (out_dir / f"{stem}.manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
     return manifest
+
+
+def class_names(model: str) -> list[str] | None:
+    """Class names in label order from config/model_<model>.yaml, or None if the config lists none (ADR-037)."""
+    from model.config import CONFIG_DIR, load_yaml
+
+    path = CONFIG_DIR / f"model_{model}.yaml"
+    return list(load_yaml(path).get("classes") or []) or None if path.exists() else None
 
 
 def integer_accuracy(qm: QModel, images: np.ndarray, labels: np.ndarray, batch: int = 256) -> float:

@@ -1,0 +1,285 @@
+{
+ "clocks": [
+  {
+   "name": "clk_in",
+   "period_ns": 50.0,
+   "wns_ns": 48.466,
+   "whs_ns": 0.357,
+   "intra_wns_ns": 48.466,
+   "intra_whs_ns": 0.357,
+   "intra_endpoints": 1,
+   "fmax_mhz": 651.8904823989575
+  },
+  {
+   "name": "safe_fb",
+   "period_ns": 50.0,
+   "wns_ns": null,
+   "whs_ns": null
+  },
+  {
+   "name": "clk_safe_raw",
+   "period_ns": 8.0,
+   "wns_ns": 0.694,
+   "whs_ns": 0.023,
+   "intra_wns_ns": 0.694,
+   "intra_whs_ns": 0.023,
+   "intra_endpoints": 12358,
+   "fmax_mhz": 136.8738023542294
+  },
+  {
+   "name": "clkfbout_clk_wiz_turbo",
+   "period_ns": 50.0,
+   "wns_ns": null,
+   "whs_ns": null
+  },
+  {
+   "name": "clk_out1_clk_wiz_turbo",
+   "period_ns": 4.0,
+   "wns_ns": null,
+   "whs_ns": null
+  },
+  {
+   "name": "clk_fast_safe",
+   "period_ns": 8.0,
+   "wns_ns": 4.196,
+   "whs_ns": 0.072,
+   "intra_wns_ns": 4.196,
+   "intra_whs_ns": 0.072,
+   "intra_endpoints": 4353,
+   "fmax_mhz": 262.8811777076761
+  },
+  {
+   "name": "clk_fast_turbo",
+   "period_ns": 4.0,
+   "wns_ns": 0.207,
+   "whs_ns": 0.072,
+   "intra_wns_ns": 0.207,
+   "intra_whs_ns": 0.072,
+   "intra_endpoints": 4353,
+   "fmax_mhz": 263.6435539151068
+  }
+ ],
+ "label": "[VIVADO-STA]",
+ "vivado": "2025.2",
+ "part": "xc7s25csga225-1",
+ "top": "top_board",
+ "K": "8",
+ "LANE_IMPL": "1",
+ "ZERO_SKIP": "1",
+ "C3_EN": "1",
+ "SAFE_DIV": "8",
+ "design_wns_ns": "0.207",
+ "design_whs_ns": "0.023",
+ "lut": "6254",
+ "ff": "5435",
+ "ramb36": "13",
+ "ramb18": "2",
+ "dsp48": "14",
+ "mmcm": "2",
+ "bufg": "6",
+ "unrouted_nets": "0",
+ "utilization_post_route": {
+  "lut": {
+   "used": 5580.0,
+   "available": 14600.0,
+   "util_pct": 38.22
+  },
+  "ff": {
+   "used": 5435.0,
+   "available": 29200.0,
+   "util_pct": 18.61
+  },
+  "slice": {
+   "used": 1953.0,
+   "available": 3650.0,
+   "util_pct": 53.51
+  },
+  "bram_tile": {
+   "used": 14.0,
+   "available": 45.0,
+   "util_pct": 31.11
+  },
+  "dsp": {
+   "used": 14.0,
+   "available": 80.0,
+   "util_pct": 17.5
+  },
+  "iob": {
+   "used": 9.0,
+   "available": 150.0,
+   "util_pct": 6.0
+  },
+  "bufgctrl": {
+   "used": 6.0,
+   "available": 32.0,
+   "util_pct": 18.75
+  },
+  "mmcm": {
+   "used": 2.0,
+   "available": 3.0,
+   "util_pct": 66.67
+  }
+ },
+ "utilization_post_synth": {
+  "ff": {
+   "used": 5817.0,
+   "available": 29200.0,
+   "util_pct": 19.92
+  },
+  "bram_tile": {
+   "used": 14.0,
+   "available": 45.0,
+   "util_pct": 31.11
+  },
+  "dsp": {
+   "used": 14.0,
+   "available": 80.0,
+   "util_pct": 17.5
+  },
+  "iob": {
+   "used": 9.0,
+   "available": 150.0,
+   "util_pct": 6.0
+  },
+  "bufgctrl": {
+   "used": 6.0,
+   "available": 32.0,
+   "util_pct": 18.75
+  },
+  "mmcm": {
+   "used": 2.0,
+   "available": 3.0,
+   "util_pct": 66.67
+  }
+ },
+ "drc": {
+  "Warning": 1
+ },
+ "methodology": {
+  "Warning": 68
+ },
+ "power": {
+  "total_w": 0.528,
+  "dynamic_w": 0.466,
+  "static_w": 0.062,
+  "confidence": "Medium"
+ },
+ "cdc": {
+  "CDC-1": {
+   "severity": "Critical",
+   "count": 824,
+   "description": "1-bit unknown CDC circuitry"
+  },
+  "CDC-3": {
+   "severity": "Info",
+   "count": 40,
+   "description": "1-bit synchronized with ASYNC_REG property"
+  },
+  "CDC-13": {
+   "severity": "Critical",
+   "count": 1,
+   "description": "1-bit CDC path on a non-FD primitive"
+  },
+  "CDC-15": {
+   "severity": "Warning",
+   "count": 784,
+   "description": "Clock enable controlled CDC structure detected"
+  }
+ },
+ "cdc_pairs": [
+  {
+   "severity": "Critical",
+   "from": "clk_safe_raw",
+   "to": "clk_fast_safe",
+   "type": "User Ignored",
+   "exception": "Asynch Clock Groups",
+   "endpoints": 686,
+   "safe": 274,
+   "unsafe": 0,
+   "unknown": 412,
+   "no_async_reg": 0
+  },
+  {
+   "severity": "Critical",
+   "from": "clk_safe_raw",
+   "to": "clk_fast_turbo",
+   "type": "User Ignored",
+   "exception": "Asynch Clock Groups",
+   "endpoints": 686,
+   "safe": 274,
+   "unsafe": 0,
+   "unknown": 412,
+   "no_async_reg": 0
+  },
+  {
+   "severity": "Critical",
+   "from": "clk_safe_raw",
+   "to": "clk_out1_clk_wiz_turbo",
+   "type": "User Ignored",
+   "exception": "False Path",
+   "endpoints": 1,
+   "safe": 0,
+   "unsafe": 1,
+   "unknown": 0,
+   "no_async_reg": 0
+  },
+  {
+   "severity": "Warning",
+   "from": "clk_fast_safe",
+   "to": "clk_safe_raw",
+   "type": "User Ignored",
+   "exception": "Asynch Clock Groups",
+   "endpoints": 136,
+   "safe": 136,
+   "unsafe": 0,
+   "unknown": 0,
+   "no_async_reg": 0
+  },
+  {
+   "severity": "Warning",
+   "from": "clk_fast_turbo",
+   "to": "clk_safe_raw",
+   "type": "User Ignored",
+   "exception": "Asynch Clock Groups",
+   "endpoints": 136,
+   "safe": 136,
+   "unsafe": 0,
+   "unknown": 0,
+   "no_async_reg": 0
+  },
+  {
+   "severity": "Info",
+   "from": "clk_in",
+   "to": "clk_safe_raw",
+   "type": "User Ignored",
+   "exception": "False Path",
+   "endpoints": 1,
+   "safe": 1,
+   "unsafe": 0,
+   "unknown": 0,
+   "no_async_reg": 0
+  },
+  {
+   "severity": "Info",
+   "from": "input port clock",
+   "to": "clk_safe_raw",
+   "type": "No Common Primary Clock",
+   "exception": "False Path",
+   "endpoints": 3,
+   "safe": 3,
+   "unsafe": 0,
+   "unknown": 0,
+   "no_async_reg": 0
+  }
+ ],
+ "cdc13_endpoints": [
+  "u_core/u_clk/u_clk/u_mux/S1"
+ ],
+ "bus_skew": {
+  "constraints": 16,
+  "worst_slack_ns": 2.912,
+  "worst_actual_ns": 1.088
+ },
+ "inter_clock": [],
+ "command": "python tools/run.py synth-official --variant dsp --zero-skip 1 --tag zs1"
+}

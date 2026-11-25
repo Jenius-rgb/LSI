@@ -22,6 +22,17 @@ from sentinel import regmap as rm  # noqa: E402
 BOARD_INFO = ROOT / "board" / "BOARD_INFO.md"
 
 
+def zero7_model(path: Path = ROOT / "config" / "hw_zero7.yaml") -> str:
+    """MODEL of the official ZERO7 build (read without PyYAML, so the script also runs on a bare Pi)."""
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.startswith("MODEL:"):
+            return line.split(":", 1)[1].split("#", 1)[0].strip()
+    return "s4"
+
+
+ZERO7_MODEL = zero7_model()
+
+
 def required_unknowns(path: Path = BOARD_INFO) -> list[str]:
     """Required fields of BOARD_INFO.md still marked UNKNOWN."""
     section, unknown = None, []
@@ -171,7 +182,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("step", choices=sorted(STEPS))
     parser.add_argument("--dry-run", action="store_true")
-    parser.add_argument("--model", default="xs", choices=["s", "s4", "xs"])
+    parser.add_argument("--model", default=ZERO7_MODEL, choices=["s", "s4", "xs"],
+                        help=f"model whose weights are loaded (default {ZERO7_MODEL}, from config/hw_zero7.yaml)")
     parser.add_argument("--images", type=int, default=200)
     parser.add_argument("--host", choices=["spi", "jtag"], default="spi",
                         help="spi: Raspberry Pi; jtag: PC over the JTAG cable with board/top_jtag.v (ADR-025)")

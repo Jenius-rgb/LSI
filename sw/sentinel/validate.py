@@ -1,6 +1,8 @@
 """Validation mode (official requirement): classify every image in a folder.
 
 Layout: <folder>/<class_name>/<images> gives accuracy; plain <folder>/<images> only timing.
+Labels follow the class order of the model (config/model_<name>.yaml `classes`, e.g. s4: cat, dog, deer, horse), not
+the alphabetical order of the folder names; folder names are matched without regard to case.
 Reports FPGA computation time and end-to-end time separately (SPEC 15).
 """
 from __future__ import annotations
@@ -15,17 +17,25 @@ from sentinel.preprocess import read_image_file
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".bmp"}
 
 
-def collect(folder: Path) -> tuple[list[tuple[Path, int | None]], list[str]]:
-    classes = sorted(p.name for p in folder.iterdir() if p.is_dir())
-    if classes:
-        items = [(f, label) for label, c in enumerate(classes) for f in sorted((folder / c).iterdir()) if f.suffix.lower() in IMAGE_SUFFIXES]
+def collect(folder: Path, class_names: list[str] | None = None) -> tuple[list[tuple[Path, int | None]], list[str]]:
+    dirs = sorted(p.name for p in folder.iterdir() if p.is_dir())
+    if not dirs:
+        return [(f, None) for f in sorted(folder.iterdir()) if f.suffix.lower() in IMAGE_SUFFIXES], []
+    if class_names:
+        index = {c.lower(): i for i, c in enumerate(class_names)}
+        unknown = [d for d in dirs if d.lower() not in index]
+        if unknown:
+            raise ValueError(f"folders {unknown} are not classes of the model ({class_names})")
+        labels, classes = {d: index[d.lower()] for d in dirs}, list(class_names)
     else:
-        items = [(f, None) for f in sorted(folder.iterdir()) if f.suffix.lower() in IMAGE_SUFFIXES]
+        labels, classes = {d: i for i, d in enumerate(dirs)}, dirs
+    items = [(f, labels[d]) for d in sorted(dirs, key=labels.get) for f in sorted((folder / d).iterdir())
+             if f.suffix.lower() in IMAGE_SUFFIXES]
     return items, classes
 
 
 def run(backend, folder: Path, class_names: list[str] | None = None) -> dict:
-    items, classes = collect(folder)
+    items, classes = collect(folder, class_names)
     if not items:
         raise ValueError(f"no images in {folder}")
     correct = labelled = 0
@@ -46,7 +56,7 @@ def run(backend, folder: Path, class_names: list[str] | None = None) -> dict:
     return {
         "images": n,
         "accuracy": correct / labelled if labelled else None,
-        "classes": class_names or classes,
+        "classes": classes,
         "fpga_latency_ms_mean": fpga_total / n * 1e3,
         "end_to_end_latency_ms_mean": wall_total / n * 1e3,
         "fps_end_to_end": n / wall_total if wall_total else 0.0,
@@ -57,13 +67,14 @@ def run(backend, folder: Path, class_names: list[str] | None = None) -> dict:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("folder", type=Path)
-    parser.add_argument("--model", default="xs")
+    parser.add_argument("--model", default="s4", help="s4 = the four official classes (ADR-037)")
     parser.add_argument("--out", default=None)
     args = parser.parse_args()
+    from model.export import class_names
     from sentinel.harness import make_backend
 
     backend, _ = make_backend(args.model)
-    report = run(backend, args.folder)
+    report = run(backend, args.folder, class_names(args.model))
     label = "[SYNTHETIC]" if backend.name == "mock" else "[HW]"
     print(f"{label} images={report['images']} accuracy={report['accuracy']} fpga_ms={report['fpga_latency_ms_mean']:.2f} end_to_end_ms={report['end_to_end_latency_ms_mean']:.2f} fps={report['fps_end_to_end']:.1f}")
     if args.out:

@@ -9,6 +9,7 @@ module tb_system;
     parameter R = 2;
     parameter C3_EN = 0;
     parameter LANE_IMPL = 0;
+    parameter ZERO_SKIP = 0;
     parameter WC1_W = 11;
     parameter WC2_W = 14;
     parameter WC3_W = 16;
@@ -33,7 +34,7 @@ module tb_system;
     wire miso;
     wire [3:0] led;
 
-    top_core #(.K(K), .R(R), .C3_EN(C3_EN), .LANE_IMPL(LANE_IMPL), .WC1_W(WC1_W), .WC2_W(WC2_W), .WC3_W(WC3_W),
+    top_core #(.K(K), .R(R), .C3_EN(C3_EN), .LANE_IMPL(LANE_IMPL), .ZERO_SKIP(ZERO_SKIP), .WC1_W(WC1_W), .WC2_W(WC2_W), .WC3_W(WC3_W),
                .WEIGHT_AW(WEIGHT_AW), .ACT0_AW(ACT0_AW), .ACT1_AW(ACT1_AW), .LOG_AW(LOG_AW)) dut (
         .clk_in(1'b0), .rst(rst), .spi_sclk(sclk), .spi_cs_n(cs_n), .spi_mosi(mosi), .spi_miso(miso), .led(led), .ext_wr(1'b0), .ext_rd(1'b0), .ext_addr(24'd0), .ext_wdata(8'd0));
 
@@ -223,6 +224,8 @@ module tb_system;
                 $fatal(1);
             end
             passed = passed + 1;
+            $display("IMG %0d done cycles=%0d", s, dut.u_engine.cycles_total);   // clk_safe cycles while busy
+            $fflush;
             #100;
         end
 

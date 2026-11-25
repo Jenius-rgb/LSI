@@ -19,6 +19,7 @@ def tiny_model(cout=5, n=3):
     return golden.QModel("tiny", (3, 4, 4), [conv, fc])
 
 
+ROOT = __import__("pathlib").Path(__file__).resolve().parents[1]
 HW = {"K": 4, "ACT_W": 8, "W_W": 8, "ACC_W": 32, "ACC_CS_W": 48, "N_CLASSES_MAX": 16}
 
 
@@ -136,3 +137,25 @@ def test_mem_files_match_binary_words(tmp_path):
         assert line == expected
     params = (tmp_path / "tiny_k4_params.mem").read_text().split()
     assert all(len(p) == 8 for p in params)
+
+
+def test_manifest_carries_the_class_names_of_model_s4(tmp_path):
+    """The Pi software reads the class order from the manifest (ADR-037: cat, dog, deer, horse)."""
+    from model.golden import QModel
+
+    qm = QModel.load(ROOT / "results" / "model" / "s4" / "quant.npz")
+    manifest = export.write_artifacts(qm, {**HW, "K": 8}, tmp_path)
+    assert manifest["classes"] == ["cat", "dog", "deer", "horse"]
+
+
+def test_zero7_config_runs_model_s4_and_its_memories_fit(tmp_path):
+    """config/hw_zero7.yaml names the model of the official build; its address widths must hold that model."""
+    import yaml
+    from model.golden import QModel
+
+    cfg = yaml.safe_load((ROOT / "config" / "hw_zero7.yaml").read_text(encoding="utf-8"))
+    assert cfg["MODEL"] == "s4"
+    qm = QModel.load(ROOT / "results" / "model" / cfg["MODEL"] / "quant.npz")
+    manifest = export.write_artifacts(qm, {**HW, "K": cfg["K"]}, tmp_path)
+    assert manifest["weight_words"] <= 2 ** cfg["WEIGHT_AW"]
+    assert manifest["buffer_bytes"]["act0"] <= 2 ** cfg["ACT0_AW"] and manifest["buffer_bytes"]["act1"] <= 2 ** cfg["ACT1_AW"]

@@ -419,3 +419,20 @@ def test_gpio_lines_use_the_lgpio_factory(monkeypatch):
     fake.LGPIOFactory = lambda: "lgpio-factory"
     monkeypatch.setitem(sys.modules, "gpiozero.pins.lgpio", fake)
     assert transport.lgpio_factory() == "lgpio-factory"
+
+
+def test_validation_labels_follow_the_model_class_order(tmp_path):
+    """Model s4 counts cat = 0, dog = 1, deer = 2, horse = 3 (ADR-037); sorted folder names would give deer = 1."""
+    from sentinel.validate import collect
+
+    for name in ("cat", "deer", "dog", "Horse"):
+        (tmp_path / name).mkdir()
+        (tmp_path / name / "x.png").write_bytes(b"")
+    items, classes = collect(tmp_path, ["cat", "dog", "deer", "horse"])
+    assert {p.parent.name: label for p, label in items} == {"cat": 0, "dog": 1, "deer": 2, "Horse": 3}
+    assert classes == ["cat", "dog", "deer", "horse"]
+    _, plain = collect(tmp_path)                      # no class list: alphabetical, as before
+    assert plain == ["Horse", "cat", "deer", "dog"]
+    (tmp_path / "bird").mkdir()
+    with pytest.raises(ValueError, match="bird"):
+        collect(tmp_path, ["cat", "dog", "deer", "horse"])

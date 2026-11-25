@@ -204,24 +204,29 @@ def engine_benches() -> dict[str, Bench]:
         name = "engine_s_k8_c1_dsp" + (f"_n{count}" if count >= 20 else "")
         out[name] = Bench(name, "tb_engine", [*ENGINE_SOURCES, "tb/tb_engine.v"], _engine_params("s", 8, 1, impl=1),
                           _engine_vectors("s", count), slow=slow, shards=shards, prefer_xsim=slow)
+    # ADR-028 on the DSP variant (speed and demo variant): ZERO_SKIP = 1 must stay bit-exact there too.
+    for count, slow, shards in [(1, False, 1), (200, True, 6)]:
+        name = "engine_s_k8_c1_dsp_zs" + (f"_n{count}" if count >= 20 else "")
+        out[name] = Bench(name, "tb_engine", [*ENGINE_SOURCES, "tb/tb_engine.v"], {**_engine_params("s", 8, 1, impl=1), "ZERO_SKIP": 1},
+                          _engine_vectors("s", count), slow=True, shards=shards, prefer_xsim=slow)
     # ADR-028 zero-skip: the same logits as the golden model with fewer cycles. ZERO_SKIP = 1 keeps at least
     # K + 2 + C3 sets per unit (operand_gen); ZERO_SKIP = 2 stalls unit ends in fast_path instead.
     for zs in (1, 2):
         for count, slow, shards in [(1, False, 1), (200, True, 6)]:
             name = f"engine_s_k8_c1_zs{zs if zs > 1 else ''}" + (f"_n{count}" if count >= 20 else "")
             out[name] = Bench(name, "tb_engine", [*ENGINE_SOURCES, "tb/tb_engine.v"], {**_engine_params("s", 8, 1), "ZERO_SKIP": zs},
-                              _engine_vectors("s", count), slow=slow, shards=shards, prefer_xsim=slow)
+                              _engine_vectors("s", count), slow=slow or zs == 2, shards=shards, prefer_xsim=slow)
     # ADR-028: units with almost all activations zero. Without a guard these end fewer than K + 2 + C3 cycles apart
     # and overrun the lane-array result serializer (found 26 Nov 2026: engine_s_k8_c1_zs_n200 hung). Baseline row for
     # the cycle comparison.
     for zs in (1, 2):
         name = f"engine_s_k8_c1_zs{zs if zs > 1 else ''}_overrun"
         out[name] = Bench(name, "tb_engine", [*ENGINE_SOURCES, "tb/tb_engine.v"], {**_engine_params("s", 8, 1), "ZERO_SKIP": zs},
-                          _picked_vectors("s", ZS_OVERRUN_IMAGES), prefer_xsim=True)
+                          _picked_vectors("s", ZS_OVERRUN_IMAGES), slow=zs == 2, prefer_xsim=True)
     for zs in (0, 1, 2):
         name = "engine_s_k8_c1_" + (f"zs{zs if zs > 1 else ''}_" if zs else "") + "sparse"
         out[name] = Bench(name, "tb_engine", [*ENGINE_SOURCES, "tb/tb_engine.v"], {**_engine_params("s", 8, 1), "ZERO_SKIP": zs},
-                          _sparse_vectors("s"), prefer_xsim=True)
+                          _sparse_vectors("s"), slow=zs != 1, prefer_xsim=True)
     # SPEC 13.4 corner cases on padded lanes, extreme values, ties, saturation, zero image.
     for kind in ("zero_lanes", "extreme", "ties", "saturate"):
         name = f"engine_corner_{kind}"
@@ -366,10 +371,23 @@ def system_benches() -> dict[str, Bench]:
     bench = "system_s_k8_c1"
     out[bench] = Bench(bench, "tb_system", SYSTEM_SOURCES, _system_params("s", 8, 1, 10.0 / 1.3),
                        _system_vectors("s", _official_scenarios), slow=True, prefer_xsim=True)
+    # The same official variant with the model of config/hw_zero7.yaml since ADR-037: s4 (four official classes).
+    bench = "system_s4_k8_c1"
+    out[bench] = Bench(bench, "tb_system", SYSTEM_SOURCES, _system_params("s4", 8, 1, 10.0 / 1.3),
+                       _system_vectors("s4", _official_scenarios), slow=True, prefer_xsim=True)
     # DSP lane variant (ADR-030 (d)): lanes at the operand supply limit, R = 2 times the safe clock.
     bench = "system_s_k8_c1_dsp"
     out[bench] = Bench(bench, "tb_system", SYSTEM_SOURCES, {**_system_params("s", 8, 1, 10.0 / 2.0), "LANE_IMPL": 1},
                        _system_vectors("s", _official_scenarios), slow=True, prefer_xsim=True)
+    # ADR-028 condition 3: zero-skip at the real clock ratio. Model s4, DSP lanes, no injection, ten images; lanes at
+    # 2 x clk_safe (the DSP variant, operand supply limit) and at clk_safe, each without and with ZERO_SKIP = 1.
+    for ratio, tag in [(2.0, "r2"), (1.0, "r1")]:
+        for zs in (0, 1):
+            bench = f"system_s4_dsp_speed_{tag}_zs{zs}"
+            out[bench] = Bench(bench, "tb_system", SYSTEM_SOURCES,
+                               {**_system_params("s4", 8, 1, 10.0 / ratio), "LANE_IMPL": 1, "ZERO_SKIP": zs},
+                               _system_vectors("s4", lambda k, c3: [{"image": i, "mode": 2} for i in range(10)]),
+                               slow=True, prefer_xsim=True)
     # Governor in automatic mode: the level climbs every image, so MMCM2 reconfigures between images.
     bench = "system_micro_autogov"
     out[bench] = Bench(bench, "tb_system", SYSTEM_SOURCES,

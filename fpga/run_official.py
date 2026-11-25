@@ -292,8 +292,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     args = parser.parse_args(argv)
     if args.tag and not re.fullmatch(r"[a-z0-9]+", args.tag):
         parser.error("--tag takes lower-case letters and digits only")
-    if args.variant == "dsp" and (args.lane_impl or args.turbo_mhz or args.tag):
-        parser.error("--variant dsp is a full official run: it takes its lane type and lane clock from config/hw_zero7.yaml")
+    if args.variant == "dsp" and (args.lane_impl or args.turbo_mhz):
+        parser.error("--variant dsp takes its lane type and lane clock from config/hw_zero7.yaml")
     if (args.lane_impl or args.turbo_mhz or args.zero_skip) and not args.tag:
         parser.error("--lane-impl and --turbo-mhz are for side runs only: add --tag so results/vivado/official/ stays the official variant")
     return args
@@ -303,7 +303,7 @@ def resolve_variant(args: argparse.Namespace, cfg: dict) -> tuple[str, float | N
     """Lane type, lane-clock frequency to analyse (None = turbo level 0) and report folder of this run."""
     if args.variant == "dsp":
         dsp = cfg["variant_dsp"]
-        return dsp["LANE_IMPL"], float(dsp["lane_mhz"]), OUT.with_name(f"{OUT.name}_dsp")
+        return dsp["LANE_IMPL"], float(dsp["lane_mhz"]), OUT.with_name(f"{OUT.name}_dsp" + (f"_{args.tag}" if args.tag else ""))
     return args.lane_impl or cfg["LANE_IMPL"], args.turbo_mhz, OUT.with_name(f"{OUT.name}_{args.tag}") if args.tag else OUT
 
 

@@ -3,13 +3,13 @@
 part: xc7s25csga225-1
 top: top_board
 constraints: board/zero7.xdc
-MODEL: s
+MODEL: s4           # the four official classes cat, dog, deer, horse (ADR-037); same layers as s, 4-class FC
 K: 8
 R: 2
 C3_EN: 1
 LANE_IMPL: lut      # 0 in the RTL parameter
 INJ_EN: 1
-WEIGHT_AW: 12       # same address widths as fpga/run_matrix.py uses for model s
+WEIGHT_AW: 12       # same address widths as fpga/run_matrix.py uses for model s; s4 fits (tests/test_export.py)
 ACT0_AW: 13
 ACT1_AW: 11
 # ADR-030 (d), choice R1: second lane variant, everything else as above. It is the speed and demo variant;

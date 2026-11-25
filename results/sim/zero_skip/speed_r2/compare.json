@@ -1,0 +1,24 @@
+{
+  "label": "[SIM]",
+  "baseline_cycles": 162397,
+  "runs": {
+    "zs0": {
+      "source": "results/sim/zero_skip/speed_r2/zs0",
+      "images_passed": 10,
+      "mean_cycles": 162397.0,
+      "saving_vs_baseline_pct": 0.0,
+      "min_cycles": 162397,
+      "max_cycles": 162397,
+      "fail_lines": []
+    },
+    "zs1": {
+      "source": "results/sim/zero_skip/speed_r2/zs1",
+      "images_passed": 10,
+      "mean_cycles": 162394.1,
+      "saving_vs_baseline_pct": 0.0,
+      "min_cycles": 162394,
+      "max_cycles": 162395,
+      "fail_lines": []
+    }
+  }
+}

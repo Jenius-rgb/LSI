@@ -577,7 +577,7 @@ Generated with fixed seed into `build/vectors/`. Not committed; `run.py gen` reg
 - **Camera** (ADR-035): only on the Raspberry Pi, never on the FPGA; source `picamera` (CSI), a camera index (USB) or a video file.
 - **`camera.py`** (picamera2 or OpenCV) and **`preprocess.py`** (center-crop → resize 32×32 with INTER_AREA → RGB uint8 (C, H, W)). Identical functions used for camera data during fine-tuning.
 - **Dashboard** (lightweight web or OpenCV window) displays camera, class, FPS, turbo frequency, turbo layers, counters, and lane map. Runnable with MockBackend on PC.
-- **Validation mode** [OFFICIAL: validation data provided on contest day via camera, SD card, etc.]: read all images in a folder, classify, then report accuracy (if labels available), latency per image, and FPS. FPGA compute time (from `CYCLES_TOTAL`) and end-to-end time reported separately.
+- **Validation mode** [OFFICIAL: validation data provided on contest day via camera, SD card, etc.]: read all images in a folder, classify, then report accuracy (if labels available), latency per image, and FPS. FPGA compute time (from `CYCLES_TOTAL`) and end-to-end time reported separately. With labels in subfolders (`<folder>/<class>/`), labels follow the class order of the model (`classes` in `config/model_<name>.yaml`, copied into the weight manifest; `s4`: cat = 0, dog = 1, deer = 2, horse = 3), not the alphabetical folder order (ADR-037).
 - **Camera mode** [OFFICIAL: real-time camera input]: continuous classification displaying recognition speed.
 - **Experiments** `sw/sentinel/experiments/e1.py` through `e8.py`. Output to `results/<backend>/<exp>/<timestamp>/`:
   - `data.csv`,
