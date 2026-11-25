@@ -1,131 +1,195 @@
-# CLAUDE.md — Proyek SENTINEL (LSI Design Contest 2027)
+# CLAUDE.md — SENTINEL Project (LSI Design Contest 2027)
 
-> "SENTINEL" hanya nama kerja. Kalau tim sudah memilih nama sendiri, ganti di file ini dan di README.
-> File ini dibaca otomatis oleh Claude Code di setiap sesi. Jangan jalankan `/init`, karena itu akan menimpa file ini.
+> "SENTINEL" is only a working title. If the team has chosen their own name, replace it in this file and in README.
+> This file is read automatically by Claude Code in every session. Do not run `/init`, as that will overwrite this file.
 
-## 1. Misi
+## 1. Mission
 
-Membangun akselerator CNN di FPGA Spartan-7 (board ZERO7, Raspberry Pi HAT) yang:
+Build a CNN accelerator on Spartan-7 FPGA (ZERO7 board, Raspberry Pi HAT) that:
 
-1. mengklasifikasi gambar 32×32 secara **bit-exact** terhadap golden model Python,
-2. menjaga lane MAC dengan **dual checksum** (C1, C2, opsional C3) untuk mendeteksi, melokalisasi, dan mengoreksi error,
-3. menjalankan lane MAC lebih cepat dari frekuensi aman (**overclocking per layer**) dengan governor hardware,
-4. menyediakan alat ukur lengkap untuk eksperimen E1–E8.
+1. classifies 32×32 images **bit-exact** against the Python golden model,
+2. guards MAC lanes with **dual checksums** (C1, C2, optional C3) to detect, localize, and correct errors,
+3. runs MAC lanes faster than safe frequency (**per-layer overclocking**) with a hardware governor,
+4. provides a complete measurement suite for experiments E1–E8.
 
-**Fase saat ini: PRA-BOARD.** Selesaikan semua pekerjaan yang tidak butuh board. Pekerjaan yang butuh board hanya boleh dimulai sesuai §8.
+**Current phase: PRE-BOARD.** Finish all work that does not require the board. Work requiring the board may only begin in accordance with §8.
 
-## 2. Sumber kebenaran (urutan prioritas)
+## 2. Source of truth (priority order)
 
-1. Instruksi saya di sesi yang sedang berjalan.
-2. `docs/official/` — dokumen resmi panitia. Hanya ini sumber aturan lomba. Jangan menambah aturan yang tidak tertulis di sana.
-3. `docs/SPEC.md` — spesifikasi teknis. Golden model Python yang mengimplementasikan SPEC adalah **oracle** untuk RTL.
-4. `docs/DECISIONS.md` — keputusan desain (format ADR). SPEC hanya boleh berubah lewat ADR baru.
-5. `STATUS.md` — progres, gerbang, item terblokir, catatan antar sesi.
-6. `board/BOARD_INFO.md` — fakta board. Field bertanda `UNKNOWN` tidak boleh ditebak.
-7. `docs/PRIOR_ART.md` — karya terkait dan batas klaim orisinalitas.
+1. My instructions in the ongoing session.
+2. `docs/official/` — official organizer documents. Only this is the source of contest rules. Do not add rules not written there.
+3. `docs/SPEC.md` — technical specification. The Python golden model implementing SPEC is the **oracle** for RTL.
+4. `docs/DECISIONS.md` — design decisions (ADR format). SPEC may only change via a new ADR.
+5. `STATUS.md` — progress, gates, blocked items, notes between sessions.
+6. `board/BOARD_INFO.md` — board facts. Fields marked `UNKNOWN` must not be guessed.
+7. `docs/PRIOR_ART.md` — related work and originality claim boundaries.
 
-## 3. Siklus kerja setiap sesi
+## 3. Work cycle each session
 
-1. **Baca** CLAUDE.md, STATUS.md (terutama "Catatan untuk sesi berikutnya"), board/BOARD_INFO.md, dan bagian SPEC yang relevan. Di sesi pertama, baca juga semua file di `docs/official/` (PDF-nya berupa gambar; baca secara visual).
-2. **Periksa keadaan nyata.** Jalankan `python tools/run.py check` dan `python tools/run.py test` (setelah M0 ada). Jangan percaya centang di STATUS.md tanpa bukti. Kalau ada test merah, perbaiki dulu sebelum fitur baru. Kalau STATUS.md tidak sesuai kenyataan, koreksi STATUS.md dan jelaskan.
-3. **Pilih tugas**: tugas pertama yang belum selesai di STATUS.md, sesuai urutan milestone. Kalau tugas itu terblokir (butuh board, alat, atau keputusan saya), tandai `[B]`, tulis alasannya di bagian "Terblokir", lalu ambil tugas berikutnya yang tidak terblokir.
-4. **Rencana singkat** (3–7 butir) di chat sebelum mulai.
-5. **Test dulu.** Buat unit test, vektor golden, atau testbench yang gagal lebih dulu, baru implementasi.
-6. **Jalankan sampai hijau.** Simpan log ringkas (perintah dan hasil).
-7. **Update STATUS.md.** Centang `[x]` hanya jika Definition of Done terpenuhi. Tulis bukti di "Log bukti": tanggal, perintah, dan hasil.
-8. **Commit git** kecil dan jelas untuk setiap langkah hijau. Jangan `git push` kecuali saya minta.
-9. **Lanjut** ke tugas berikutnya tanpa menunggu konfirmasi. Sebelum konteks hampir penuh (sekitar 70%), atau saat semua tugas yang tidak terblokir selesai: tulis "Catatan untuk sesi berikutnya" di STATUS.md, commit, lalu kirim ringkasan ke saya (§5).
+1. **Read** CLAUDE.md, STATUS.md (especially "Notes for next session"), board/BOARD_INFO.md, and relevant SPEC sections. In the first session, also read all files in `docs/official/` (PDFs are image-based; read visually).
+2. **Examine real state.** Run `python tools/run.py check` and `python tools/run.py test` (after M0 exists). Do not trust checkmarks in STATUS.md without evidence. If there are red tests, fix them before new features. If STATUS.md does not match reality, correct STATUS.md and explain.
+3. **Select task**: first unfinished task in STATUS.md, according to milestone order. If that task is blocked (needs board, tools, or my decision), mark `[B]`, write the reason in "Blocked" section, then take the next unblocked task.
+4. **Brief plan** (3–7 bullets) in chat before starting.
+5. **Test first.** Create unit tests, golden vectors, or testbenches that fail first, then implement.
+6. **Run until green.** Save concise log (command and result).
+7. **Update STATUS.md.** Check `[x]` only if Definition of Done is fulfilled. Write evidence in "Evidence log": date, command, and result.
+8. **Git commit** small and clear for each green step. Do not `git push` unless I ask.
+9. **Continue** to the next task without waiting for confirmation. Before context is nearly full (around 70%), or when all unblocked tasks are complete: write "Notes for next session" in STATUS.md, commit, then send summary to me (§5).
 
-## 4. Aturan keras (tidak boleh dilanggar)
+## 4. Hard rules (must not be violated)
 
-- **Jangan mengarang hasil.** Setiap angka di dokumen, laporan, atau grafik harus bisa dilacak ke skrip dan log yang ada di repo. Kalau sebuah alat tidak bisa dijalankan, katakan itu. Jangan menulis output yang tidak benar-benar keluar.
-- **Simulasi tidak bisa memunculkan error timing nyata.** Jangan pernah mengklaim perilaku hardware dari simulasi atau dari model error sintetis.
-- **Label wajib** pada setiap angka, tabel, dan grafik:
-  - `[SIM]` hasil simulasi RTL atau model Python,
-  - `[SYNTHETIC]` memakai model error timing buatan (`model/fault_model.py`),
-  - `[VIVADO-STA]` dari laporan timing atau resource Vivado (estimasi statis),
-  - `[HW]` diukur di board sungguhan.
-  Grafik dari backend mock wajib diberi watermark **"SYNTHETIC — NOT MEASURED"**.
-- **Jangan menebak fakta board**: part number, package, speed grade, pin, clock input, cara programming, kecepatan SPI, antarmuka LED, ada tidaknya XADC. Pakai parameter atau placeholder, lalu catat di "Terblokir".
-- **Golden model dan RTL harus bit-exact.** Tidak ada "hampir sama".
-- **Jangan mengubah test agar lulus** tanpa alasan tertulis. Kalau spesifikasi perlu berubah, urutannya: ADR di `docs/DECISIONS.md` → update SPEC → update golden model dan testnya → update RTL.
-- **Seed acak tetap** dan tercatat. Catat versi alat (Python, PyTorch, Icarus, Verilator, Vivado) di `docs/ENVIRONMENT.md`.
-- **Aturan lomba**: bedakan `[OFFICIAL]` (tertulis di docs/official), `[UNKNOWN]`, dan `[INFERENCE]`. Jangan menulis aturan yang tidak ada.
-- **Kode pihak ketiga**: jangan menyalin kode dengan lisensi tidak jelas. Catat setiap sumber dan lisensinya di `docs/THIRD_PARTY.md`.
-- **Klaim orisinalitas**: hanya yang didukung `docs/PRIOR_ART.md`. Jangan mengklaim "pertama" atau "baru" untuk hal yang belum dicek.
+- **Do not fabricate results.** Every number in documents, reports, or plots must be traceable to scripts and logs existing in the repo. If a tool cannot be run, say so. Do not write outputs that were not genuinely produced.
+- **Simulation cannot produce real timing errors.** Never claim hardware behavior from simulation or from synthetic error models.
+- **Mandatory labels** on every number, table, and plot:
+  - `[SIM]` RTL simulation or Python model result,
+  - `[SYNTHETIC]` using artificial timing error model (`model/fault_model.py`),
+  - `[VIVADO-STA]` from Vivado timing or resource report (static estimation),
+  - `[HW]` measured on real board.
+    Plots from mock backend must be watermarked **"SYNTHETIC — NOT MEASURED"**.
+- **Do not guess board facts**: part number, package, speed grade, pins, input clock, programming method, SPI speed, LED interfaces, presence of XADC. Use parameters or placeholders, then record in "Blocked".
+- **Golden model and RTL must be bit-exact.** There is no "almost identical".
+- **Do not alter tests to pass** without written justification. If specification needs to change, order: ADR in `docs/DECISIONS.md` → update SPEC → update golden model and its tests → update RTL.
+- **Random seed fixed** and recorded. Record tool versions (Python, PyTorch, Icarus, Verilator, Vivado) in `docs/ENVIRONMENT.md`.
+- **Contest rules**: distinguish `[OFFICIAL]` (written in docs/official), `[UNKNOWN]`, and `[INFERENCE]`. Do not write rules that do not exist.
+- **Third-party code**: do not copy code with unclear licensing. Record every source and its license in `docs/THIRD_PARTY.md`.
+- **Originality claims**: only those supported by `docs/PRIOR_ART.md`. Do not claim "first" or "novel" for things not yet checked.
 
-## 5. Otonomi, pertanyaan, dan laporan
+## 5. Autonomy, questions, and reports
 
-- Langkah yang bisa dibatalkan (menulis file, menjalankan test, membuat branch, commit lokal): **langsung kerjakan**, tanpa minta izin.
-- Bertanya hanya jika:
-  (a) ada ambiguitas di SPEC yang mengubah arsitektur,
-  (b) butuh tindakan saya (instal alat, menjalankan Vivado di PC saya, data board), atau
-  (c) aturan lomba tidak jelas.
-  Ajukan pertanyaan sekali dengan rekomendasimu, lalu lanjutkan tugas lain yang tidak terblokir.
-- Kalau sebuah alat tidak tersedia (misalnya Vivado tidak ada di PATH): tetap buat skripnya, tulis instruksi persis untuk saya, tandai tugasnya `[B] perlu dijalankan user`, lalu lanjut.
-- **Ringkasan di akhir sesi** (bahasa Indonesia, singkat):
-  1. selesai: apa saja, dengan bukti (perintah dan hasil test),
-  2. terblokir: apa dan kenapa,
-  3. yang perlu saya lakukan, dengan langkah persis,
-  4. pertanyaan, masing-masing dengan rekomendasi.
+- Reversible steps (writing files, running tests, creating branches, local commits): **execute directly**, without asking permission.
+- Inquire only if:
+  (a) there is ambiguity in SPEC that changes architecture,
+  (b) requires my action (installing tools, running Vivado on my PC, board data), or
+  (c) contest rules are unclear.
+  Ask once with your recommendation, then continue other unblocked tasks.
+- If a tool is unavailable (e.g. Vivado not in PATH): still create the script, write exact instructions for me, mark task `[B] requires user run`, then continue.
+- **Summary at end of session** (concise):
+  1. completed: what was done, with evidence (commands and test results),
+  2. blocked: what and why,
+  3. what I need to do, with exact steps,
+  4. questions, each with recommendation.
 
-## 6. Konvensi
+## 6. Conventions
 
-- **Bahasa**: komunikasi dengan saya dalam bahasa Indonesia. Kode, komentar, nama file, dan dokumen teknis di repo dalam bahasa Inggris (untuk laporan lomba). STATUS.md boleh bahasa Indonesia.
-- **RTL**: Verilog-2005 yang dapat disintesis, kompatibel dengan Icarus (`iverilog -g2012`), Verilator (`--lint-only -Wall`), dan Vivado.
-  - Satu modul per file, nama file = nama modul.
-  - Reset sinkron aktif tinggi, kecuali ada alasan tertulis. Tidak boleh ada latch.
-  - Semua lebar dan jumlah lane memakai parameter (K, ACC_W, dll.).
-- **Primitif Xilinx** (MMCM, BUFGCTRL, XPM, Clocking Wizard) hanya boleh muncul di `rtl/platform/xilinx/`. Setiap wrapper punya model simulasi portabel di `rtl/platform/sim/`.
-- **Testbench** memakai file vektor (`$readmemh`) yang dibangkitkan golden model. Cetak `PASS n/n`, atau `FAIL` beserta mismatch pertama (layer, unit, lane, expected, got). Keluar dengan status gagal jika ada mismatch.
-- **Python** ≥ 3.10, pytest, lintas platform (Windows dan Linux). Semua perintah lewat `tools/run.py`, bukan Makefile atau skrip bash saja.
-- **Register map**: satu sumber, `spec/regmap.yaml`, dibangkitkan ke Verilog dan Python oleh `tools/gen_regmap.py`. Jangan mengedit file hasil generate. Ada test yang memastikan hasil generate selalu terbaru.
-- **Folder build**: `build/` (vektor, bobot hasil ekspor, hasil simulasi) tidak di-commit dan selalu bisa dibangkitkan ulang. `results/` di-commit, karena berisi data eksperimen dan metadata.
+- **Language**: communication with me in Indonesian. Code, comments, filenames, and technical documents in repo in English (for contest report). STATUS.md may be in Indonesian.
+- **RTL**: Synthesizable Verilog-2005, compatible with Icarus (`iverilog -g2012`), Verilator (`--lint-only -Wall`), and Vivado.
+  - One module per file, filename = module name.
+  - Synchronous active-high reset, unless written justification exists. No latches allowed.
+  - All widths and lane counts use parameters (K, ACC_W, etc.).
+- **Xilinx primitives** (MMCM, BUFGCTRL, XPM, Clocking Wizard) may only appear in `rtl/platform/xilinx/`. Each wrapper has a portable simulation model in `rtl/platform/sim/`.
+- **Testbenches** use vector files (`$readmemh`) generated by golden model. Print `PASS n/n`, or `FAIL` along with first mismatch (layer, unit, lane, expected, got). Exit with failure status if mismatch occurs.
+- **Python** ≥ 3.10, pytest, cross-platform (Windows and Linux). All commands via `tools/run.py`, not Makefile or bash scripts alone.
+- **Register map**: single source, `spec/regmap.yaml`, generated to Verilog and Python by `tools/gen_regmap.py`. Do not edit generated files. Test exists ensuring generated files are always up-to-date.
+- **Build folder**: `build/` (vectors, exported weights, simulation outputs) not committed and always regenerable. `results/` is committed, as it contains experiment data and metadata.
 
-## 7. Konteks lomba (ringkas; verifikasi ke docs/official)
+## 7. Contest context (concise; verify against docs/official)
 
-Diperbarui 2026-11-16 dengan persetujuan user, dari `docs/official/README.md`.
+Updated 2026-11-16 with user agreement, from `docs/official/README.md`.
 
-- [OFFICIAL] 30th LSI Design Contest 2027 di Chitose, Hokkaido. Tema: implementasi hardware CNN, jumlah layer bebas.
-- [OFFICIAL] Batas laporan 31 Jan 2027. Lomba 5 Mar 2027, hybrid. Presentasi 10 menit (maksimal 10 slide) dan tanya jawab 5 menit.
-- [OFFICIAL] Yang dikumpulkan: laporan akhir dan laporan sintesis untuk AMD Spartan-7 XC7S25CSGA225-1. Laporan sintesis wajib untuk semua kelas; formatnya belum dijelaskan (user akan mengirim begitu terbit).
-- [OFFICIAL] Juri menilai bukan hanya kecepatan dan area, tetapi juga ide, orisinalitas, keunikan, dan presentasi. Tingkat pendidikan peserta ikut dipertimbangkan.
-- [OFFICIAL] Syarat tujuan: data validasi yang ditentukan panitia dan input kamera real-time. Gambar validasi diberikan pada hari lomba (dari kamera, kartu SD, dll.). Presentasi harus menunjukkan seberapa cepat hasil pengenalan keluar.
-- [OFFICIAL] CNN menerima input 32×32. Struktur mengacu ke design overview kontes ke-23; struktur hidden layer bebas.
-- [OFFICIAL] Class 1 (Image Classification): hanya klasifikasi gambar. Level 1 dan Level 2 menargetkan XC7S25CSGA225-1. Level 3 bebas board dan arsitektur, tetapi tetap harus menunjukkan laporan sintesis yang muat di XC7S25CSGA225-1.
-- [OFFICIAL] Class 2 (ZERO7): hanya board ZERO7, tugas bebas, hanya Level 3.
-- [OFFICIAL] ZERO7 buatan Gigafirm adalah HAT Raspberry Pi; panitia menyebut board pinjaman bisa dipasang di Raspberry Pi 5. Vivado yang direkomendasikan: 2025.2.
-- [USER] Tim memakai Raspberry Pi 4 Model B (ADR-022). Board dan Pi dipakai fisik mulai Desember 2026 atau Januari 2027.
-- [OFFICIAL] Dataset latih bebas, tetapi kelas target ditentukan panitia dan belum diumumkan. Karena itu model harus bisa dilatih ulang, dan bobot harus bisa dimuat ulang lewat SPI **tanpa sintesis ulang**.
-- [OFFICIAL, berbeda antar halaman] Ukuran tim: halaman Inggris 1–3 orang, halaman Jepang paling banyak 4 orang. [USER] Tim berjumlah 4 orang, jadi bergantung pada aturan halaman Jepang. [USER, 17 Nov 2026] Panitia sudah mengonfirmasi tim 4 orang (Q5 di STATUS.md); perubahan baris ini disetujui user 18 Nov 2026.
-- [OFFICIAL] Dokumen resmi tidak memuat aturan penggunaan AI. [USER] Keputusan user: AI boleh dipakai selama sesuai ketentuan lomba.
-- [UNKNOWN] Bobot penilaian, format laporan dan laporan sintesis, kelas target, dan apakah demo hardware langsung diizinkan.
-- **Target kategori [PROPOSAL, menunggu konfirmasi panitia]: Class 2 (ZERO7 Class), Level 3.** Tetap pertahankan klasifikasi gambar, mode data validasi, dan mode kamera real-time, supaya proyek juga memenuhi syarat Class 1 Level 3 jika ternyata harus pindah kelas. Jangan menulis kategori ini sebagai fakta di laporan sebelum dikonfirmasi.
+- [OFFICIAL] 30th LSI Design Contest 2027 in Chitose, Hokkaido. Theme: hardware implementation of CNN, number of layers arbitrary.
+- [OFFICIAL] Report deadline 31 Jan 2027. Contest 5 Mar 2027, hybrid. 10-minute presentation (at most 10 slides) and 5-minute Q&A.
+- [OFFICIAL] Submissions: final report and synthesis report for AMD Spartan-7 XC7S25CSGA225-1. Synthesis report mandatory for all classes; format not yet explained (user will provide once published).
+- [OFFICIAL] Judges evaluate not only speed and area, but also ideas, originality, uniqueness, and presentation. Participants' school grade is taken into account.
+- [OFFICIAL] Purpose requirements: validation data specified by organizers and real-time camera input. Validation images provided on the day of the contest (from camera, SD card, etc.). Presentation must show how fast recognition results are output.
+- [OFFICIAL] CNN accepts 32×32 input. Structure refers to 23rd contest design overview; hidden layer structure is free.
+- [OFFICIAL] Class 1 (Image Classification): image classification only. Level 1 and Level 2 target XC7S25CSGA225-1. Level 3 board and architecture free, but must still show synthesis report fitting in XC7S25CSGA225-1.
+- [OFFICIAL] Class 2 (ZERO7): ZERO7 board only, free task, Level 3 only.
+- [OFFICIAL] ZERO7 by Gigafirm is a Raspberry Pi HAT; organizers state loan board can be connected to Raspberry Pi 5. Recommended Vivado: 2025.2.
+- [USER, 25 Nov 2026] Team uses its own Raspberry Pi 5 as host (ADR-033, supersedes the Pi 4 of ADR-022). Board and Pi are in hand; work on the real hardware is on hold by user decision until development and architecture are finished (26 Nov 2026).
+- [OFFICIAL] Training dataset is free, but target classes are specified by organizers. Therefore model must be retrainable, and weights reloadable via SPI **without resynthesis**. [OFFICIAL, website update read 23 Nov 2026] The image classification task lists four classes: cat, dog, deer, horse. [USER, 25 Nov 2026] The project uses these four classes (ADR-037, model `s4`).
+- [OFFICIAL, differs between pages] Team size: English page 1–3 persons, Japanese page at most 4 persons. [USER] Team consists of 4 persons, hence relies on Japanese page rule. [USER, 17 Nov 2026] Organizers have confirmed 4-person team (Q5 in STATUS.md); modification of this line approved by user 18 Nov 2026.
+- [OFFICIAL] Official documents contain no AI usage rules. [USER] User decision: AI may be used as long as compliant with contest provisions.
+- [UNKNOWN] Evaluation weightings, report and synthesis report formats, and whether live hardware demo is permitted.
+- **Target category [USER decision 25 Nov 2026, ADR-036; organizer confirmation relayed 23 Nov 2026]: Class 2 (ZERO7 Class), Level 3, task: image classification, no camera (ADR-035).** Previous text: [PROPOSAL, awaiting organizer confirmation]: Class 2 (ZERO7 Class), Level 3. Still maintain image classification, validation data mode, and real-time camera mode, so that project also fulfills Class 1 Level 3 requirements if class transfer is required. Do not write this category as a fact in report before confirmed.
 
-## 8. Fase BOARD
+## 8. BOARD Phase
 
-Fase board (milestone B1–B6 di STATUS.md) hanya boleh dimulai jika dua syarat terpenuhi:
+Board phase (milestones B1–B6 in STATUS.md) may only begin if two conditions are fulfilled:
 
-1. semua field **wajib** di `board/BOARD_INFO.md` sudah terisi (tidak ada `UNKNOWN`) dan masing-masing punya sumber, dan
-2. saya menulis bahwa board sudah ada di tangan (misalnya "board siap").
+1. all **mandatory** fields in `board/BOARD_INFO.md` are filled (no `UNKNOWN`) and each has a source, and
+2. I write that the board is in hand (e.g. "board siap" or "board ready").
 
-Aturan di fase board:
+Rules in board phase:
 
-- Selalu mulai dari clock aman. Overclocking baru boleh dilakukan setelah E7 bit-exact di clock aman.
-- Jangan pernah mengubah tegangan. Pantau suhu.
-- Hasil board diberi label `[HW]` dan disimpan di `results/hw/`, terpisah dari `results/mock/`.
-- Vivado berjalan di PC, tidak di Raspberry Pi. Skrip untuk Pi harus bisa dijalankan sendiri di Pi, dan hasilnya disalin kembali ke repo.
+- Always start from safe clock. Overclocking may only be conducted after E7 is bit-exact on safe clock.
+- Never alter voltage. Monitor temperature.
+- Board results labeled `[HW]` and stored in `results/hw/`, separated from `results/mock/`.
+- Vivado runs on PC, not on Raspberry Pi. Scripts for Pi must be runnable standalone on Pi, and results copied back to repo.
 
-## 9. Perintah standar (dibuat di M0)
+## 9. Standard commands (created in M0)
 
 ```
-python tools/run.py check            # cek alat dan versi
-python tools/run.py test             # pytest + semua testbench
-python tools/run.py gen              # regmap, vektor, bobot
+python tools/run.py check            # check tools and versions
+python tools/run.py test             # pytest + all testbenches
+python tools/run.py gen              # regmap, vectors, weights
 python tools/run.py train --model s  # training
-python tools/run.py export --model s # kuantisasi + ekspor
-python tools/run.py sim <tb>         # satu testbench
-python tools/run.py campaign         # kampanye fault injection
-python tools/run.py ooc              # Vivado out-of-context (jika Vivado ada)
-python tools/run.py plots            # semua grafik
+python tools/run.py export --model s # quantization + export
+python tools/run.py sim <tb>         # single testbench
+python tools/run.py campaign         # fault injection campaign
+python tools/run.py ooc              # Vivado out-of-context (if Vivado exists)
+python tools/run.py plots            # all plots
 ```
+
+
+## 10. AI Memory, Graphity, and Tool Integration
+
+### 10.1 Graphity Integration
+
+"Graphity" in this section means the `graphify` tool (skill `graphify`); its output lives in `graphify-out/`.
+
+Graphity is used to document and visualize relationships between project files, modules, dependencies, and architecture.
+
+When working on relevant project changes:
+
+1. Consult `graphify-out/GRAPH_REPORT.md` when architectural relationships are relevant.
+2. Consult `graphify-out/GRAPHITY_3D_AUDIT_REPORT.md` when modifying graph data or when the user explicitly requests a 3D visualization update.
+3. Use the installed Graphity skill when analyzing project relationships.
+4. After adding, modifying, moving, or deleting relevant files, evaluate whether Graphity needs updating.
+5. Update the underlying Graphity graph data using the existing Graphity workflow when necessary.
+6. Run the available consistency validation before declaring graph synchronization complete.
+7. Never assume Graphity is automatically synchronized.
+8. Do not overwrite existing graph data without understanding its structure and generation process.
+9. Avoid unnecessary full repository rescans when incremental updates are supported.
+10. Always verify Graphity findings against the actual source code before making decisions.
+11. Treat Graphity as a navigation and analysis aid, not as the source of truth.
+
+#### 3D Visualization Update Policy
+
+- Do NOT automatically regenerate or update the Graphity 3D web visualization after code changes or graph data updates.
+- Preserve existing visualization files, including `graph3d.html`, `graph3d.backup.html`, and related assets.
+- Update the underlying Graphity graph data when necessary, but defer 3D visualization regeneration.
+- Only regenerate or update the 3D web visualization when explicitly requested by the user.
+- Do not spend tokens checking, rebuilding, or auditing the 3D visualization during routine development sessions unless explicitly requested.
+- When the user requests a 3D visualization update:
+  1. Read the latest validated Graphity graph data.
+  2. Consult `graphify-out/GRAPHITY_3D_AUDIT_REPORT.md`.
+  3. Use the existing Graphity workflow to regenerate or synchronize the 3D visualization.
+  4. Run the available consistency validation.
+  5. Verify that the generated visualization reflects the latest graph data.
+- Do not modify or regenerate unrelated Graphity outputs unless required by the existing workflow.
+
+### 10.2 AI Memory Integration
+
+- Claude-Mem supplements project documentation; it does not replace it.
+- `STATUS.md` remains the authoritative source for current project progress.
+- `docs/SPEC.md` remains the authoritative technical specification.
+- `docs/DECISIONS.md` remains the authoritative design decision record.
+- Record important technical decisions, discoveries, and unresolved issues in their appropriate project documents.
+- Do not rely exclusively on conversational memory for critical project information.
+
+### 10.3 Skills, Agents, and Plugins
+
+- Use installed skills and agents when they are relevant to the current task.
+- Prefer specialized tools for RTL development, verification, debugging, architecture analysis, and documentation.
+- Avoid activating unnecessary agents or hooks.
+- Do not duplicate functionality already provided by existing project tools.
+- Verify tool execution rather than assuming installation means functionality is active.
+
+### 10.4 Context and Token Efficiency
+
+- Read only the project documents relevant to the current task, while respecting the mandatory session startup checklist.
+- Avoid repeatedly analyzing unchanged files.
+- Prefer targeted updates over full repository rescans.
+- Preserve important findings in project documentation so future sessions can continue efficiently.
+- Avoid unnecessary Graphity analysis, regeneration, and visualization tasks that do not contribute to the current objective.
+- Prioritize essential project work and verification over optional visualization and reporting tasks.

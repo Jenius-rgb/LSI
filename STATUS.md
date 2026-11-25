@@ -335,19 +335,19 @@ Status update (23 Nov 2026, organizer responses relayed by user; details in `doc
 
 ## Blocked
 
-Updated 2026-11-16.
+Updated 2026-11-26.
 
-- [B] ZERO7 physical board and Raspberry Pi 4 — used starting December 2026 or January 2027 [USER]. All `[HW]` experiments (E1–E4, E6, E7 on board) waiting.
+- [B] Work on the real hardware — board and Raspberry Pi 5 are in hand (25 Nov 2026), but the user holds every hardware step until development and architecture are finished (26 Nov 2026) [USER]. All `[HW]` experiments (E1–E4, E6, E7 on board) waiting. Earlier text: board and Raspberry Pi 4 from December 2026 or January 2027.
 - [B] Official `Zero7.xdc`, VCCO voltage, and bank 14/15/34 IOSTANDARD — not yet published; `board/zero7.xdc` uses LVCMOS33 marked TODO. Bitstream for board must not be built before this is certain.
 - [B] ZERO7 User Manual and schematics — mentioned by organizers, not yet linked on website.
-- [B] Pi 4 compatibility with ZERO7 awaiting organizer confirmation. (team info, 17 Nov 2026: each team uses their own Pi 4; organizers have not yet confirmed.)
+- ~~[B] Pi 4 compatibility with ZERO7~~ superseded 25 Nov 2026: the team uses its own Raspberry Pi 5 (ADR-033).
 - [B] ZERO7 power without Raspberry Pi — official documents only mention power from Pi GPIO header (IN-41); other methods [UNKNOWN], ask organizers. Without power, steps without Pi cannot begin.
 - [B] Actual SPI speed, button polarities, WS2812B chain, boot from QSPI flash — needs board or user manual.
-- [B] Target classes — not yet announced by organizers (use CIFAR-10 temporarily). Update 23 Nov 2026: the website lists four classes (cat, dog, deer, horse) for the image classification task; for Class 2 they are not mandatory (organizer). Choice of the Class 2 evaluation method is a user decision.
+- ~~[B] Target classes~~ decided 25 Nov 2026: the four official classes cat, dog, deer, horse (ADR-037, model `s4`). History: not announced at first (CIFAR-10 used temporarily). Update 23 Nov 2026: the website lists four classes (cat, dog, deer, horse) for the image classification task; for Class 2 they are not mandatory (organizer). Choice of the Class 2 evaluation method is a user decision.
 - [B] JTAG programming and debug (updated 25 Nov 2026): the team uses a SEGGER J-Link through the J-Link XVCD Server, untested [UNKNOWN]; JTAG header location and pin order on this white ZERO7 not identified; VCC3V3 at the header to be measured by the user before VTref is connected. Organizer question on alternative cables still pending. Blocks B1–B3 and the JTAG-host experiments.
 - ~~[B] Raspberry Pi for power and SPI~~ resolved 25 Nov 2026: Raspberry Pi 5 available now [USER]; Pi 5 compatibility with ZERO7 [UNKNOWN] until tested.
 - ~~[B] Camera type~~ resolved 25 Nov 2026: no camera (ADR-035 update); images from files on the Pi.
-- ~~[B] Contest class~~ decided 25 Nov 2026: Class 2 Level 3, image classification (ADR-036). Open: class set and evaluation method (follow-up ADR).
+- ~~[B] Contest class~~ decided 25 Nov 2026: Class 2 Level 3, image classification (ADR-036); class set decided by ADR-037.
 - [B] Official synthesis report format — not yet explained by organizers; currently in the form of Vivado `.rpt` files and `summary.md` in `results/vivado/official/` (LUT variant) and `results/vivado/official_dsp/` (DSP variant).
 - [B] Full text of Li et al. (ITC-Asia 2019): user did not find it; claims regarding recovery use the phrase "to the best of our knowledge".
 
