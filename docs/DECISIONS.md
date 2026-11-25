@@ -416,3 +416,20 @@ ADR-001 through ADR-007 are initial proposals from the starter kit (2026-11-09).
 
 - **Order:** ADR-037 (four classes) first, then the ADR-032 study run, then ADR-028, then ADR-031 + D5. Each follows ADR → SPEC → golden model and tests → RTL, with Vivado before/after comparison.
 - **Status:** Accepted (25 Nov 2026), decision delegated by the user.
+
+## ADR-039 — Fast-domain reset distribution after ADR-031 (rejected)
+
+- **Context:** after ADR-031 the worst `clk_fast` path of the official LUT report was the synchronized fast reset `u_engine/rst_fast_r` → `u_fast/can_take_reg_rep` (0 logic levels, 92 % routing, slack 1.180 ns at 8 ns) [VIVADO-STA]. The user asked to fix it (26 Nov 2026).
+- **Alternatives tried (26 Nov 2026):** (a) a local reset register in `fast_path` (`max_fanout = 32`, one cycle later) driving its control registers and the lane array, plus no reset on the LUT-lane accumulators (reset sets `first`, so the first unit loads base 0); (b) the local register alone.
+- **Results [VIVADO-STA]:** both bit-exact (71 fast RTL benches each) [SIM].
+
+  | Run | Official clk_fast WNS at 8 ns | Official clk_safe WNS | OOC fast Fmax (SPEC 7.4 settings) | OOC clk_safe | Worst official clk_fast path |
+  | --- | --- | --- | --- | --- | --- |
+  | ADR-031 state (committed) | 1.180 ns (146.6 MHz) | 0.694 ns | 159.3 MHz | 144.6 MHz | fast reset fan-out |
+  | (a) `--tag rstf` | 0.744 ns (137.8 MHz) | 0.680 ns | 160.2 MHz | 146.9 MHz | `p_reg` → `acc_reg` in a checksum lane, 3 levels, 80 % routing |
+  | (b) `--tag rstl` | 0.250 ns (129.7 MHz) | 0.733 ns | 156.9 MHz | 142.4 MHz (fails the 7.0 ns OOC target) | `acc_last` → `hold_y`, 1 level, 92 % routing |
+
+  Reports: `results/vivado/official_rstf/`, `official_rstl/`, OOC rows `rstf`, `rstl` in `fpga/reports/summary.csv`.
+- **Decision:** rejected; the RTL stays at the ADR-031 state. Moving the reset tree only re-placed the domain and exposed other high-fan-out nets (`acc_last` to the hold registers, the lane accumulators). Across three netlists that differ only in reset distribution the official `clk_fast` WNS moved between 0.250 and 1.180 ns, so single-run differences of this size are within implementation variation and do not show an effect.
+- **If revisited:** treat the high-fan-out control nets of the fast domain together (reset, `acc_last` capture, `can_take`), and compare each variant over several implementation runs (directives or seeds), not one.
+- **Status:** Rejected (26 Nov 2026).
