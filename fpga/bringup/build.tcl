@@ -26,6 +26,7 @@ route_design
 report_utilization -file [file join $outdir utilization.rpt]
 report_timing_summary -file [file join $outdir timing_summary.rpt]
 report_drc -file [file join $outdir drc.rpt]
+report_power -file [file join $outdir power.rpt]
 write_bitstream -force [file join $outdir $bitname]
 if { $ila } { write_debug_probes -force [file join $outdir $top.ltx] }
 puts "BRINGUP bitstream [file join $outdir $bitname]"

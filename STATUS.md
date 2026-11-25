@@ -247,7 +247,7 @@ Effect on the board phase: power through the Raspberry Pi header is the only doc
 - [x] 3.1 Pi 5 software: gpiozero on the lgpio factory chosen explicitly, `pi_check` checks lgpio, `board/BRINGUP.md` Pi 5 setup; camera mode takes picamera / USB index / video file and is tested on a video file without a Pi
 - [x] 3.2 `docs/JLINK_VIVADO.md`: J-Link XVCD Server route, openFPGALoader fallback, wiring table (ZERO7 header UNKNOWN), safety checklist, five-step test order
 - [x] 3.3 Bring-up: `blink` (CLK20M B13, LED R3/R2, f_clk = 2·HALF·n/t), `io_test` (buttons, WS2812B), new `spi_loopback` (SPI0 CE0 echo, `tb_spi_loopback` PASS 619/619 [SIM], `board/spi_loopback_check.py` for the Pi); `board/zero7.xdc` uses no QSPI, JTAG or configuration pin
-- [ ] 3.4 Vivado reports for the bring-up designs in `results/vivado/bringup/` (see Evidence log); SENTINEL already fits (LUT variant 6,832 LUT, DSP variant 5,472 LUT + 14 DSP of 14,600 LUT / 80 DSP [VIVADO-STA])
+- [x] 3.4 Vivado reports for the bring-up designs in `results/vivado/bringup/` (blink, io_test, spi_loopback: all fit, WNS > 0 at 20 MHz, DRC 0 checks; Evidence log); SENTINEL already fits (LUT variant 6,832 LUT, DSP variant 5,472 LUT + 14 DSP of 14,600 LUT / 80 DSP [VIVADO-STA])
 - [x] 3.5 ADR-033 (Pi 5), ADR-034 (J-Link), ADR-035 (camera via Pi) accepted as team decisions; ADR-036 (class) Proposed; SPEC header, §14 and §15 updated
 
 **Waiting for the user (hardware), in this order** (details in `docs/JLINK_VIVADO.md` and `board/BRINGUP.md`):
@@ -474,3 +474,8 @@ Written 18 Nov 2026.
 | 2026-11-18 | reset fan-out | `python tools/run.py synth-official` after `max_fanout = 64` on `rst_safe_r` | 6,832 LUTs, 6,209 FFs, clk_safe 136.6 MHz (WNS +0.678 ns), lane 140.8 MHz [VIVADO-STA] |
 | 2026-11-18 | reset fan-out | `python tools/run.py synth-official --variant dsp` | 5,472 LUTs, 5,429 FFs, 14 DSPs, clk_safe 132.4 MHz (WNS +0.445 ns), lane 256.5 MHz at 250 MHz analysis (WNS +0.102 ns) [VIVADO-STA] |
 | 2026-11-18 | reset fan-out | `python tools/run.py test` | 257 passed in 215.99s (`build/test_session3b.log`) |
+| 2026-11-25 | orientation | `python tools/run.py check`; `python tools/run.py test` | check ok (Python 3.13.1, Icarus 12, Verilator 5.053, Vivado 2025.2); 257 passed in 288.53s (`build/test_tahap3.log`) |
+| 2026-11-25 | 3.3 | `python tools/run.py sim spi_loopback` | PASS 619/619 frames=42 [SIM]; lint `spi_loopback` clean |
+| 2026-11-25 | 3.4 | `python tools/run.py bringup blink --accept-inferred-io` | 8 LUT, 33 FF, WNS +45.476 ns at 50 ns, WHS +0.260 ns, DRC 0 checks, 0.058 W [VIVADO-STA], `results/vivado/bringup/blink/` |
+| 2026-11-25 | 3.4 | `python tools/run.py bringup io_test --accept-inferred-io` | 52 LUT, 76 FF, WNS +42.493 ns, WHS +0.122 ns, DRC 0 checks, 0.062 W [VIVADO-STA], `results/vivado/bringup/io_test/` |
+| 2026-11-25 | 3.4 | `python tools/run.py bringup spi_loopback --accept-inferred-io` | 14 LUT, 29 FF, WNS +44.709 ns, WHS +0.131 ns, DRC 0 checks, 0.062 W [VIVADO-STA], `results/vivado/bringup/spi_loopback/` |

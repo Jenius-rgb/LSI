@@ -44,3 +44,15 @@ def test_output_goes_to_build_and_names_the_purpose(tmp_path):
     cmd = bb.vivado_command("vivado", "io_test", tmp_path)
     assert str(tmp_path) in " ".join(cmd) and "io_test_top" in " ".join(cmd)
     assert bb.bitstream_name("io_test").endswith("_BRINGUP.bit")
+
+
+def test_reports_are_published_to_results_without_the_bitstream(tmp_path):
+    """Bring-up reports go to results/vivado/bringup/<design>/ (committed); the bitstream stays in build/."""
+    build_dir, results = tmp_path / "build", tmp_path / "results"
+    build_dir.mkdir()
+    for name in ("utilization.rpt", "timing_summary.rpt", "drc.rpt", "power.rpt"):
+        (build_dir / name).write_text(name, encoding="utf-8")
+    (build_dir / "blink_top_BRINGUP.bit").write_bytes(b"bit")
+    out = bb.publish_reports(build_dir, "blink", results)
+    assert sorted(p.name for p in out.iterdir()) == ["README.md", "drc.rpt", "power.rpt", "timing_summary.rpt", "utilization.rpt"]
+    assert "[VIVADO-STA]" in (out / "README.md").read_text(encoding="utf-8")

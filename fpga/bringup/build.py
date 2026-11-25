@@ -49,6 +49,26 @@ def vivado_command(vivado: str, design: str, outdir: Path, ila: bool = False) ->
             "-tclargs", d["top"], rtl, str(ROOT / d["xdc"]), str(outdir), bitstream_name(design), "1" if ila else "0"]
 
 
+REPORTS = ("utilization.rpt", "timing_summary.rpt", "drc.rpt", "power.rpt")
+
+
+def publish_reports(build_dir: Path, design: str, results_root: Path | None = None) -> Path:
+    """Copy the Vivado reports (not the bitstream) to results/vivado/bringup/<design>/ so they can be committed."""
+    import shutil
+
+    out = (results_root or ROOT / "results" / "vivado" / "bringup") / design
+    out.mkdir(parents=True, exist_ok=True)
+    for name in REPORTS:
+        if (build_dir / name).exists():
+            shutil.copyfile(build_dir / name, out / name)
+    (out / "README.md").write_text(
+        f"# Bring-up design `{design}` on xc7s25csga225-1 [VIVADO-STA]\n\n"
+        f"Reports from `python tools/run.py bringup {design} --accept-inferred-io` (`fpga/bringup/build.py`, Vivado batch).\n"
+        "Static estimates after place and route; nothing here was measured on a board. The I/O standards are an "
+        "inference (ADR-024), so the bitstream itself stays in build/ and is not committed.\n", encoding="utf-8", newline="\n")
+    return out
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("design", choices=sorted(DESIGNS))
@@ -73,6 +93,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"failed; see {(outdir / 'vivado.log').relative_to(ROOT)}")
         return 1
     print(f"[VIVADO] wrote {bit.relative_to(ROOT).as_posix()} (bring-up only, not committed)")
+    print(f"[VIVADO-STA] reports in {publish_reports(outdir, args.design).relative_to(ROOT).as_posix()}")
     return 0
 
 
