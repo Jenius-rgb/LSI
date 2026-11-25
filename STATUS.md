@@ -238,7 +238,7 @@ These supersede conflicting entries in this file and in earlier prompts (details
 2. **ZERO7 is in the user's hands** (photos in `board/photos/`). The board phase still starts only per CLAUDE.md §8 (mandatory BOARD_INFO fields without UNKNOWN, and "board siap").
 3. **Debugger: SEGGER J-Link** (20-pin JTAG), no Digilent cable. Vivado route: J-Link XVCD Server (J-Link software ≥ V7.92d, port 2542 [VERIFIED EXTERNAL]); programming and ILA through it [UNKNOWN] until the user tests it. `docs/JLINK_VIVADO.md`.
 4. **Camera only through the Raspberry Pi** (Pi captures, scales to 32×32, sends over SPI); no camera module on the FPGA. Camera type (USB or CSI) is a question for the user; a video file is the development stand-in, and the report must say the real camera demo is untested until it is.
-5. **Contest class: user decision pending.** ADR-036 (Proposed) compares Class 1 Level 3 and Class 2. Conflict to reconcile: the 23 Nov record says the organizers confirmed Class 2 (below and `docs/official/CORRESPONDENCE_2026-11.md` §1). `CLAUDE.md` §7 is not changed. The XC7S25CSGA225-1 synthesis report is mandatory either way [OFFICIAL].
+5. **Contest class (decided 25 Nov 2026): Class 2 Level 3, image classification, no camera** (ADR-036, ADR-035). Earlier text: contest class: user decision pending. ADR-036 (Proposed) compares Class 1 Level 3 and Class 2. Conflict to reconcile: the 23 Nov record says the organizers confirmed Class 2 (below and `docs/official/CORRESPONDENCE_2026-11.md` §1). `CLAUDE.md` §7 is not changed. The XC7S25CSGA225-1 synthesis report is mandatory either way [OFFICIAL].
 
 Effect on the board phase: power through the Raspberry Pi header is the only documented method (IN-41) and is now available; a standalone supply stays unconfirmed. The remaining hardware blockers are the verified XDC (bank voltages, I/O standards), the JTAG header location on this board, and whether the J-Link works through XVC.
 
@@ -249,6 +249,8 @@ Effect on the board phase: power through the Raspberry Pi header is the only doc
 - [x] 3.3 Bring-up: `blink` (CLK20M B13, LED R3/R2, f_clk = 2·HALF·n/t), `io_test` (buttons, WS2812B), new `spi_loopback` (SPI0 CE0 echo, `tb_spi_loopback` PASS 619/619 [SIM], `board/spi_loopback_check.py` for the Pi); `board/zero7.xdc` uses no QSPI, JTAG or configuration pin
 - [x] 3.4 Vivado reports for the bring-up designs in `results/vivado/bringup/` (blink, io_test, spi_loopback: all fit, WNS > 0 at 20 MHz, DRC 0 checks; Evidence log); SENTINEL already fits (LUT variant 6,832 LUT, DSP variant 5,472 LUT + 14 DSP of 14,600 LUT / 80 DSP [VIVADO-STA])
 - [x] 3.5 ADR-033 (Pi 5), ADR-034 (J-Link), ADR-035 (camera via Pi) accepted as team decisions; ADR-036 (class) Proposed; SPEC header, §14 and §15 updated
+
+**On hold by the user (25 Nov 2026): the hardware steps below wait for the user's instruction; development continues first.**
 
 **Waiting for the user (hardware), in this order** (details in `docs/JLINK_VIVADO.md` and `board/BRINGUP.md`):
 1. Identify the JTAG header on the white ZERO7 from an official source (ask the organizers with the user manual / XDC question).
@@ -337,8 +339,8 @@ Updated 2026-11-16.
 - [B] Target classes — not yet announced by organizers (use CIFAR-10 temporarily). Update 23 Nov 2026: the website lists four classes (cat, dog, deer, horse) for the image classification task; for Class 2 they are not mandatory (organizer). Choice of the Class 2 evaluation method is a user decision.
 - [B] JTAG programming and debug (updated 25 Nov 2026): the team uses a SEGGER J-Link through the J-Link XVCD Server, untested [UNKNOWN]; JTAG header location and pin order on this white ZERO7 not identified; VCC3V3 at the header to be measured by the user before VTref is connected. Organizer question on alternative cables still pending. Blocks B1–B3 and the JTAG-host experiments.
 - ~~[B] Raspberry Pi for power and SPI~~ resolved 25 Nov 2026: Raspberry Pi 5 available now [USER]; Pi 5 compatibility with ZERO7 [UNKNOWN] until tested.
-- [B] Camera type (25 Nov 2026): USB webcam or CSI module on the Pi not decided by the user; development uses a video file.
-- [B] Contest class (25 Nov 2026): user decision pending (ADR-036, Proposed); conflicts with the 23 Nov record of an organizer confirmation of Class 2.
+- ~~[B] Camera type~~ resolved 25 Nov 2026: no camera (ADR-035 update); images from files on the Pi.
+- ~~[B] Contest class~~ decided 25 Nov 2026: Class 2 Level 3, image classification (ADR-036). Open: class set and evaluation method (follow-up ADR).
 - [B] Official synthesis report format — not yet explained by organizers; currently in the form of Vivado `.rpt` files and `summary.md` in `results/vivado/official/` (LUT variant) and `results/vivado/official_dsp/` (DSP variant).
 - [B] Full text of Li et al. (ITC-Asia 2019): user did not find it; claims regarding recovery use the phrase "to the best of our knowledge".
 

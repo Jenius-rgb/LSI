@@ -331,8 +331,9 @@ ADR-001 through ADR-007 are initial proposals from the starter kit (2026-11-09).
 - **Context:** team decision of 25 Nov 2026: no camera module on the FPGA side; a camera, if used, sits on the Raspberry Pi, which captures, scales to 32×32 and sends the image over SPI [USER]. Real-time camera input is a condition of the image classification task [OFFICIAL, website §2]; for Class 2 it is not mandatory (organizer response relayed by the user, 23 Nov 2026). The camera type (USB webcam or CSI module) is not decided [USER].
 - **Alternatives:** (a) camera on the FPGA PMOD; (b) camera on the Pi.
 - **Decision:** (b). `sentinel.camera.open_source` takes `picamera` (CSI through picamera2), a camera index (USB through OpenCV/V4L2) or a video file; `python -m sentinel.camera_mode --source …`. During development a video file stands in for the camera, and any report states that the real camera demo is untested until it is run.
-- **Impact:** no RTL change; SPEC §15 records the decision. The camera type is a question for the user.
-- **Status:** Accepted (team decision, 25 Nov 2026).
+- **Impact:** no RTL change; SPEC §15 records the decision.
+- **Update (user, 25 Nov 2026):** no camera is used. For Class 2 real-time camera input is not mandatory (organizer response relayed 23 Nov 2026); input images come from files on the Raspberry Pi (validation-folder mode). The camera code stays in `sw/` but is not part of the evaluation or demo.
+- **Status:** Accepted (team decision, 25 Nov 2026; no camera, 25 Nov 2026).
 
 ## ADR-036 — Contest class: Class 1 Level 3 or Class 2 (ZERO7)
 
@@ -340,4 +341,5 @@ ADR-001 through ADR-007 are initial proposals from the starter kit (2026-11-09).
 - **Alternatives:** (a) Class 1 Level 3: judged on four-class accuracy and speed against other teams; ZERO7 not required. (b) Class 2: SENTINEL's own evaluation method (bit-exact against the golden model, [HW] timing-error atlas, throughput of the three checker modes) on ZERO7, which must then be used.
 - **Recommendation (not a decision):** (b), keeping a four-class classification mode and the camera mode so that (a) stays possible. Reasons [INFERENCE]: SENTINEL's distinguishing results (error atlas, correction against recompute) need the physical Spartan-7 and fit a self-defined evaluation; in Class 1 the 8-lane engine (about 2 GOP/s at 125 MHz [SIM × VIVADO-STA]) competes on raw accuracy and speed, where it is not designed to stand out. Risk of (b): every Class 2 result depends on the board working in time (power through the Pi, verified XDC, J-Link through XVC).
 - **Impact:** `CLAUDE.md` §7 (target class) only after the user decides; an evaluation-method ADR and SPEC change (for example retraining for the four classes) follow the decision.
-- **Status:** Proposed (25 Nov 2026), awaiting the user's decision.
+- **Decision (user, 25 Nov 2026):** (b) **Class 2 (ZERO7 Class), Level 3, with image classification as the task**, because ZERO7 and the Raspberry Pi 5 are in hand. The class set and evaluation method (for example the four official classes cat, dog, deer, horse, or the CIFAR-10 stand-in) are decided in a follow-up ADR.
+- **Status:** Accepted (user decision, 25 Nov 2026). `CLAUDE.md` §7 target line updated accordingly.
