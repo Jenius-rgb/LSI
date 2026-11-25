@@ -37,11 +37,11 @@ def report(model: str, ks: tuple[int, ...] = (8, 16)) -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--model", default="all", choices=["s", "xs", "all"])
+    parser.add_argument("--model", default="all", choices=["s", "s4", "xs", "all"])
     args = parser.parse_args()
     out_dir = ROOT / "results" / "model"
     out_dir.mkdir(parents=True, exist_ok=True)
-    for model in ["s", "xs"] if args.model == "all" else [args.model]:
+    for model in ["s", "s4", "xs"] if args.model == "all" else [args.model]:
         rep = report(model)
         (out_dir / f"arch_{model}.json").write_text(json.dumps(rep, indent=2) + "\n", encoding="utf-8")
         print(f"[SIM] model {model}")

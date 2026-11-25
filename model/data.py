@@ -59,10 +59,23 @@ def load_image_folder(root: Path) -> ImageSet:
     return ImageSet(np.stack(images), np.asarray(labels, dtype=np.int64), classes)
 
 
+OFFICIAL_CLASSES = ["cat", "dog", "deer", "horse"]  # Design Specification §4, in the official order (ADR-037)
+
+
+def subset(full: ImageSet, classes: list[str]) -> ImageSet:
+    """Keep the images of the named classes and relabel them 0..len(classes)-1 in the order given."""
+    index = {full.classes.index(name): new for new, name in enumerate(classes)}
+    keep = np.isin(full.labels, list(index))
+    labels = np.asarray([index[int(v)] for v in full.labels[keep]], dtype=np.int64)
+    return ImageSet(full.images[keep], labels, list(classes))
+
+
 def load_dataset(name: str, data_dir: str | None = None) -> tuple[ImageSet, ImageSet]:
     """Return (train, test). For a folder dataset expects <data_dir>/train and <data_dir>/val."""
     if name == "cifar10":
         return load_cifar10(True), load_cifar10(False)
+    if name == "cifar10_4":
+        return subset(load_cifar10(True), OFFICIAL_CLASSES), subset(load_cifar10(False), OFFICIAL_CLASSES)
     if name == "folder":
         if not data_dir:
             raise ValueError("--data-dir is required for a folder dataset")

@@ -221,7 +221,7 @@ def full_campaign(model: str, n_images: int, seed: int, sizes: dict[str, int]) -
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--model", default=load_hw_config()["MODEL"], choices=["s", "xs"])
+    parser.add_argument("--model", default=load_hw_config()["MODEL"], choices=["s", "s4", "xs"])
     parser.add_argument("--images", type=int, default=50)
     parser.add_argument("--seed", type=int, default=2027)
     parser.add_argument("--single", type=int, default=10000)

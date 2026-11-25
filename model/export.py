@@ -308,8 +308,9 @@ def quantize_and_evaluate(model: str, dataset: str, data_dir: str | None, calib_
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--model", required=True, choices=["s", "xs"])
-    parser.add_argument("--dataset", default="cifar10", choices=["cifar10", "folder"])
+    parser.add_argument("--model", required=True, choices=["s", "s4", "xs"])
+    parser.add_argument("--dataset", default=None, choices=["cifar10", "cifar10_4", "folder"],
+                        help="default: the dataset in the model config, else cifar10")
     parser.add_argument("--data-dir", default=None)
     parser.add_argument("--calib-count", type=int, default=1000)
     parser.add_argument("--seed", type=int, default=2027)
@@ -317,6 +318,9 @@ def main() -> None:
     parser.add_argument("--from-quant", action="store_true", help="skip quantisation; reuse results/model/<m>/quant.npz")
     args = parser.parse_args()
 
+    from model.config import load_model_config
+
+    args.dataset = args.dataset or load_model_config(args.model).get("dataset", "cifar10")
     result_dir = ROOT / "results" / "model" / args.model
     if args.from_quant:
         qm = QModel.load(result_dir / "quant.npz")

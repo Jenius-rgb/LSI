@@ -57,6 +57,7 @@ def accuracy(model: nn.Module, images: np.ndarray, labels: np.ndarray, device: t
 
 def train(args: argparse.Namespace) -> dict:
     cfg = load_model_config(args.model)
+    args.dataset = args.dataset or cfg.get("dataset", "cifar10")
     tcfg = cfg["train"]
     seed = args.seed if args.seed is not None else tcfg["seed"]
     epochs = args.epochs if args.epochs is not None else tcfg["epochs"]
@@ -150,8 +151,9 @@ def train(args: argparse.Namespace) -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--model", required=True, choices=["s", "xs"])
-    parser.add_argument("--dataset", default="cifar10", choices=["cifar10", "folder"])
+    parser.add_argument("--model", required=True, choices=["s", "s4", "xs"])
+    parser.add_argument("--dataset", default=None, choices=["cifar10", "cifar10_4", "folder"],
+                        help="default: the dataset in the model config, else cifar10")
     parser.add_argument("--data-dir", default=None, help="folder dataset root with train/ and val/")
     parser.add_argument("--n-classes", type=int, default=None)
     parser.add_argument("--epochs", type=int, default=None)

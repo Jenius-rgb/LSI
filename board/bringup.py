@@ -171,7 +171,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("step", choices=sorted(STEPS))
     parser.add_argument("--dry-run", action="store_true")
-    parser.add_argument("--model", default="xs", choices=["s", "xs"])
+    parser.add_argument("--model", default="xs", choices=["s", "s4", "xs"])
     parser.add_argument("--images", type=int, default=200)
     parser.add_argument("--host", choices=["spi", "jtag"], default="spi",
                         help="spi: Raspberry Pi; jtag: PC over the JTAG cable with board/top_jtag.v (ADR-025)")
