@@ -32,6 +32,8 @@ References: **TK-n** = `docs/official/ZERO7FPGA_Connection-table_261109_001.pdf`
 
 ## 2. Wire the JTAG-HS2 (no power)
 
+**Superseded 25 Nov 2026:** the team uses a SEGGER J-Link, not a Digilent cable. Follow `docs/JLINK_VIVADO.md` (wiring, safety checklist, test order) instead of the table below; the table is kept for reference to IN-42.
+
 [USER, photo, 18 Nov 2026] The team's cable is a Digilent JTAG-HS2 Rev. A. The official guide shows a JTAG-HS3 with six
 jumper wires (IN-42); the HS2 needs the same six signals. Match signals by label, not by header position: the HS2 header
 order from the photo (TMS, TDI, TDO, TCK, GND, VDD) differs from the colour list of IN-42. Tick every row before power is
