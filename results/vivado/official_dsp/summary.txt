@@ -4,19 +4,20 @@ part xc7s25csga225-1
 top top_board
 K 8
 LANE_IMPL 1
+ZERO_SKIP 0
 C3_EN 1
-SAFE_DIV 8
+SAFE_DIV 7
 clock clk_in period_ns 50.000 wns_ns 48.466 whs_ns 0.357
 clock safe_fb period_ns 50.000 wns_ns NA whs_ns NA
-clock clk_safe_raw period_ns 8.000 wns_ns 0.445 whs_ns 0.061
+clock clk_safe_raw period_ns 7.000 wns_ns 0.198 whs_ns 0.049
 clock clkfbout_clk_wiz_turbo period_ns 50.000 wns_ns NA whs_ns NA
-clock clk_out1_clk_wiz_turbo period_ns 4.000 wns_ns NA whs_ns NA
-clock clk_fast_safe period_ns 8.000 wns_ns 4.092 whs_ns 0.060
-clock clk_fast_turbo period_ns 4.000 wns_ns 0.102 whs_ns 0.060
-design_wns_ns 0.102
-design_whs_ns 0.060
-lut 6096
-ff 5429
+clock clk_out1_clk_wiz_turbo period_ns 3.922 wns_ns NA whs_ns NA
+clock clk_fast_safe period_ns 7.000 wns_ns 3.241 whs_ns 0.050
+clock clk_fast_turbo period_ns 3.922 wns_ns 0.173 whs_ns 0.050
+design_wns_ns 0.173
+design_whs_ns 0.049
+lut 6099
+ff 5566
 ramb36 13
 ramb18 2
 dsp48 14

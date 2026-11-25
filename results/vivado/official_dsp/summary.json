@@ -18,13 +18,13 @@
   },
   {
    "name": "clk_safe_raw",
-   "period_ns": 8.0,
-   "wns_ns": 0.445,
-   "whs_ns": 0.061,
-   "intra_wns_ns": 0.445,
-   "intra_whs_ns": 0.061,
-   "intra_endpoints": 12317,
-   "fmax_mhz": 132.36267372600926
+   "period_ns": 7.0,
+   "wns_ns": 0.198,
+   "whs_ns": 0.049,
+   "intra_wns_ns": 0.198,
+   "intra_whs_ns": 0.049,
+   "intra_endpoints": 12333,
+   "fmax_mhz": 147.0155836518671
   },
   {
    "name": "clkfbout_clk_wiz_turbo",
@@ -34,29 +34,29 @@
   },
   {
    "name": "clk_out1_clk_wiz_turbo",
-   "period_ns": 4.0,
+   "period_ns": 3.922,
    "wns_ns": null,
    "whs_ns": null
   },
   {
    "name": "clk_fast_safe",
-   "period_ns": 8.0,
-   "wns_ns": 4.092,
-   "whs_ns": 0.06,
-   "intra_wns_ns": 4.092,
-   "intra_whs_ns": 0.06,
-   "intra_endpoints": 4368,
-   "fmax_mhz": 255.88536335721594
+   "period_ns": 7.0,
+   "wns_ns": 3.241,
+   "whs_ns": 0.05,
+   "intra_wns_ns": 3.241,
+   "intra_whs_ns": 0.05,
+   "intra_endpoints": 4489,
+   "fmax_mhz": 266.02819898909286
   },
   {
    "name": "clk_fast_turbo",
-   "period_ns": 4.0,
-   "wns_ns": 0.102,
-   "whs_ns": 0.06,
-   "intra_wns_ns": 0.102,
-   "intra_whs_ns": 0.06,
-   "intra_endpoints": 4368,
-   "fmax_mhz": 256.5418163160595
+   "period_ns": 3.922,
+   "wns_ns": 0.173,
+   "whs_ns": 0.05,
+   "intra_wns_ns": 0.173,
+   "intra_whs_ns": 0.05,
+   "intra_endpoints": 4489,
+   "fmax_mhz": 266.73779674579885
   }
  ],
  "label": "[VIVADO-STA]",
@@ -65,12 +65,13 @@
  "top": "top_board",
  "K": "8",
  "LANE_IMPL": "1",
+ "ZERO_SKIP": "0",
  "C3_EN": "1",
- "SAFE_DIV": "8",
- "design_wns_ns": "0.102",
- "design_whs_ns": "0.060",
- "lut": "6096",
- "ff": "5429",
+ "SAFE_DIV": "7",
+ "design_wns_ns": "0.173",
+ "design_whs_ns": "0.049",
+ "lut": "6099",
+ "ff": "5566",
  "ramb36": "13",
  "ramb18": "2",
  "dsp48": "14",
@@ -79,19 +80,19 @@
  "unrouted_nets": "0",
  "utilization_post_route": {
   "lut": {
-   "used": 5472.0,
+   "used": 5536.0,
    "available": 14600.0,
-   "util_pct": 37.48
+   "util_pct": 37.92
   },
   "ff": {
-   "used": 5429.0,
+   "used": 5566.0,
    "available": 29200.0,
-   "util_pct": 18.59
+   "util_pct": 19.06
   },
   "slice": {
-   "used": 1956.0,
+   "used": 1987.0,
    "available": 3650.0,
-   "util_pct": 53.59
+   "util_pct": 54.44
   },
   "bram_tile": {
    "used": 14.0,
@@ -152,32 +153,27 @@
   }
  },
  "drc": {
-  "Warning": 1
+  "Warning": 2
  },
  "methodology": {
   "Warning": 68
  },
  "power": {
-  "total_w": 0.527,
-  "dynamic_w": 0.465,
+  "total_w": 0.556,
+  "dynamic_w": 0.493,
   "static_w": 0.062,
   "confidence": "Medium"
  },
  "cdc": {
   "CDC-1": {
    "severity": "Critical",
-   "count": 760,
+   "count": 824,
    "description": "1-bit unknown CDC circuitry"
   },
   "CDC-3": {
    "severity": "Info",
    "count": 40,
    "description": "1-bit synchronized with ASYNC_REG property"
-  },
-  "CDC-4": {
-   "severity": "Critical",
-   "count": 2,
-   "description": "Multi-bit unknown CDC circuitry"
   },
   "CDC-13": {
    "severity": "Critical",
@@ -281,10 +277,10 @@
  ],
  "bus_skew": {
   "constraints": 16,
-  "worst_slack_ns": 2.906,
-  "worst_actual_ns": 1.094
+  "worst_slack_ns": 2.99,
+  "worst_actual_ns": 0.932
  },
  "inter_clock": [],
  "command": "python tools/run.py synth-official --variant dsp",
- "note": "ADR-030 (d) DSP variant, lanes analysed at 250 MHz; ADR-029 wc_gen plus replicated reset register (max_fanout 64)"
+ "model": "s4"
 }

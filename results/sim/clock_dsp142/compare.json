@@ -1,0 +1,20 @@
+{
+  "label": "[SIM]",
+  "model": "s4",
+  "lanes": "dsp_min",
+  "images": 10,
+  "note": "clk_safe cycles per image from tb_system at the given clock ratio; time = cycles / f_safe assumes the real clocks",
+  "f125_lane250": {
+    "ratio": 2.0,
+    "f_safe_mhz": 125.0,
+    "mean_cycles": 162397.0,
+    "ms_per_image": 1.2992
+  },
+  "f142857_lane255": {
+    "ratio": 1.785,
+    "f_safe_mhz": 142.857,
+    "mean_cycles": 175745.7,
+    "ms_per_image": 1.2302
+  },
+  "time_reduction_pct": 5.31
+}

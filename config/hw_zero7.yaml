@@ -16,7 +16,9 @@ ACT1_AW: 11
 # the LUT variant above stays the overclocking research variant (E1-E3). Numbers never mix the two.
 variant_dsp:
   LANE_IMPL: dsp_min
-  lane_mhz: 250.0   # lane clock analysed by the official flow = operand supply limit R x f_safe (ADR-013)
+  safe_div: 7       # ADR-032 (b): clk_safe = 1000/7 = 142.857 MHz, operand supply R x f_safe = 285.7 MHz
+  lane_mhz: 255.0   # lane clock analysed by the official flow: turbo level 13 (125 + 13 x 10 MHz), below the DSP lane
+                    # Fmax of the 142.857 MHz run (261.3 MHz) and below the supply; was 250 = R x 125 MHz (ADR-030)
 clock:
   f_in_mhz: 20.0    # CLK20M on pin B13 [OFFICIAL: board/BOARD_INFO.md]
   vco_mhz: 1000.0   # M = 50, D = 1

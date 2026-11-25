@@ -39,7 +39,7 @@ SENTINEL is an INT8 CNN accelerator on Spartan-7 with **K parallel MAC lanes**. 
 | `INJ_EN` | 1 | fault injection logic synthesized |
 | `ZERO_SKIP` | 0 | 0: off. 1: operand sets with activation 0 are not sent to the lanes, except a set that closes a unit or opens a pass, and every unit keeps at least K + 2 + C3 sets (§5.4). 2: the same skipping with unit ends spaced by a stall in `fast_path` instead (comparison variant). Synthesis parameter (ADR-028); flag bit 4 of the ID word is set for 1 and 2 |
 
-Official variant for ZERO7 and synthesis report is in `config/hw_zero7.yaml`: K = 8, R = 2, `C3_EN = 1`, `LANE_IMPL = lut`, model `s4` (ADR-013; model `s` until ADR-037). The bitstream does not depend on the model: weights are loaded over SPI.
+Official variant for ZERO7 and synthesis report is in `config/hw_zero7.yaml`: K = 8, R = 2, `C3_EN = 1`, `LANE_IMPL = lut`, model `s4` (ADR-013; model `s` until ADR-037), clk_safe 125 MHz. The DSP variant (`variant_dsp`) uses `LANE_IMPL = dsp_min`, clk_safe 142.857 MHz and lanes analysed at 255 MHz (ADR-030 (d), ADR-032 (b)). The bitstream does not depend on the model: weights are loaded over SPI.
 
 ---
 
@@ -303,7 +303,7 @@ In fast domain, MAC and accumulator paths must be the critical path. All non-MAC
 
 ### 7.5 Operand supply
 
-Requirement is R · f_safe ≥ f_turbo_max. Cycles when operand FIFO is empty counted by `STARVE_CYCLES`.
+Requirement is R · f_safe ≥ f_turbo_max. Cycles when operand FIFO is empty counted by `STARVE_CYCLES`. The turbo table runs from 125 MHz in 10 MHz steps to 275 MHz (16 levels). The DSP variant therefore uses clk_safe = 1000/7 = 142.857 MHz (R · f_safe = 285.7 MHz, above every level) and is analysed at level 13, 255 MHz (ADR-032 (b)); its levels 0 and 1 lie below clk_safe and are not used. The LUT variant keeps clk_safe = 125 MHz; levels above R · 125 = 250 MHz are not used with it.
 
 ### 7.6 Clock generation (`clk_gen` wrapper)
 

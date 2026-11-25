@@ -361,6 +361,11 @@ def m9_campaign_scenarios(k: int, c3: int, count: int = 2400, seed: int = 99) ->
     return out
 
 
+# DSP variant clocks (ADR-032 (b)): clk_safe = 1000 / 7 MHz, lanes analysed at turbo level 255 MHz.
+DSP_F_SAFE_MHZ = 1000.0 / 7.0
+DSP_LANE_MHZ = 255.0
+
+
 def system_benches() -> dict[str, Bench]:
     out = {}
     for ratio, name in [(1.0, "r100"), (1.3, "r130"), (1.7, "r170"), (2.0, "r200")]:
@@ -375,14 +380,19 @@ def system_benches() -> dict[str, Bench]:
     bench = "system_s4_k8_c1"
     out[bench] = Bench(bench, "tb_system", SYSTEM_SOURCES, _system_params("s4", 8, 1, 10.0 / 1.3),
                        _system_vectors("s4", _official_scenarios), slow=True, prefer_xsim=True)
+    # Official DSP variant since ADR-032 (b): model s4, clk_safe 1000/7 MHz, lanes at turbo level 255 MHz (ratio 1.785).
+    bench = "system_s4_k8_c1_dsp"
+    out[bench] = Bench(bench, "tb_system", SYSTEM_SOURCES,
+                       {**_system_params("s4", 8, 1, 10.0 * DSP_F_SAFE_MHZ / DSP_LANE_MHZ), "LANE_IMPL": 1},
+                       _system_vectors("s4", _official_scenarios), slow=True, prefer_xsim=True)
     # DSP lane variant (ADR-030 (d)): lanes at the operand supply limit, R = 2 times the safe clock.
     bench = "system_s_k8_c1_dsp"
     out[bench] = Bench(bench, "tb_system", SYSTEM_SOURCES, {**_system_params("s", 8, 1, 10.0 / 2.0), "LANE_IMPL": 1},
                        _system_vectors("s", _official_scenarios), slow=True, prefer_xsim=True)
     # ADR-028 condition 3: zero-skip at the real clock ratio. Model s4, DSP lanes, no injection, ten images; lanes at
     # 2 x clk_safe (the DSP variant, operand supply limit) and at clk_safe, each without and with ZERO_SKIP = 1.
-    for ratio, tag in [(2.0, "r2"), (1.0, "r1")]:
-        for zs in (0, 1):
+    for ratio, tag in [(2.0, "r2"), (1.0, "r1"), (DSP_LANE_MHZ / DSP_F_SAFE_MHZ, "r1785")]:
+        for zs in ((0, 1) if tag != "r1785" else (0,)):
             bench = f"system_s4_dsp_speed_{tag}_zs{zs}"
             out[bench] = Bench(bench, "tb_system", SYSTEM_SOURCES,
                                {**_system_params("s4", 8, 1, 10.0 / ratio), "LANE_IMPL": 1, "ZERO_SKIP": zs},

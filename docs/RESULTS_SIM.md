@@ -60,11 +60,16 @@ Source: `results/sim/rtl_regression.jsonl` (script `tools/sim.py --record`; late
 | engine_corner_saturate | xsim | 2026-11-16 | PASS: PASS 6/6 cycles_mean=173820 ideal=0 |
 | engine_corner_ties | xsim | 2026-11-16 | PASS: PASS 6/6 cycles_mean=173820 ideal=0 |
 | engine_corner_zero_lanes | xsim | 2026-11-16 | PASS: PASS 6/6 cycles_mean=173820 ideal=0 |
+| engine_s4_k8_c1_n200 | xsim | 2026-11-26 | PASS: PASS 200/200 (34/34 cycles_mean=277381 ideal=276992) |
 | engine_s_k16_n20 | xsim | 2026-11-16 | PASS: PASS 20/20 (5/5 cycles_mean=152498 ideal=138752) |
 | engine_s_k8 | icarus | 2026-11-16 | PASS: PASS 1/1 cycles_mean=277887 ideal=277504 |
 | engine_s_k8_c1 | icarus | 2026-11-16 | PASS: PASS 1/1 cycles_mean=277895 ideal=277504 |
 | engine_s_k8_c1_dsp_n200 | xsim | 2026-11-18 | PASS: PASS 200/200 (34/34 cycles_mean=277891 ideal=277504) |
+| engine_s_k8_c1_dsp_zs | icarus | 2026-11-26 | PASS: PASS 1/1 cycles_mean=195128 ideal=277504 |
+| engine_s_k8_c1_dsp_zs_n200 | xsim | 2026-11-26 | PASS: PASS 200/200 (34/34 cycles_mean=191084 ideal=277504) |
 | engine_s_k8_c1_n200 | xsim | 2026-11-18 | PASS: PASS 200/200 (34/34 cycles_mean=277895 ideal=277504) |
+| engine_s_k8_c1_zs2_n200 | xsim | 2026-11-26 | PASS: PASS 200/200 (34/34 cycles_mean=191090 ideal=277504) |
+| engine_s_k8_c1_zs_n200 | xsim | 2026-11-26 | PASS: PASS 200/200 (34/34 cycles_mean=191090 ideal=277504) |
 | engine_s_k8_n200 | xsim | 2026-11-16 | PASS: PASS 200/200 (34/34 cycles_mean=277887 ideal=277504) |
 | engine_xs_k8 | icarus | 2026-11-16 | PASS: PASS 2/2 cycles_mean=83839 ideal=83456 |
 | engine_xs_k8_n200 | xsim | 2026-11-16 | PASS: PASS 200/200 (34/34 cycles_mean=83839 ideal=83456) |
@@ -91,6 +96,13 @@ Source: `results/sim/rtl_regression.jsonl` (script `tools/sim.py --record`; late
 | system_micro_campaign_k8_c0 | xsim | 2026-11-17 | PASS: PASS 2400/2400 reconfigs=0 |
 | system_micro_campaign_k8_c1 | xsim | 2026-11-17 | PASS: PASS 2400/2400 reconfigs=0 |
 | system_micro_corners | xsim | 2026-11-17 | PASS: PASS 5/5 reconfigs=0 |
+| system_s4_dsp_speed_r1785_zs0 | xsim | 2026-11-26 | PASS: PASS 10/10 reconfigs=0 |
+| system_s4_dsp_speed_r1_zs0 | xsim | 2026-11-26 | PASS: PASS 10/10 reconfigs=0 |
+| system_s4_dsp_speed_r1_zs1 | xsim | 2026-11-26 | PASS: PASS 10/10 reconfigs=0 |
+| system_s4_dsp_speed_r2_zs0 | xsim | 2026-11-26 | PASS: PASS 10/10 reconfigs=0 |
+| system_s4_dsp_speed_r2_zs1 | xsim | 2026-11-26 | PASS: PASS 10/10 reconfigs=0 |
+| system_s4_k8_c1 | xsim | 2026-11-26 | PASS: PASS 10/10 reconfigs=0 |
+| system_s4_k8_c1_dsp | xsim | 2026-11-26 | PASS: PASS 10/10 reconfigs=0 |
 | system_s_k8_c1 | xsim | 2026-11-18 | PASS: PASS 10/10 reconfigs=0 |
 | system_s_k8_c1_dsp | xsim | 2026-11-18 | PASS: PASS 10/10 reconfigs=0 |
 | system_xs_r100 | xsim | 2026-11-16 | PASS: PASS 8/8 reconfigs=0 |
@@ -130,9 +142,11 @@ Run: `final` is the M11 matrix; `pre029` and `post029` are the same variant befo
 | Part | K | Lane | C3 | Run | LUT | FF | BRAM36 | DSP | Fmax clk_safe (MHz) | Fmax clk_fast (MHz) | WNS MAC (ns) | WNS non-MAC (ns) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | xc7s25csga225-1 | 8 | lut | 0 | final | 4774 | 4364 | 14.0 | 3 | 147.8 | 156.3 | 0.003 | 0.226 |
+| xc7s25csga225-1 | 8 | lut | 1 | adr031 | 5641 | 5513 | 14.0 | 3 | 144.6 | 159.3 | 0.671 | 0.121 |
 | xc7s25csga225-1 | 8 | lut | 1 | final | 5717 | 5103 | 14.0 | 3 | 139.1 | 148.1 | -0.352 | -0.008 |
 | xc7s25csga225-1 | 8 | lut | 1 | post029 | 5668 | 5118 | 14.0 | 3 | 144.3 | 156.3 | 0.001 | 0.185 |
 | xc7s25csga225-1 | 8 | lut | 1 | pre029 | 5710 | 5076 | 14.0 | 3 | 141.7 | 155.4 | -0.035 | 0.057 |
+| xc7s25csga225-1 | 8 | lut | 1 | pre031 | 5668 | 5118 | 14.0 | 3 | 144.3 | 156.3 | 0.001 | 0.185 |
 | xc7s25csga225-1 | 8 | dsp_min | 0 | final | 3694 | 3767 | 14.0 | 13 | 144.2 | 295.3 | -0.035 | -0.386 |
 | xc7s25csga225-1 | 8 | dsp_min | 1 | final | 4469 | 4428 | 14.0 | 14 | 139.2 | 272.9 | -0.108 | -0.665 |
 | xc7s25csga225-1 | 8 | dsp_full | 0 | final | 3704 | 3792 | 14.0 | 23 | 143.3 | 276.9 | -0.612 | -0.343 |
@@ -189,8 +203,8 @@ Top `top_board` with `board/zero7.xdc`: model s, K = 8, lut lanes, C3_EN = 1, cl
 
 | Resource | Used | Available | Utilisation |
 | --- | --- | --- | --- |
-| Slice LUTs | 6832 | 14600 | 46.79% |
-| Slice registers | 6209 | 29200 | 21.26% |
+| Slice LUTs | 6825 | 14600 | 46.75% |
+| Slice registers | 6604 | 29200 | 22.62% |
 | Block RAM tiles | 14 | 45 | 31.11% |
 | DSP48E1 | 3 | 80 | 3.75% |
 | Global clock buffers | 6 | 32 | 18.75% |
@@ -199,24 +213,31 @@ Top `top_board` with `board/zero7.xdc`: model s, K = 8, lut lanes, C3_EN = 1, cl
 | Clock | Period (ns) | Endpoints | WNS setup (ns) | WHS hold (ns) | Fmax (MHz) |
 | --- | --- | --- | --- | --- | --- |
 | clk_in | 50.000 | 1 | 48.466 | 0.357 | 651.9 |
-| clk_safe_raw | 8.000 | 12294 | 0.678 | 0.037 | 136.6 |
-| clk_fast_safe | 8.000 | 5599 | 0.898 | 0.057 | 140.8 |
-| clk_fast_turbo | 8.000 | 5599 | 0.898 | 0.057 | 140.8 |
+| clk_safe_raw | 8.000 | 12294 | 0.694 | 0.036 | 136.9 |
+| clk_fast_safe | 8.000 | 5997 | 1.180 | 0.089 | 146.6 |
+| clk_fast_turbo | 8.000 | 5997 | 1.180 | 0.089 | 146.6 |
 
-Paths inside one clock; Fmax = 1000 / (period - WNS). Design worst setup slack 0.678 ns, worst hold slack 0.037 ns, unrouted nets 0.
+Paths inside one clock; Fmax = 1000 / (period - WNS). Design worst setup slack 0.694 ns, worst hold slack 0.036 ns, unrouted nets 0.
 `clk_fast_turbo` is analysed at turbo level 0, the safe frequency. Running the lanes faster than that is the experiment of the project; static timing says nothing about it.
 
-Clock-domain crossings by `report_cdc` rule: CDC-1 816 (critical), CDC-3 40 (info), CDC-4 4 (critical), CDC-13 1 (critical), CDC-15 784 (warning). Their meaning in this design is in `results/vivado/official/summary.md` and SPEC 7.8.
+Clock-domain crossings by `report_cdc` rule: CDC-1 760 (critical), CDC-3 40 (info), CDC-4 2 (critical), CDC-13 1 (critical), CDC-15 784 (warning). Their meaning in this design is in `results/vivado/official/summary.md` and SPEC 7.8.
 
-Power by `report_power` without switching-activity data: total 0.484 W (dynamic 0.422 W, device static 0.062 W), Vivado confidence "Medium". An estimate, not a measurement.
+Power by `report_power` without switching-activity data: total 0.484 W (dynamic 0.421 W, device static 0.062 W), Vivado confidence "Medium". An estimate, not a measurement.
 
 Side runs:
 
 - `results/vivado/official_adr021a/`: clk_safe = 125 MHz, design worst setup slack 0.326 ns. Intermediate run of 2026-11-16: synchronizers marked and the reset crossing excepted, but the three reset sources were still ORed in front of one synchronizer (CDC-10). Superseded by results/vivado/official/, where each asynchronous source has its own synchronizer.
-- `results/vivado/official_dsp/`: clk_safe = 125 MHz, design worst setup slack 0.102 ns. ADR-030 (d) DSP variant, lanes analysed at 250 MHz; ADR-029 wc_gen plus replicated reset register (max_fanout 64)
+- `results/vivado/official_adr031/`: clk_safe = 125 MHz, design worst setup slack 0.694 ns.
+- `results/vivado/official_base26/`: clk_safe = 125 MHz, design worst setup slack 0.678 ns.
+- `results/vivado/official_d5/`: clk_safe = 125 MHz, design worst setup slack 0.148 ns.
+- `results/vivado/official_dsp/`: clk_safe = 142.857 MHz, design worst setup slack 0.173 ns.
 - `results/vivado/official_dsp250/`: clk_safe = 125 MHz, design worst setup slack 0.233 ns. ADR-030 premise check: DSP lanes with clk_fast_turbo analysed at 250 MHz (operand supply limit)
+- `results/vivado/official_dsp_sd7/`: clk_safe = 142.857 MHz, design worst setup slack 0.098 ns.
+- `results/vivado/official_dsp_zs1/`: clk_safe = 125 MHz, design worst setup slack 0.207 ns.
 - `results/vivado/official_dspmin/`: clk_safe = 125 MHz, design worst setup slack 0.395 ns. Side run for the DSP-lane candidate of docs/research/PARHI_DEVELOPMENT_LIST.md (approved experiment, 17 Nov 2026)
 - `results/vivado/official_preadr021/`: clk_safe = 125 MHz, design worst setup slack -0.499 ns. Run of 2026-11-16 at commit 7a2d369, before ADR-021: the reset crossing from the board clock was still timed and the synchronizers were not marked. Kept as the evidence for ADR-021; a later commit cannot reproduce it.
+- `results/vivado/official_zs1/`: clk_safe = 125 MHz, design worst setup slack 0.587 ns.
+- `results/vivado/official_zs2/`: clk_safe = 125 MHz, design worst setup slack 0.292 ns.
 
 ## Latency budget per image, official variant [SIM] x [VIVADO-STA]
 

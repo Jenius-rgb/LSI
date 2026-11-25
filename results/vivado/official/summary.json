@@ -286,5 +286,6 @@
   "worst_actual_ns": 1.22
  },
  "inter_clock": [],
- "command": "python tools/run.py synth-official"
+ "command": "python tools/run.py synth-official",
+ "model": "s4"
 }

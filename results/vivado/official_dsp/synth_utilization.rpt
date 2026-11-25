@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.2 (win64) Build 6299465 Fri Nov 14 19:35:11 GMT 2025
-| Date         : Wed Nov 18 12:55:03 2026
+| Date         : Thu Nov 26 05:12:19 2026
 | Host         : LAPTOP-ER7J7A89 running 64-bit major release  (build 9200)
 | Command      : report_utilization -file {C:\AF\SENTINEL-LSI-2027\results\vivado\official_dsp/synth_utilization.rpt}
 | Design       : top_board
@@ -31,15 +31,15 @@ Table of Contents
 +----------------------------+------+-------+------------+-----------+-------+
 |          Site Type         | Used | Fixed | Prohibited | Available | Util% |
 +----------------------------+------+-------+------------+-----------+-------+
-| Slice LUTs*                | 5828 |     0 |          0 |     14600 | 39.92 |
-|   LUT as Logic             | 5218 |     0 |          0 |     14600 | 35.74 |
+| Slice LUTs*                | 6108 |     0 |          0 |     14600 | 41.84 |
+|   LUT as Logic             | 5498 |     0 |          0 |     14600 | 37.66 |
 |   LUT as Memory            |  610 |     0 |          0 |      5000 | 12.20 |
 |     LUT as Distributed RAM |  584 |     0 |            |           |       |
 |     LUT as Shift Register  |   26 |     0 |            |           |       |
 | Slice Registers            | 5797 |     0 |          0 |     29200 | 19.85 |
 |   Register as Flip Flop    | 5797 |     0 |          0 |     29200 | 19.85 |
 |   Register as Latch        |    0 |     0 |          0 |     29200 |  0.00 |
-| F7 Muxes                   |   67 |     0 |          0 |      7300 |  0.92 |
+| F7 Muxes                   |   68 |     0 |          0 |      7300 |  0.93 |
 | F8 Muxes                   |    1 |     0 |          0 |      3650 |  0.03 |
 | Unique Control Sets        |  263 |       |          0 |      3650 |  7.21 |
 +----------------------------+------+-------+------------+-----------+-------+
@@ -63,8 +63,8 @@ Warning! For any ECO changes, please run place_design if there are unplaced inst
 | 0     |          Yes |           - |            - |
 | 0     |          Yes |           - |          Set |
 | 0     |          Yes |           - |        Reset |
-| 85    |          Yes |         Set |            - |
-| 5712  |          Yes |       Reset |            - |
+| 86    |          Yes |         Set |            - |
+| 5711  |          Yes |       Reset |            - |
 +-------+--------------+-------------+--------------+
 
 
@@ -157,19 +157,19 @@ Warning! For any ECO changes, please run place_design if there are unplaced inst
 +------------+------+---------------------+
 |  Ref Name  | Used | Functional Category |
 +------------+------+---------------------+
-| FDRE       | 5712 |        Flop & Latch |
+| FDRE       | 5711 |        Flop & Latch |
 | LUT6       | 1926 |                 LUT |
-| LUT2       | 1578 |                 LUT |
-| LUT3       | 1063 |                 LUT |
-| LUT5       |  958 |                 LUT |
-| LUT4       |  642 |                 LUT |
+| LUT2       | 1576 |                 LUT |
+| LUT3       | 1061 |                 LUT |
+| LUT5       |  963 |                 LUT |
+| LUT4       |  644 |                 LUT |
 | CARRY4     |  422 |          CarryLogic |
 | RAMD32     |  394 |  Distributed Memory |
 | RAMD64E    |  308 |  Distributed Memory |
 | RAMS32     |  134 |  Distributed Memory |
-| LUT1       |  120 |                 LUT |
-| FDSE       |   85 |        Flop & Latch |
-| MUXF7      |   67 |               MuxFx |
+| LUT1       |  117 |                 LUT |
+| FDSE       |   86 |        Flop & Latch |
+| MUXF7      |   68 |               MuxFx |
 | SRL16E     |   26 |  Distributed Memory |
 | DSP48E1    |   14 |    Block Arithmetic |
 | RAMB36E1   |   13 |        Block Memory |

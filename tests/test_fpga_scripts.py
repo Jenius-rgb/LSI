@@ -318,7 +318,8 @@ def test_dsp_variant_is_an_official_run_of_its_own():
 
     cfg = yaml.safe_load((ROOT / "config" / "hw_zero7.yaml").read_text(encoding="utf-8"))
     lane, turbo, out = ro.resolve_variant(ro.parse_args(["--variant", "dsp"]), cfg)
-    assert (lane, turbo, out.name) == ("dsp_min", cfg["R"] * cfg["clock"]["f_safe_mhz"], "official_dsp")
+    # ADR-032 (b): the DSP variant runs clk_safe at 1000/7 MHz and is analysed at turbo level 255 MHz (was 250 = R x 125).
+    assert (lane, turbo, out.name) == ("dsp_min", float(cfg["variant_dsp"]["lane_mhz"]), "official_dsp")
     assert ro.resolve_variant(ro.parse_args([]), cfg) == ("lut", None, ro.OUT)
     with pytest.raises(SystemExit):
         ro.parse_args(["--variant", "dsp", "--lane-impl", "lut", "--tag", "x"])
@@ -335,7 +336,16 @@ def test_committed_variant_reports_are_clean(folder):
     util = summary["utilization_post_route"]
     assert all(util[r]["used"] <= util[r]["available"] for r in ("lut", "ff", "bram_tile", "dsp"))
     turbo = next(c for c in summary["clocks"] if c["name"] == "clk_fast_turbo")
-    assert (int(summary["LANE_IMPL"]), turbo["period_ns"]) == ((0, 8.0) if folder == "official" else (1, 4.0))
+    safe = next(c for c in summary["clocks"] if c["name"] == "clk_safe_raw")
+    # ADR-032 (b), 26 Nov 2026: the DSP variant moved from clk_safe 8 ns / lanes 4 ns (250 MHz) to 7 ns / 3.922 ns (255 MHz),
+    # both taken from config/hw_zero7.yaml so the committed report must match the configured variant.
+    import yaml
+
+    cfg = yaml.safe_load((ROOT / "config" / "hw_zero7.yaml").read_text(encoding="utf-8"))
+    dsp_lane_ns = round(1000.0 / float(cfg["variant_dsp"]["lane_mhz"]), 3)
+    dsp_safe_ns = float(cfg["variant_dsp"]["safe_div"])
+    expected = (0, 8.0, 8.0) if folder == "official" else (1, dsp_lane_ns, dsp_safe_ns)
+    assert (int(summary["LANE_IMPL"]), turbo["period_ns"], safe["period_ns"]) == expected
 
 
 def test_zero_skip_reaches_the_id_flags_and_the_official_flow():
@@ -369,7 +379,7 @@ def test_dsp_variant_side_run_with_zero_skip_gets_its_own_folder():
     cfg = yaml.safe_load((ROOT / "config" / "hw_zero7.yaml").read_text(encoding="utf-8"))
     args = ro.parse_args(["--variant", "dsp", "--zero-skip", "1", "--tag", "zs1"])
     lane, turbo, out = ro.resolve_variant(args, cfg)
-    assert (lane, turbo, out.name, args.zero_skip) == ("dsp_min", cfg["R"] * cfg["clock"]["f_safe_mhz"], "official_dsp_zs1", 1)
+    assert (lane, turbo, out.name, args.zero_skip) == ("dsp_min", float(cfg["variant_dsp"]["lane_mhz"]), "official_dsp_zs1", 1)
     with pytest.raises(SystemExit):
         ro.parse_args(["--variant", "dsp", "--turbo-mhz", "200", "--tag", "x"])
 
@@ -382,3 +392,22 @@ def test_split_multiplier_registers_count_as_mac_endpoints():
         assert pr.is_mac_path({"source": src, "destination": f"u_fast/u_lanes/csum_lane[1].impl.u/{reg}/D"})
     tcl = (ROOT / "fpga" / "ooc.tcl").read_text(encoding="utf-8")
     assert tcl.count("p_lo_reg") >= 1 and "p_(lo|hi)_reg" in tcl
+
+
+def test_dsp_variant_clocks_follow_adr032():
+    """ADR-032 (b): DSP variant clk_safe = 1000/7 MHz; the operand supply R x f_safe covers the analysed lane clock and
+    the top turbo level (SPEC 7.5); the LUT variant keeps divider 8."""
+    sys.path.insert(0, str(ROOT / "fpga"))
+    import run_official as ro
+    import yaml
+
+    cfg = yaml.safe_load((ROOT / "config" / "hw_zero7.yaml").read_text(encoding="utf-8"))
+    dsp = ro.parse_args(["--variant", "dsp"])
+    assert ro.safe_divider(dsp, cfg) == 7.0
+    assert ro.safe_divider(ro.parse_args([]), cfg) == 8.0
+    assert ro.safe_divider(ro.parse_args(["--variant", "dsp", "--safe-div", "8", "--tag", "x"]), cfg) == 8.0
+    supply = cfg["R"] * cfg["clock"]["vco_mhz"] / 7.0
+    top_level = cfg["clock"]["f_safe_mhz"] + (cfg["clock"]["turbo_levels"] - 1) * cfg["clock"]["turbo_step_mhz"]
+    lane = float(cfg["variant_dsp"]["lane_mhz"])
+    assert lane <= supply and top_level <= supply
+    assert (lane - cfg["clock"]["f_safe_mhz"]) % cfg["clock"]["turbo_step_mhz"] == 0   # a real turbo level
