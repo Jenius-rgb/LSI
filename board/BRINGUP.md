@@ -77,7 +77,7 @@ remote-access, config_txt), gpiozero documentation (installing, api_pins), read 
   `ls /dev/spidev0.*` must list `spidev0.0`; the user needs the `spi` and `gpio` groups. SENTINEL uses SPI0 with CE0:
   GPIO11 SCLK, GPIO10 MOSI, GPIO9 MISO, GPIO8 CE0. On the Pi 5 SPI comes from RP1. Start at 1 MHz (`SpidevTransport`
   default); the FPGA side is guaranteed up to f_safe / 8 = 15.6 MHz (SPEC 12.1); the speed the wiring allows is measured
-  with `fpga/bringup/spi_loopback`. GPIO pins are 3.3 V and not 5 V tolerant [OFFICIAL, Raspberry Pi documentation].
+  with `fpga/bringup/spi_loopback`: build it with `python tools/run.py bringup spi_loopback --accept-inferred-io`, program it through the J-Link, then run `python3 board/spi_loopback_check.py` on the Pi and paste the output. The connection table marks JP11 "(CUT)" on SCLK (A8) and JP9 "(CUT)" on MOSI (A6); if those jumpers are open the FPGA never sees SCLK or MOSI and the check reports constant replies. Their default state is UNKNOWN; do not modify them without an official source. GPIO pins are 3.3 V and not 5 V tolerant [OFFICIAL, Raspberry Pi documentation].
 - Camera (team decision: only through the Pi): picamera2 for a CSI module, OpenCV/V4L2 for a USB webcam, or a video file:
   `python -m sentinel.camera_mode --source picamera|0|video.mp4`. The Pi 5 uses 22-pin camera ribbons [INFERENCE, not checked in the documentation read] (the older 15-pin
   ribbon needs an adapter cable). The camera type is not decided yet.

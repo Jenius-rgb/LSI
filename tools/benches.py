@@ -360,6 +360,26 @@ JTAG_SOURCES = [*TOP_SOURCES, "rtl/axil_bus_bridge.v", "rtl/jtag_axi_master.v", 
                 "board/top_jtag.v", "tb/tb_jtag_log.v"]
 
 
+def _spi_loopback_vectors(workdir: Path, params: dict) -> list[str]:
+    """Frames for tb_spi_loopback: corner bytes, then seeded random frames; each frame echoes 0xA5, then byte n-1."""
+    import numpy as np
+
+    from model.vectors import write_hex
+
+    rng = np.random.default_rng(2027)
+    frames = [[0x00, 0xFF, 0x55, 0xAA, 0x01, 0x80], [0x5A]] + [list(rng.integers(0, 256, size=int(rng.integers(1, 33))))
+                                                               for _ in range(40)]
+    tx, exp = [], []
+    for frame in frames:
+        tx += [int(b) for b in frame]
+        exp += [0xA5] + [int(b) for b in frame[:-1]]
+    write_hex(workdir / "tx.mem", tx, 8)
+    write_hex(workdir / "exp.mem", exp, 8)
+    write_hex(workdir / "len.mem", [len(f) for f in frames], 16)
+    return [f"+tx={(workdir / 'tx.mem').as_posix()}", f"+exp={(workdir / 'exp.mem').as_posix()}",
+            f"+len={(workdir / 'len.mem').as_posix()}", f"+frames={len(frames)}", f"+bytes={len(tx)}"]
+
+
 def misc_benches() -> dict[str, Bench]:
     return {
         "governor": Bench("governor", "tb_governor", ["rtl/governor.v", "tb/tb_governor.v"], {}, _governor_vectors),
@@ -370,6 +390,8 @@ def misc_benches() -> dict[str, Bench]:
         "bringup": Bench("bringup", "tb_bringup", ["rtl/ws2812_tx.v", "fpga/bringup/blink/blink_top.v",
                                                    "fpga/bringup/vcco_probe/vcco_probe_top.v", "fpga/bringup/io_test/io_test_top.v",
                                                    "tb/tb_bringup.v"]),
+        "spi_loopback": Bench("spi_loopback", "tb_spi_loopback", ["fpga/bringup/spi_loopback/spi_loopback_top.v",
+                                                                "tb/tb_spi_loopback.v"], {}, _spi_loopback_vectors),
         "status_led": Bench("status_led", "tb_status_led", ["rtl/ws2812_tx.v", "rtl/status_led.v", "tb/tb_status_led.v"]),
         "xadc_temp": Bench("xadc_temp", "tb_xadc_temp", ["rtl/xadc_temp.v", "rtl/platform/sim/xadc_prim_sim.v", "tb/tb_xadc_temp.v"]),
         "jtag_session_xs": Bench(
@@ -394,6 +416,7 @@ BENCHES: dict[str, Bench] = {
 _W = {f"WC{i+1}_W": v for i, v in enumerate(wc_widths(8))}
 LINT_TARGETS = [
     {"id": "regfile", "top": "regfile", "sources": ["rtl/regfile.v"]},
+    {"id": "spi_loopback", "top": "spi_loopback_top", "sources": ["fpga/bringup/spi_loopback/spi_loopback_top.v"]},
     {"id": "top_core", "top": "top_core", "sources": TOP_SOURCES, "params": _W},
     {"id": "top_board", "top": "top_board", "sources": TOP_SOURCES + ["board/top_board.v"]},
     {"id": "top_jtag", "top": "top_jtag", "sources": TOP_SOURCES + ["rtl/axil_bus_bridge.v", "rtl/jtag_axi_master.v", "rtl/platform/sim/jtag_axi_master_sim.v", "board/top_jtag.v"]},

@@ -105,3 +105,16 @@ def test_bringup_dry_run_over_jtag():
                              capture_output=True, text=True, cwd=ROOT)
         assert res.returncode == 0, res.stdout + res.stderr
         assert "dry-run over JTAG" in res.stdout
+
+
+def test_spi_loopback_check_expects_the_previous_byte():
+    """board/spi_loopback_check.py: each frame echoes 0xA5 first, then every byte one position late."""
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("slc", ROOT / "board" / "spi_loopback_check.py")
+    slc = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(slc)
+    assert slc.expected_echo(bytes([1, 2, 3])) == bytes([0xA5, 1, 2])
+    assert slc.compare(bytes([1, 2, 3]), bytes([0xA5, 1, 2])) == 0
+    assert slc.compare(bytes([1, 2, 3]), bytes([0xA5, 1, 0])) == 1
+    assert slc.diagnose(bytes([0xFF] * 4)) and slc.diagnose(bytes([0x00] * 4)) and not slc.diagnose(bytes([0xA5, 7, 9]))

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build the bring-up bitstreams for ZERO7 without the Raspberry Pi (ADR-026).
 
-    python tools/run.py bringup <blink|vcco_probe|io_test> --accept-inferred-io [--ila]
+    python tools/run.py bringup <blink|vcco_probe|io_test|spi_loopback|jtag_host> --accept-inferred-io [--ila]
 
 The I/O standards in the constraints are an inference (ADR-024). The designs drive only FPGA-only
 pins (a test checks this), so a wrong bank voltage costs function, not hardware. The bitstreams go to
@@ -25,6 +25,10 @@ DESIGNS = {
                    "xdc": "fpga/bringup/vcco_probe/vcco_probe_top.xdc", "outputs": ["led1", "led2", "pmod1_hi", "pmod1_lo", "ws2812_dout"]},
     "io_test": {"top": "io_test_top", "rtl": ["rtl/ws2812_tx.v", "fpga/bringup/io_test/io_test_top.v"],
                 "xdc": "fpga/bringup/io_test/io_test_top.xdc", "outputs": ["led1", "led2", "ws2812_dout"]},
+    # Needs the Raspberry Pi 5 on the header: SPI0 CE0 loopback (board/spi_loopback_check.py runs on the Pi).
+    "spi_loopback": {"top": "spi_loopback_top", "rtl": ["fpga/bringup/spi_loopback/spi_loopback_top.v"],
+                     "xdc": "fpga/bringup/spi_loopback/spi_loopback_top.xdc", "outputs": ["led1", "led2", "spi_miso"],
+                     "shared_outputs": {"spi_miso": "A7 = RP_GPIO9, an input on the Pi while SPI0 is enabled; driven only while CE0 is low"}},
     # The full SENTINEL core with the PC as host over JTAG (ADR-025); its own Tcl generates the IP cores.
     "jtag_host": {"top": "top_jtag", "tcl": "fpga/bringup/jtag_host/build.tcl", "xdc": "fpga/bringup/jtag_host/top_jtag.xdc",
                   "outputs": ["led_busy", "led_fatal", "ws2812_dout"]},
