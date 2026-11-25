@@ -204,6 +204,15 @@ module lane_array #(
             valid_r   <= 1'b0;
         end
     end
+
+`ifndef SYNTHESIS
+    // The serializer needs WORDS cycles per unit. A capture while words of the previous unit are still queued
+    // would overwrite them (units must be at least WORDS operand sets apart; ADR-028 keeps that with zero-skip).
+    always @(posedge clk)
+        if (!rst && capture && remaining > 7'd1)
+            $display("FAIL lane_array: result serializer overrun, capture with %0d words of the previous unit left",
+                     remaining - 7'd1);
+`endif
 endmodule
 
 `default_nettype wire

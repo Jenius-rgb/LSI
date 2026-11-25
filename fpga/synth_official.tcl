@@ -15,6 +15,8 @@ if { $argc != 8 && $argc != 9 } {
     exit 2
 }
 lassign $argv outdir k impl c3 weight_aw act0_aw act1_aw safe_div turbo_arg
+# ADR-028 side runs set SENTINEL_ZERO_SKIP=1 (fpga/run_official.py --zero-skip); the official variant keeps 0.
+set zero_skip [expr {[info exists ::env(SENTINEL_ZERO_SKIP)] ? $::env(SENTINEL_ZERO_SKIP) : 0}]
 set part xc7s25csga225-1
 set top top_board
 file mkdir $outdir
@@ -53,7 +55,7 @@ if {$k != 8 && ($wc1 != 11 || $wc2 != 14 || $wc3 != 16)} {
 
 synth_design -top $top -part $part -include_dirs [list [file join $root rtl/gen]] \
     -verilog_define SENTINEL_XILINX=1 -verilog_define SENTINEL_SAFE_DIV=$safe_div \
-    -generic K=$k -generic LANE_IMPL=$impl -generic C3_EN=$c3 \
+    -generic K=$k -generic LANE_IMPL=$impl -generic C3_EN=$c3 -generic ZERO_SKIP=$zero_skip \
     -generic WEIGHT_AW=$weight_aw -generic ACT0_AW=$act0_aw -generic ACT1_AW=$act1_aw
 
 source [file join $root fpga/constraints/top_board_timing.tcl]
@@ -96,6 +98,7 @@ puts $fp "part $part"
 puts $fp "top $top"
 puts $fp "K $k"
 puts $fp "LANE_IMPL $impl"
+puts $fp "ZERO_SKIP $zero_skip"
 puts $fp "C3_EN $c3"
 puts $fp "SAFE_DIV $safe_div"
 foreach clk [get_clocks] {

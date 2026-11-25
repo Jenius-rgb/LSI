@@ -13,6 +13,7 @@ module engine #(
     parameter R          = 2,
     parameter C3_EN      = 0,
     parameter LANE_IMPL  = 0,
+    parameter ZERO_SKIP  = 0,     // ADR-028
     parameter INJ_EN     = 1,
     parameter INJ_SLOTS  = 2,
     parameter ACC_W      = 32,
@@ -249,7 +250,7 @@ module engine #(
     wire                info_full;
 
     operand_gen #(
-        .K(K), .R(R), .C3_EN(C3_EN), .WC1_W(WC1_W), .WC2_W(WC2_W), .WC3_W(WC3_W),
+        .K(K), .R(R), .C3_EN(C3_EN), .ZERO_SKIP(ZERO_SKIP), .WC1_W(WC1_W), .WC2_W(WC2_W), .WC3_W(WC3_W),
         .WEIGHT_AW(WEIGHT_AW), .ACT_AW(ACT_AW), .G_W(G_W), .WIN_W(WIN_W), .LOG_AW(LOG_AW)
     ) u_gen (
         .clk(clk_safe), .rst(rst),
@@ -300,7 +301,8 @@ module engine #(
 
     fast_path #(
         .K(K), .R(R), .C3_EN(C3_EN), .WC1_W(WC1_W), .WC2_W(WC2_W), .WC3_W(WC3_W),
-        .ACC_W(ACC_W), .ACC_CS_W(ACC_CS_W), .LANE_IMPL(LANE_IMPL), .INJ_EN(INJ_EN), .INJ_SLOTS(INJ_SLOTS)
+        .ACC_W(ACC_W), .ACC_CS_W(ACC_CS_W), .LANE_IMPL(LANE_IMPL), .INJ_EN(INJ_EN), .INJ_SLOTS(INJ_SLOTS),
+        .SPACE_GUARD(ZERO_SKIP == 2 ? 1 : 0)
     ) u_fast (
         .clk(clk_fast), .rst(rst_fast),
         .op_empty(opf_empty), .op_data(opf_rdata), .op_rd(opf_rd),

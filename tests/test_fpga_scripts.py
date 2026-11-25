@@ -336,3 +336,25 @@ def test_committed_variant_reports_are_clean(folder):
     assert all(util[r]["used"] <= util[r]["available"] for r in ("lut", "ff", "bram_tile", "dsp"))
     turbo = next(c for c in summary["clocks"] if c["name"] == "clk_fast_turbo")
     assert (int(summary["LANE_IMPL"]), turbo["period_ns"]) == ((0, 8.0) if folder == "official" else (1, 4.0))
+
+
+def test_zero_skip_reaches_the_id_flags_and_the_official_flow():
+    """ADR-028: ZERO_SKIP is a synthesis parameter down to operand_gen and is reported in ID flag bit 4."""
+    core = (ROOT / "rtl" / "top_core.v").read_text(encoding="utf-8")
+    assert "ZERO_SKIP" in core and "4'd0, IMPL_BITS" not in core and "ZS_BIT, IMPL_BITS" in core
+    assert "ZERO_SKIP" in (ROOT / "board" / "top_board.v").read_text(encoding="utf-8")
+    assert "ZERO_SKIP=" in (ROOT / "fpga" / "synth_official.tcl").read_text(encoding="utf-8")
+
+
+def test_zero_skip_side_run_takes_the_mode():
+    """ADR-028: --zero-skip [1|2] picks the guard (1: minimum sets in operand_gen, 2: stall in fast_path); side run only."""
+    sys.path.insert(0, str(ROOT / "fpga"))
+    import run_official
+
+    assert run_official.parse_args(["--zero-skip", "--tag", "zs"]).zero_skip == 1
+    assert run_official.parse_args(["--zero-skip", "2", "--tag", "zs2"]).zero_skip == 2
+    assert run_official.parse_args([]).zero_skip == 0
+    with pytest.raises(SystemExit):
+        run_official.parse_args(["--zero-skip", "2"])          # no --tag: would overwrite the official reports
+    with pytest.raises(SystemExit):
+        run_official.parse_args(["--zero-skip", "3", "--tag", "x"])

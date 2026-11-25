@@ -1,0 +1,54 @@
+{
+  "label": "[SIM]",
+  "baseline_cycles": 277895,
+  "runs": {
+    "unguarded": {
+      "source": "results/sim/zero_skip/unguarded",
+      "images_passed": 182,
+      "mean_cycles": 189959.1,
+      "saving_vs_baseline_pct": 31.64,
+      "min_cycles": 173624,
+      "max_cycles": 201822,
+      "fail_lines": [
+        "engine_s_k8_c1_zs_n200_s3.log: FAIL lane_array: result serializer overrun, capture with 1 words of the previous unit left",
+        "engine_s_k8_c1_zs_n200_s3.log: FAIL image=118 timeout: done not set within 2000000 cycles",
+        "engine_s_k8_c1_zs_n200_s3.log: FAIL image=118 layer=fc unit=0 lane=0 expected=ffff7656 got=00000aa1",
+        "engine_s_k8_c1_zs_n200_s3.log: FAIL errors=11 images_passed=17/33",
+        "engine_s_k8_c1_zs_n200_s3.log: FAIL image=119 timeout: done not set within 2000000 cycles",
+        "engine_s_k8_c1_zs_n200_s3.log: FAIL errors=22 images_passed=18/33"
+      ]
+    },
+    "min_sets": {
+      "source": "results/sim/zero_skip/zs1",
+      "images_passed": 200,
+      "mean_cycles": 189797.6,
+      "saving_vs_baseline_pct": 31.7,
+      "min_cycles": 173624,
+      "max_cycles": 201822,
+      "fail_lines": [],
+      "guard_cost_vs_unguarded": {
+        "images": 182,
+        "total_cycles": 5,
+        "max_per_image": 4,
+        "images_with_cost": 2,
+        "min_per_image": 0
+      }
+    },
+    "stall": {
+      "source": "results/sim/zero_skip/zs2",
+      "images_passed": 200,
+      "mean_cycles": 189797.6,
+      "saving_vs_baseline_pct": 31.7,
+      "min_cycles": 173624,
+      "max_cycles": 201822,
+      "fail_lines": [],
+      "guard_cost_vs_unguarded": {
+        "images": 182,
+        "total_cycles": 0,
+        "max_per_image": 0,
+        "images_with_cost": 0,
+        "min_per_image": 0
+      }
+    }
+  }
+}

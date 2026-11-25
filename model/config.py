@@ -69,6 +69,21 @@ class LayerShape:
         return self.groups(k)
 
 
+def result_words(k: int, c3: int) -> int:
+    """Words the lane-array result serializer sends per computing unit: K data lanes plus 2 or 3 checksum lanes.
+
+    One word leaves per clk_fast cycle, so consecutive units must end at least this many cycles apart
+    (rtl/lane_array.v). Without zero-skip a unit lasts ``LayerShape.t`` cycles.
+    """
+    return k + 2 + (1 if c3 else 0)
+
+
+def shortest_unit(shapes: list[LayerShape]) -> tuple[str, int]:
+    """(layer name, t) of the layer with the fewest accumulation cycles per unit."""
+    layer = min(shapes, key=lambda s: s.t)
+    return layer.name, layer.t
+
+
 def load_yaml(path: Path) -> dict:
     with open(path, encoding="utf-8") as fh:
         return yaml.safe_load(fh)

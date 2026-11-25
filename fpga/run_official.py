@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
@@ -284,6 +285,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
                         help="side run only (needs --tag): lane implementation instead of the one in config/hw_zero7.yaml")
     parser.add_argument("--variant", choices=("lut", "dsp"), default="lut",
                         help="dsp: the DSP lane variant of ADR-030 (variant_dsp in config/hw_zero7.yaml), reports in results/vivado/official_dsp/")
+    parser.add_argument("--zero-skip", type=int, nargs="?", const=1, default=0, choices=(1, 2),
+                        help="side run only (needs --tag): ZERO_SKIP mode, 1 = minimum sets per unit, 2 = fast_path stall (ADR-028)")
     parser.add_argument("--turbo-mhz", type=float, default=None,
                         help="side run only (needs --tag): analyse clk_fast_turbo at this frequency instead of turbo level 0")
     args = parser.parse_args(argv)
@@ -291,7 +294,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         parser.error("--tag takes lower-case letters and digits only")
     if args.variant == "dsp" and (args.lane_impl or args.turbo_mhz or args.tag):
         parser.error("--variant dsp is a full official run: it takes its lane type and lane clock from config/hw_zero7.yaml")
-    if (args.lane_impl or args.turbo_mhz) and not args.tag:
+    if (args.lane_impl or args.turbo_mhz or args.zero_skip) and not args.tag:
         parser.error("--lane-impl and --turbo-mhz are for side runs only: add --tag so results/vivado/official/ stays the official variant")
     return args
 
@@ -313,7 +316,7 @@ def main() -> int:
     command = ("python tools/run.py synth-official" + (" --variant dsp" if args.variant == "dsp" else "")
                + (f" --safe-div {safe_div:g}" if args.safe_div else "")
                + (f" --lane-impl {args.lane_impl}" if args.lane_impl else "") + (f" --turbo-mhz {args.turbo_mhz:g}" if args.turbo_mhz and args.variant != "dsp" else "")
-               + (f" --tag {args.tag}" if args.tag else ""))
+               + (f" --zero-skip {args.zero_skip}" if args.zero_skip else "") + (f" --tag {args.tag}" if args.tag else ""))
     out.mkdir(parents=True, exist_ok=True)
     if not args.summary_only:
         vivado = find_vivado()
@@ -333,6 +336,7 @@ def main() -> int:
              str(cfg["WEIGHT_AW"]), str(cfg["ACT0_AW"]), str(cfg["ACT1_AW"]), f"{safe_div:g}"]
             + ([f"{args.turbo_mhz:g}"] if args.turbo_mhz else []),
             cwd=ROOT, capture_output=True, text=True, errors="replace",
+            env={**os.environ, "SENTINEL_ZERO_SKIP": str(args.zero_skip)},
         )
         if res.returncode != 0 or not (out / "summary.txt").exists():
             print(f"failed; see {log.relative_to(ROOT)}")

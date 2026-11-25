@@ -1,6 +1,6 @@
 # STATUS — SENTINEL
 
-Last updated: 2026-11-23, organizer clarifications integrated (pre-board). Previous: 2026-11-16 night, ZERO7 update session after user response.
+Last updated: 2026-11-26, zero-skip (ADR-028) fixed and compared, model s4 (ADR-037), G1 status. Before: 2026-11-23, organizer clarifications integrated (pre-board). Previous: 2026-11-16 night, ZERO7 update session after user response.
 Phase: **PRE-BOARD**
 
 Legend: `[ ]` not started · `[~]` in progress · `[x]` completed (evidence in Evidence log) · `[B]` blocked (reason in Blocked section)
@@ -18,6 +18,13 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` completed (evidence in E
 If G1 slips by more than one week, drop per-layer clock selection and use a single global turbo clock (record ADR).
 
 **At risk (23 Nov 2026):** G1 and G2 both need the board running. ZERO7 power without a Raspberry Pi is still unanswered by the organizers, and the only Raspberry Pi confirmed so far (a Raspberry Pi 5 from the user's lecturer) arrives about 3–4 Jan 2027. Unless another way to power and program ZERO7 is found in December, G1 slips by more than one week. Re-planning the gates and applying the fallback rule above are user decisions; see "Organizer clarifications and hardware dependencies (23 Nov 2026)".
+
+**G1 status (26 Nov 2026, written for the ADR-028 condition):**
+- Simulation half: done. M0–M8 are checked off with evidence; only optional items stay open (QAT in M2, operand parity in M8).
+- Board half (B1–B3, CNN bit-exact on the safe clock): not started. Open: the user put every hardware step on hold on 25 Nov ("tunggu instruksi"); the CLAUDE.md §8 conditions are not met (`board/BOARD_INFO.md` mandatory fields such as the JTAG header P2 signal order and the bank voltages are still UNKNOWN, and "board siap" has not been written); the J-Link XVCD path is untested.
+- Change since 23 Nov: the Raspberry Pi risk above is gone. The team's own Raspberry Pi 5 is the host (ADR-033), and the board and the Pi are in hand (user, 25 Nov).
+- 17 days remain until 13 Dec. How long bring-up up to E7 takes is [UNKNOWN]; nothing has been measured.
+- Verdict: G1 is not missed. Its board half is at risk, for reasons outside the zero-skip work. Zero-skip is PC-side only, `ZERO_SKIP` defaults to 0 and the baseline benches are unchanged, so it takes nothing the board half needs. Rule from here on: when the user resumes the hardware steps, board work comes first; if G1 is missed, zero-skip stays off by default and its work stops (ADR-028 condition 1).
 
 ---
 
@@ -351,11 +358,19 @@ No longer blocked since official documents of 10 Nov 2026: part number and speed
 - [x] ADR-029 checksum weight flat tree (`rtl/wc_gen.v`): bench `wc_gen_*` bit-exact between old and new RTL, 10⁶ vectors PASS; OOC Fmax clk_safe 141.7 → 144.3 MHz; LUT official report 132.9 → 133.7 MHz [VIVADO-STA]; accepted (see Evidence log)
 - [x] ADR-030 option (d) with R1 narrative: `variant_dsp` block in `config/hw_zero7.yaml`, `synth-official --variant dsp` → `results/vivado/official_dsp/`, guard test for both reports, benches `engine_s_k8_c1_dsp*` and `system_s_k8_c1_dsp`, variant labels in [HW] metadata, slides and draft report adjusted
 - [x] Reset fan-out fix `rst_safe_r` (`max_fanout = 64`, approved by user 18 Nov 2026): clk_safe LUT 133.7 → 136.6 MHz, DSP 126.7 → 132.4 MHz; DSP lane at 250 MHz 262.0 → 256.5 MHz (still passing) [VIVADO-STA]
-- [ ] ADR-028 zero-skip — only after G1 (13 Dec 2026) on time
+- [~] ADR-028 zero-skip (gate lifted by ADR-038; G1 status above): implemented behind `ZERO_SKIP` (default 0). The first version hung on images 118 and 198 (result serializer overrun); guard `ZERO_SKIP = 1` chosen over the `fast_path` stall (`ZERO_SKIP = 2`): both bit-exact 200/200 and 31.70 % fewer cycles [SIM], mode 1 keeps more slack [VIVADO-STA]. **Stopped and reported:** with zero-skip on, Fmax drops (clk_safe 136.6 → 134.9 MHz, clk_fast 140.8 → 135.8 MHz at the 8 ns analysis, still above 125 MHz); waiting for the user's decision before any further zero-skip work
 - [ ] ADR-032 (R2) increasing operand supply — only after G1 on time
 - [ ] ADR-031 fine-grain pipelining LUT lane — remains Proposed; relevant for LUT research variant
 
 ## Notes for next session
+
+**Written 26 Nov 2026 (zero-skip fix, model s4).** Read this block first.
+
+- Position: model `s4` (four official classes, ADR-037) trained, exported and bit-exact in RTL (200/200). Zero-skip (ADR-028) implemented behind `ZERO_SKIP`; the first version overran the lane-array result serializer on images 118 and 198; guard `ZERO_SKIP = 1` chosen (details in ADR-028). Zero-skip is **stopped and reported**: with it on, Fmax drops (clk_safe 136.6 → 134.9 MHz, clk_fast 140.8 → 135.8 MHz) for 31.70 % fewer cycles; `ZERO_SKIP = 0` stays the default and the official reports are unchanged (base26 rerun identical).
+- Waiting for the user: (1) adopt zero-skip for the demo build or leave it as a studied option; (2) when to resume the hardware steps (on hold since 25 Nov); (3) whether G1 counts as threatened (see "G1 status" at the top); (4) `config/hw_zero7.yaml` still names model `s`; switching it to `s4` is the next ADR-037 step.
+- Not started from ADR-038: the ADR-032 study run (`--safe-div 7`) and ADR-031 + D5.
+- New tools: `build/sim/logs/<bench>[_s<shard>].log` fill while a bench runs (`Get-Content -Wait`); tb_engine prints `IMG i done cycles=n` and fails an image after `+maxcycles` (default 2,000,000); the runner kills the whole process tree on timeout; an exact bench name no longer also runs longer names that start with it. `python tools/zs_compare.py` builds the zero-skip table from logs.
+- Gotchas: under xsim `$fatal` printed the FAIL and the run went on, so tb_engine now calls `$finish` after it (other testbenches still rely on the runner's FAIL check). Do not judge a netlist change from simulation alone: the ungated zero-skip mux was bit-exact but added 118 LUTs with `ZERO_SKIP = 0`. A bench with the same name overwrites its logs; copy them to `results/` before a rerun if they are evidence.
 
 **Written 25 Nov 2026 (PROMPT_TAHAP3, stage 3 board preparation).** Read "Team decisions, 25 Nov 2026" and "Stage 3" above first; they supersede the Pi 4, Digilent cable and Pi-5-in-January notes further down.
 
@@ -489,3 +504,16 @@ Written 18 Nov 2026.
 | 2026-11-25 | 3.4 | `python tools/run.py bringup io_test --accept-inferred-io` | 52 LUT, 76 FF, WNS +42.493 ns, WHS +0.122 ns, DRC 0 checks, 0.062 W [VIVADO-STA], `results/vivado/bringup/io_test/` |
 | 2026-11-25 | 3.4 | `python tools/run.py bringup spi_loopback --accept-inferred-io` | 14 LUT, 29 FF, WNS +44.709 ns, WHS +0.131 ns, DRC 0 checks, 0.062 W [VIVADO-STA], `results/vivado/bringup/spi_loopback/` |
 | 2026-11-25 | end of stage 3 | `python tools/run.py test` | 264 passed in 208.84s (`build/test_tahap3_end.log`); new: lgpio factory, pi_check lgpio, spi_loopback bench/lint, bring-up report publishing |
+| 2026-11-25 | ADR-037 | `python tools/run.py train --model s4`, `python tools/run.py export --model s4` | four official classes (cat, dog, deer, horse; CIFAR-10 subset `cifar10_4`), 18,000 train / 2,000 val / 4,000 test images: float 83.8 %, INT8 83.5 % (drop 0.30 points) [SIM], `results/model/s4/` |
+| 2026-11-25 | ADR-037 | `python tools/sim.py engine_s4_k8_c1_n200` (xsim) | PASS 200/200, cycles_mean 277,377, ideal 276,992 [SIM]; recorded in `results/sim/rtl_regression.jsonl` |
+| 2026-11-26 | ADR-028 | `python tools/sim.py engine_s_k8_c1_zs_n200` with the first zero-skip RTL (no spacing guard) | hung: shards for images 101–133 and 167–199 ran 4 h 43 min; the 7200 s runner timeout killed only `xsim.bat`, leaving `xsim.exe`/`xsimk.exe` running (stopped by hand, PIDs 27636, 5064) |
+| 2026-11-26 | ADR-028 | same bench, rerun with the watchdog, per-image progress and the lane-array overrun check | images 0–100 and 134–166 PASS (134 images); `FAIL lane_array: result serializer overrun` on image 118 (1 word left) and image 198 (3 words left), then wrong logits and a timeout [SIM]; logs `results/sim/zero_skip/unguarded/` |
+| 2026-11-26 | ADR-028 | `python tools/sim.py engine_s_k8_c1_sparse engine_s_k8_c1_zs_sparse` (pre-fix RTL) | both PASS 4/4 (black, sparse, half-black, real image), no overrun [SIM]. Likely reason [INFERENCE]: scanning R = 2 taps per cycle already spaces fully zero first-layer units 14 cycles apart; the trigger needs partly zero units queued behind a FIFO backlog, as in images 118 and 198 |
+| 2026-11-26 | runner | `pytest tests/test_sim_runner.py` | 4 passed: whole process tree killed on timeout, log readable while running, exact bench name selects one bench |
+| 2026-11-26 | ADR-028 | `pytest tests/test_tools.py -k serializer` | shortest unit t = 27 (conv1, C_in = 3) in micro, s, s4, xs; serializer needs 10/11/18/19 cycles (K = 8/16, C3 = 0/1): no layer is too short without zero-skip |
+| 2026-11-26 | ADR-028 | `python tools/sim.py engine_s_k8_c1_zs_overrun engine_s_k8_c1_zs2_overrun` (inside `run.py test`) | both guards on images 118 and 198: PASS 2/2, no overrun line; 186,909 and 192,020 cycles with either guard [SIM] |
+| 2026-11-26 | ADR-028 | `python tools/sim.py engine_s_k8_c1_zs engine_s_k8_c1_zs2` (Icarus) | PASS 1/1 each, 195,134 cycles (image 0, same as before the guard) [SIM] |
+| 2026-11-26 | ADR-028 | `python tools/sim.py engine_s_k8_c1_zs_n200 engine_s_k8_c1_zs2_n200 --record ...` (xsim) | both PASS 200/200, cycles_mean of the first shard 191,090; all images: mean 189,797.6, 31.70 % below 277,895; guard cost against the unguarded run 5 cycles (mode 1) and 0 (mode 2) over 182 images [SIM]; `python tools/zs_compare.py` → `results/sim/zero_skip/compare.json`, logs `results/sim/zero_skip/zs1/`, `zs2/` |
+| 2026-11-26 | ADR-028 | `python tools/run.py synth-official --zero-skip 1 --tag zs1`, then `--zero-skip 2 --tag zs2` | mode 1: clk_safe WNS 0.587 ns, clk_fast 0.637 ns, 7,912 LUT, 6,229 FF; mode 2: 0.471 ns, 0.292 ns, 7,878 LUT, 6,213 FF; official baseline 0.678 / 0.898 ns, 7,741 LUT [VIVADO-STA]; `results/vivado/official_zs1/`, `official_zs2/` |
+| 2026-11-26 | ADR-028 | `python tools/run.py synth-official --tag base26` (ZERO_SKIP = 0, today's RTL) | first run: 7,859 LUT, clk_safe WNS 0.811 ns, not the official netlist (ungated slot-shift mux; numbers from the session diff, reports overwritten by the rerun); after gating `shift1` and `fifo_wr` by the parameter: identical to `results/vivado/official/` (0.678 / 0.898 ns, 7,741 LUT, 6,209 FF) [VIVADO-STA] |
+| 2026-11-26 | ADR-028 | `python tools/run.py test` (after the gate) | 286 passed in 793 s (`build/test_zs_fix2.log`; run beside Vivado); before the gate also 286 passed in 442 s |

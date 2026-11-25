@@ -1,0 +1,89 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2025.2 (win64) Build 6299465 Fri Nov 14 19:35:11 GMT 2025
+| Date         : Thu Nov 26 01:10:22 2026
+| Host         : LAPTOP-ER7J7A89 running 64-bit major release  (build 9200)
+| Command      : report_clocks -file {C:\AF\SENTINEL-LSI-2027\results\vivado\official_base26/impl_clocks.rpt}
+| Design       : top_board
+| Device       : 7s25-csga225
+| Speed File   : -1  PRODUCTION 1.23 2018-06-13
+| Design State : Routed
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Clock Report
+
+
+Attributes
+  P: Propagated
+  G: Generated
+  A: Auto-derived
+  R: Renamed
+  V: Virtual
+  I: Inverted
+  S: Pin phase-shifted with Latency mode
+
+Clock                   Period(ns)  Waveform(ns)    Attributes  Sources
+clk_in                  50.000      {0.000 25.000}  P           {clk_in}
+clk_fast_safe           8.000       {0.000 4.000}   P,G         {u_core/u_clk/u_clk/u_mux/O}
+clk_fast_turbo          8.000       {0.000 4.000}   P,G         {u_core/u_clk/u_clk/u_mux/O}
+clk_out1_clk_wiz_turbo  8.000       {0.000 4.000}   P,G,A       {u_core/u_clk/u_clk/u_turbo/inst/CLK_CORE_DRP_I/clk_inst/mmcm_adv_inst/CLKOUT0}
+clk_safe_raw            8.000       {0.000 4.000}   P,G,A       {u_core/u_clk/u_clk/u_mmcm1/CLKOUT0}
+clkfbout_clk_wiz_turbo  50.000      {0.000 25.000}  P,G,A       {u_core/u_clk/u_clk/u_turbo/inst/CLK_CORE_DRP_I/clk_inst/mmcm_adv_inst/CLKFBOUT}
+safe_fb                 50.000      {0.000 25.000}  P,G,A       {u_core/u_clk/u_clk/u_mmcm1/CLKFBOUT}
+
+
+====================================================
+Generated Clocks
+====================================================
+
+Generated Clock     : clk_fast_safe
+Master Source       : u_core/u_clk/u_clk/u_mux/I0
+Master Clock        : clk_safe_raw
+Divide By           : 1
+Generated Sources   : {u_core/u_clk/u_clk/u_mux/O}
+
+Generated Clock     : clk_fast_turbo
+Master Source       : u_core/u_clk/u_clk/u_mux/I1
+Master Clock        : clk_out1_clk_wiz_turbo
+Divide By           : 1
+Generated Sources   : {u_core/u_clk/u_clk/u_mux/O}
+
+Generated Clock     : clk_out1_clk_wiz_turbo
+Master Source       : u_core/u_clk/u_clk/u_turbo/inst/CLK_CORE_DRP_I/clk_inst/mmcm_adv_inst/CLKIN1
+Master Clock        : clk_in
+Edges               : {1 2 3}
+Edge Shifts(ns)     : {0.000 -21.000 -42.000}
+Generated Sources   : {u_core/u_clk/u_clk/u_turbo/inst/CLK_CORE_DRP_I/clk_inst/mmcm_adv_inst/CLKOUT0}
+
+Generated Clock     : clk_safe_raw
+Master Source       : u_core/u_clk/u_clk/u_mmcm1/CLKIN1
+Master Clock        : clk_in
+Edges               : {1 2 3}
+Edge Shifts(ns)     : {0.000 -21.000 -42.000}
+Generated Sources   : {u_core/u_clk/u_clk/u_mmcm1/CLKOUT0}
+
+Generated Clock     : clkfbout_clk_wiz_turbo
+Master Source       : u_core/u_clk/u_clk/u_turbo/inst/CLK_CORE_DRP_I/clk_inst/mmcm_adv_inst/CLKIN1
+Master Clock        : clk_in
+Multiply By         : 1
+Generated Sources   : {u_core/u_clk/u_clk/u_turbo/inst/CLK_CORE_DRP_I/clk_inst/mmcm_adv_inst/CLKFBOUT}
+
+Generated Clock     : safe_fb
+Master Source       : u_core/u_clk/u_clk/u_mmcm1/CLKIN1
+Master Clock        : clk_in
+Multiply By         : 1
+Generated Sources   : {u_core/u_clk/u_clk/u_mmcm1/CLKFBOUT}
+
+
+
+====================================================
+User Uncertainty
+====================================================
+
+
+
+====================================================
+User Jitter
+====================================================
+
+

@@ -10,6 +10,7 @@ module top_core #(
     parameter R          = 2,
     parameter C3_EN      = 0,
     parameter LANE_IMPL  = 0,
+    parameter ZERO_SKIP  = 0,     // ADR-028
     parameter INJ_EN     = 1,
     parameter WC1_W      = 11,
     parameter WC2_W      = 14,
@@ -120,7 +121,8 @@ module top_core #(
     localparam [1:0] IMPL_BITS = LANE_IMPL;
     localparam [0:0] INJ_BIT   = (INJ_EN != 0);
     localparam [0:0] C3_BIT    = (C3_EN != 0);
-    wire [63:0] id_word = {32'h534E544C, VER_MAJOR, VER_MINOR, K_BYTE, 4'd0, IMPL_BITS, INJ_BIT, C3_BIT};
+    localparam [0:0] ZS_BIT    = (ZERO_SKIP != 0);   // flag bit 4 (ADR-028)
+    wire [63:0] id_word = {32'h534E544C, VER_MAJOR, VER_MINOR, K_BYTE, 3'd0, ZS_BIT, IMPL_BITS, INJ_BIT, C3_BIT};
     assign host_rdata  = bus_rdata;
     assign host_rvalid = bus_rvalid;
     assign clk_safe_o  = clk_safe;
@@ -188,7 +190,7 @@ module top_core #(
 
     // ---- engine ----------------------------------------------------------------------------
     engine #(
-        .K(K), .R(R), .C3_EN(C3_EN), .LANE_IMPL(LANE_IMPL), .INJ_EN(INJ_EN),
+        .K(K), .R(R), .C3_EN(C3_EN), .LANE_IMPL(LANE_IMPL), .ZERO_SKIP(ZERO_SKIP), .INJ_EN(INJ_EN),
         .WC1_W(WC1_W), .WC2_W(WC2_W), .WC3_W(WC3_W),
         .WEIGHT_AW(WEIGHT_AW), .ACT0_AW(ACT0_AW), .ACT1_AW(ACT1_AW), .LOG_AW(LOG_AW)
     ) u_engine (

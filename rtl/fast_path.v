@@ -7,6 +7,10 @@
 // Registers separate the FIFO output, the slot mux and the broadcast to the lanes so that
 // the MAC paths stay critical (SPEC 7.4).  STARVE counts cycles with no operand ready
 // while a pass is running (pass_active is synchronized from clk_safe).
+//
+// SPACE_GUARD = 1 (ADR-028, ZERO_SKIP = 2): a word that closes a unit is taken only when at least MINW + 1 cycles have
+// passed since the previous such word, so unit ends reach the lane array at least MINW = K + 2 + C3 cycles apart
+// (the result serializer sends MINW words per unit). The held cycles look like an empty FIFO to the rest of the path.
 module fast_path #(
     parameter K         = 8,
     parameter R         = 2,
@@ -21,7 +25,8 @@ module fast_path #(
     parameter INJ_EN    = 1,
     parameter INJ_SLOTS = 2,
     parameter UNIT_W    = 16,
-    parameter LANE_ID_W = 6
+    parameter LANE_ID_W = 6,
+    parameter SPACE_GUARD = 0
 ) (
     input  wire                 clk,
     input  wire                 rst,
@@ -56,9 +61,33 @@ module fast_path #(
     // A new word is taken when none is held or the current one is on its last slot.
     // Next state: after taking a word, wait only if it carries a valid second slot.
     wire op_slot1_valid = op_data[R*SLOT_W-1];
-    wire can_take_next  = ~can_take | op_empty | (R == 1) | ~op_slot1_valid;
+    wire hold;                               // SPACE_GUARD: the head word must wait
+    wire op_none        = op_empty | hold;
+    wire can_take_next  = ~can_take | op_none | (R == 1) | ~op_slot1_valid;
 
-    assign op_rd = ~op_empty & can_take;
+    assign op_rd = ~op_none & can_take;
+
+    generate
+        if (SPACE_GUARD != 0) begin : space_guard
+            localparam integer MINW = K + 2 + (C3_EN != 0 ? 1 : 0);
+            localparam integer SW   = $clog2(MINW + 2);
+            localparam integer SMAXI = MINW + 1;
+            localparam [SW-1:0] SMAX = SMAXI[SW-1:0];
+            wire op_closes = op_data[SET_W-2] | (R == 2 && op_slot1_valid && op_data[R*SLOT_W-1-2]);
+            reg [SW-1:0] since;              // cycles since a unit-closing word was taken, saturating at MINW + 1
+            assign hold = op_closes & (since != SMAX);
+            always @(posedge clk) begin
+                if (rst)
+                    since <= SMAX;
+                else if (op_rd & op_closes)
+                    since <= {{(SW-1){1'b0}}, 1'b1};
+                else if (since != SMAX)
+                    since <= since + 1'b1;
+            end
+        end else begin : no_space_guard
+            assign hold = 1'b0;
+        end
+    endgenerate
 
     reg [SET_W-1:0] set_r;
     reg             set_valid;
@@ -79,7 +108,7 @@ module fast_path #(
             set_valid     <= 1'b0;
             starve_cycles <= 32'd0;
         end else begin
-            if (can_take) word_valid <= ~op_empty;
+            if (can_take) word_valid <= ~op_none;
             slot     <= ~can_take;
             can_take <= can_take_next;
             set_valid <= word_valid;

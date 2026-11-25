@@ -101,18 +101,19 @@ ENGINE_SOURCES = [
 ]
 
 
-def _engine_vectors(model: str, count: int):
+def _engine_vectors(model: str, count: int, first: int = 0):
+    """Vectors for the first first+count verification images; the bench runs images [first, first+count)."""
     def gen(workdir: Path, params: dict) -> list[str]:
         from model.config import layer_shapes, load_model_config
         from model.vectors import engine_vectors
 
         k = params["K"]
         ideal = sum(s.ideal_cycles(k) for s in layer_shapes(load_model_config(model)))
-        v = engine_vectors(model, k, count, workdir)
+        v = engine_vectors(model, k, first + count, workdir)
         return [
             f"+weights={v['weights']}", f"+params={v['params']}", f"+images={v['images']}",
             f"+logits={v['logits']}", f"+classes={v['classes']}", f"+nclasses={v['n_classes']}",
-            f"+ideal={ideal}", "+first=0", f"+count={count}",
+            f"+ideal={ideal}", f"+first={first}", f"+count={count}",
         ]
 
     return gen
@@ -132,10 +133,48 @@ def _corner_vectors(kind: str):
     return gen
 
 
+def _sparse_vectors(model: str):
+    """Trained model, images with almost-all-zero operand units (model.vectors.sparse_images, ADR-028)."""
+    def gen(workdir: Path, params: dict) -> list[str]:
+        from model.vectors import engine_vectors_custom, load_or_random_qmodel, sparse_images
+
+        qm, _ = load_or_random_qmodel(model)
+        images = sparse_images()
+        v = engine_vectors_custom(qm, images, params["K"], workdir)
+        return [
+            f"+weights={v['weights']}", f"+params={v['params']}", f"+images={v['images']}", f"+logits={v['logits']}",
+            f"+classes={v['classes']}", f"+nclasses={v['n_classes']}", "+first=0", f"+count={len(images)}",
+        ]
+
+    return gen
+
+
+# Verification images whose units end fewer than K + 2 + C3 cycles apart under unguarded zero-skip: the
+# pre-fix RTL overran the lane-array result serializer on them (diagnosis run of 26 Nov 2026, build/sim/logs).
+ZS_OVERRUN_IMAGES = [118, 198]
+
+
+def _picked_vectors(model: str, indices: list[int]):
+    """Trained model, the listed verification images only (in that order)."""
+    def gen(workdir: Path, params: dict) -> list[str]:
+        from model.data import verification_images
+        from model.vectors import engine_vectors_custom, load_or_random_qmodel
+
+        qm, _ = load_or_random_qmodel(model)
+        images, _, _ = verification_images(max(indices) + 1)
+        v = engine_vectors_custom(qm, images[indices], params["K"], workdir)
+        return [
+            f"+weights={v['weights']}", f"+params={v['params']}", f"+images={v['images']}", f"+logits={v['logits']}",
+            f"+classes={v['classes']}", f"+nclasses={v['n_classes']}", "+first=0", f"+count={len(indices)}",
+        ]
+
+    return gen
+
+
 def _engine_params(model: str, k: int, c3: int = 0, impl: int = 0) -> dict:
     wc1, wc2, wc3 = wc_widths(k)
-    aw = {"s": (13, 11), "xs": (12, 10)}[model]
-    words = {("s", 8): 12, ("s", 16): 11, ("xs", 8): 11, ("xs", 16): 10}[(model, k)]
+    aw = {"s": (13, 11), "s4": (13, 11), "xs": (12, 10)}[model]
+    words = {("s", 8): 12, ("s", 16): 11, ("s4", 8): 12, ("s4", 16): 11, ("xs", 8): 11, ("xs", 16): 10}[(model, k)]
     return {"K": k, "C3_EN": c3, "LANE_IMPL": impl, "WC1_W": wc1, "WC2_W": wc2, "WC3_W": wc3,
             "WEIGHT_AW": words, "ACT0_AW": aw[0], "ACT1_AW": aw[1]}
 
@@ -151,6 +190,8 @@ def engine_benches() -> dict[str, Bench]:
         ("xs", 8, 0, 200, True, 6),
         ("s", 8, 0, 200, True, 6),
         ("s", 8, 1, 200, True, 6),
+        ("s4", 8, 1, 1, False, 1),     # official contest classes (ADR-037)
+        ("s4", 8, 1, 200, True, 6),
         ("s", 16, 0, 20, True, 4),
     ]:
         name = f"engine_{model}_k{k}" + ("_c1" if c3 else "") + (f"_n{count}" if count >= 20 else "")
@@ -163,6 +204,24 @@ def engine_benches() -> dict[str, Bench]:
         name = "engine_s_k8_c1_dsp" + (f"_n{count}" if count >= 20 else "")
         out[name] = Bench(name, "tb_engine", [*ENGINE_SOURCES, "tb/tb_engine.v"], _engine_params("s", 8, 1, impl=1),
                           _engine_vectors("s", count), slow=slow, shards=shards, prefer_xsim=slow)
+    # ADR-028 zero-skip: the same logits as the golden model with fewer cycles. ZERO_SKIP = 1 keeps at least
+    # K + 2 + C3 sets per unit (operand_gen); ZERO_SKIP = 2 stalls unit ends in fast_path instead.
+    for zs in (1, 2):
+        for count, slow, shards in [(1, False, 1), (200, True, 6)]:
+            name = f"engine_s_k8_c1_zs{zs if zs > 1 else ''}" + (f"_n{count}" if count >= 20 else "")
+            out[name] = Bench(name, "tb_engine", [*ENGINE_SOURCES, "tb/tb_engine.v"], {**_engine_params("s", 8, 1), "ZERO_SKIP": zs},
+                              _engine_vectors("s", count), slow=slow, shards=shards, prefer_xsim=slow)
+    # ADR-028: units with almost all activations zero. Without a guard these end fewer than K + 2 + C3 cycles apart
+    # and overrun the lane-array result serializer (found 26 Nov 2026: engine_s_k8_c1_zs_n200 hung). Baseline row for
+    # the cycle comparison.
+    for zs in (1, 2):
+        name = f"engine_s_k8_c1_zs{zs if zs > 1 else ''}_overrun"
+        out[name] = Bench(name, "tb_engine", [*ENGINE_SOURCES, "tb/tb_engine.v"], {**_engine_params("s", 8, 1), "ZERO_SKIP": zs},
+                          _picked_vectors("s", ZS_OVERRUN_IMAGES), prefer_xsim=True)
+    for zs in (0, 1, 2):
+        name = "engine_s_k8_c1_" + (f"zs{zs if zs > 1 else ''}_" if zs else "") + "sparse"
+        out[name] = Bench(name, "tb_engine", [*ENGINE_SOURCES, "tb/tb_engine.v"], {**_engine_params("s", 8, 1), "ZERO_SKIP": zs},
+                          _sparse_vectors("s"), prefer_xsim=True)
     # SPEC 13.4 corner cases on padded lanes, extreme values, ties, saturation, zero image.
     for kind in ("zero_lanes", "extreme", "ties", "saturate"):
         name = f"engine_corner_{kind}"
@@ -189,8 +248,8 @@ def _spi_log_vectors(model: str):
 
 def _system_params(model: str, k: int, c3: int, turbo_ns: float, log_aw: int = 8) -> dict:
     wc1, wc2, wc3 = wc_widths(k)
-    aw = {"s": (13, 11, 12), "xs": (12, 10, 11), "micro": (9, 8, 9)}[model]
-    img_bytes = {"s": 3072, "xs": 3072, "micro": 192}[model]
+    aw = {"s": (13, 11, 12), "s4": (13, 11, 12), "xs": (12, 10, 11), "micro": (9, 8, 9)}[model]
+    img_bytes = {"s": 3072, "s4": 3072, "xs": 3072, "micro": 192}[model]
     return {"K": k, "C3_EN": c3, "WC1_W": wc1, "WC2_W": wc2, "WC3_W": wc3, "WEIGHT_AW": aw[2], "ACT0_AW": aw[0],
             "ACT1_AW": aw[1], "LOG_AW": log_aw, "IMG_BYTES": img_bytes, "TURBO_NS": turbo_ns}
 
@@ -428,6 +487,10 @@ LINT_TARGETS = [
     *[
         {"id": f"engine_c{c3}", "top": "engine", "sources": ENGINE_SOURCES, "params": {"C3_EN": c3, **_W}}
         for c3 in (0, 1)
+    ],
+    *[
+        {"id": f"engine_c1_zs{zs}", "top": "engine", "sources": ENGINE_SOURCES, "params": {"C3_EN": 1, "ZERO_SKIP": zs, **_W}}
+        for zs in (1, 2)
     ],
     *[
         {"id": f"wc_gen_k{k}_c1", "top": "wc_gen", "sources": ["rtl/sum_tree.v", "rtl/wc_gen.v"],

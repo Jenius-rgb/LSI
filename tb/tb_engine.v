@@ -3,11 +3,15 @@
 // Single-clock engine test (M6): weights, parameters and images are loaded by backdoor,
 // logits and class are compared with the golden model.
 // Runs images [first, first+count).  Prints PASS n/n, or FAIL with the first mismatch.
+// Progress: one "IMG i done cycles=n" line per image, flushed, so a runner log shows how far a run is.
+// Watchdog: an image that does not finish within +maxcycles (default 2,000,000, about 7 times the largest
+// model's per-image cycle count) fails with its index instead of hanging the simulator.
 module tb_engine;
     parameter K = 8;
     parameter R = 2;
     parameter C3_EN = 0;
     parameter LANE_IMPL = 0;
+    parameter ZERO_SKIP = 0;
     parameter WC1_W = 11;
     parameter WC2_W = 14;
     parameter WC3_W = 16;
@@ -31,7 +35,7 @@ module tb_engine;
     wire [7:0]  host_rdata;
     wire        clk_sel;
 
-    engine #(.K(K), .R(R), .C3_EN(C3_EN), .LANE_IMPL(LANE_IMPL), .INJ_EN(0),
+    engine #(.K(K), .R(R), .C3_EN(C3_EN), .LANE_IMPL(LANE_IMPL), .INJ_EN(0), .ZERO_SKIP(ZERO_SKIP),
              .WC1_W(WC1_W), .WC2_W(WC2_W), .WC3_W(WC3_W),
              .WEIGHT_AW(WEIGHT_AW), .ACT0_AW(ACT0_AW), .ACT1_AW(ACT1_AW)) dut (
         .clk_safe(clk), .clk_fast(clk), .rst(rst),
@@ -50,12 +54,14 @@ module tb_engine;
     reg [31:0]      class_exp [0:MAX_IMAGES-1];
 
     integer first, count, n_classes, ideal_cycles, i, c, o, errors, passed;
-    integer total_cycles;
+    integer total_cycles, max_cycles;
+    reg     timed_out;
 
     task fail_stop;
         begin
             $display("FAIL errors=%0d images_passed=%0d/%0d", errors, passed, count);
             $fatal(1);
+            $finish;   // xsim printed the FAIL and ran on after $fatal (26 Nov 2026)
         end
     endtask
 
@@ -64,6 +70,7 @@ module tb_engine;
         if (!$value$plusargs("count=%d", count)) count = 1;
         if (!$value$plusargs("nclasses=%d", n_classes)) n_classes = 10;
         if (!$value$plusargs("ideal=%d", ideal_cycles)) ideal_cycles = 0;
+        if (!$value$plusargs("maxcycles=%d", max_cycles)) max_cycles = 2000000;
         if (!$value$plusargs("weights=%s", path)) begin $display("FAIL no weights"); $fatal(1); end
         $readmemh(path, dut.u_wram.mem);
         if (!$value$plusargs("params=%s", path)) begin $display("FAIL no params"); $fatal(1); end
@@ -88,7 +95,23 @@ module tb_engine;
             start = 1;
             @(negedge clk);
             start = 0;
-            wait (done == 1'b1);
+            timed_out = 1'b0;
+            fork : wait_done
+                begin
+                    wait (done == 1'b1);
+                    disable wait_done;
+                end
+                begin
+                    repeat (max_cycles) @(negedge clk);
+                    timed_out = 1'b1;
+                    disable wait_done;
+                end
+            join
+            if (timed_out) begin
+                $display("FAIL image=%0d timeout: done not set within %0d cycles", i, max_cycles);
+                $fatal(1);
+                $finish;
+            end
             @(negedge clk);
             total_cycles = total_cycles + cycles_total;
 
@@ -111,6 +134,8 @@ module tb_engine;
             end
             if (errors != 0) fail_stop;
             passed = passed + 1;
+            $display("IMG %0d done cycles=%0d", i, cycles_total);
+            $fflush;
             repeat (3) @(negedge clk);
         end
 

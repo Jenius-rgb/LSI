@@ -6,6 +6,10 @@ Usage: python tools/run.py sim <bench ...> [--list] [--sim icarus|xsim] [--jobs 
 Each bench declares its sources, parameters and a vector generator. A bench passes only if
 it prints ``PASS n/n`` with n == n and no FAIL line (and, under Icarus, vvp exits with 0).
 xsim runs about ten times faster than Icarus, so long regressions use it when available.
+
+Simulator output goes to build/sim/logs/<bench>[_s<shard>].log while it runs (engine benches print one
+``IMG i done`` line per image), so a long regression can be followed with ``Get-Content -Wait``. On a
+timeout the whole process tree is killed (xsim.bat starts xsim.exe, which starts xsimk.exe).
 """
 from __future__ import annotations
 
@@ -13,8 +17,10 @@ import argparse
 import os
 import re
 import shutil
+import signal
 import subprocess
 import sys
+import time
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -24,6 +30,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BUILD = ROOT / "build"
 SIM_DIR = BUILD / "sim"
 XSIM_DIR = BUILD / "xsim"
+LOG_DIR = SIM_DIR / "logs"
 VECTOR_DIR = BUILD / "vectors"
 
 RTL = "rtl"
@@ -82,12 +89,52 @@ def compile_icarus(bench: Bench) -> Path:
     return out
 
 
-def _run_icarus(bench: Bench, plusargs: list[str], vvp: Path) -> tuple[bool, str]:
-    res = subprocess.run(
-        ["vvp", "-n", str(vvp), *plusargs], cwd=ROOT, capture_output=True, text=True, timeout=bench.timeout_s, errors="replace"
-    )
-    output = res.stdout + res.stderr
-    return res.returncode == 0 and _verdict(output), output
+def kill_tree(proc: subprocess.Popen) -> None:
+    """Kill a process and everything it started. Popen.kill() alone leaves xsim.exe and xsimk.exe running on Windows."""
+    if os.name == "nt":
+        subprocess.run(["taskkill", "/F", "/T", "/PID", str(proc.pid)], capture_output=True)
+    else:
+        try:
+            os.killpg(proc.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+    try:
+        proc.wait(timeout=30)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+
+
+def run_logged(cmd: list[str], cwd: Path, log: Path, timeout_s: float) -> tuple[int | None, str]:
+    """Run cmd with stdout and stderr streamed into log. Returns (exit code, or None on timeout, and the log text)."""
+    log.parent.mkdir(parents=True, exist_ok=True)
+    extra = {"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP} if os.name == "nt" else {"start_new_session": True}
+    code: int | None = None
+    with open(log, "w", encoding="utf-8", errors="replace") as fh:
+        proc = subprocess.Popen(cmd, cwd=cwd, stdout=fh, stderr=subprocess.STDOUT, **extra)
+        deadline = time.monotonic() + timeout_s
+        while code is None:
+            try:
+                code = proc.wait(timeout=1.0)
+            except subprocess.TimeoutExpired:
+                if time.monotonic() >= deadline:
+                    kill_tree(proc)
+                    break
+    text = log.read_text(encoding="utf-8", errors="replace")
+    if code is None:
+        note = f"FAIL runner timeout after {timeout_s:.0f} s; process tree killed\n"
+        with open(log, "a", encoding="utf-8") as fh:
+            fh.write(note)
+        text += note
+    return code, text
+
+
+def _log_path(bench: Bench, shard: int, shards: int) -> Path:
+    return LOG_DIR / (f"{bench.name}_s{shard}.log" if shards > 1 else f"{bench.name}.log")
+
+
+def _run_icarus(bench: Bench, plusargs: list[str], vvp: Path, log: Path) -> tuple[bool, str]:
+    code, output = run_logged(["vvp", "-n", str(vvp), *plusargs], ROOT, log, bench.timeout_s)
+    return code == 0 and _verdict(output), output
 
 
 def _vivado_tool(name: str) -> str:
@@ -119,15 +166,11 @@ def build_xsim(bench: Bench, workdir: Path) -> None:
     run("xelab", ["-nolog", "-f", "ela.txt"])
 
 
-def _run_xsim(bench: Bench, plusargs: list[str], workdir: Path) -> tuple[bool, str]:
+def _run_xsim(bench: Bench, plusargs: list[str], workdir: Path, log: Path) -> tuple[bool, str]:
     tests = " ".join(f"-testplusarg {p[1:]}" for p in plusargs)
     (workdir / "sim.txt").write_text(f"snap -R {tests}\n", encoding="ascii")
-    res = subprocess.run(
-        [_vivado_tool("xsim"), "-nolog", "-f", "sim.txt"], cwd=workdir, capture_output=True, text=True,
-        timeout=bench.timeout_s, errors="replace",
-    )
-    output = res.stdout + res.stderr
-    return _verdict(output), output
+    code, output = run_logged([_vivado_tool("xsim"), "-nolog", "-f", "sim.txt"], workdir, log, bench.timeout_s)
+    return code is not None and _verdict(output), output
 
 
 def _shard_plusargs(plusargs: list[str], shards: int) -> list[list[str]]:
@@ -167,11 +210,12 @@ def run_bench(bench: Bench, simulator: str = "auto") -> tuple[bool, str]:
 
     if sim == "icarus":
         vvp = compile_icarus(bench)
-        run = lambda s: _run_icarus(bench, s[1], vvp)  # noqa: E731
+        run = lambda s: _run_icarus(bench, s[1], vvp, _log_path(bench, s[0], len(shards)))  # noqa: E731
     else:
         for i in range(len(shards)):
             build_xsim(bench, XSIM_DIR / bench.name / f"s{i}")
-        run = lambda s: _run_xsim(bench, s[1], XSIM_DIR / bench.name / f"s{s[0]}")  # noqa: E731
+        run = lambda s: _run_xsim(bench, s[1], XSIM_DIR / bench.name / f"s{s[0]}",  # noqa: E731
+                                  _log_path(bench, s[0], len(shards)))
 
     with ThreadPoolExecutor(max_workers=max(1, len(shards))) as pool:
         results = list(pool.map(run, enumerate(shards)))
@@ -208,7 +252,11 @@ def main() -> int:
             print(f"{name}{'  (slow)' if bench.slow else ''}")
         return 0
 
-    chosen = [b for n, b in benches.items() if (not args.benches and not b.slow) or any(n == p or n.startswith(p) for p in args.benches)]
+    # An exact bench name selects only that bench; anything else is a prefix.
+    def selected(name: str) -> bool:
+        return any(name == p or (p not in benches and name.startswith(p)) for p in args.benches)
+
+    chosen = [b for n, b in benches.items() if (not args.benches and not b.slow) or (args.benches and selected(n))]
     if not chosen:
         print("no matching bench", file=sys.stderr)
         return 2
@@ -220,6 +268,7 @@ def main() -> int:
         passed, output = run_bench(bench, args.sim)
         return bench, passed, output
 
+    print(f"logs (written while running): {LOG_DIR.relative_to(ROOT).as_posix()}/<bench>[_s<shard>].log", flush=True)
     failures = 0
     with ThreadPoolExecutor(max_workers=args.jobs) as pool:
         for bench, passed, output in pool.map(job, chosen):

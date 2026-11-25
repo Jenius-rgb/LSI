@@ -15,8 +15,9 @@ MAX_CHUNK = 256
 
 
 def lane_variant(flags: int) -> dict:
-    """Variant bits of the ID flags byte {4'd0, IMPL[1:0], INJ, C3} (rtl/top_core.v, SPEC 12.2)."""
-    return {"lane_impl": ("lut", "dsp_min", "dsp_full", "unknown")[(flags >> 2) & 3], "inj_hw": bool(flags & 2), "c3_hw": bool(flags & 1)}
+    """Variant bits of the ID flags byte {3'd0, ZS, IMPL[1:0], INJ, C3} (rtl/top_core.v, SPEC 12.2)."""
+    return {"lane_impl": ("lut", "dsp_min", "dsp_full", "unknown")[(flags >> 2) & 3], "inj_hw": bool(flags & 2), "c3_hw": bool(flags & 1),
+            "zero_skip": bool(flags & 0x10)}
 
 
 @dataclass

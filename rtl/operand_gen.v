@@ -9,8 +9,17 @@
 //
 // FIFO word: R slots, each {valid, set}; a set is {pass_start, last, a, w[K], wc3, wc2, wc1}.
 // wc3 is omitted when C3_EN = 0.
+//
+// ZERO_SKIP != 0 (ADR-028): a set whose activation is 0 is not sent, unless it closes a unit (last) or opens a pass
+// (pass_start). Every product of such a set is 0 in every data and checksum lane, so all sums are unchanged. Kept sets
+// are packed into slot 0 first, so the fast side still sees a valid slot 0 in every word, and a word with no kept
+// set is not written.
+// ZERO_SKIP = 1 also keeps at least MINW = K + 2 + C3 sets per unit (zero sets near the unit end are kept when
+// needed): the lane-array result serializer sends MINW words per unit, one per cycle, so units must not end closer
+// than that. ZERO_SKIP = 2 drops every zero set and leaves the spacing to a stall in fast_path.
 module operand_gen #(
     parameter K         = 8,
+    parameter ZERO_SKIP = 0,
     parameter R         = 2,
     parameter C3_EN     = 0,
     parameter W_W       = 8,
@@ -340,20 +349,77 @@ module operand_gen #(
         w1_d  <= w1_c;
     end
 
-    assign fifo_wr = slot_v_p[PIPE-1][0];
+    // Zero skipping at the FIFO write (ADR-028).
+    wire zs    = (ZERO_SKIP != 0);
+    wire drop0 = (a0_d == 8'd0) & ~slot_l_p[PIPE-1][0] & ~pass_p[PIPE-1];
+    wire drop1 = (a1_d == 8'd0) & ~slot_l_p[PIPE-1][1];
+    wire room0, room1;                        // dropping still leaves room for MINW sets in the unit
+    wire keep0  = slot_v_p[PIPE-1][0] & ~(zs & drop0 & room0);
+    wire keep1  = slot_v_p[PIPE-1][1] & ~(zs & drop1 & room1);
+    // Gated by zs so that ZERO_SKIP = 0 synthesizes the original slot wiring: synthesis cannot prove that a valid
+    // slot 1 implies a valid slot 0, and the ungated mux cost 118 LUTs in the baseline (official run, 26 Nov 2026).
+    wire shift1 = zs & ~keep0 & keep1;        // set 1 moves into slot 0
+
+    generate
+        if (ZERO_SKIP == 1) begin : min_sets
+            // need = MINW - (sets after this one in the unit), floored at 0: a zero set may be dropped only while
+            // the sets already kept reach it, because the rest of the unit can then still bring the count to MINW.
+            localparam integer MINW = K + 2 + (C3_EN != 0 ? 1 : 0);
+            localparam integer NW   = $clog2(MINW + 2);
+            localparam integer MINW1 = MINW + 1;
+            localparam [NW-1:0] MINW_N = MINW[NW-1:0];
+            reg  [NW-1:0] need0_p [0:PIPE-1];
+            reg  [NW-1:0] need1_p [0:PIPE-1];
+            reg  [NW-1:0] kept;               // sets kept so far in the current unit, saturating at MINW
+            wire [15:0]   after0 = t_last_r - t;          // sets after set 0 (set 1 is one closer to the end)
+            wire [NW-1:0] need0  = (after0 >= MINW[15:0]) ? {NW{1'b0}} : MINW_N - after0[NW-1:0];
+            wire [NW-1:0] need1  = (after0 >= MINW1[15:0]) ? {NW{1'b0}} : MINW_N + 1'b1 - after0[NW-1:0];
+            wire [NW-1:0] need0_d = need0_p[PIPE-1];
+            wire [NW-1:0] need1_d = need1_p[PIPE-1];
+            wire [NW-1:0] kept_mid = (keep0 && kept != MINW_N) ? kept + 1'b1 : kept;
+            assign room0 = (kept >= need0_d);
+            // kept_mid depends on keep0; both outcomes are compared in parallel.
+            assign room1 = keep0 ? ((kept != MINW_N ? kept + 1'b1 : kept) >= need1_d) : (kept >= need1_d);
+            integer q;
+            always @(posedge clk) begin
+                need0_p[0] <= need0;
+                need1_p[0] <= need1;
+                for (q = 1; q < PIPE; q = q + 1) begin
+                    need0_p[q] <= need0_p[q-1];
+                    need1_p[q] <= need1_p[q-1];
+                end
+                if (rst | (|slot_l_p[PIPE-1]))
+                    kept <= {NW{1'b0}};      // the unit ends in this word (a word never spans two units)
+                else if (keep1 && kept_mid != MINW_N)
+                    kept <= kept_mid + 1'b1;
+                else
+                    kept <= kept_mid;
+            end
+        end else begin : no_min_sets
+            assign room0 = 1'b1;
+            assign room1 = 1'b1;
+        end
+    endgenerate
+
+    assign fifo_wr = zs ? (keep0 | keep1) : keep0;
 
     wire [SLOT_W-1:0] slot0;
     wire [SLOT_W-1:0] slot1;
+    wire [SLOT_W-1:0] set0;
+    wire [SLOT_W-1:0] set1;
 
     generate
         if (C3_EN != 0) begin : set_c3
-            assign slot0 = {slot_v_p[PIPE-1][0], pass_p[PIPE-1], slot_l_p[PIPE-1][0], a0_d, w0_d, wc3_0, wc2_0, wc1_0};
-            assign slot1 = {slot_v_p[PIPE-1][1], 1'b0,           slot_l_p[PIPE-1][1], a1_d, w1_d, wc3_1, wc2_1, wc1_1};
+            assign set0  = {keep0, pass_p[PIPE-1], slot_l_p[PIPE-1][0], a0_d, w0_d, wc3_0, wc2_0, wc1_0};
+            assign set1  = {keep1, 1'b0,           slot_l_p[PIPE-1][1], a1_d, w1_d, wc3_1, wc2_1, wc1_1};
         end else begin : set_no_c3
-            assign slot0 = {slot_v_p[PIPE-1][0], pass_p[PIPE-1], slot_l_p[PIPE-1][0], a0_d, w0_d, wc2_0, wc1_0};
-            assign slot1 = {slot_v_p[PIPE-1][1], 1'b0,           slot_l_p[PIPE-1][1], a1_d, w1_d, wc2_1, wc1_1};
+            assign set0  = {keep0, pass_p[PIPE-1], slot_l_p[PIPE-1][0], a0_d, w0_d, wc2_0, wc1_0};
+            assign set1  = {keep1, 1'b0,           slot_l_p[PIPE-1][1], a1_d, w1_d, wc2_1, wc1_1};
             wire unused_wc3 = &{1'b0, wc3_0, wc3_1};
         end
+
+        assign slot0 = shift1 ? set1 : set0;
+        assign slot1 = shift1 ? {1'b0, set1[SLOT_W-2:0]} : set1;
 
         if (R == 2) begin : two_slots
             wc_gen #(.K(K), .C3_EN(C3_EN), .W_W(W_W), .WC1_W(WC1_W), .WC2_W(WC2_W), .WC3_W(WC3_W)) u_wc1 (

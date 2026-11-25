@@ -7,6 +7,7 @@ module top_board #(
     parameter K         = 8,
     parameter C3_EN     = 1,
     parameter LANE_IMPL = 0,
+    parameter ZERO_SKIP = 0,     // ADR-028
     parameter WEIGHT_AW = 12,
     parameter ACT0_AW   = 13,
     parameter ACT1_AW   = 11
@@ -32,7 +33,7 @@ module top_board #(
     wire        unused_rvalid, unused_clk, unused_rst;
 
     top_core #(
-        .K(K), .C3_EN(C3_EN), .LANE_IMPL(LANE_IMPL),
+        .K(K), .C3_EN(C3_EN), .LANE_IMPL(LANE_IMPL), .ZERO_SKIP(ZERO_SKIP),
         .WEIGHT_AW(WEIGHT_AW), .ACT0_AW(ACT0_AW), .ACT1_AW(ACT1_AW)
     ) u_core (
         .clk_in(clk_in), .rst(por[7]),

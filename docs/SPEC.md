@@ -37,6 +37,7 @@ SENTINEL is an INT8 CNN accelerator on Spartan-7 with **K parallel MAC lanes**. 
 | `N_CLASSES_MAX` | 16 | upper bound of classes supported by hardware without resynthesis (layer table loaded at runtime) |
 | `IN_CH` | 3 | input channels (RGB) |
 | `INJ_EN` | 1 | fault injection logic synthesized |
+| `ZERO_SKIP` | 0 | 0: off. 1: operand sets with activation 0 are not sent to the lanes, except a set that closes a unit or opens a pass, and every unit keeps at least K + 2 + C3 sets (§5.4). 2: the same skipping with unit ends spaced by a stall in `fast_path` instead (comparison variant). Synthesis parameter (ADR-028); flag bit 4 of the ID word is set for 1 and 2 |
 
 Official variant for ZERO7 and synthesis report is in `config/hw_zero7.yaml`: K = 8, R = 2, `C3_EN = 1`, `LANE_IMPL = lut`, model `s` (ADR-013).
 
@@ -69,6 +70,12 @@ Official variant for ZERO7 and synthesis report is in `config/hw_zero7.yaml`: K 
 
 Numbers above calculated manually. `model/arch_report.py` must recompute from config, and that script's output is the reference.
 
+
+### 2.3 Variant `s4` (official contest classes, ADR-037)
+
+The architecture of `s` (§2.1) with a 4-output fully connected layer (512 → 4, 2,048 weights). Classes in the official
+order: cat = 0, dog = 1, deer = 2, horse = 3 [OFFICIAL, Design Specification §4]. Trained on the CIFAR-10 images of these
+four classes (dataset `cifar10_4`); `model/arch_report.py` gives the exact counts.
 ---
 
 ## 3. Integer arithmetic (normative)
@@ -181,6 +188,10 @@ H_out·W_out calculated before pooling. For variant `s` with K = 8: 277,504 cycl
 
 ## 6. Checksum (normative)
 
+
+**Result serializer spacing.** The lane array sends K + 2 + C3 result words per unit (K data lanes, 2 or 3 checksum lanes), one per `clk_fast` cycle, so consecutive units must end at least K + 2 + C3 cycles apart. Without zero-skip a unit lasts t cycles, and the shortest t in every model is 27 (first convolution, C_in = 3), above the 19 needed at K = 16 with C3 (`tests/test_tools.py::test_every_unit_is_long_enough_for_the_result_serializer`). A model with t < K + 2 + C3 (for example a one-channel 3×3 layer, t = 9) would break this rule even with `ZERO_SKIP = 0`.
+
+With `ZERO_SKIP` = 1 or 2 (ADR-028) the lane-side cycle count becomes data dependent: ideal cycles minus the operand sets with a zero activation that neither close a unit nor open a pass. Unguarded skipping lets units end closer than K + 2 + C3 cycles apart and overruns the serializer (seen on verification images 118 and 198, ADR-028 results). `ZERO_SKIP = 1` keeps zero sets near the end of a unit when fewer than K + 2 + C3 sets would remain; `ZERO_SKIP = 2` holds a unit-closing word in `fast_path` until K + 3 + C3 cycles have passed since the previous one. The safe side still scans every tap at R sets per `clk_safe` cycle, so the gain is bounded by min(1/(1 − z), R·f_safe/f_lane), with z the dropped fraction [INFERENCE]. Sums and checksum identities (§6) are unchanged because every dropped product is 0 in every lane.
 ### 6.1 Checksum weights, computed on-the-fly
 
 Checksum weights are computed in the **safe domain**, from the same K weights sent to data lanes:
@@ -450,7 +461,7 @@ Injection semantics identical in `model/checker.py`, so RTL outcomes can be pred
 | --- | --- | --- |
 | `0x02` WRITE | `[0x02][A23:16][A15:8][A7:0][data…]` | write, auto-incrementing byte address |
 | `0x03` READ | `[0x03][A23:16][A15:8][A7:0][dummy]` then data out on MISO | read, auto-increment |
-| `0x9F` ID | 8 bytes out | `"SNTL"`, major version, minor version, K, flags |
+| `0x9F` ID | 8 bytes out | `"SNTL"`, major version, minor version, K, flags (bit 0 C3, bit 1 INJ, bits 3:2 lane implementation, bit 4 ZERO_SKIP) |
 
 ### 12.3 Address map
 

@@ -449,6 +449,26 @@ def corner_images(seed: int = 2027) -> np.ndarray:
     return images
 
 
+def sparse_images(seed: int = 2027) -> np.ndarray:
+    """Images whose operand units are almost all zero (ADR-028 zero-skip corner cases), for model input 3x32x32.
+
+    0: black (every first-layer unit has only zero activations); 1: black with one bright 3x3 patch and eight random
+    pixels (units with one to a few non-zero activations); 2: the first verification image with its left half black
+    (short units next to full ones); 3: that verification image unchanged (control).
+    """
+    from model.data import verification_images
+
+    real, _, _ = verification_images(1)
+    rng = np.random.default_rng(seed)
+    images = np.zeros((4, 3, 32, 32), dtype=np.uint8)
+    images[1, :, 14:17, 14:17] = 200
+    images[1, rng.integers(0, 3, 8), rng.integers(0, 32, 8), rng.integers(0, 32, 8)] = rng.integers(1, 256, 8)
+    images[2] = real[0]
+    images[2, :, :, :16] = 0
+    images[3] = real[0]
+    return images
+
+
 def engine_vectors_custom(qm: QModel, images: np.ndarray, k: int, workdir) -> dict:
     """Like engine_vectors, for an arbitrary QModel and image set."""
     from model.config import load_hw_config

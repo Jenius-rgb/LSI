@@ -382,7 +382,8 @@ def test_hw_metadata_names_the_lane_variant():
     from sentinel.backend import HwBackend
     from sentinel.driver import lane_variant
 
-    assert lane_variant(0b0011) == {"lane_impl": "lut", "inj_hw": True, "c3_hw": True}
+    assert lane_variant(0b0011) == {"lane_impl": "lut", "inj_hw": True, "c3_hw": True, "zero_skip": False}
+    assert lane_variant(0b10011)["zero_skip"] is True  # ADR-028 condition 4: every [HW] result names the zero-skip state
     assert lane_variant(0b0111)["lane_impl"] == "dsp_min" and lane_variant(0b1000)["lane_impl"] == "dsp_full"
     qm = micro_qm()
     drv = SentinelDriver(LogTransport(ModelDevice(qm, k=8, flags=0b0111)))
