@@ -41,57 +41,50 @@ Sources: `docs/official/Initialize_20260618_EN.pdf` (IN-n = slide n), `docs/offi
   SoCs > Zynq-7000 if the Hardware Manager misbehaves.
 - The cable drivers option of the installer must be on for the JTAG cable (IN-18).
 
-### JTAG cable
+### JTAG cable (team decision 25 Nov 2026: SEGGER J-Link)
 
-- [OFFICIAL] Digilent JTAG-HS3, six jumper wires to the JTAG pins of ZERO7: Vref red, TMS orange,
+- [OFFICIAL] The guide uses a Digilent JTAG-HS3 with six jumper wires to the JTAG pins of ZERO7: Vref red, TMS orange,
   TCK yellow, TDO green, TDI blue, GND black (IN-42; the slide text misspells it "JTAG-H53").
 - [OFFICIAL] In "Open New Target" set the JTAG clock to 3,000,000 Hz (IN-46). The device shows as
   `xc7s25_0`, ID code `037C4093` (IN-46). Program with the `.bit` file (IN-49).
-- [USER, photo, 18 Nov 2026] The team's cable is a Digilent JTAG-HS2 Rev. A, not the HS3 of the guide. Its 6-pin header is
-  labelled TMS, TDI, TDO, TCK, GND, VDD. The HS2 VDD pin takes the role of the HS3 VREF pin [INFERENCE]; check this in the
-  Digilent JTAG-HS2 reference manual before power is applied. The wiring and Hardware Manager steps are in
-  `board/BRINGUP_NO_PI.md` section 2.
-- Cheaper cable options [INFERENCE, not in the official guide and not tried on ZERO7; checked on 2026-11-17
-  against the project pages linked below]. The JTAG pins of ZERO7 sit on configuration bank 0, whose
-  VCCO is VCC3V3 [OFFICIAL, TK-2 to TK-6], so 3.3 V logic matches; 100 ohm series resistors on TMS, TCK
-  and TDI, and ground connected first, are cheap protection. None of these options senses Vref.
-  1. Raspberry Pi Pico with xvc-pico (https://github.com/kholia/xvc-pico): a Xilinx Virtual Cable server,
-     so the Vivado Hardware Manager connects through "Add Xilinx Virtual Cable" (UG908) and the official
-     screens mostly still apply. Cheapest option that keeps Vivado.
-  2. The Raspberry Pi 4 itself with xvcpi (https://github.com/derekmulcahy/xvcpi): free and also XVC, but
-     the four Pi GPIOs it uses are under the HAT and wired to FPGA pins (TK-1, TK-2), so it needs a
-     stacking header and a design that leaves those FPGA pins unused.
-  3. A generic FT232H or FT2232H module with openFPGALoader (https://github.com/trabucayre/openFPGALoader):
-     xc7s25 is listed for SRAM loading; programs the `.bit` file without the Vivado Hardware Manager.
-  4. Digilent JTAG-HS2: the safe choice; same family as the HS3 of the official guide.
-  Unofficial clones of AMD/Xilinx cables are not recommended.
+- [USER, 25 Nov 2026] The team has no Digilent cable and uses a SEGGER J-Link (20-pin JTAG). Vivado reaches it through
+  the SEGGER J-Link XVCD Server ("Add Xilinx Virtual Cable"); openFPGALoader (`--cable jlink`) is the programming-only
+  fallback. Wiring, safety checks and the test order are in `docs/JLINK_VIVADO.md`. Programming and ILA through the
+  J-Link are [UNKNOWN] until the user runs the tests there.
+- The earlier notes on a Digilent JTAG-HS2 (18 Nov 2026) and on cheaper cable options are superseded.
 
-### Raspberry Pi (the team uses a Raspberry Pi 4 Model B, ADR-022)
+### Raspberry Pi 5 (team decision 25 Nov 2026, ADR-033)
 
-- [OFFICIAL] The organisers say the loaned boards connect to a Raspberry Pi 5 (G-6), and ZERO7 takes
-  its power from the header (IN-41). The team only has a Raspberry Pi 4 Model B [USER].
-- [INFERENCE] The Pi 4 has the same 40-pin header and the same BCM GPIO numbers as the Pi 5, including
-  SPI0 on GPIO 7 to 11, so `board/zero7.xdc` and the software do not change. Nothing in the repository
-  is Pi 5 specific: `spidev`, `gpiozero` and `picamera2` run on both. Check on arrival: the board seats
-  fully on the header, nothing underneath touches the Pi 4's USB or Ethernet jacks, and the mounting
-  holes line up.
-- Power: use the official Raspberry Pi 4 supply (5.1 V, 3 A, USB-C). How much current ZERO7 draws from
-  the 5 V pins is [UNKNOWN]; measure it with a USB power meter in step 1 and keep USB loads off the Pi
-  while the FPGA runs. The Pi 4 has no power button; it starts when power is applied.
-- Operating system: Raspberry Pi Imager, device "Raspberry Pi 4", Raspberry Pi OS (64-bit), microSD of
-  32 GB or more. In the customisation step set hostname, user, Wi-Fi and enable SSH.
-- Packages: `sudo apt install python3-spidev python3-gpiozero python3-numpy python3-picamera2 python3-opencv`.
-- SPI: `sudo raspi-config`, `3 Interface Options`, `I4 SPI`, then reboot. `ls /dev/spidev0.*` must list
-  `spidev0.0`. SENTINEL uses SPI0 with CE0: GPIO11 SCLK, GPIO10 MOSI, GPIO9 MISO, GPIO8 CE0.
-  Start at 1 MHz (`SpidevTransport` default). The FPGA side is guaranteed up to f_safe / 8 = 15.6 MHz
-  (SPEC 12.1); the speed the wiring allows is measured in step 3.
-- Camera: the Pi 4 takes the standard 15-pin camera ribbon (the Pi 5 needs a different, 22-pin cable).
-  Check with `rpicam-hello --list-cameras`.
+Sources: Raspberry Pi documentation (raspberrypi.com/documentation/computers: raspberry-pi, getting-started, imager,
+remote-access, config_txt), gpiozero documentation (installing, api_pins), read 2026-11-25.
+
+- [OFFICIAL] The organisers say the loaned boards connect to a Raspberry Pi 5 (G-6), and ZERO7 takes its power from the
+  header (IN-41). [USER] The team now has a Raspberry Pi 5 with 8 GB RAM. Pi 5 compatibility with ZERO7 is [UNKNOWN] until
+  shown on the board; check on arrival that the board seats fully on the 40-pin header and that nothing underneath touches
+  the Pi's connectors or cooler.
+- Power: Raspberry Pi documentation recommends the 27 W USB-C supply (5 V, 5 A); with a 5 V 3 A supply the Pi limits USB
+  peripherals to 600 mA. How much ZERO7 draws from the 5 V header pins is [UNKNOWN]; measure it with a USB power meter in
+  step 1. Do not power ZERO7 any other way (its DC jack is unconfirmed, `board/BOARD_INFO.md`).
+- Operating system: Raspberry Pi Imager, device "Raspberry Pi 5", Raspberry Pi OS (64-bit). In the OS customisation step
+  set the hostname (letters, numbers, hyphens), a lowercase username and password, Wi-Fi (the country in Localisation sets
+  the Wi-Fi regulatory domain), and in Remote access turn on "Enable SSH". SSH is off by default otherwise.
+- GPIO on the Pi 5 (RP1 I/O controller): gpiozero with the **lgpio** pin factory. The gpiozero documentation says "Only
+  lgpio works on the Pi 5"; RPi.GPIO is not used anywhere in this repository. `sentinel.transport.lgpio_factory()` selects
+  it explicitly, so a missing lgpio fails with an install hint instead of a silent fallback.
+- Packages (apt, the system Python; Bookworm does not allow pip into the system Python):
+  `sudo apt install python3-spidev python3-gpiozero python3-lgpio python3-numpy python3-picamera2 python3-opencv`.
+- SPI: `sudo raspi-config`, Interface Options, SPI, then reboot (or `dtparam=spi=on` in `/boot/firmware/config.txt`).
+  `ls /dev/spidev0.*` must list `spidev0.0`; the user needs the `spi` and `gpio` groups. SENTINEL uses SPI0 with CE0:
+  GPIO11 SCLK, GPIO10 MOSI, GPIO9 MISO, GPIO8 CE0. On the Pi 5 SPI comes from RP1. Start at 1 MHz (`SpidevTransport`
+  default); the FPGA side is guaranteed up to f_safe / 8 = 15.6 MHz (SPEC 12.1); the speed the wiring allows is measured
+  with `fpga/bringup/spi_loopback`. GPIO pins are 3.3 V and not 5 V tolerant [OFFICIAL, Raspberry Pi documentation].
+- Camera (team decision: only through the Pi): picamera2 for a CSI module, OpenCV/V4L2 for a USB webcam, or a video file:
+  `python -m sentinel.camera_mode --source picamera|0|video.mp4`. The Pi 5 uses 22-pin camera ribbons [INFERENCE, not checked in the documentation read] (the older 15-pin
+  ribbon needs an adapter cable). The camera type is not decided yet.
 - Done signal: `irq_done` arrives on GPIO25 (pin C9); `sentinel.transport.GpioDoneLine` waits on it.
-- Run `python3 board/pi_check.py` on the Pi before step 2. It prints the Pi model, whether
-  `/dev/spidev0.0` exists, and whether `spidev`, `gpiozero` and `picamera2` import.
-- SSH: `3 Interface Options`, `I1 SSH`. Wi-Fi from a terminal: `nmcli dev wifi list`, then
-  `sudo nmcli --ask dev wifi connect <ssid>`.
+- Run `python3 board/pi_check.py` on the Pi before step 2. It prints the Pi model, whether `/dev/spidev0.0` exists,
+  whether `spidev`, `gpiozero`, `lgpio`, `picamera2`, `numpy` and `cv2` import, and whether GPIO will work on a Pi 5.
+- Wi-Fi from a terminal: `nmcli dev wifi list`, then `sudo nmcli --ask dev wifi connect <ssid>`.
 - GPIO lines that ZERO7 shares with its own parts must stay inputs on the Pi unless a script means to
   drive them: GPIO13 and GPIO19 (LEDs D9 and D8), GPIO6 (LED D3), GPIO16, GPIO20, GPIO21 (buttons RUN,
   START, STOP), GPIO18 (WS2812B LED2).

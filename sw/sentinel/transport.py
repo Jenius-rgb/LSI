@@ -40,16 +40,27 @@ class SpidevTransport:
                 raise TimeoutError(f"register 0x{offset:03x}: timeout waiting for {value:#x} under {mask:#x}")
 
 
+def lgpio_factory():
+    """gpiozero pin factory for the Raspberry Pi 5: only lgpio works there (RP1 I/O controller; gpiozero docs,
+    "Only lgpio works on the Pi 5"). Chosen explicitly so a missing lgpio fails here, not as a silent fallback."""
+    try:
+        from gpiozero.pins.lgpio import LGPIOFactory  # available on the Pi only
+    except ImportError as exc:
+        raise RuntimeError("gpiozero's lgpio pin factory is missing: sudo apt install python3-lgpio python3-gpiozero") from exc
+    return LGPIOFactory()
+
+
 class GpioDoneLine:
     """irq_done on a Raspberry Pi GPIO: RP_GPIO25, high while STATUS.DONE is set (ADR-016).
 
-    Uses gpiozero with BCM numbering. Not exercised before the board phase; the tests use a stand-in.
+    Uses gpiozero with BCM numbering and the lgpio factory (Raspberry Pi 5). Not exercised before the board phase;
+    the tests use a stand-in.
     """
 
     def __init__(self, bcm_pin: int = 25):
         from gpiozero import DigitalInputDevice  # available on the Pi only
 
-        self.line = DigitalInputDevice(bcm_pin, pull_up=False)
+        self.line = DigitalInputDevice(bcm_pin, pull_up=False, pin_factory=lgpio_factory())
 
     def wait(self, timeout_s: float) -> bool:
         return bool(self.line.wait_for_active(timeout=timeout_s))

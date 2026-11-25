@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check a Raspberry Pi before bring-up step 2 (ADR-022). Run on the Pi: python3 board/pi_check.py
+"""Check a Raspberry Pi before bring-up step 2 (ADR-033: Raspberry Pi 5). Run on the Pi: python3 board/pi_check.py
 
 Prints the Pi model, whether SPI0 CE0 is enabled (/dev/spidev0.0), and whether the Python packages
 the SENTINEL scripts import are installed. It only reads; it touches no GPIO.
@@ -9,7 +9,15 @@ from __future__ import annotations
 import importlib.util
 from pathlib import Path
 
-MODULES = ("spidev", "gpiozero", "picamera2", "numpy", "cv2")
+# lgpio: gpiozero's pin factory on the Pi 5 ("Only lgpio works on the Pi 5", gpiozero docs). RPi.GPIO is not used.
+MODULES = ("spidev", "gpiozero", "lgpio", "picamera2", "numpy", "cv2")
+
+
+def gpio_note(model: str, has_lgpio: bool) -> str:
+    """State of GPIO support for the SENTINEL scripts on this Pi model."""
+    if "Raspberry Pi 5" in model and not has_lgpio:
+        return "missing  Pi 5 needs gpiozero's lgpio factory: sudo apt install python3-lgpio python3-gpiozero"
+    return "ok       gpiozero will use the lgpio pin factory" if has_lgpio else "missing  lgpio not installed"
 
 
 def check(model_path: Path = Path("/proc/device-tree/model"), spidev_path: Path = Path("/dev/spidev0.0"),
@@ -31,8 +39,9 @@ def main() -> int:
     for key, (state, note) in rows.items():
         print(f"{state:8} {key:20} {note}")
     model = rows["model"][1]
-    if rows["model"][0] == "ok" and "Raspberry Pi 4" not in model and "Raspberry Pi 5" not in model:
-        print("note: SENTINEL was planned for a Raspberry Pi 4 or 5 (ADR-022)")
+    print("gpio     " + gpio_note(model, rows["import lgpio"][0] == "ok"))
+    if rows["model"][0] == "ok" and "Raspberry Pi 5" not in model:
+        print("note: the SENTINEL host is a Raspberry Pi 5 (ADR-033)")
     return 0 if all(state == "ok" for state, _ in rows.values()) else 1
 
 

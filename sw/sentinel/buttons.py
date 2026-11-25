@@ -41,5 +41,7 @@ def open_pi_buttons(active_high: bool) -> ButtonControl:
     """gpiozero buttons on the Pi; active_high must come from a measurement on the board."""
     from gpiozero import Button  # available on the Pi only
 
-    kwargs = {"pull_up": None, "active_state": active_high, "bounce_time": 0.05}
+    from sentinel.transport import lgpio_factory
+
+    kwargs = {"pull_up": None, "active_state": active_high, "bounce_time": 0.05, "pin_factory": lgpio_factory()}
     return ButtonControl(Button(START_GPIO, **kwargs), Button(STOP_GPIO, **kwargs), Button(RUN_GPIO, **kwargs))

@@ -388,3 +388,33 @@ def test_hw_metadata_names_the_lane_variant():
     drv = SentinelDriver(LogTransport(ModelDevice(qm, k=8, flags=0b0111)))
     meta = HwBackend(drv, qm, 8, 10, 125.0).metadata()
     assert meta["lane_impl"] == "dsp_min" and meta["c3_hw"] and meta["label"] == "[HW]"
+
+
+def test_pi_check_requires_lgpio_on_a_pi5(tmp_path):
+    """On a Raspberry Pi 5 only the lgpio pin factory of gpiozero works (gpiozero docs, api_pins); pi_check says so."""
+    import importlib.util
+    from pathlib import Path
+
+    spec = importlib.util.spec_from_file_location("pi_check", Path(__file__).resolve().parents[1] / "board" / "pi_check.py")
+    pc = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(pc)
+    assert "lgpio" in pc.MODULES and "RPi" not in " ".join(pc.MODULES)
+    assert pc.gpio_note("Raspberry Pi 5 Model B Rev 1.0", has_lgpio=False).startswith("missing")
+    assert pc.gpio_note("Raspberry Pi 5 Model B Rev 1.0", has_lgpio=True).startswith("ok")
+
+
+def test_gpio_lines_use_the_lgpio_factory(monkeypatch):
+    """GPIO users pick gpiozero's lgpio factory explicitly and fail with an install hint when it is missing."""
+    import sys
+    import types
+
+    import pytest
+    from sentinel import transport
+
+    monkeypatch.setitem(sys.modules, "gpiozero.pins.lgpio", None)
+    with pytest.raises(RuntimeError, match="lgpio"):
+        transport.lgpio_factory()
+    fake = types.ModuleType("gpiozero.pins.lgpio")
+    fake.LGPIOFactory = lambda: "lgpio-factory"
+    monkeypatch.setitem(sys.modules, "gpiozero.pins.lgpio", fake)
+    assert transport.lgpio_factory() == "lgpio-factory"
