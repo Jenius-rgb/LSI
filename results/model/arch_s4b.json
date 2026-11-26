@@ -1,0 +1,100 @@
+{
+  "model": "s4b",
+  "layers": [
+    {
+      "name": "conv1",
+      "kind": "conv",
+      "input": [
+        3,
+        32,
+        32
+      ],
+      "output_channels": 16,
+      "weights": 432,
+      "bias": 16,
+      "macs": 442368,
+      "t": 27,
+      "groups": {
+        "8": 2,
+        "16": 1
+      },
+      "ideal_cycles": {
+        "8": 55296,
+        "16": 27648
+      }
+    },
+    {
+      "name": "conv2",
+      "kind": "conv",
+      "input": [
+        16,
+        16,
+        16
+      ],
+      "output_channels": 32,
+      "weights": 4608,
+      "bias": 32,
+      "macs": 1179648,
+      "t": 144,
+      "groups": {
+        "8": 4,
+        "16": 2
+      },
+      "ideal_cycles": {
+        "8": 147456,
+        "16": 73728
+      }
+    },
+    {
+      "name": "conv3",
+      "kind": "conv",
+      "input": [
+        32,
+        8,
+        8
+      ],
+      "output_channels": 32,
+      "weights": 9216,
+      "bias": 32,
+      "macs": 589824,
+      "t": 288,
+      "groups": {
+        "8": 4,
+        "16": 2
+      },
+      "ideal_cycles": {
+        "8": 73728,
+        "16": 36864
+      }
+    },
+    {
+      "name": "fc",
+      "kind": "fc",
+      "input": [
+        32,
+        4,
+        4
+      ],
+      "output_channels": 4,
+      "weights": 2048,
+      "bias": 4,
+      "macs": 2048,
+      "t": 512,
+      "groups": {
+        "8": 1,
+        "16": 1
+      },
+      "ideal_cycles": {
+        "8": 512,
+        "16": 512
+      }
+    }
+  ],
+  "total_weights": 16304,
+  "total_bias": 84,
+  "total_macs": 2213888,
+  "ideal_cycles": {
+    "8": 276992,
+    "16": 138752
+  }
+}

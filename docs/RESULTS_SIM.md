@@ -61,6 +61,8 @@ Source: `results/sim/rtl_regression.jsonl` (script `tools/sim.py --record`; late
 | engine_corner_ties | xsim | 2026-11-16 | PASS: PASS 6/6 cycles_mean=173820 ideal=0 |
 | engine_corner_zero_lanes | xsim | 2026-11-16 | PASS: PASS 6/6 cycles_mean=173820 ideal=0 |
 | engine_s4_k8_c1_n200 | xsim | 2026-11-26 | PASS: PASS 200/200 (34/34 cycles_mean=277381 ideal=276992) |
+| engine_s4b_k8_c1 | icarus | 2026-11-26 | PASS: PASS 1/1 cycles_mean=277381 ideal=276992 |
+| engine_s4b_k8_c1_n200 | xsim | 2026-11-26 | PASS: PASS 200/200 (34/34 cycles_mean=277381 ideal=276992) |
 | engine_s_k16_n20 | xsim | 2026-11-16 | PASS: PASS 20/20 (5/5 cycles_mean=152498 ideal=138752) |
 | engine_s_k8 | icarus | 2026-11-16 | PASS: PASS 1/1 cycles_mean=277887 ideal=277504 |
 | engine_s_k8_c1 | icarus | 2026-11-16 | PASS: PASS 1/1 cycles_mean=277895 ideal=277504 |
@@ -103,6 +105,8 @@ Source: `results/sim/rtl_regression.jsonl` (script `tools/sim.py --record`; late
 | system_s4_dsp_speed_r2_zs1 | xsim | 2026-11-26 | PASS: PASS 10/10 reconfigs=0 |
 | system_s4_k8_c1 | xsim | 2026-11-26 | PASS: PASS 10/10 reconfigs=0 |
 | system_s4_k8_c1_dsp | xsim | 2026-11-26 | PASS: PASS 10/10 reconfigs=0 |
+| system_s4b_k8_c1 | xsim | 2026-11-26 | PASS: PASS 10/10 reconfigs=0 |
+| system_s4b_k8_c1_dsp | xsim | 2026-11-26 | PASS: PASS 10/10 reconfigs=0 |
 | system_s_k8_c1 | xsim | 2026-11-18 | PASS: PASS 10/10 reconfigs=0 |
 | system_s_k8_c1_dsp | xsim | 2026-11-18 | PASS: PASS 10/10 reconfigs=0 |
 | system_xs_r100 | xsim | 2026-11-16 | PASS: PASS 8/8 reconfigs=0 |
@@ -147,6 +151,8 @@ Run: `final` is the M11 matrix; `pre029` and `post029` are the same variant befo
 | xc7s25csga225-1 | 8 | lut | 1 | post029 | 5668 | 5118 | 14.0 | 3 | 144.3 | 156.3 | 0.001 | 0.185 |
 | xc7s25csga225-1 | 8 | lut | 1 | pre029 | 5710 | 5076 | 14.0 | 3 | 141.7 | 155.4 | -0.035 | 0.057 |
 | xc7s25csga225-1 | 8 | lut | 1 | pre031 | 5668 | 5118 | 14.0 | 3 | 144.3 | 156.3 | 0.001 | 0.185 |
+| xc7s25csga225-1 | 8 | lut | 1 | rstf | 5647 | 5509 | 14.0 | 3 | 146.9 | 160.2 | 0.157 | 0.178 |
+| xc7s25csga225-1 | 8 | lut | 1 | rstl | 5658 | 5521 | 14.0 | 3 | 142.4 | 156.9 | 0.718 | 0.028 |
 | xc7s25csga225-1 | 8 | dsp_min | 0 | final | 3694 | 3767 | 14.0 | 13 | 144.2 | 295.3 | -0.035 | -0.386 |
 | xc7s25csga225-1 | 8 | dsp_min | 1 | final | 4469 | 4428 | 14.0 | 14 | 139.2 | 272.9 | -0.108 | -0.665 |
 | xc7s25csga225-1 | 8 | dsp_full | 0 | final | 3704 | 3792 | 14.0 | 23 | 143.3 | 276.9 | -0.612 | -0.343 |
@@ -236,6 +242,8 @@ Side runs:
 - `results/vivado/official_dsp_zs1/`: clk_safe = 125 MHz, design worst setup slack 0.207 ns.
 - `results/vivado/official_dspmin/`: clk_safe = 125 MHz, design worst setup slack 0.395 ns. Side run for the DSP-lane candidate of docs/research/PARHI_DEVELOPMENT_LIST.md (approved experiment, 17 Nov 2026)
 - `results/vivado/official_preadr021/`: clk_safe = 125 MHz, design worst setup slack -0.499 ns. Run of 2026-11-16 at commit 7a2d369, before ADR-021: the reset crossing from the board clock was still timed and the synchronizers were not marked. Kept as the evidence for ADR-021; a later commit cannot reproduce it.
+- `results/vivado/official_rstf/`: clk_safe = 125 MHz, design worst setup slack 0.680 ns.
+- `results/vivado/official_rstl/`: clk_safe = 125 MHz, design worst setup slack 0.250 ns.
 - `results/vivado/official_zs1/`: clk_safe = 125 MHz, design worst setup slack 0.587 ns.
 - `results/vivado/official_zs2/`: clk_safe = 125 MHz, design worst setup slack 0.292 ns.
 

@@ -4,7 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 
-from model.config import ROOT, layer_shapes, load_model_config
+from model.config import ROOT, layer_shapes, load_model_config, model_names
 
 
 def report(model: str, ks: tuple[int, ...] = (8, 16)) -> dict:
@@ -37,11 +37,11 @@ def report(model: str, ks: tuple[int, ...] = (8, 16)) -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--model", default="all", choices=["s", "s4", "xs", "all"])
+    parser.add_argument("--model", default="all", choices=[*model_names(), "all"])
     args = parser.parse_args()
     out_dir = ROOT / "results" / "model"
     out_dir.mkdir(parents=True, exist_ok=True)
-    for model in ["s", "s4", "xs"] if args.model == "all" else [args.model]:
+    for model in model_names() if args.model == "all" else [args.model]:
         rep = report(model)
         (out_dir / f"arch_{model}.json").write_text(json.dumps(rep, indent=2) + "\n", encoding="utf-8")
         print(f"[SIM] model {model}")

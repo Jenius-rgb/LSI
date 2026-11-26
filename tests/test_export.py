@@ -148,13 +148,14 @@ def test_manifest_carries_the_class_names_of_model_s4(tmp_path):
     assert manifest["classes"] == ["cat", "dog", "deer", "horse"]
 
 
-def test_zero7_config_runs_model_s4_and_its_memories_fit(tmp_path):
-    """config/hw_zero7.yaml names the model of the official build; its address widths must hold that model."""
+def test_zero7_config_runs_the_official_model_and_its_memories_fit(tmp_path):
+    """config/hw_zero7.yaml names the model of the official build; its address widths must hold that model.
+    ADR-037 made it s4; ADR-040 (26 Nov 2026) replaced it by s4b, the same layers with camera-style training."""
     import yaml
     from model.golden import QModel
 
     cfg = yaml.safe_load((ROOT / "config" / "hw_zero7.yaml").read_text(encoding="utf-8"))
-    assert cfg["MODEL"] == "s4"
+    assert cfg["MODEL"] == "s4b"
     qm = QModel.load(ROOT / "results" / "model" / cfg["MODEL"] / "quant.npz")
     manifest = export.write_artifacts(qm, {**HW, "K": cfg["K"]}, tmp_path)
     assert manifest["weight_words"] <= 2 ** cfg["WEIGHT_AW"]

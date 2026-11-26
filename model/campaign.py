@@ -13,7 +13,7 @@ from dataclasses import dataclass, field
 import numpy as np
 
 from model.checker import CORRECT, Outcome, check, xor_inject
-from model.config import ROOT, load_hw_config
+from model.config import ROOT, load_hw_config, model_names
 from model.golden import QModel, conv_accumulate, flatten_chw, forward
 
 CLASSES = ("clean", "corrected", "csum_lane", "recompute", "miscorrected", "escaped")
@@ -221,7 +221,7 @@ def full_campaign(model: str, n_images: int, seed: int, sizes: dict[str, int]) -
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--model", default=load_hw_config()["MODEL"], choices=["s", "s4", "xs"])
+    parser.add_argument("--model", default=load_hw_config()["MODEL"], choices=model_names())
     parser.add_argument("--images", type=int, default=50)
     parser.add_argument("--seed", type=int, default=2027)
     parser.add_argument("--single", type=int, default=10000)

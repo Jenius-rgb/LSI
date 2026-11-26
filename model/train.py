@@ -17,7 +17,7 @@ import torch
 from torch import nn
 
 from model.arch import SentinelNet
-from model.config import ROOT, load_model_config
+from model.config import ROOT, load_model_config, model_names
 from model.data import load_dataset
 
 
@@ -42,6 +42,42 @@ def augment(images: torch.Tensor, rng: torch.Generator, pad: int = 4) -> torch.T
     flip = torch.rand(n, generator=rng) < 0.5
     cropped[flip] = cropped[flip].flip(-1)
     return cropped
+
+
+def _rand(n: int, lo: float, hi: float, rng: torch.Generator) -> torch.Tensor:
+    return (lo + (hi - lo) * torch.rand(n, generator=rng))[:, None, None, None]
+
+
+def camera_augment(x: torch.Tensor, rng: torch.Generator, strength: float = 1.0) -> torch.Tensor:
+    """Camera-style photometric augmentation (ADR-040) on float images in 0..255, shape (N, C, H, W).
+
+    Each image independently gets, with the given probability: exposure gain and offset (0.8), contrast around its
+    mean (0.5), per-channel white-balance gains (0.5), sensor noise (0.4), a [1, 2, 1] / 4 blur once or twice (0.3) and
+    half resolution (0.2). JPEG compression and zoom are left out on purpose: `model/robustness.py` holds them out.
+    `strength` scales every probability and every range toward no change (1.0: `camera`, 0.5: `camera_mild`); the
+    random draws are the same for any strength.
+    """
+    n, c = x.shape[:2]
+    st = float(strength)
+    pick = lambda prob: (torch.rand(n, generator=rng) < prob * st)[:, None, None, None]  # noqa: E731
+    toward = lambda v: 1.0 + st * (v - 1.0)  # noqa: E731
+    x = torch.where(pick(0.8), x * toward(_rand(n, 0.55, 1.25, rng)) + st * _rand(n, -25.0, 60.0, rng), x)
+    mean = x.mean(dim=(1, 2, 3), keepdim=True)
+    x = torch.where(pick(0.5), (x - mean) * toward(_rand(n, 0.45, 1.3, rng)) + mean, x)
+    gains = toward(0.8 + 0.4 * torch.rand(n, c, 1, 1, generator=rng))
+    x = torch.where(pick(0.5), x * gains, x)
+    sigma = st * _rand(n, 0.0, 14.0, rng)
+    x = torch.where(pick(0.4), x + sigma * torch.randn(x.shape, generator=rng), x)
+    k = torch.tensor([1.0, 2.0, 1.0]) / 4
+    blurred = x
+    for _ in range(2):
+        p = nn.functional.pad(blurred.reshape(n * c, 1, *x.shape[2:]), (1, 1, 1, 1), mode="replicate")
+        p = nn.functional.conv2d(p, k.view(1, 1, 1, 3))
+        blurred = nn.functional.conv2d(p, k.view(1, 1, 3, 1)).reshape(x.shape)
+        x = torch.where(pick(0.15), blurred, x)
+    low = nn.functional.interpolate(nn.functional.avg_pool2d(x, 2), scale_factor=2, mode="nearest")
+    x = torch.where(pick(0.2), low, x)
+    return x.clamp(0.0, 255.0)
 
 
 @torch.no_grad()
@@ -89,6 +125,7 @@ def train(args: argparse.Namespace) -> dict:
     sched = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=tcfg["lr"], total_steps=epochs * steps_per_epoch, pct_start=0.2)
     loss_fn = nn.CrossEntropyLoss(label_smoothing=0.05)
     rng = torch.Generator().manual_seed(seed)
+    camera = {"camera": 1.0, "camera_mild": 0.5}.get(tcfg.get("augment", "basic"), 0.0)   # ADR-040 strength
 
     out_dir = ROOT / "results" / "model" / args.model if not args.out else ROOT / args.out
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -100,7 +137,10 @@ def train(args: argparse.Namespace) -> dict:
         total_loss = 0.0
         for b in range(steps_per_epoch):
             idx = order[b * batch_size : (b + 1) * batch_size]
-            x = augment(x_train[idx], rng).float().div(255).to(device)
+            x = augment(x_train[idx], rng).float()
+            if camera:
+                x = camera_augment(x, rng, camera)
+            x = x.div(255).to(device)
             y = y_train[idx].to(device)
             opt.zero_grad(set_to_none=True)
             loss = loss_fn(model(x), y)
@@ -151,7 +191,7 @@ def train(args: argparse.Namespace) -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--model", required=True, choices=["s", "s4", "xs"])
+    parser.add_argument("--model", required=True, choices=model_names())
     parser.add_argument("--dataset", default=None, choices=["cifar10", "cifar10_4", "folder"],
                         help="default: the dataset in the model config, else cifar10")
     parser.add_argument("--data-dir", default=None, help="folder dataset root with train/ and val/")

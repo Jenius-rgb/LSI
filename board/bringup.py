@@ -18,6 +18,7 @@ from sentinel.device_model import ModelDevice  # noqa: E402
 from sentinel.driver import SentinelDriver  # noqa: E402
 from sentinel.transport import LogTransport, SpidevTransport  # noqa: E402
 from sentinel import regmap as rm  # noqa: E402
+from model.config import model_names  # noqa: E402
 
 BOARD_INFO = ROOT / "board" / "BOARD_INFO.md"
 
@@ -182,7 +183,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("step", choices=sorted(STEPS))
     parser.add_argument("--dry-run", action="store_true")
-    parser.add_argument("--model", default=ZERO7_MODEL, choices=["s", "s4", "xs"],
+    parser.add_argument("--model", default=ZERO7_MODEL, choices=model_names(),
                         help=f"model whose weights are loaded (default {ZERO7_MODEL}, from config/hw_zero7.yaml)")
     parser.add_argument("--images", type=int, default=200)
     parser.add_argument("--host", choices=["spi", "jtag"], default="spi",

@@ -171,10 +171,16 @@ def _picked_vectors(model: str, indices: list[int]):
     return gen
 
 
+def _layers_of(model: str) -> str:
+    """Models that share the layers of another one: s4, s4a and s4b have the layers of s with a 4-class FC (ADR-037, ADR-040)."""
+    return "s" if model in ("s4", "s4a", "s4b") else model
+
+
 def _engine_params(model: str, k: int, c3: int = 0, impl: int = 0) -> dict:
     wc1, wc2, wc3 = wc_widths(k)
-    aw = {"s": (13, 11), "s4": (13, 11), "xs": (12, 10)}[model]
-    words = {("s", 8): 12, ("s", 16): 11, ("s4", 8): 12, ("s4", 16): 11, ("xs", 8): 11, ("xs", 16): 10}[(model, k)]
+    model = _layers_of(model)
+    aw = {"s": (13, 11), "xs": (12, 10)}[model]
+    words = {("s", 8): 12, ("s", 16): 11, ("xs", 8): 11, ("xs", 16): 10}[(model, k)]
     return {"K": k, "C3_EN": c3, "LANE_IMPL": impl, "WC1_W": wc1, "WC2_W": wc2, "WC3_W": wc3,
             "WEIGHT_AW": words, "ACT0_AW": aw[0], "ACT1_AW": aw[1]}
 
@@ -190,8 +196,10 @@ def engine_benches() -> dict[str, Bench]:
         ("xs", 8, 0, 200, True, 6),
         ("s", 8, 0, 200, True, 6),
         ("s", 8, 1, 200, True, 6),
-        ("s4", 8, 1, 1, False, 1),     # official contest classes (ADR-037)
+        ("s4", 8, 1, 1, True, 1),      # official contest classes (ADR-037), superseded by s4b
         ("s4", 8, 1, 200, True, 6),
+        ("s4b", 8, 1, 1, False, 1),    # official model since ADR-040 (camera-style training, same layers)
+        ("s4b", 8, 1, 200, True, 6),
         ("s", 16, 0, 20, True, 4),
     ]:
         name = f"engine_{model}_k{k}" + ("_c1" if c3 else "") + (f"_n{count}" if count >= 20 else "")
@@ -253,8 +261,9 @@ def _spi_log_vectors(model: str):
 
 def _system_params(model: str, k: int, c3: int, turbo_ns: float, log_aw: int = 8) -> dict:
     wc1, wc2, wc3 = wc_widths(k)
-    aw = {"s": (13, 11, 12), "s4": (13, 11, 12), "xs": (12, 10, 11), "micro": (9, 8, 9)}[model]
-    img_bytes = {"s": 3072, "s4": 3072, "xs": 3072, "micro": 192}[model]
+    model = _layers_of(model)
+    aw = {"s": (13, 11, 12), "xs": (12, 10, 11), "micro": (9, 8, 9)}[model]
+    img_bytes = {"s": 3072, "xs": 3072, "micro": 192}[model]
     return {"K": k, "C3_EN": c3, "WC1_W": wc1, "WC2_W": wc2, "WC3_W": wc3, "WEIGHT_AW": aw[2], "ACT0_AW": aw[0],
             "ACT1_AW": aw[1], "LOG_AW": log_aw, "IMG_BYTES": img_bytes, "TURBO_NS": turbo_ns}
 
@@ -380,6 +389,14 @@ def system_benches() -> dict[str, Bench]:
     bench = "system_s4_k8_c1"
     out[bench] = Bench(bench, "tb_system", SYSTEM_SOURCES, _system_params("s4", 8, 1, 10.0 / 1.3),
                        _system_vectors("s4", _official_scenarios), slow=True, prefer_xsim=True)
+    # Official model since ADR-040: s4b, both lane variants.
+    bench = "system_s4b_k8_c1"
+    out[bench] = Bench(bench, "tb_system", SYSTEM_SOURCES, _system_params("s4b", 8, 1, 10.0 / 1.3),
+                       _system_vectors("s4b", _official_scenarios), slow=True, prefer_xsim=True)
+    bench = "system_s4b_k8_c1_dsp"
+    out[bench] = Bench(bench, "tb_system", SYSTEM_SOURCES,
+                       {**_system_params("s4b", 8, 1, 10.0 * DSP_F_SAFE_MHZ / DSP_LANE_MHZ), "LANE_IMPL": 1},
+                       _system_vectors("s4b", _official_scenarios), slow=True, prefer_xsim=True)
     # Official DSP variant since ADR-032 (b): model s4, clk_safe 1000/7 MHz, lanes at turbo level 255 MHz (ratio 1.785).
     bench = "system_s4_k8_c1_dsp"
     out[bench] = Bench(bench, "tb_system", SYSTEM_SOURCES,

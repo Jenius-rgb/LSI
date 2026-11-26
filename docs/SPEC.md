@@ -39,7 +39,7 @@ SENTINEL is an INT8 CNN accelerator on Spartan-7 with **K parallel MAC lanes**. 
 | `INJ_EN` | 1 | fault injection logic synthesized |
 | `ZERO_SKIP` | 0 | 0: off. 1: operand sets with activation 0 are not sent to the lanes, except a set that closes a unit or opens a pass, and every unit keeps at least K + 2 + C3 sets (§5.4). 2: the same skipping with unit ends spaced by a stall in `fast_path` instead (comparison variant). Synthesis parameter (ADR-028); flag bit 4 of the ID word is set for 1 and 2 |
 
-Official variant for ZERO7 and synthesis report is in `config/hw_zero7.yaml`: K = 8, R = 2, `C3_EN = 1`, `LANE_IMPL = lut`, model `s4` (ADR-013; model `s` until ADR-037), clk_safe 125 MHz. The DSP variant (`variant_dsp`) uses `LANE_IMPL = dsp_min`, clk_safe 142.857 MHz and lanes analysed at 255 MHz (ADR-030 (d), ADR-032 (b)). The bitstream does not depend on the model: weights are loaded over SPI.
+Official variant for ZERO7 and synthesis report is in `config/hw_zero7.yaml`: K = 8, R = 2, `C3_EN = 1`, `LANE_IMPL = lut`, model `s4b` (ADR-013; model `s` until ADR-037, `s4` until ADR-040), clk_safe 125 MHz. The DSP variant (`variant_dsp`) uses `LANE_IMPL = dsp_min`, clk_safe 142.857 MHz and lanes analysed at 255 MHz (ADR-030 (d), ADR-032 (b)). The bitstream does not depend on the model: weights are loaded over SPI.
 
 ---
 
@@ -76,6 +76,8 @@ Numbers above calculated manually. `model/arch_report.py` must recompute from co
 The architecture of `s` (§2.1) with a 4-output fully connected layer (512 → 4, 2,048 weights). Classes in the official
 order: cat = 0, dog = 1, deer = 2, horse = 3 [OFFICIAL, Design Specification §4]. Trained on the CIFAR-10 images of these
 four classes (dataset `cifar10_4`); `model/arch_report.py` gives the exact counts.
+
+Variant `s4b` (ADR-040) has exactly these layers and classes and is trained with camera-style augmentation at strength 0.5 (`train.augment: camera_mild`, `model/train.py camera_augment`); it is the model of the official build. `s4a` (strength 1.0) is a compared candidate. `model/robustness.py` measures accuracy under camera-style distortions.
 ---
 
 ## 3. Integer arithmetic (normative)
@@ -577,7 +579,7 @@ Generated with fixed seed into `build/vectors/`. Not committed; `run.py gen` reg
 - **Camera** (ADR-035): only on the Raspberry Pi, never on the FPGA; source `picamera` (CSI), a camera index (USB) or a video file.
 - **`camera.py`** (picamera2 or OpenCV) and **`preprocess.py`** (center-crop → resize 32×32 with INTER_AREA → RGB uint8 (C, H, W)). Identical functions used for camera data during fine-tuning.
 - **Dashboard** (lightweight web or OpenCV window) displays camera, class, FPS, turbo frequency, turbo layers, counters, and lane map. Runnable with MockBackend on PC.
-- **Validation mode** [OFFICIAL: validation data provided on contest day via camera, SD card, etc.]: read all images in a folder, classify, then report accuracy (if labels available), latency per image, and FPS. FPGA compute time (from `CYCLES_TOTAL`) and end-to-end time reported separately. With labels in subfolders (`<folder>/<class>/`), labels follow the class order of the model (`classes` in `config/model_<name>.yaml`, copied into the weight manifest; `s4`: cat = 0, dog = 1, deer = 2, horse = 3), not the alphabetical folder order (ADR-037).
+- **Validation mode** [OFFICIAL: validation data provided on contest day via camera, SD card, etc.]: read all images in a folder, classify, then report accuracy (if labels available), latency per image, and FPS. FPGA compute time (from `CYCLES_TOTAL`) and end-to-end time reported separately. With labels in subfolders (`<folder>/<class>/`), labels follow the class order of the model (`classes` in `config/model_<name>.yaml`, copied into the weight manifest; `s4`/`s4b`: cat = 0, dog = 1, deer = 2, horse = 3), not the alphabetical folder order (ADR-037).
 - **Camera mode** [OFFICIAL: real-time camera input]: continuous classification displaying recognition speed.
 - **Experiments** `sw/sentinel/experiments/e1.py` through `e8.py`. Output to `results/<backend>/<exp>/<timestamp>/`:
   - `data.csv`,

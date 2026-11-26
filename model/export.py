@@ -15,7 +15,7 @@ from pathlib import Path
 
 import numpy as np
 
-from model.config import ROOT, load_hw_config, load_model_config
+from model.config import ROOT, load_hw_config, load_model_config, model_names
 from model.golden import QModel, forward
 
 # Activation buffer selectors used in the layer table.
@@ -317,7 +317,7 @@ def quantize_and_evaluate(model: str, dataset: str, data_dir: str | None, calib_
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--model", required=True, choices=["s", "s4", "xs"])
+    parser.add_argument("--model", required=True, choices=model_names())
     parser.add_argument("--dataset", default=None, choices=["cifar10", "cifar10_4", "folder"],
                         help="default: the dataset in the model config, else cifar10")
     parser.add_argument("--data-dir", default=None)

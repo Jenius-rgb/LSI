@@ -84,6 +84,11 @@ def shortest_unit(shapes: list[LayerShape]) -> tuple[str, int]:
     return layer.name, layer.t
 
 
+def model_names() -> list[str]:
+    """Model variants with a config/model_<name>.yaml, sorted; `micro` is a test-only model and is left out."""
+    return sorted(f.stem[len("model_"):] for f in CONFIG_DIR.glob("model_*.yaml") if f.stem != "model_micro")
+
+
 def load_yaml(path: Path) -> dict:
     with open(path, encoding="utf-8") as fh:
         return yaml.safe_load(fh)

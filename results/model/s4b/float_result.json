@@ -1,0 +1,36 @@
+{
+  "label": "[SIM]",
+  "model": "s4b",
+  "dataset": "cifar10_4",
+  "seed": 2027,
+  "epochs": 120,
+  "best_epoch": 116,
+  "val_acc": 0.8465,
+  "test_acc_float": 0.829,
+  "n_classes": 4,
+  "classes": [
+    "cat",
+    "dog",
+    "deer",
+    "horse"
+  ],
+  "train_size": 18000,
+  "val_size": 2000,
+  "test_size": 4000,
+  "device": "cpu",
+  "threads": 8,
+  "torch": "2.15.0+cpu",
+  "python": "3.13.1",
+  "train_cfg": {
+    "augment": "camera_mild",
+    "seed": 2027,
+    "epochs": 120,
+    "batch_size": 128,
+    "lr": 0.08,
+    "momentum": 0.9,
+    "weight_decay": 0.0005,
+    "dropout": 0.2,
+    "val_size": 5000
+  },
+  "elapsed_s": 967.0279183387756
+}

@@ -67,7 +67,7 @@ def run(backend, folder: Path, class_names: list[str] | None = None) -> dict:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("folder", type=Path)
-    parser.add_argument("--model", default="s4", help="s4 = the four official classes (ADR-037)")
+    parser.add_argument("--model", default="s4b", help="s4b = the four official classes with camera-style training (ADR-040)")
     parser.add_argument("--out", default=None)
     args = parser.parse_args()
     from model.export import class_names

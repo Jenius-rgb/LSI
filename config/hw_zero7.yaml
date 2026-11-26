@@ -3,7 +3,7 @@
 part: xc7s25csga225-1
 top: top_board
 constraints: board/zero7.xdc
-MODEL: s4           # the four official classes cat, dog, deer, horse (ADR-037); same layers as s, 4-class FC
+MODEL: s4b          # the four official classes (ADR-037), camera-style training (ADR-040); same layers as s, 4-class FC
 K: 8
 R: 2
 C3_EN: 1

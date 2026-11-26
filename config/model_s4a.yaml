@@ -1,0 +1,22 @@
+# ADR-040 candidate: model s4 (ADR-037) trained with camera-style augmentation; same layers, same classes.
+# Variant "s4" (SPEC section 2.3, ADR-037): architecture of s, the four official classes.
+name: s4a
+input: {channels: 3, height: 32, width: 32}
+n_classes: 4
+classes: [cat, dog, deer, horse]
+dataset: cifar10_4
+layers:
+  - {name: conv1, type: conv, out_channels: 16, pool: true}
+  - {name: conv2, type: conv, out_channels: 32, pool: true}
+  - {name: conv3, type: conv, out_channels: 32, pool: true}
+  - {name: fc, type: fc}
+train:
+  augment: camera     # ADR-040: camera-style photometric augmentation (model/train.py camera_augment)
+  seed: 2027
+  epochs: 120
+  batch_size: 128
+  lr: 0.08
+  momentum: 0.9
+  weight_decay: 0.0005
+  dropout: 0.2
+  val_size: 5000

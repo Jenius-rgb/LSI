@@ -1,0 +1,22 @@
+# ADR-040 second candidate: model s4 (ADR-037) with camera-style augmentation at half strength; same layers and classes.
+# Variant "s4" (SPEC section 2.3, ADR-037): architecture of s, the four official classes.
+name: s4b
+input: {channels: 3, height: 32, width: 32}
+n_classes: 4
+classes: [cat, dog, deer, horse]
+dataset: cifar10_4
+layers:
+  - {name: conv1, type: conv, out_channels: 16, pool: true}
+  - {name: conv2, type: conv, out_channels: 32, pool: true}
+  - {name: conv3, type: conv, out_channels: 32, pool: true}
+  - {name: fc, type: fc}
+train:
+  augment: camera_mild   # ADR-040: camera_augment at strength 0.5 (s4a used strength 1.0)
+  seed: 2027
+  epochs: 120
+  batch_size: 128
+  lr: 0.08
+  momentum: 0.9
+  weight_decay: 0.0005
+  dropout: 0.2
+  val_size: 5000

@@ -87,3 +87,11 @@ def test_zs_compare_reads_progress_lines_and_ignores_lines_after_a_fail(tmp_path
     assert rep["runs"]["fixed"]["guard_cost_vs_unguarded"] == {
         "images": 3, "total_cycles": 3, "max_per_image": 3, "images_with_cost": 1, "min_per_image": 0}
     assert rep["runs"]["fixed"]["saving_vs_baseline_pct"] == 51.88
+
+
+def test_model_names_come_from_the_config_folder():
+    """CLI model choices follow config/model_*.yaml (ADR-040 adds s4a without editing five lists); micro stays test-only."""
+    from model.config import model_names
+
+    names = model_names()
+    assert {"s", "s4", "s4a", "xs"} <= set(names) and "micro" not in names and names == sorted(names)
