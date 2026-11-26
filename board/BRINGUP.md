@@ -16,10 +16,12 @@ of the device and proves nothing about hardware. Save the output of each step un
 | 3. LED blink | `python board/bringup.py led` | LED1 to LED4 follow the pattern from the bitstream | Check XDC pin assignment |
 | 4. SPI loopback | `python board/bringup.py spi-loopback` | A pattern written to a scratch register reads back identically at the lowest SPI speed | Check SPI pins, mode, CS polarity, level voltage |
 | 5. Read ID | `python board/bringup.py id` | Returns `SNTL` and the expected version and K | Check the bitstream build |
-| 6. Load weights | `python board/bringup.py load --model s` | Read-back of the first 256 weight bytes matches the file | Lower the SPI speed |
+| 6. Load weights | `python board/bringup.py load` (model from `config/hw_zero7.yaml`, s4b) | Read-back of the first 256 weight bytes matches the file | Lower the SPI speed |
 | 7. One image | `python board/bringup.py one-image` | Class and logits match the golden model | Stop. Do not raise the clock |
 | 8. Full validation at the safe clock | `python board/bringup.py validate --images 200` | 100% logits match (this is E7) | Stop. Do not raise the clock |
 | 9. Turbo, one step at a time | `python board/bringup.py turbo` | Only after step 8. Raises the turbo level step by step and reports `[HW]` counters; stops at the first FATAL | Lower the level, re-run E7 at the safe clock |
+
+Checkpoints C0–C4 (inspection, Pi 5 set-up, power, voltage map) come first: `board/BRINGUP_C0_C4.md`.
 
 Facts this plan needs but does not assume are listed in `board/BOARD_INFO.md`. The script stops
 with a message if a required field is still `UNKNOWN`.
@@ -94,3 +96,53 @@ remote-access, config_txt), gpiozero documentation (installing, api_pins), read 
 
 `board/zero7.xdc` carries LVCMOS33 on every pin as an unconfirmed value. Steps 2 and later stay blocked
 until the official `Zero7.xdc` or the user manual confirms the I/O standards (`board/BOARD_INFO.md`).
+
+## Board checks after the J-Link works (C8–C10 of the bring-up prompt)
+
+Moved here on 26 Nov 2026 from the removed `board/BRINGUP_NO_PI.md` (the team has the Raspberry Pi 5, ZERO7 and the
+SEGGER J-Link, so the no-Pi path is gone). Program each bitstream through the J-Link XVCD Server and the Hardware Manager
+(`docs/JLINK_VIVADO.md`). These designs drive only FPGA-owned pins; `fpga/bringup/build.py` refuses to build without
+`--accept-inferred-io` because the I/O standards are an inference (ADR-024). Results are [HW] only when the board shows them.
+
+### Blink: clock and LEDs
+
+`python tools/run.py bringup blink --accept-inferred-io`, then program `build/bringup/blink/blink_top_BRINGUP.bit`.
+
+- Expected: D5 and D6 blink in turn, one full period per second at 20 MHz.
+- Clock check with a stopwatch: count `n` full periods over `t` seconds; `f_clk = 2 × HALF × n / t` with `HALF = 10,000,000`
+  (`fpga/bringup/blink/blink_top.v`). A stopwatch tells 20 MHz from 16 or 25 MHz, not finer. Record n, t and f as [HW].
+- Fail signs: no blinking (check the DONE LED and the programming result), or a clearly different rate (stop and record).
+
+### Bank voltages through driven outputs
+
+`python tools/run.py bringup vcco_probe --accept-inferred-io`. The VCCO balls of the BGA cannot be probed, but an unloaded
+output driven high sits at its bank voltage; use this when C4 could not reach a VCCO decoupling point.
+
+| Where | Driven | Expected if the inference (ADR-024) holds | Measured |
+| --- | --- | --- | --- |
+| J1 table pins 1–4 (D15, E15, F15, G15; bank 15) to GND | high | about 3.3 V | |
+| J1 table pins 5–8 (E13, E14, F14, G14; bank 15) to GND | low | about 0 V | |
+| J7, the pin wired to S7_LED0 (N1; bank 34) to GND | high | about 3.3 V | |
+
+- The physical position of the table pins on J1 and the J7 pinout are [UNKNOWN]: find them from the silkscreen first.
+- About 1.8 V on bank 15 or 34: stop, write it in `BOARD_INFO.md`; an ADR changes the I/O standard before any further
+  bitstream (the architecture diagram mentions two 1.8 V interfaces, G-3).
+- About 3.3 V on both: write them in `BOARD_INFO.md` (team measurement, date), remove the `TODO: belum dikonfirmasi` marks
+  in `board/zero7.xdc` and the bring-up constraints, and record it in STATUS.
+
+### Buttons, switches and the WS2812B
+
+`python tools/run.py bringup io_test --accept-inferred-io`. D5 shows SW1 (PSW), D6 shows SW3 (DIP), the WS2812B LED1 shows
+START red, STOP green, RUN blue. Polarity is [UNKNOWN]: record the level released and pressed for START (C14), STOP (B15),
+RUN (C13), PSW (R4) and DIP (M4). A flickering reading may mean a floating input; note it.
+
+### XADC
+
+After programming any design, open the System Monitor (XADC) dashboard in the Hardware Manager (guide slide 48). Record
+temperature, VCCINT, VCCAUX and VCCBRAM as [HW] and compare them with the DS189 recommended operating conditions.
+
+### ILA
+
+`python tools/run.py bringup io_test --accept-inferred-io --ila`, then program with the `.bit` and the `io_test_top.ltx` next
+to it; trigger on a button input or on the WS2812B line. ILA through the J-Link XVCD Server is [UNKNOWN] until this is tried
+(C9); if it fails, record it as a [HW] finding and debug through LEDs, VIO or SPI instead.

@@ -202,14 +202,14 @@ Organizers published new official facts on 2 and 10 Nov 2026 (summary and refere
   - [x] `clk_wiz_turbo` generated in `fpga/synth_official.tcl`; `clk_gen_xilinx` uses it
   - [B] genuine reconfiguration measured on board (B4)
 - [B] Boot from QSPI flash (ADR-019): awaiting flash model and DIP SW7 positions.
-- **M22 — Bring-up without Raspberry Pi and host via JTAG (ADR-025, ADR-026)**
+- **M22 — Bring-up without Raspberry Pi and host via JTAG (ADR-025, ADR-026)** (superseded 26 Nov 2026: Pi 5, ZERO7 and J-Link in hand; `board/BRINGUP_NO_PI.md` removed, its checks are in `board/BRINGUP.md`, the early steps in `board/BRINGUP_C0_C4.md`)
   - [x] `board/BRINGUP_NO_PI.md`: power (only via Pi per IN-41; other methods [UNKNOWN]), JTAG-HS3 cable, Hardware Manager, blink, bank voltages, I/O, XADC, ILA, JTAG host
   - [x] designs in `fpga/bringup/` (blink, vcco_probe, io_test) with `tb_bringup`; `python tools/run.py bringup <design> --accept-inferred-io`
   - [x] `top_core` with second host port; `rtl/axil_bus_bridge.v`; `board/top_jtag.v`; JTAG log player model; bench `jtag_session_xs`
   - [x] `sentinel.transport_jtag` (`JtagAxiTransport`, `SimulatedAxi`, `RecordingAxi`, `VivadoTclAxi`, `JtagBackend`); `bringup.py --host jtag` passes dry-run
   - [B] all on-board steps: awaiting power, board, and "board ready" (CLAUDE.md §8)
 
-### Experiment map without Raspberry Pi (ADR-025, ADR-026)
+### Experiment map without Raspberry Pi (ADR-025, ADR-026) — superseded 26 Nov 2026, kept as history
 
 | Experiment | Without Pi (JTAG-HS2 + PC) | Notes |
 | --- | --- | --- |

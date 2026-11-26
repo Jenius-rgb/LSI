@@ -53,7 +53,7 @@ webcam works without a driver on Linux (UVC) before buying.
 2. If one must be bought: the **cheapest price seen** is the OV5647 CSI module ($15.99, waveshare.com). Two risks:
    it only works with the Raspberry Pi (not testable on the laptop now), and its ribbon cable must reach the Pi 4's CSI
    connector while ZERO7 sits on the GPIO header. Whether ZERO7 leaves room for that ribbon is [UNKNOWN] (no board
-   drawing in `docs/official/`); check it during board inspection (`board/BRINGUP_NO_PI.md` step 1) before buying.
+   drawing in `docs/official/`); check it during board inspection (`board/BRINGUP_C0_C4.md`, C2-1) before buying.
 3. Otherwise a **generic UVC USB webcam** is the safe economical buy: the same code runs on the laptop and the Pi 4,
    and no ribbon has to pass the HAT. Local prices in Indonesia were not checked; any UVC model with 640 × 480 or more
    will do, so the cheapest UVC listing is acceptable.

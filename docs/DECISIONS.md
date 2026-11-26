@@ -226,7 +226,7 @@ ADR-001 through ADR-007 are initial proposals from the starter kit (2026-11-09).
   4. Milestone M22 (bring-up without Pi and JTAG host) in STATUS.
   5. BOARD phase still commences per CLAUDE.md §8. All created prior is preparation.
 - **Impact:** `board/BRINGUP_NO_PI.md`; experiment map without Pi in STATUS.
-- **Status:** Accepted.
+- **Status:** Accepted. Superseded 26 Nov 2026: the team has the Raspberry Pi 5 (ADR-033), ZERO7 and the SEGGER J-Link (ADR-034); `board/BRINGUP_NO_PI.md` was removed, its board checks moved to `board/BRINGUP.md` and the early steps to `board/BRINGUP_C0_C4.md`. The bring-up designs in `fpga/bringup/` stay.
 
 ## ADR-027 — BUFGCTRL select pin unconstrained by timing
 
@@ -369,7 +369,7 @@ ADR-001 through ADR-007 are initial proposals from the starter kit (2026-11-09).
 - **Context:** team decision of 25 Nov 2026: the team has a SEGGER J-Link (20-pin JTAG) and no Digilent cable [USER]. The official guide uses a Digilent JTAG-HS3 [OFFICIAL, IN-42]. The SEGGER J-Link XVCD Server (J-Link software from V7.92d, default port 2542) lets the Vivado Hardware Manager use a J-Link as a Xilinx Virtual Cable [VERIFIED EXTERNAL, kb.segger.com/J-Link_XVCD_Server]. openFPGALoader lists the cable keyword `jlink` and Spartan-7 xc7s25 [VERIFIED EXTERNAL]. The JTAG header of the team's white ZERO7 and its pin order are not documented [UNKNOWN].
 - **Alternatives:** (a) obtain a Digilent cable (organizer question pending); (b) J-Link through XVCD for programming and ILA; (c) J-Link through openFPGALoader for programming only.
 - **Decision:** (b), with (c) as the programming fallback and VIO, LEDs and SPI register reads from the Pi 5 as debug fallbacks if ILA through XVC fails. Wiring table, safety checklist (measure the header voltage before VTref is connected; never use J-Link pin 19 to power the board) and a five-step test order in `docs/JLINK_VIVADO.md`.
-- **Impact:** `docs/JLINK_VIVADO.md`, `board/BRINGUP.md`, `board/BRINGUP_NO_PI.md` (Digilent wiring superseded), SPEC §14. Programming and ILA through the J-Link are [UNKNOWN] until the user runs the test order. No RTL change.
+- **Impact:** `docs/JLINK_VIVADO.md`, `board/BRINGUP.md`, `board/BRINGUP_NO_PI.md` (Digilent wiring superseded; file removed 26 Nov 2026), SPEC §14. Programming and ILA through the J-Link are [UNKNOWN] until the user runs the test order. No RTL change.
 - **Status:** Accepted (team decision, 25 Nov 2026).
 
 ## ADR-035 — Camera only through the Raspberry Pi
