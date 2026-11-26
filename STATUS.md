@@ -365,15 +365,35 @@ No longer blocked since official documents of 10 Nov 2026: part number and speed
 
 ## Notes for next session
 
-**Written 26 Nov 2026 (zero-skip fix, model s4).** Read this block first.
+**Written 26 Nov 2026, end of session (development and architecture pass).** Read this block first; it supersedes the older blocks below where they differ.
 
-- Update later on 26 Nov: the user approved the reviewed CLAUDE.md/AGENTS.md/translations (committed), asked to test zero-skip on the DSP variant (done: no speed gain at the supply limit, not used, see ADR-028) and to move the official build to s4 (done: `config/hw_zero7.yaml` MODEL s4, `system_s4_k8_c1` PASS 10/10). Real-hardware work stays on hold until development and architecture are finished. ADR-032 study and ADR-031 + D5 approved by the user later the same day: ADR-031 (c) accepted (split LUT multiplier + D5); ADR-032 study met timing at 142.857 MHz, adoption waits for the user.
-- Position: model `s4` (four official classes, ADR-037) trained, exported and bit-exact in RTL (200/200). Zero-skip (ADR-028) implemented behind `ZERO_SKIP`; the first version overran the lane-array result serializer on images 118 and 198; guard `ZERO_SKIP = 1` chosen (details in ADR-028). Zero-skip is **stopped and reported**: with it on, Fmax drops (clk_safe 136.6 → 134.9 MHz, clk_fast 140.8 → 135.8 MHz) for 31.70 % fewer cycles; `ZERO_SKIP = 0` stays the default and the official reports are unchanged (base26 rerun identical).
-- Waiting for the user: (1) nothing open from ADR-038 (ADR-032 (b) adopted for the DSP variant on 26 Nov); (2) when to resume the hardware steps (on hold until development and architecture are finished); (3) whether G1 counts as threatened (see "G1 status" at the top).
-- ADR-038 list: all items handled (ADR-037 done, ADR-028 tested and not used, ADR-031 accepted, ADR-032 (b) adopted for the DSP variant).
-- `docs/REPORT_DRAFT.md` and `docs/SLIDES_OUTLINE.md` still describe the DSP lanes at 250 MHz and the LUT lane before ADR-031; update them when the report is written (the user asked not to write the report yet).
-- New tools: `build/sim/logs/<bench>[_s<shard>].log` fill while a bench runs (`Get-Content -Wait`); tb_engine prints `IMG i done cycles=n` and fails an image after `+maxcycles` (default 2,000,000); the runner kills the whole process tree on timeout; an exact bench name no longer also runs longer names that start with it. `python tools/zs_compare.py` builds the zero-skip table from logs.
-- Gotchas: under xsim `$fatal` printed the FAIL and the run went on, so tb_engine now calls `$finish` after it (other testbenches still rely on the runner's FAIL check). Do not judge a netlist change from simulation alone: the ungated zero-skip mux was bit-exact but added 118 LUTs with `ZERO_SKIP = 0`. A bench with the same name overwrites its logs; copy them to `results/` before a rerun if they are evidence.
+Done (evidence in the Evidence log and the ADRs):
+- Model `s4`, the four official classes cat, dog, deer, horse (ADR-037): trained (float 83.8 %, INT8 83.5 % [SIM]), exported, bit-exact in RTL (engine 200/200, official system scenarios 10/10 for both lane variants [SIM]); `config/hw_zero7.yaml` names `MODEL: s4`; the weight manifest carries the class names and `sw/sentinel/validate.py` labels folders in model order.
+- ADR-028 zero-skip: built behind `ZERO_SKIP`, overrun bug (images 118, 198) found and fixed with the minimum-sets guard (`ZERO_SKIP = 1`), bit-exact, but no speed gain at the operand supply limit of the DSP variant and lower Fmax on the LUT variant: not used, default 0.
+- ADR-031 (c) accepted: split LUT multiplier + per-lane activation register; official clk_fast 140.8 → 146.6 MHz at 8 ns, OOC 156.3 → 159.3 MHz [VIVADO-STA].
+- ADR-032 (b) adopted for the DSP variant: clk_safe 142.857 MHz, lanes analysed at 255 MHz, official DSP report clean; 1.230 ms per image instead of 1.299 ms [SIM].
+- ADR-039 rejected: two fast-reset variants were worse in the official flow; RTL stays at the ADR-031 state. Timing optimisation stopped by the user (26 Nov); no variation study.
+- Tooling: per-image watchdog and progress in tb_engine/tb_system, live logs in `build/sim/logs/`, runner kills the whole process tree on timeout, exact bench names are exact; reviewed CLAUDE.md/AGENTS.md/translations committed; superseded official PDF restored.
+- Official reports now: LUT `results/vivado/official/` (clk_safe 125 MHz, WNS 0.694 ns, clk_fast WNS 1.180 ns at 8 ns, 7,645 LUT, 6,604 FF); DSP `results/vivado/official_dsp/` (clk_safe 142.857 MHz, WNS 0.198 ns, lanes 0.173 ns at 255 MHz, 6,099 LUT, 5,566 FF) [VIVADO-STA].
+
+Pending or not proven:
+- Nothing has run on the board: every [HW] experiment (E1–E7), Pi 5 compatibility with ZERO7, SPI speed, power draw and the J-Link XVCD path are unproven.
+- Hardware steps stay on hold by the user's instruction (25 and 26 Nov) until the user says otherwise; CLAUDE.md §8 conditions are not met (mandatory BOARD_INFO fields still UNKNOWN, no "board siap").
+- User to-do list before the board can be used (see the session summary of 26 Nov): measure the VCCO of banks 14/15/34 at the board test points with the board powered from the Pi, without touching anything else; identify the JTAG header P2 pin order from an official document or the organizers before connecting the J-Link; ask the organizers whether ZERO7 may be powered without a Pi (DC jack "POW") and keep using only the Pi header until they answer.
+- G1 (13 Dec 2026): simulation half done, board half not started (see "G1 status"); whether it counts as threatened is the user's call.
+- Report material: `docs/REPORT_DRAFT.md` and `docs/SLIDES_OUTLINE.md` still show the DSP lanes at 250 MHz and the LUT lane before ADR-031; update when the report is written (the user asked not to write it yet).
+- Open from ADR-028/031 test plans: the [SYNTHETIC] injection campaign was not rerun (it uses the Python model, which does not see the lane latency).
+- `.agents/` (24 MB of third-party skill copies, not in THIRD_PARTY.md) and `graphify-out/` (14 MB, regenerable) are untracked on purpose; decide whether to commit them or add them to `.gitignore`.
+
+Gotchas found this session:
+- Under xsim `$fatal` printed FAIL and the run went on; tb_engine now calls `$finish` after it. Other testbenches still rely on the runner's FAIL check.
+- On Windows a subprocess timeout killed only `xsim.bat`; xsim.exe/xsimk.exe kept running for hours. Fixed in `tools/sim.py` (`kill_tree`).
+- A bench of the same name overwrites its logs; copy them to `results/` first when they are evidence.
+- Bit-exact is not netlist-identical: the ungated zero-skip mux added 118 LUTs with `ZERO_SKIP = 0`; always rerun the baseline side run after RTL changes that should be neutral.
+- Vivado placement variation: official clk_fast WNS moved by up to 0.9 ns between netlists that differ only in reset wiring; do not accept or reject a sub-nanosecond change from one run.
+- The OOC MAC/non-MAC classification is name-based (`fpga/ooc.tcl`, `fpga/parse_reports.py`); new lane registers must be added there or they are held to the non-MAC budget.
+- The engine testbench clocks `clk_safe` and `clk_fast` alike; speed claims at a real clock ratio need `tb_system` (`system_s4_dsp_speed_*`).
+- Fmax = 1000 / (period − WNS); recompute rather than copy (one wrong figure, 147.5 MHz, was corrected to 146.6 MHz).
 
 **Written 25 Nov 2026 (PROMPT_TAHAP3, stage 3 board preparation).** Read "Team decisions, 25 Nov 2026" and "Stage 3" above first; they supersede the Pi 4, Digilent cable and Pi-5-in-January notes further down.
 
